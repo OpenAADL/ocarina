@@ -1,0 +1,27 @@
+-- Filename: props.aadl
+property set props is
+  sise: constant aadlinteger => 5;
+  size: aadlinteger applies to (all);
+end props;
+-- Filename: TestCase_ParseSubcomponentsArraysWithAADLXMLBackend.aadl
+-- execute this model with the following ocarina command:
+-- ocarina -d -v -aadlv2 -f -g aadl_xml -r sys.impl -o . TestCase_ParseSubcomponentsArraysWithAADLXMLBackend.aadl props.aadl
+
+package TestCase_ParseSubcomponentsArraysWithAADLXMLBackend
+public
+  with props;
+
+  processor procs
+  end procs;
+
+  system sys
+  end sys;
+
+  system implementation sys.impl
+  subcomponents
+    procs_hardcoded: processor procs [5];
+    procs_inline:    processor procs { props::size => 6; };
+    procs_property:  processor procs [props::sise];
+  end sys.impl;
+
+end TestCase_ParseSubcomponentsArraysWithAADLXMLBackend;

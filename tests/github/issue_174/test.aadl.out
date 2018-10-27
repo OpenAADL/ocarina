@@ -1,0 +1,1001 @@
+
+
+
+
+
+
+
+
+property set Data_Model is
+  Base_Type : list of classifier (
+data)
+    applies to (data);
+
+  Code_Set : aadlinteger
+    applies to (data);
+
+  Data_Digits : aadlinteger
+    applies to (data);
+
+  Data_Scale : aadlinteger
+    applies to (data);
+
+  Data_Representation : enumeration (Array, Boolean, Bounded_Array, Character, Enum, Float, Fixed, Integer, String, Struct, Union)
+    applies to (data);
+
+  Dimension : list of aadlinteger
+    applies to (data);
+
+  Indefinite_Dimension : constant aadlinteger => -1;
+  Infinite_Dimension : constant aadlinteger => -2;
+  Element_Names : list of aadlstring
+    applies to (data);
+
+  Enumerators : list of aadlstring
+    applies to (data);
+
+  IEEE754_Precision : enumeration (Simple, Double)
+    applies to (data);
+
+  Initial_Value : list of aadlstring
+    applies to (data, port, parameter);
+
+  Integer_Range : range of aadlinteger
+    applies to (data, port, parameter);
+
+  Measurement_Unit : aadlstring
+    applies to (data, port, parameter);
+
+  Number_Representation : enumeration (Signed, Unsigned)
+    applies to (data);
+
+  Real_Range : range of aadlreal
+    applies to (data, port, parameter);
+
+  Representation : list of aadlstring
+    applies to (data);
+
+end Data_Model;
+
+property set Deployment is
+  Allowed_Transport_APIs : type enumeration (BSD_Sockets, SpaceWire);
+
+  Transport_API : Deployment::Allowed_Transport_APIs
+    applies to (bus);
+
+  Location : aadlstring
+    applies to (processor, device);
+
+  Port_Number : aadlinteger
+    applies to (process, device);
+
+  Protocol_Type : type enumeration (iiop, diop);
+
+  Protocol : Deployment::Protocol_Type
+    applies to (system);
+
+  Allowed_Execution_Platform : type enumeration (Native, Native_Compcert, bench, GNAT_Runtime, LEON_ORK, LEON_RTEMS, LEON_RTEMS_POSIX, LEON3_SCOC3, LEON3_XTRATUM, LEON3_XM3, LEON_GNAT, LINUX32, LINUX_DLL, LINUX32_XENOMAI_NATIVE, LINUX32_XENOMAI_POSIX, LINUX64, ERC32_ORK, X86_RTEMS_POSIX, X86_LINUXTASTE, MARTE_OS, WIN32, VXWORKS, FREERTOS, AIR);
+
+  Execution_Platform : Deployment::Allowed_Execution_Platform
+    applies to ( all);
+
+  Ada_Runtime : aadlstring
+    applies to (processor);
+
+  USER_CFLAGS : aadlstring
+    applies to (processor);
+
+  USER_LDFLAGS : aadlstring
+    applies to (processor);
+
+  Supported_Execution_Platform : list of Deployment::Allowed_Execution_Platform
+    applies to (device);
+
+  USER_ENV : aadlstring
+    applies to (processor);
+
+  Runtime : type enumeration (PolyORB_HI_C, PolyORB_HI_Ada, POK);
+
+  Supported_Runtime : Deployment::Runtime
+    applies to ( all);
+
+  Priority_Type : type aadlinteger 0 .. 255;
+
+  Priority : Deployment::Priority_Type
+    applies to (data, thread);
+
+  Driver_Name : aadlstring
+    applies to (device);
+
+  Configuration : aadlstring
+    applies to (device, thread);
+
+  Config : aadlstring
+    applies to (device);
+
+  ASN1_Module_Name : aadlstring
+    applies to ( all);
+
+  Help : aadlstring
+    applies to ( all);
+
+  Version : aadlstring
+    applies to ( all);
+
+  Configuration_Type : classifier (
+data)
+    applies to ( all);
+
+end Deployment;
+
+property set Cheddar_Properties is
+  Dispatch_Seed_is_Predictable : aadlboolean
+    applies to (thread, thread group);
+
+  Context_Switch_Overhead : inherit Time
+    applies to (thread, thread group);
+
+  Source_Text : inherit list of aadlstring
+    applies to (virtual processor, processor, thread);
+
+  Automaton_Name : inherit list of aadlstring
+    applies to (virtual processor, processor, thread);
+
+  Dispatch_Seed_Value : aadlinteger
+    applies to (thread, thread group);
+
+  Dispatch_Absolute_Time : inherit Time
+    applies to (thread, thread group);
+
+  Criticality : aadlinteger
+    applies to (thread, thread group);
+
+  Bound_On_Data_Blocking_Time : inherit Time
+    applies to (thread, thread group);
+
+  Dispatch_Jitter : inherit Time
+    applies to (thread, thread group);
+
+  Fixed_Priority : aadlinteger 0 .. 255
+    applies to (thread, thread group);
+
+  POSIX_Scheduling_Policy : enumeration (SCHED_FIFO, SCHED_RR, SCHED_OTHERS)
+    applies to (thread, thread group);
+
+  Dispatch_Offset_Value_0 : aadlinteger
+    applies to (thread, thread group);
+
+  Dispatch_Offset_Time_0 : inherit Time
+    applies to (thread, thread group);
+
+  Dispatch_Offset_Value_1 : aadlinteger
+    applies to (thread, thread group);
+
+  Dispatch_Offset_Time_1 : inherit Time
+    applies to (thread, thread group);
+
+  Dispatch_Offset_Value_2 : aadlinteger
+    applies to (thread, thread group);
+
+  Dispatch_Offset_Time_2 : inherit Time
+    applies to (thread, thread group);
+
+  Dispatch_Offset_Value_3 : aadlinteger
+    applies to (thread, thread group);
+
+  Dispatch_Offset_Time_3 : inherit Time
+    applies to (thread, thread group);
+
+  Dispatch_Offset_Value_4 : aadlinteger
+    applies to (thread, thread group);
+
+  Dispatch_Offset_Time_4 : inherit Time
+    applies to (thread, thread group);
+
+  Dispatch_Offset_Value_5 : aadlinteger
+    applies to (thread, thread group);
+
+  Dispatch_Offset_Time_5 : inherit Time
+    applies to (thread, thread group);
+
+  Task_Precedencies : list of aadlstring
+    applies to (system);
+
+  Scheduler_Quantum : inherit Time
+    applies to (processor, virtual processor);
+
+  Preemptive_Scheduler : aadlboolean
+    applies to (processor, virtual processor);
+
+  Scheduling_Protocol : list of Supported_Scheduling_Protocols
+    applies to (processor, virtual processor);
+
+  Data_Concurrency_State : aadlinteger
+    applies to (data);
+
+  Critical_Section : list of aadlstring
+    applies to (virtual processor, thread, data);
+
+  Source_Global_Heap_Size : Size
+    applies to (process);
+
+  Source_Global_Stack_Size : Size
+    applies to (process);
+
+  Source_Global_Text_Size : Size
+    applies to (process);
+
+  Source_Global_Data_Size : Size
+    applies to (process);
+
+end Cheddar_Properties;
+
+property set Ocarina_Config is
+  Generator_Type : type enumeration (PolyORB_QoS_Ada, PolyORB_HI_Ada, PolyORB_HI_C, PolyORB_HI_RTSJ, POK_C, Xtratum_Configuration, Petri_Nets);
+
+  Generator : Ocarina_Config::Generator_Type
+    applies to (system);
+
+  Generator_Options_Type : type enumeration (gprof, ASN1);
+
+  Generator_Options : list of Ocarina_Config::Generator_Options_Type
+    applies to (system);
+
+  AADL_Files : list of aadlstring
+    applies to (system);
+
+  Cheddar_Properties : constant aadlstring => "Cheddar_Properties";
+  Data_Model : constant aadlstring => "Data_Model";
+  Deployment : constant aadlstring => "Deployment";
+  POK_Properties : constant aadlstring => "pok_properties";
+  ARINC653_Properties : constant aadlstring => "arinc653";
+  ASSERT_Properties : constant aadlstring => "ASSERT_Properties";
+  TASTE_Properties : constant aadlstring => "taste_properties";
+  Needed_Property_Sets : list of aadlstring
+    applies to (system);
+
+  Ocarina_Driver_Library : constant list of aadlstring => ("devices.aadl", "buses", "base_types", "exarm-ni-6071e-analog.aadl", "grspw.aadl", "rasta-serial.aadl", "sockets-rtems-ne2000.aadl", "exarm-ni-6071e-digital.aadl", "gruart.aadl", "rasta-spacewire.aadl", "tcp_protocol.aadl", "generic-keyboard.aadl", "leon-eth.aadl", "scoc3-spacewire.aadl", "udp-exarm.aadl", "generic_bus.aadl", "leon-serial.aadl", "sd-spw-usb.aadl", "generic_native.aadl", "native_uart.aadl", "serial-raw.aadl", "gr_cpci_x4cv.aadl", "rasta-1553.aadl", "sockets-raw.aadl", "grspw_packet.aadl", "apbuart.aadl", "greth.aadl", "stardundee.aadl");
+  Root_System_Name : aadlstring
+    applies to (system);
+
+  AADL_Version_Type : type enumeration (AADLv1, AADLv2);
+
+  AADL_Version : Ocarina_Config::AADL_Version_Type
+    applies to (system);
+
+  Use_Components_Library : aadlboolean
+    applies to (system);
+
+  Referencial_Files : list of aadlstring
+    applies to (system);
+
+  Timeout_Property : Time
+    applies to (system);
+
+  Annex_Type : type enumeration (annex_all, annex_none, behavior_specification, real_specification, emv2);
+
+  Enable_Annexes : list of Ocarina_Config::Annex_Type
+    applies to (system);
+
+end Ocarina_Config;
+
+property set Transformations is
+  Call_Sequence_Period : inherit Time
+    applies to (subprogram);
+
+  Priority : aadlinteger 0 .. 255
+    applies to (subprogram);
+
+  Source_Name : aadlstring
+    applies to (subprogram);
+
+  Fusion_Occurred : aadlboolean
+    applies to (thread);
+
+  Priority_Shifter : aadlboolean
+    applies to (data);
+
+  Deadline : inherit Time
+    applies to (subprogram);
+
+  No_Optimization : aadlboolean
+    applies to (process, thread);
+
+  Scheduler_Name : aadlstring
+    applies to (thread);
+
+  Original_Name : aadlstring
+    applies to (thread);
+
+end Transformations;
+
+property set POK is
+  Security_Level : aadlinteger
+    applies to (virtual processor, virtual bus, process, bus, event data port, event port, data port);
+
+  Criticality : aadlinteger
+    applies to (virtual processor);
+
+  Handler : aadlstring
+    applies to (virtual processor);
+
+  Topics : list of aadlstring
+    applies to (virtual processor, virtual bus);
+
+  Needed_Memory_Size : Size
+    applies to (process);
+
+  Available_Schedulers : type enumeration (RMS, EDF, LLF, RR, TIMESLICE, STATIC);
+
+  Timeslice : Time
+    applies to (virtual processor);
+
+  Major_Frame : Time
+    applies to (processor);
+
+  Scheduler : POK::Available_Schedulers
+    applies to (processor, virtual processor);
+
+  Slots : list of Time
+    applies to (processor);
+
+  Slots_Allocation : list of reference (
+virtual processor)
+    applies to (processor);
+
+  Supported_Error_Code : type enumeration (Deadline_Missed, Application_Error, Numeric_Error, Illegal_Request, Stack_Overflow, Memory_Violation, Hardware_Fault, Power_Fail, Partition_Configuration, Partition_Init, Partition_Scheduling, Partition_Process, Kernel_Init, Kernel_Scheduling);
+
+  Recovery_Errors : list of POK::Supported_Error_Code
+    applies to (processor, virtual processor, thread);
+
+  Supported_Recovery_Action : type enumeration (Ignore, Confirm, Thread_Restart, Thread_Stop_And_Start_Another, Thread_Stop, Partition_Restart, Partition_Stop, Kernel_Stop, Kernel_Restart, Nothing);
+
+  Recovery_Actions : list of POK::Supported_Recovery_Action
+    applies to (processor, virtual processor, thread);
+
+  Available_BSP : type enumeration (x86_qemu, x86_qemu_vmm, prep, leon3);
+
+  BSP : POK::Available_BSP
+    applies to (processor, system);
+
+  Available_Architectures : type enumeration (x86, ppc, sparc);
+
+  Architecture : POK::Available_Architectures
+    applies to (processor, system);
+
+  Source_Location : aadlstring
+    applies to (subprogram);
+
+  MILS_Verified : aadlboolean
+    applies to (system, process, device, thread, processor, data);
+
+  Refresh_Time : Time
+    applies to (data port);
+
+  Hw_Addr : aadlstring
+    applies to (device);
+
+  PCI_Vendor_Id : aadlstring
+    applies to (device);
+
+  PCI_Device_ID : aadlstring
+    applies to (device);
+
+  Device_Name : aadlstring
+    applies to (device);
+
+  Additional_Features : list of POK::Supported_Additional_Features
+    applies to (virtual processor, processor);
+
+  Supported_Additional_Features : type enumeration (libmath, libc_stdlib, libc_stdio, libc_string, io, pci, console, libc, x86_vmm);
+
+  Des_Key : aadlstring
+    applies to (virtual bus);
+
+  Des_Init : aadlstring
+    applies to (virtual bus);
+
+  Blowfish_Key : aadlstring
+    applies to (virtual bus);
+
+  Blowfish_Init : aadlstring
+    applies to (virtual bus);
+
+  Supported_POK_Protocols : type enumeration (ceasar, des, blowfish, unknown);
+
+  Protocol : POK::Supported_POK_Protocols
+    applies to (virtual bus);
+
+end POK;
+
+package Base_Types
+
+public
+  with data_model;
+
+  data Boolean
+  properties
+    Data_Model::Data_Representation => Boolean;
+
+  end Boolean;
+
+  data Integer
+  properties
+    Data_Model::Data_Representation => Integer;
+
+  end Integer;
+
+  data Integer_8 extends Integer
+  properties
+    Data_Model::Number_Representation => Signed;
+    Source_Data_Size => 1 Bytes;
+
+  end Integer_8;
+
+  data Integer_16 extends Integer
+  properties
+    Data_Model::Number_Representation => Signed;
+    Source_Data_Size => 2 Bytes;
+
+  end Integer_16;
+
+  data Integer_32 extends Integer
+  properties
+    Data_Model::Number_Representation => Signed;
+    Source_Data_Size => 4 Bytes;
+
+  end Integer_32;
+
+  data Integer_64 extends Integer
+  properties
+    Data_Model::Number_Representation => Signed;
+    Source_Data_Size => 8 Bytes;
+
+  end Integer_64;
+
+  data Unsigned_8 extends Integer
+  properties
+    Data_Model::Number_Representation => Unsigned;
+    Source_Data_Size => 1 Bytes;
+
+  end Unsigned_8;
+
+  data Unsigned_16 extends Integer
+  properties
+    Data_Model::Number_Representation => Unsigned;
+    Source_Data_Size => 2 Bytes;
+
+  end Unsigned_16;
+
+  data Unsigned_32 extends Integer
+  properties
+    Data_Model::Number_Representation => Unsigned;
+    Source_Data_Size => 4 Bytes;
+
+  end Unsigned_32;
+
+  data Unsigned_64 extends Integer
+  properties
+    Data_Model::Number_Representation => Unsigned;
+    Source_Data_Size => 8 Bytes;
+
+  end Unsigned_64;
+
+  data Natural extends Integer
+  properties
+    Data_Model::Integer_Range => 0 .. Max_Target_Integer;
+
+  end Natural;
+
+  data Float
+  properties
+    Data_Model::Data_Representation => Float;
+
+  end Float;
+
+  data Float_32 extends Float
+  properties
+    Data_Model::IEEE754_Precision => Simple;
+    Source_Data_Size => 4 Bytes;
+
+  end Float_32;
+
+  data Float_64 extends Float
+  properties
+    Data_Model::IEEE754_Precision => Double;
+    Source_Data_Size => 8 Bytes;
+
+  end Float_64;
+
+  data Character
+  properties
+    Data_Model::Data_Representation => Character;
+
+  end Character;
+
+  data String
+  properties
+    Data_Model::Data_Representation => String;
+
+  end String;
+
+end Base_Types;
+
+property set Taste is
+  Interface_Coordinates : aadlstring
+    applies to (subprogram access, bus access);
+
+  Coordinates : aadlstring
+    applies to (system, package, device, memory, processor, process, access, subprogram access, connection, bus, virtual bus, feature group);
+
+  Fill_Color : aadlstring
+    applies to (system, device, processor, process, bus);
+
+  HWLibraries : list of aadlstring
+    applies to (package);
+
+  Data_Transport : enumeration (legacy, asn1)
+    applies to (device, abstract);
+
+  Importance : enumeration (low, medium, high)
+    applies to (system, subprogram access, access);
+
+  APLC_Binding : list of reference (
+process)
+    applies to (process, device, system);
+
+  APLC_Properties : record (APLC : aadlstring; Coordinates : aadlstring; Source_Language : Supported_Source_Language;)
+    applies to (process);
+
+  ASN1_types : type enumeration (asequenceof, asequence, aenumerated, aset, asetof, ainteger, aboolean, areal, achoice, aoctetstring, astring);
+
+  ASN1_Basic_Type : Taste::ASN1_types
+    applies to (data);
+
+  FS_Default_Value : aadlstring
+    applies to (data);
+
+  Deadline : inherit Time => Period
+    applies to (thread, thread group, process, system, device, subprogram access);
+
+  Max_Priority_Value : constant aadlinteger => 28;
+  Min_Interrupt_Priority_Value : constant aadlinteger => 29;
+  Max_Interrupt_Priority_Value : constant aadlinteger => 31;
+  Criticality_Level_Type : type enumeration (A, B, C, D, E);
+
+  Transmission_Type : type enumeration (simplex, half_duplex, full_duplex);
+
+  Frequency : type aadlinteger 0 Hz .. Max_Aadlinteger units (
+    Hz,
+    KHz => Hz * 1000,
+    MHz => KHz * 1000,
+    GHz => MHz * 1000);
+
+  Criticality : Taste::Criticality_Level_Type
+    applies to (process, system);
+
+  Local_Scheduling_Policy : Supported_Scheduling_Protocols
+    applies to (process, system);
+
+  Time_Budget : aadlinteger
+    applies to (process, system);
+
+  Budget_Replenishment_Period : Time
+    applies to (process, system);
+
+  Storage_Budget : Size
+    applies to (process, system);
+
+  Longest_Critical_Section : Time
+    applies to (processor);
+
+  Periodic_Clock_Interrupt_Period : Time
+    applies to (processor);
+
+  Periodic_Clock_Handler : Time
+    applies to (processor);
+
+  Demanded_Clock_Handler : Time
+    applies to (processor);
+
+  Interrupt_Handler : Time
+    applies to (processor);
+
+  External_Interrupt : Time
+    applies to (processor);
+
+  Wakeup_Jitter : Time
+    applies to (processor);
+
+  Ready : Time
+    applies to (processor);
+
+  Select : Time
+    applies to (processor);
+
+  Context_Switch : Time
+    applies to (processor);
+
+  Signal : Time
+    applies to (processor);
+
+  Suspension_Call : Time
+    applies to (processor);
+
+  Wait_Call : Time
+    applies to (processor);
+
+  Priority_Raising : Time
+    applies to (processor);
+
+  Priority_Lowering : Time
+    applies to (processor);
+
+  Barrier_Evaluation : Time
+    applies to (processor);
+
+  Budget_Replenishment_Overhead : Time
+    applies to (processor);
+
+  Budget_Exhausted_Recovery_Call : Time
+    applies to (processor);
+
+  Processor_Speed : Taste::Frequency
+    applies to (processor);
+
+  Interconnection_Speed_Factor : aadlreal
+    applies to (bus);
+
+  Transmission_Kind : Taste::Transmission_Type
+    applies to (bus);
+
+  Bandwidth : Data_Volume
+    applies to (bus);
+
+  Memory_Size : Size
+    applies to (memory);
+
+  Access_Time : Time
+    applies to (memory);
+
+  Access_Bandwidth : Data_Volume
+    applies to (bus);
+
+  RCMoperation : classifier (
+subprogram)
+    applies to (event port, event data port);
+
+  RCMoperationKind_list : type enumeration (cyclic, sporadic, variator, protected, transaction, barrier, unprotected, deferred, immediate, any);
+
+  RCMoperationKind : Taste::RCMoperationKind_list
+    applies to (event port, event data port, access, subprogram access);
+
+  RCMceiling : aadlinteger
+    applies to (event port, event data port);
+
+  RCMperiod : Time
+    applies to (event port, event data port, access, subprogram access);
+
+  RCMpartition : reference (
+system)
+    applies to (system);
+
+  dataview : list of aadlstring
+    applies to (package);
+
+  dataviewpath : list of aadlstring
+    applies to (package);
+
+  Encoding_type : type enumeration (native, uper, acn);
+
+  Encoding : Taste::Encoding_type
+    applies to (parameter);
+
+  Ada_Package_Name : aadlstring
+    applies to (data);
+
+  Forbid_In_PI : aadlboolean
+    applies to (data);
+
+  interfaceView : aadlstring
+    applies to (package);
+
+  WCET : Time
+    applies to (subprogram access);
+
+  Instance_Name : aadlstring
+    applies to (system);
+
+  Associated_Queue_Size : aadlinteger
+    applies to (subprogram);
+
+  EncodingDefinitionFile : classifier (
+data)
+    applies to (data);
+
+  labelInheritance : aadlstring
+    applies to (subprogram access);
+
+  version : aadlstring
+    applies to (package);
+
+  InterfaceName : aadlstring
+    applies to (subprogram access, feature group);
+
+  FunctionName : aadlstring
+    applies to (system);
+
+  Active_Interfaces : enumeration (Enabled, Disabled, Any) => Enabled
+    applies to (system);
+
+end Taste;
+
+property set ARINC653 is
+  Module_Major_Frame : Time
+    applies to (processor, virtual processor);
+
+  Sampling_Refresh_Period : Time
+    applies to (data port);
+
+  Supported_Error_Code : type enumeration (Module_Config, Module_Init, Module_Scheduling, Partition_Scheduling, Partition_Config, Partition_Handler, Partition_Init, Deadline_Miss, Application_Error, Numeric_Error, Illegal_Request, Stack_Overflow, Memory_Violation, Hardware_Fault, Power_Fail);
+
+  Supported_Memory_Type : type enumeration (Data_Memory, Code_Memory, IO_Memory);
+
+  Memory_Type : list of ARINC653::Supported_Memory_Type
+    applies to (memory);
+
+  Timeout : Time
+    applies to (port, access connections);
+
+  Supported_DAL_Type : type enumeration (LEVEL_A, LEVEL_B, LEVEL_C, LEVEL_D, LEVEL_E);
+
+  DAL : ARINC653::Supported_DAL_Type
+    applies to (virtual processor, system, abstract);
+
+  Module_Version : aadlstring
+    applies to (processor);
+
+  Module_Identifier : aadlstring
+    applies to (processor);
+
+  Partition_Identifier : aadlinteger
+    applies to (virtual processor);
+
+  Partition_Name : aadlstring
+    applies to (virtual processor);
+
+  System_Partition : aadlboolean
+    applies to (virtual processor);
+
+  Error_Handling : reference (
+thread)
+    applies to (virtual processor);
+
+  Error_Level_Type : type enumeration (Module_Level, Partition_Level, Process_Level);
+
+  HM_Error_ID_Level_Type : type record (ErrorIdentifier : aadlinteger; Description : aadlstring; ErrorLevel : ARINC653::Error_Level_Type; ErrorCode : ARINC653::Supported_Error_Code;);
+
+  HM_Error_ID_Levels : list of ARINC653::HM_Error_ID_Level_Type
+    applies to (processor);
+
+  HM_Error_ID_Action_Type : type record (ErrorIdentifier : aadlinteger; Description : aadlstring; Action : aadlstring;);
+
+  HM_Error_ID_Actions : list of ARINC653::HM_Error_ID_Action_Type
+    applies to (processor, virtual processor, thread);
+
+  State_Information_Type : type record (Identifier : aadlinteger; Description : aadlstring;);
+
+  State_Information : ARINC653::State_Information_Type
+    applies to (mode);
+
+  Queueing_Discipline_Type : type enumeration (Fifo, By_Priority);
+
+  Queueing_Discipline : ARINC653::Queueing_Discipline_Type
+    applies to (port, data access);
+
+  Schedule_Window : type record (Partition : reference (
+virtual processor, processor); Duration : time; Periodic_Processing_Start : aadlboolean;);
+
+  Module_Schedule : list of ARINC653::Schedule_Window
+    applies to (processor, virtual processor);
+
+  Time_Capacity : Time
+    applies to (thread);
+
+  Deadline_Type : enumeration (soft, hard)
+    applies to (thread);
+
+end ARINC653;
+
+property set ASSERT_Properties is
+  APLC_Binding : list of aadlstring
+    applies to (process);
+
+  ASN1_types : type enumeration (asequenceof, asequence, aenumerated, aset, asetof, ainteger, aboolean, areal, achoice, aoctetstring);
+
+  ASN1_Basic_Type : ASSERT_Properties::ASN1_types
+    applies to (data);
+
+  Max_Priority_Value : constant aadlinteger => 28;
+  Min_Interrupt_Priority_Value : constant aadlinteger => 29;
+  Max_Interrupt_Priority_Value : constant aadlinteger => 31;
+  Criticality_Level_Type : type enumeration (A, B, C, D, E);
+
+  Transmission_Type : type enumeration (simplex, half_duplex, full_duplex);
+
+  Frequency : type aadlinteger 0 Hz .. Max_Aadlinteger units (
+    Hz,
+    KHz => Hz * 1000,
+    MHz => KHz * 1000,
+    GHz => MHz * 1000);
+
+  Criticality : ASSERT_Properties::Criticality_Level_Type
+    applies to (process, system);
+
+  Local_Scheduling_Policy : Supported_Scheduling_Protocols
+    applies to (process, system);
+
+  Time_Budget : aadlinteger
+    applies to (process, system);
+
+  Budget_Replenishment_Period : Time
+    applies to (process, system);
+
+  Storage_Budget : Size
+    applies to (process, system);
+
+  Longest_Critical_Section : Time
+    applies to (processor);
+
+  Periodic_Clock_Interrupt_Period : Time
+    applies to (processor);
+
+  Periodic_Clock_Handler : Time
+    applies to (processor);
+
+  Demanded_Clock_Handler : Time
+    applies to (processor);
+
+  Interrupt_Handler : Time
+    applies to (processor);
+
+  External_Interrupt : Time
+    applies to (processor);
+
+  Wakeup_Jitter : Time
+    applies to (processor);
+
+  Ready : Time
+    applies to (processor);
+
+  Select : Time
+    applies to (processor);
+
+  Context_Switch : Time
+    applies to (processor);
+
+  Signal : Time
+    applies to (processor);
+
+  Suspension_Call : Time
+    applies to (processor);
+
+  Wait_Call : Time
+    applies to (processor);
+
+  Priority_Raising : Time
+    applies to (processor);
+
+  Priority_Lowering : Time
+    applies to (processor);
+
+  Barrier_Evaluation : Time
+    applies to (processor);
+
+  Budget_Replenishment_Overhead : Time
+    applies to (processor);
+
+  Budget_Exhausted_Recovery_Call : Time
+    applies to (processor);
+
+  Processor_Speed : ASSERT_Properties::Frequency
+    applies to (processor);
+
+  Interconnection_Speed_Factor : aadlreal
+    applies to (bus);
+
+  Transmission_Kind : ASSERT_Properties::Transmission_Type
+    applies to (bus);
+
+  Bandwidth : Data_Volume
+    applies to (bus);
+
+  Memory_Size : Size
+    applies to (memory);
+
+  Access_Time : Time
+    applies to (memory);
+
+  Access_Bandwidth : Data_Volume
+    applies to (bus);
+
+  RCMoperation : classifier (
+subprogram)
+    applies to (event port, event data port);
+
+  RCMoperationKind_list : type enumeration (cyclic, sporadic, variator, protected, transaction, barrier, unprotected, deferred, immediate, any);
+
+  RCMoperationKind : ASSERT_Properties::RCMoperationKind_list
+    applies to (event port, event data port);
+
+  RCMceiling : aadlinteger
+    applies to (event port, event data port);
+
+  RCMperiod : Time
+    applies to (event port, event data port);
+
+  RCMpartition : reference (
+system)
+    applies to (system);
+
+end ASSERT_Properties;
+
+property set Replication_Properties is
+  Description : aadlstring
+    applies to (system, process, thread, processor, device);
+
+  Replica_Number : aadlinteger
+    applies to (system, process, thread, processor, device);
+
+  Min_Nbr_Replica : constant aadlinteger => 3;
+  Max_Nbr_Replica : constant aadlinteger => 7;
+  Replica_Identifiers : list of aadlstring
+    applies to (system, process, thread, processor, device);
+
+  Replication_Types : type enumeration (ACTIVE, PASSIVE);
+
+  Replica_Type : Replication_Properties::Replication_Types
+    applies to (system, process, thread, processor, device);
+
+  Consensus_Algorithm_Source_Text : aadlstring
+    applies to (port, data access, system, processor, device);
+
+  Consensus_Algorithm_Class : classifier (
+subprogram)
+    applies to (port, data access, system, processor, device);
+
+  Consensus_Algorithm_Ref : reference (
+subprogram)
+    applies to (port, data access, system, processor, device);
+
+end Replication_Properties;
+
+property set props is
+  sise : constant aadlinteger => 5;
+  size : aadlinteger
+    applies to ( all);
+
+end props;
+
+package TestCase_ParseSubcomponentsArraysWithAADLXMLBackend
+
+public
+  with props;
+
+  processor procs
+  end procs;
+
+  system sys
+  end sys;
+
+  system implementation sys.impl
+  subcomponents
+    procs_hardcoded : processor procs [5];
+    procs_inline : processor procs
+      {props::size => 6;};
+    procs_property : processor procs [props::sise];
+
+  end sys.impl;
+
+end TestCase_ParseSubcomponentsArraysWithAADLXMLBackend;
+
