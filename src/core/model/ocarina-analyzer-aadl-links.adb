@@ -3206,7 +3206,7 @@ package body Ocarina.Analyzer.AADL.Links is
 
             if Present (Property_Type) then
                declare
-                  Unit_Type : Node_Id;
+                  Unit_Type : Node_Id := No_Node;
 
                   V_Unit_Id : constant Node_Id := Unit_Identifier (Node);
                   Unit_Id               : Node_Id;
@@ -3217,10 +3217,11 @@ package body Ocarina.Analyzer.AADL.Links is
                      --  iterate over the property designator until we
                      --  find the corresponding entity to operate on.
 
-                     if Kind (Property_Type_Designator
-                                (Entity
-                                   (Property_Type_Designator
-                                      (Property_Type)))) = K_Record_Type
+                     if Present (V_Unit_Id) and then
+                       Kind (Property_Type_Designator
+                               (Entity
+                                  (Property_Type_Designator
+                                     (Property_Type)))) = K_Record_Type
                      then
                         List_Node := First_Node
                           (List_Items
@@ -3242,11 +3243,13 @@ package body Ocarina.Analyzer.AADL.Links is
                            List_Node := Next_Node (List_Node);
                         end loop;
                      else
-                        Unit_Type := Unwind_Units_Type
-                          (Root, Property_Type_Designator
+                        if Present (V_Unit_Id) then
+                           Unit_Type := Unwind_Units_Type
+                             (Root, Property_Type_Designator
                                 (Entity
                                    (Property_Type_Designator
                                       (Property_Type))));
+                        end if;
                      end if;
                   else
                      Unit_Type := Unwind_Units_Type (Root, Property_Type);

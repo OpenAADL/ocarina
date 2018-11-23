@@ -1,0 +1,17 @@
+property set ps is
+
+  Position_In_File: record ( line : aadlinteger ; column: aadlinteger;)
+    applies to (data);
+
+end ps;
+
+package foo
+public
+with PS;
+
+DATA T_Int8
+ PROPERTIES
+    PS::Position_In_File => [ line => 10 ; column => 1 ; ];
+    end T_Int8;
+
+end foo;
