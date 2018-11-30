@@ -22,7 +22,7 @@ cat_log () {
 
 debug () {
     if test x"${ENABLE_DEBUG=yes}" = x"yes"; then
-	echo "DEBUG: $1"
+        echo "DEBUG: $1"
     fi
 }
 
@@ -45,9 +45,9 @@ EOF
 
 banner () {
     echo "$1 $2" | \
-	awk '{printf ("%.65s %s\n", $1, $2)}' | \
-	awk '{printf ("%-65s%10s\n", $1, $2)}' | \
-	tee -a ${logfile}
+        awk '{printf ("%.65s %s\n", $1, $2)}' | \
+        awk '{printf ("%-65s%10s\n", $1, $2)}' | \
+        tee -a ${logfile}
 }
 
 ignored () {
@@ -63,15 +63,15 @@ failed () {
     echo_log "--------------------------- command -----------------------------"
     echo_log "$2"
     if [ -f "$3" ]; then
-	echo_log "----------------------- expected output -------------------------"
-	cat_log $3
-	echo_log "----------------------- actual output ---------------------------"
-	cat_log $4
-	echo_log "-----------------------------------------------------------------"
+        echo_log "----------------------- expected output -------------------------"
+        cat_log $3
+        echo_log "----------------------- actual output ---------------------------"
+        cat_log $4
+        echo_log "-----------------------------------------------------------------"
     elif [ -f "$4" ]; then
-	echo_log "--------------------------- output ------------------------------"
-	cat_log $4
-	echo_log "-----------------------------------------------------------------"
+        echo_log "--------------------------- output ------------------------------"
+        cat_log $4
+        echo_log "-----------------------------------------------------------------"
     fi
 }
 
@@ -112,12 +112,12 @@ path_conv="${path_conv-echo}"
 
 case "$(uname -s)" in
     CYGWIN*)
-	path_conv="cygpath -w"
-	;;
+        path_conv="cygpath -w"
+        ;;
     MINGW32*|MSYS*)
-	echo "Unsupported build configuration"
-	exit -1
-	;;
+        echo "Unsupported build configuration"
+        exit -1
+        ;;
 esac
 
 # The default value of the path separator is ':'. By default we use
@@ -130,7 +130,6 @@ path_sep="${path_sep-:}"
 if which dos2unix 2>&1 >/dev/null; then
     dos2unix="dos2unix"
 else
-    echo "%%%%%%%  WARNING: dos2unix not found  %%%%%%%%%"
     # Affect a dummy value
     dos2unix=":"
 fi
@@ -155,81 +154,81 @@ examplefiles=""
 
 if test  $# != 0 ; then
     case "$1" in
-	--help|-h)
-	    usage
-	    exit 0
-	    ;;
-	--overwrite|-o)
-	    overwrite_output="true"
-	    ;;
-	--all|-a)
-	    doexamples="false"
-	    dotests="false"
-	    doruntimes="false"
-	    doprojects="false"
-	    doall="true"
-	    ;;
-	--tests|-t)
-	    doexamples="false"
-	    shift
-	    while test $# -gt 0
-	      do
-	      testfiles="${testfiles} $1"
-	      shift
-	    done
-	    ;;
-	--examples|-x)
-	    dotests="false"
-	    shift
-	    while test $# -gt 0; do
-		examplefiles=${examplefiles}" $1"
-		shift
-	    done
-	    ;;
-	--runtimes|-r)
-	    doruntimes="true"
-	    dotests="false"
-	    doexamples="false"
-	    shift
-	    ;;
-	--projects|-p)
-	    doprojects="true"
-	    dotests="false"
-	    doexamples="false"
-	    shift
-	    ;;
-	--lcov|-l)
-	    lcov -d . -c -o ocarina.gcov-info -t ocarina
-	    lcov -d . --remove ocarina.gcov-info "*debug*" "*adainclude*" "*python*" "*transfo*" "*nodes*" -o ocarina.gcov-info -t ocarina
-	    genhtml -o html -s -f ocarina.gcov-info
-	    exit 0
-	    ;;
-	--clean|-c)
-	    rm -f log.* dir.* file.* out.*
-	    exit 0
-	    ;;
-	*)
-	    usage
-	    exit 1
+        --help|-h)
+            usage
+            exit 0
+            ;;
+        --overwrite|-o)
+            overwrite_output="true"
+            ;;
+        --all|-a)
+            doexamples="false"
+            dotests="false"
+            doruntimes="false"
+            doprojects="false"
+            doall="true"
+            ;;
+        --tests|-t)
+            doexamples="false"
+            shift
+            while test $# -gt 0
+              do
+              testfiles="${testfiles} $1"
+              shift
+            done
+            ;;
+        --examples|-x)
+            dotests="false"
+            shift
+            while test $# -gt 0; do
+                examplefiles=${examplefiles}" $1"
+                shift
+            done
+            ;;
+        --runtimes|-r)
+            doruntimes="true"
+            dotests="false"
+            doexamples="false"
+            shift
+            ;;
+        --projects|-p)
+            doprojects="true"
+            dotests="false"
+            doexamples="false"
+            shift
+            ;;
+        --lcov|-l)
+            lcov -d . -c -o ocarina.gcov-info -t ocarina
+            lcov -d . --remove ocarina.gcov-info "*debug*" "*adainclude*" "*python*" "*transfo*" "*nodes*" -o ocarina.gcov-info -t ocarina
+            genhtml -o html -s -f ocarina.gcov-info
+            exit 0
+            ;;
+        --clean|-c)
+            rm -f log.* dir.* file.* out.*
+            exit 0
+            ;;
+        *)
+            usage
+            exit 1
     esac
 fi
 
 if test ${doruntimes} = "true" ; then
     for e in "resources/runtime/polyorb-hi-c" "resources/runtime/polyorb-hi-ada"; do
-	entry=${e}
-	old_dir=`pwd`
-	cd ${e};
+        entry=${e}
+        old_dir=`pwd`
+        cd ${e};
 
-	make examples 2> /dev/null > /dev/null
-	if test $? != 0 ; then
-	    failed ${entry} "${command}" "" "${actual_output}"
-	    failures=`expr ${failures} + 1`
+        make examples 2> /dev/null > /dev/null
+        if test $? != 0 ; then
+            failed ${entry} "${command}" "" "${actual_output}"
+            failures=`expr ${failures} + 1`
 
-	else
-	    passed ${entry}
-	fi;
+        else
+            passed ${entry}
+        fi;
 
-	cd ${old_dir}
+        cd ${old_dir}
     done
 fi
 
@@ -239,11 +238,11 @@ if test ${doprojects} = "true" ; then
 
     ./build.sh 2> /dev/null > /dev/null
     if test $? != 0 ; then
-	banner "Projects" FAILED
-	failures=`expr ${failures} + 1`
+        banner "Projects" FAILED
+        failures=`expr ${failures} + 1`
 
     else
-	passed ${entry}
+        passed ${entry}
     fi;
 
     cd ${old_dir}
@@ -252,255 +251,255 @@ fi
 if test ${doall} = "true" ; then
     ./autotest.sh 2> /dev/null > /dev/null
     if test $? != 0 ; then
-	banner "Ocarina_Core" FAILED
-	failures=`expr ${failures} + 1`
+        banner "Ocarina_Core" FAILED
+        failures=`expr ${failures} + 1`
 
     else
-	banner "Ocarina_Core" PASSED
+        banner "Ocarina_Core" PASSED
     fi;
 
     ./autotest.sh -r 2> /dev/null > /dev/null
     if test $? != 0 ; then
-	banner "Runtimes" FAILED
-	failures=`expr ${failures} + 1`
+        banner "Runtimes" FAILED
+        failures=`expr ${failures} + 1`
 
     else
-	banner "Runtimes" PASSED
+        banner "Runtimes" PASSED
     fi;
 
     ./autotest.sh -p 2> /dev/null > /dev/null
     if test $? != 0 ; then
-	banner "Projects" FAILED
-	failures=`expr ${failures} + 1`
+        banner "Projects" FAILED
+        failures=`expr ${failures} + 1`
 
     else
-	banner "Projects" PASSED
+        banner "Projects" PASSED
     fi;
 fi
 
 
 if test ${doexamples} = "true" ; then
     if test "x${examplefiles}" = "x" ; then
-	if test ! -f  ${scriptdir}/examples/MANIFEST; then
-	    echo "${scriptdir}/examples/MANIFEST: file not found";
-	    exit 2;
-	fi
-	examplefiles=`cat ${scriptdir}/examples/MANIFEST | grep -v "^#"`
+        if test ! -f  ${scriptdir}/examples/MANIFEST; then
+            echo "${scriptdir}/examples/MANIFEST: file not found";
+            exit 2;
+        fi
+        examplefiles=`cat ${scriptdir}/examples/MANIFEST | grep -v "^#"`
     fi
 
     for e in ${examplefiles}; do
-	entry=examples/${e}
-	file=${scriptdir}/${entry}
-	if test ! -f ${file} ; then
-	    echo "FATAL : example ${e} does not exist"
-	    cleanup
-	    exit 1;
-	fi
+        entry=examples/${e}
+        file=${scriptdir}/${entry}
+        if test ! -f ${file} ; then
+            echo "FATAL : example ${e} does not exist"
+            cleanup
+            exit 1;
+        fi
 
-	rm -f  ${output_file} >/dev/null 2>&1
-	rm -f  ${actual_output} >/dev/null 2>&1
-	rm -rf ${tmpdir} >/dev/null 2>&1
-	mkdir  ${tmpdir}
-	chmod u+rwx ${tmpdir}
-	cd ${tmpdir};
+        rm -f  ${output_file} >/dev/null 2>&1
+        rm -f  ${actual_output} >/dev/null 2>&1
+        rm -rf ${tmpdir} >/dev/null 2>&1
+        mkdir  ${tmpdir}
+        chmod u+rwx ${tmpdir}
+        cd ${tmpdir};
 
-	total=`expr ${total} + 1`
-	command="${ocarina_generate_code} \"`${path_conv} ${file}`\""
-	${ocarina_generate_code} "`${path_conv} ${file}`" > ${actual_output} 2>&1
-	if test $? != 0 ; then
-	    failed ${entry} "${command}" "" "${actual_output}"
-	    failures=`expr ${failures} + 1`
+        total=`expr ${total} + 1`
+        command="${ocarina_generate_code} \"`${path_conv} ${file}`\""
+        ${ocarina_generate_code} "`${path_conv} ${file}`" > ${actual_output} 2>&1
+        if test $? != 0 ; then
+            failed ${entry} "${command}" "" "${actual_output}"
+            failures=`expr ${failures} + 1`
 
-	else
-	    passed ${entry}
-	fi;
+        else
+            passed ${entry}
+        fi;
 
-	cd ..
+        cd ..
     done
 fi
 
 if test ${dotests} = "true" ; then
     if test "x${testfiles}" = "x" ; then
-	if test ! -f  ${scriptdir}/tests/MANIFEST; then
-	    echo "${scriptdir}/tests/MANIFEST: file not found";
-	    exit 2;
-	fi
-	testfiles=`cat ${scriptdir}/tests/MANIFEST | grep -v "^#"`
+        if test ! -f  ${scriptdir}/tests/MANIFEST; then
+            echo "${scriptdir}/tests/MANIFEST: file not found";
+            exit 2;
+        fi
+        testfiles=`cat ${scriptdir}/tests/MANIFEST | grep -v "^#"`
     fi
 
     for t in ${testfiles}; do
-	if test ! -d ${scriptdir}/${t} && test ! -f ${scriptdir}/${t};
-	then
-	    echo "FATAL: tests ${t} does not exist"
-	    cleanup
-	    exit 1;
-	fi
+        if test ! -d ${scriptdir}/${t} && test ! -f ${scriptdir}/${t};
+        then
+            echo "FATAL: tests ${t} does not exist"
+            cleanup
+            exit 1;
+        fi
 
-	rm -f  ${output_file} >/dev/null 2>&1
-	rm -f  ${actual_output} >/dev/null 2>&1
-	cd ${workdir}
-	rm -rf ${tmpdir} >/dev/null 2>&1
-	mkdir  ${tmpdir}
-	chmod u+rwx ${tmpdir}
-	cd ${tmpdir};
+        rm -f  ${output_file} >/dev/null 2>&1
+        rm -f  ${actual_output} >/dev/null 2>&1
+        cd ${workdir}
+        rm -rf ${tmpdir} >/dev/null 2>&1
+        mkdir  ${tmpdir}
+        chmod u+rwx ${tmpdir}
+        cd ${tmpdir};
 
-	files=`find ${scriptdir}/${t} -name '*.aadl'`;
+        files=`find ${scriptdir}/${t} -name '*.aadl'`;
 
-	for file in ${files}; do
-	    entry=`echo ${file} | sed "s,^${scriptdir}/,,"`
+        for file in ${files}; do
+            entry=`echo ${file} | sed "s,^${scriptdir}/,,"`
             manifest="`dirname ${file}`/MANIFEST"
-	    expected_output="${file}.out"
-	    test_ignored="${file}.ignore"
+            expected_output="${file}.out"
+            test_ignored="${file}.ignore"
 
-	    # copy REAL files if such file exists
+            # copy REAL files if such file exists
 
-	    real_lib_base=`dirname ${file}`
-	    real_libs_nb=`ls ${real_lib_base} | grep "\.real" | wc -l` > /dev/null
-	    if [ ${real_libs_nb} -gt 0 ]
-		then
-		real_lib=`dirname ${file}`/"*.real"
-		cp -f ${real_lib} .
-	    fi
-
-	    flags=${default_flags}
-	    version=${default_version}
-            if test -r ${manifest}; then
-		flags=`grep OCARINA_FLAGS ${manifest} | sed  's/OCARINA_FLAGS=//'`
-		version=`grep AADL_VERSION ${manifest} | awk -F= '{print $2}'`
-		flags=${flags:-${default_flags}}
-		version=${version:-${default_version}}
+            real_lib_base=`dirname ${file}`
+            real_libs_nb=`ls ${real_lib_base} | grep "\.real" | wc -l` > /dev/null
+            if [ ${real_libs_nb} -gt 0 ]
+                then
+                real_lib=`dirname ${file}`/"*.real"
+                cp -f ${real_lib} .
             fi
 
-	    if test -r ${test_ignored} ; then
-		ignored "${entry}"
+            flags=${default_flags}
+            version=${default_version}
+            if test -r ${manifest}; then
+                flags=`grep OCARINA_FLAGS ${manifest} | sed  's/OCARINA_FLAGS=//'`
+                version=`grep AADL_VERSION ${manifest} | awk -F= '{print $2}'`
+                flags=${flags:-${default_flags}}
+                version=${version:-${default_version}}
+            fi
 
-	    else
-		touch ${output_file}
-		${ocarina} ${flags} ${version} "`${path_conv} ${file}`" \
-		    -o "`${path_conv} ${output_file}`" > ${actual_output} 2>&1
-		if test -r ${expected_output} ; then
-		    cat ${output_file} >>${actual_output}
-		    ${dos2unix} ${actual_output} >/dev/null 2>&1
-		    ${scriptdir}/tools/compare.py \
-			${expected_output} \
-			${actual_output} >/dev/null 2>&1
-		    result=$?
+            if test -r ${test_ignored} ; then
+                ignored "${entry}"
 
-		else
-		    ${scriptdir}/tools/compare.py \
-			${file} \
-			${output_file} >> /dev/null 2>&1
-		    result=$?
-		fi
+            else
+                touch ${output_file}
+                ${ocarina} ${flags} ${version} "`${path_conv} ${file}`" \
+                    -o "`${path_conv} ${output_file}`" > ${actual_output} 2>&1
+                if test -r ${expected_output} ; then
+                    cat ${output_file} >>${actual_output}
+                    ${dos2unix} ${actual_output} >/dev/null 2>&1
+                    ${scriptdir}/tools/compare.py \
+                        ${expected_output} \
+                        ${actual_output} >/dev/null 2>&1
+                    result=$?
 
-		if test  ${result} != 0 ; then
-		    if test -r ${expected_output} ; then
-			failed ${entry} \
-			    "${ocarina} ${flags} ${version} \"`${path_conv} ${file}`\"" \
-			    ${expected_output} \
-			    ${actual_output}
+                else
+                    ${scriptdir}/tools/compare.py \
+                        ${file} \
+                        ${output_file} >> /dev/null 2>&1
+                    result=$?
+                fi
 
-			if test ${overwrite_output} = "true"; then
-			    cp ${actual_output} ${expected_output}
-			fi
+                if test  ${result} != 0 ; then
+                    if test -r ${expected_output} ; then
+                        failed ${entry} \
+                            "${ocarina} ${flags} ${version} \"`${path_conv} ${file}`\"" \
+                            ${expected_output} \
+                            ${actual_output}
 
-		    else
-			failed ${entry} \
-			    "${ocarina} ${flags} ${version} \"`${path_conv} ${file}`\"" \
-			    ${file} \
-			    ${output_file}
-		    fi
-		    failures=`expr ${failures} + 1`
+                        if test ${overwrite_output} = "true"; then
+                            cp ${actual_output} ${expected_output}
+                        fi
 
-		else
-		    passed ${entry}
-		fi
-		total=`expr ${total} + 1`
-	    fi
-	done
+                    else
+                        failed ${entry} \
+                            "${ocarina} ${flags} ${version} \"`${path_conv} ${file}`\"" \
+                            ${file} \
+                            ${output_file}
+                    fi
+                    failures=`expr ${failures} + 1`
 
-	files=`find ${scriptdir}/${t} -name '*.adb'`;
+                else
+                    passed ${entry}
+                fi
+                total=`expr ${total} + 1`
+            fi
+        done
 
-	for file in ${files}; do
-	    entry=`echo ${file} | sed "s,^${scriptdir}/,,"`
-	    expected_output="${file}.out"
-	    ignored_output="${file}.ignore"
-	    gprfile="`basename ${file} .adb`.gpr"
-	    gprfile="`dirname ${file}`/${gprfile}"
+        files=`find ${scriptdir}/${t} -name '*.adb'`;
 
-	    cd ${tmpdir}
+        for file in ${files}; do
+            entry=`echo ${file} | sed "s,^${scriptdir}/,,"`
+            expected_output="${file}.out"
+            ignored_output="${file}.ignore"
+            gprfile="`basename ${file} .adb`.gpr"
+            gprfile="`dirname ${file}`/${gprfile}"
 
-	    if test -r ${ignored_output} ; then
-		ignored ${entry}
+            cd ${tmpdir}
 
-	    else
-		total=`expr ${total} + 1`
+            if test -r ${ignored_output} ; then
+                ignored ${entry}
 
-		case "$(uname -s)" in
+            else
+                total=`expr ${total} + 1`
 
-		    CYGWIN*|MINGW32*|MSYS*)
-			ignored ${entry}
-			;;
+                case "$(uname -s)" in
 
-		    *)
-			if test -r ${gprfile} ; then
-			    ocarina_gpr="`ocarina-config --projects`"
-			    command="gnatmake -P\"`${path_conv} ${gprfile}`\" -aP${ocarina_gpr} -XOBJ_DIR=\"`${path_conv} ${tmpdir}`\""
-			    ADA_PROJECT_PATH="${ocarina_gpr}${path_sep}${ADA_PROJECT_PATH}" \
-					    gnatmake -P"`${path_conv} ${gprfile}`" -aP${ocarina_gpr} \
-					    -XOBJ_DIR="`${path_conv} ${tmpdir}`" \
-					    >${actual_output} 2>&1
-			else
-			    command="gnatmake '`${path_conv} ${file}`' `ocarina-config`"
-			    gnatmake "`${path_conv} ${file}`" `ocarina-config` \
-				     >${actual_output} 2>&1
-			fi
+                    CYGWIN*|MINGW32*|MSYS*)
+                        ignored ${entry}
+                        ;;
 
-			if test $? != 0 ; then
-			    failed ${entry} \
-				   "${command}" \
-				   "" \
-				   "${actual_output}"
+                    *)
+                        if test -r ${gprfile} ; then
+                            ocarina_gpr="`ocarina-config --projects`"
+                            command="gnatmake -P\"`${path_conv} ${gprfile}`\" -aP${ocarina_gpr} -XOBJ_DIR=\"`${path_conv} ${tmpdir}`\""
+                            ADA_PROJECT_PATH="${ocarina_gpr}${path_sep}${ADA_PROJECT_PATH}" \
+                                            gnatmake -P"`${path_conv} ${gprfile}`" -aP${ocarina_gpr} \
+                                            -XOBJ_DIR="`${path_conv} ${tmpdir}`" \
+                                            >${actual_output} 2>&1
+                        else
+                            command="gnatmake '`${path_conv} ${file}`' `ocarina-config`"
+                            gnatmake "`${path_conv} ${file}`" `ocarina-config` \
+                                     >${actual_output} 2>&1
+                        fi
+
+                        if test $? != 0 ; then
+                            failed ${entry} \
+                                   "${command}" \
+                                   "" \
+                                   "${actual_output}"
 
                             # We do not increase the number of
                             # failures for compiled files, as those
                             # are dependent on external conditions,
                             # e.g. enabling code coverage, etc.
 
-			    # failures=`expr ${failures} + 1`
+                            # failures=`expr ${failures} + 1`
 
-			else
-			    OCARINA_PATH="`which ocarina`" ./`basename ${file} .adb` >${actual_output} 2>&1
+                        else
+                            OCARINA_PATH="`which ocarina`" ./`basename ${file} .adb` >${actual_output} 2>&1
                             command="./`basename ${file} .adb`"
                             result=$?
 
-			    if test -r ${expected_output} ; then
-				${scriptdir}/tools/compare.py \
-					    ${expected_output} \
-					    ${actual_output} > /dev/null
-				result=$?
-			    fi;
+                            if test -r ${expected_output} ; then
+                                ${scriptdir}/tools/compare.py \
+                                            ${expected_output} \
+                                            ${actual_output} > /dev/null
+                                result=$?
+                            fi;
 
-			    if test ${result} != 0 ; then
-				if test -r ${expected_output} ; then
-				    failed ${entry} \
-					   "${command}" \
-					   ${expected_output} \
-					   ${actual_output}
+                            if test ${result} != 0 ; then
+                                if test -r ${expected_output} ; then
+                                    failed ${entry} \
+                                           "${command}" \
+                                           ${expected_output} \
+                                           ${actual_output}
 
-				else
-				    failed ${entry} \
-					   "${command}"
-				fi
-				failures=`expr ${failure} + 1`
+                                else
+                                    failed ${entry} \
+                                           "${command}"
+                                fi
+                                failures=`expr ${failure} + 1`
 
-			    else
-				passed ${entry}
-			    fi
-			fi;;
-		esac
-	    fi
-	done
+                            else
+                                passed ${entry}
+                            fi
+                        fi;;
+                esac
+            fi
+        done
     done
 fi
 
