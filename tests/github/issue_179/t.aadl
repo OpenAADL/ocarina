@@ -1,0 +1,17 @@
+property set ps is
+
+  foo : aadlstring applies to (package);
+
+end ps;
+
+package p
+public
+  with ps;
+
+  system s end s;
+
+  system implementation s.i end s.i;
+
+properties
+  ps::foo => "bar";
+end p;
