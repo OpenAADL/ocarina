@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                     Copyright (C) 2018 ESA & ISAE.                       --
+--                   Copyright (C) 2018-2019 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -353,8 +353,8 @@ package body Ocarina.Backends.AIR_Conf.AIR_Configuration is
 
       Set_Str_To_Name_Buffer ("RequiredCores");
       P := Make_Defining_Identifier (Name_Find);
-      Set_Str_To_Name_Buffer ("1"); --  XXX Hardcoded ?
-      Q := Make_Defining_Identifier (Name_Find);
+      Q := Make_Literal
+        (XV.New_Numeric_Value (Get_Number_Of_Cores (E), 0, 10));
 
       Append_Node_To_List
         (Make_Assignement (P, Q),

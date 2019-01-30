@@ -33,9 +33,12 @@ with Ocarina.Namet; use Ocarina.Namet;
 with Utils;         use Utils;
 
 with Ocarina.ME_AADL;
+with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
+with Ocarina.ME_AADL.AADL_Tree.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
+with Ocarina.ME_AADL.AADL_Tree.Entities;
 
 with Ocarina.Backends.Utils;
 with Ocarina.Instances.Queries;
@@ -63,6 +66,8 @@ package body Ocarina.Backends.AIR_Conf.Partitions is
    use Ocarina.Backends.Properties.ARINC653;
 
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
+   package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
+   package ATNU renames Ocarina.ME_AADL.AADL_Tree.Nutils;
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
    package XTU renames Ocarina.Backends.XML_Tree.Nutils;
@@ -611,6 +616,50 @@ package body Ocarina.Backends.AIR_Conf.Partitions is
                                0, 10));
          Append_Node_To_List (Make_Assignement (P, Q),
                               XTN.Items (Window_Schedule_Node));
+
+         --  Definition of the Cores attribute
+
+         declare
+            Cores : constant List_Id := Get_Bound_Processor_L (Partition);
+            S : Node_Id;
+            Core : Node_Id;
+            List_Of_Cores : Name_Id := No_Name;
+            First_Run : Boolean := True;
+         begin
+            --  For partition Partition, we iterate on the list of
+            --  processors this partition is bound to, for each
+            --  partition, we get is Core_Id and build a ';' separated
+            --  string with numerical Core_Id value.
+
+            if not ATNU.Is_Empty (Cores) then
+               S := ATN.First_Node (Cores);
+               while Present (S) loop
+                  Core :=
+                    Ocarina.ME_AADL.AADL_Tree.Entities.Get_Referenced_Entity
+                    (S);
+                  if First_Run then
+                     First_Run := False;
+                     Set_Str_To_Name_Buffer
+                       (Ocarina.Backends.Properties.Get_Core_Id (Core)'Img);
+                  else
+                     Get_Name_String (List_Of_Cores);
+                     Add_Char_To_Name_Buffer (';');
+                     Add_Str_To_Name_Buffer
+                       (Ocarina.Backends.Properties.Get_Core_Id (Core)'Img);
+                  end if;
+                  List_Of_Cores := Name_Find;
+                  S := ATN.Next_Node (S);
+               end loop;
+
+               Set_Str_To_Name_Buffer ("Cores");
+               P := Make_Defining_Identifier (Name_Find);
+               Q := Make_Defining_Identifier
+                 (Remove_Char (List_Of_Cores, ' '));
+               Append_Node_To_List (Make_Assignement (P, Q),
+                                    XTN.Items (Window_Schedule_Node));
+            end if;
+
+         end;
 
          Window_Identifier := Window_Identifier + 1;
          if Window_Identifier = 10 then
