@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2019 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -506,6 +506,7 @@ package Ocarina.Backends.Properties is
    ----------------------------------
 
    function Get_Bound_Processor (P : Node_Id) return Node_Id;
+   function Get_Bound_Processor_L (P : Node_Id) return List_Id;
    --  Return the processor component to which the process P is
    --  bound. Raises an error if P is not bound to any processor.
 
@@ -622,9 +623,9 @@ package Ocarina.Backends.Properties is
       E : Node_Id := No_Node) return Supported_Transport_APIs;
    --  Return the transport layer supported by the bus B
 
-   ----------------------
-   --  Port properties --
-   ----------------------
+   ---------------------
+   -- Port properties --
+   ---------------------
 
    type Supported_Port_Timing is
      (Port_Timing_Sampled,
