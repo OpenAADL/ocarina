@@ -57,7 +57,7 @@ package Ocarina.Backends.Properties.Utils is
      (E        : Node_Id;
       Property : Node_Id) return String_List;
 
-   --  The following accessors takes as parameters the following entities
+   --  The following accessors take as parameters the following entities
    --  * E: entity from the instance tree for which we look for a property
    --  * Property_Name: name of the property we are looking for, in
    --    lower case
