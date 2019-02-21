@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2019 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -209,8 +209,17 @@ package body Ocarina.Backends.PO_HI_Ada is
       if Execution_Platform /= Platform_LEON_RTEMS
         and then Execution_Platform /= Platform_LEON_RTEMS_POSIX
       then
-         Write_Line ("GNATMAKE = " & Target_Prefix.all & "gnatmake");
-         Write_Line ("GNAT = " & Target_Prefix.all & "gnat");
+         --  For GNAT ARM GPL 2018, gnatmake is no longer provided, we
+         --  have to rely on gprbuild instead.
+
+         if Execution_Platform /= Platform_GNAT_Runtime then
+            Write_Line ("GNATMAKE = " & Target_Prefix.all & "gnatmake");
+            Write_Line ("GNAT = " & Target_Prefix.all & "gnat");
+         else
+            Write_Line ("GNATMAKE = " & "gprbuild");
+            Write_Line ("GNAT = " & Target_Prefix.all & "gnat");
+         end if;
+
          Write_Line ("CC = " & Target_Prefix.all & "gcc");
          Write_Line ("TARGET = " & Target.all);
          Write_Line ("BUILD = Debug");
@@ -444,6 +453,11 @@ package body Ocarina.Backends.PO_HI_Ada is
       Write_Line (".adb"");");
 
       if Ada_Runtime /= No_Name then
+         Write_Eol;
+         Write_Indentation;
+         Write_Str ("for Target use ");
+         Write_Name (Ada_Runtime);
+         Write_Line ("'Target;");
          Write_Eol;
          Write_Indentation;
          Write_Str ("for Runtime (""Ada"") use ");
