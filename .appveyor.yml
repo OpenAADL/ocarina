@@ -1,0 +1,15 @@
+install:
+ - choco install gnat-gpl
+ - echo C:/Projects /Projects ntfs auto 1 1 >> c:\msys64\etc\fstab
+ - git clone https://github.com/OpenAADL/ocarina-build.git
+
+build_script:
+ - C:\cygwin64\bin\bash --login -c "export PATH=/cygdrive/c/GNAT:/cygdrive/c/GNAT/bin:$PATH && $(cygpath ${APPVEYOR_BUILD_FOLDER})/ocarina-build/build_ocarina.sh --scenario=appveyor"
+
+for:
+-
+  branches:
+    only:
+      - master
+  artifacts:
+      - path: win32.zip
