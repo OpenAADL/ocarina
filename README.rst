@@ -37,6 +37,8 @@ Q&A:
 +----------------------------------+---------------+
 | Build status for Linux and OS X  ||build-status| |
 +----------------------------------+---------------+
+| Build status for Windows         ||appveyor|     |
++----------------------------------+---------------+
 | Code coverage                    | |coverage|    |
 +----------------------------------+---------------+
 | CII Best practice                | |cii|         |
@@ -45,6 +47,9 @@ Q&A:
 .. |build-status| image:: https://travis-ci.org/OpenAADL/ocarina.svg?branch=master 
   :target: https://travis-ci.org/OpenAADL/ocarina
 
+.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/openaadl/ocarina
+  :target: https://ci.appveyor.com/project/yoogx/ocarina
+  
 .. |docs| image:: https://readthedocs.org/projects/docs/badge/?version=latest
     :alt: Documentation Status
     :scale: 100%
