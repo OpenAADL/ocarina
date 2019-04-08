@@ -1,4 +1,4 @@
-tests/test_ocarina_help
+#tests/test_ocarina_help
 #tests/test_ocarina_config
 #tests/test_ocarina_gpr
 #tests/test_ao4aadl_lexer
