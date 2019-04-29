@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2019 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -294,6 +294,7 @@ package body Ocarina.Backends.Build_Utils is
       procedure Visit_Data_Instance (E : Node_Id);
       procedure Visit_Abstract_Instance (E : Node_Id);
       procedure Visit_Device_Instance (E : Node_Id);
+      procedure Visit_Subcomponents_Of is new Visit_Subcomponents_Of_G (Visit);
 
       procedure Build_Architecture_Instance (E : Node_Id);
       procedure Build_Component_Instance (E : Node_Id);
@@ -864,19 +865,8 @@ package body Ocarina.Backends.Build_Utils is
       ------------------------
 
       procedure Visit_Bus_Instance (E : Node_Id) is
-         SC : Node_Id;
       begin
-         if not AAU.Is_Empty (Subcomponents (E)) then
-            SC := First_Node (Subcomponents (E));
-
-            while Present (SC) loop
-               --  Visit the corresponding instance of SC
-
-               Visit (Corresponding_Instance (SC));
-
-               SC := Next_Node (SC);
-            end loop;
-         end if;
+         Visit_Subcomponents_Of (E);
       end Visit_Bus_Instance;
 
       -----------------------------
@@ -926,23 +916,12 @@ package body Ocarina.Backends.Build_Utils is
       ---------------------------
 
       procedure Visit_Device_Instance (E : Node_Id) is
-         SC : Node_Id;
       begin
          if Get_Implementation (E) /= No_Node then
             Visit (Get_Implementation (E));
          end if;
 
-         if not AAU.Is_Empty (Subcomponents (E)) then
-            SC := First_Node (Subcomponents (E));
-
-            while Present (SC) loop
-               --  Visit the corresponding instance of SC
-
-               Visit (Corresponding_Instance (SC));
-
-               SC := Next_Node (SC);
-            end loop;
-         end if;
+         Visit_Subcomponents_Of (E);
       end Visit_Device_Instance;
 
       --------------------------------
@@ -950,23 +929,12 @@ package body Ocarina.Backends.Build_Utils is
       --------------------------------
 
       procedure Visit_Virtual_Bus_Instance (E : Node_Id) is
-         SC : Node_Id;
       begin
          if Get_Implementation (E) /= No_Node then
             Visit (Get_Implementation (E));
          end if;
 
-         if not AAU.Is_Empty (Subcomponents (E)) then
-            SC := First_Node (Subcomponents (E));
-
-            while Present (SC) loop
-               --  Visit the corresponding instance of SC
-
-               Visit (Corresponding_Instance (SC));
-
-               SC := Next_Node (SC);
-            end loop;
-         end if;
+         Visit_Subcomponents_Of (E);
       end Visit_Virtual_Bus_Instance;
 
       ----------------------------
@@ -1130,8 +1098,6 @@ package body Ocarina.Backends.Build_Utils is
       ---------------------------
 
       procedure Visit_System_Instance (E : Node_Id) is
-         S : Node_Id;
-
       begin
          if Appli_Name = No_Name then
             --  We need a unique application name, derived from the
@@ -1144,16 +1110,7 @@ package body Ocarina.Backends.Build_Utils is
 
          --  Visit all the subcomponents of the system
 
-         if not AAU.Is_Empty (Subcomponents (E)) then
-            S := First_Node (Subcomponents (E));
-            while Present (S) loop
-               --  Visit the component instance corresponding to the
-               --  subcomponent S.
-
-               Visit (Corresponding_Instance (S));
-               S := Next_Node (S);
-            end loop;
-         end if;
+         Visit_Subcomponents_Of (E);
       end Visit_System_Instance;
 
       ---------------------------
@@ -1163,7 +1120,7 @@ package body Ocarina.Backends.Build_Utils is
       procedure Visit_Thread_Instance (E : Node_Id) is
          Parent_Process : Node_Id;
 
-         M : Makefile_Type;
+         M                     : Makefile_Type;
          Compute_Entrypoint    : Name_Id;
          Initialize_Entrypoint : constant Name_Id       :=
            Get_Thread_Initialize_Entrypoint (E);
@@ -1495,7 +1452,8 @@ package body Ocarina.Backends.Build_Utils is
                Write_Eol;
                Write_Line
                  ("SUBDIRS = " &
-                    "$(filter-out Makefile polyorb-hi-c, $(wildcard *))");
+                    "$(filter-out Makefile polyorb-hi-c polyorb-hi-ada"
+                    & ", $(wildcard *))");
                Write_Eol;
                Write_Line ("all:");
                Write_Line
