@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2019 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -2271,7 +2271,8 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                        (RE (RE_Littleendian),
                         CTN.Values (Endiannesses));
 
-                  when Platform_LEON_RTEMS       |
+                  when Platform_AIR              |
+                    Platform_LEON_RTEMS          |
                     Platform_LEON_RTEMS_POSIX    |
                     Platform_LEON_ORK            |
                     Platform_LEON3_XM3           =>
