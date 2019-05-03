@@ -348,9 +348,13 @@ package body Ocarina.Backends.C_Tree.Nutils is
       New_Token (Tok_Arrow, "->");
       New_Token (Tok_Vertical_Bar, "|");
 
-      for O in Op_And .. Op_Or_Else loop
-         New_Operator (O);
-      end loop;
+--        for O in Op_And .. Op_Or_Else loop
+--           New_Operator (O);
+--        end loop;
+
+      New_Operator (Op_Not, "!");
+      New_Operator (Op_And, "&&");
+      New_Operator (Op_Or, "||");
       New_Operator (Op_And_Symbol, "&");
       New_Operator (Op_Double_Asterisk, "**");
       New_Operator (Op_Asterisk, "**");
@@ -369,6 +373,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
       New_Operator (Op_Less_Less, "<<");
       New_Operator (Op_Semicolon, ";");
       New_Operator (Op_Arrow, "=>");
+      New_Operator (Op_Modulo, "%");
       New_Operator (Op_Vertical_Bar, "|");
 
       for A in Attribute_Id loop
@@ -495,10 +500,11 @@ package body Ocarina.Backends.C_Tree.Nutils is
    ------------------------------
 
    function Make_Defining_Identifier
-     (Name           : Name_Id;
-      C_Conversion   : Boolean := True;
-      Ada_Conversion : Boolean := False;
-      Pointer        : Boolean := False) return Node_Id
+     (Name             : Name_Id;
+      C_Conversion     : Boolean := True;
+      Ada_Conversion   : Boolean := False;
+      Pointer          : Boolean := False;
+      Variable_Address : Boolean := False) return Node_Id
    is
       N : Node_Id;
 
@@ -512,6 +518,10 @@ package body Ocarina.Backends.C_Tree.Nutils is
 
       if Pointer then
          CTN.Set_Is_Pointer (N, True);
+      end if;
+
+      if Variable_Address then
+         CTN.Set_Is_Variable_Address (N, True);
       end if;
 
       return N;
@@ -1023,11 +1033,13 @@ package body Ocarina.Backends.C_Tree.Nutils is
 
    procedure New_Operator (O : Operator_Type; I : String := "") is
    begin
-      if O in Keyword_Operator then
-         Set_Str_To_Name_Buffer (Image (O));
-      else
-         Set_Str_To_Name_Buffer (I);
-      end if;
+--        if O in Keyword_Operator then
+--           Set_Str_To_Name_Buffer (Image (O));
+--        else
+--           Set_Str_To_Name_Buffer (I);
+--        end if;
+
+      Set_Str_To_Name_Buffer (I);
       Operator_Image (Operator_Type'Pos (O)) := Name_Find;
    end New_Operator;
 

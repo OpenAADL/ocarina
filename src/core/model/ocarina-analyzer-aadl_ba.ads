@@ -51,6 +51,11 @@ package Ocarina.Analyzer.AADL_BA is
    function Is_Final
      (BA_Root : Node_Id;
       State   : Node_Id)
-     return boolean;
+      return boolean;
+
+   function Find_BA_Variable
+     (Node             : Node_Id;
+      BA_Root          : Node_Id)
+      return Node_Id;
 
 end Ocarina.Analyzer.AADL_BA;

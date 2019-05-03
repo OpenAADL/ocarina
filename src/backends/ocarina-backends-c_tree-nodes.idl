@@ -62,6 +62,7 @@ module Ocarina::Backends::C_Tree::Nodes {
     Node_Id    Corresponding_Node;
     Node_Id    Compile_Unit;
     boolean    Is_Pointer;
+    boolean    Is_Variable_Address;
   };
 
   interface Ifdef_Clause : Node_Id {

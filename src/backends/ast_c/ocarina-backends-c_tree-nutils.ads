@@ -116,12 +116,12 @@ package Ocarina.Backends.C_Tree.Nutils is
    subtype Keyword_Type is Token_Type range Tok_Null .. Tok_Typedef;
 
    type Operator_Type is
-     (Op_Not,             -- not
-      Op_And,             -- and
-      Op_In,              -- in
-      Op_And_Then,        -- and then
-      Op_Or,              -- or
-      Op_Or_Else,         -- or else
+     (Op_Not,             -- !  -- not
+      Op_And,             -- &&
+      --  Op_In,          -- in
+      --  Op_And_Then,    -- and then
+      Op_Or,              -- ||
+      --  Op_Or_Else,     -- or else
       Op_And_Symbol,      -- &
       Op_Double_Asterisk, -- **
       Op_Minus,           -- -
@@ -139,15 +139,20 @@ package Ocarina.Backends.C_Tree.Nutils is
       Op_Less_Less,       -- <<
       Op_Semicolon,       -- ;
       Op_Arrow,           -- ->
+      Op_Modulo,           -- %
       Op_Vertical_Bar,    -- |
       Op_None);           -- No operation
 
    Operator_Image : array
-   (Operator_Type'Pos (Op_And) ..
+   (Operator_Type'Pos (Op_Not) ..
         Operator_Type'Pos (Op_Vertical_Bar)) of Name_Id;
 
-   subtype Keyword_Operator is
-     Operator_Type range Operator_Type'First .. Op_Or_Else;
+--     Operator_Image : array
+--     (Operator_Type'Pos (Op_And) ..
+--          Operator_Type'Pos (Op_Vertical_Bar)) of Name_Id;
+
+--     subtype Keyword_Operator is
+--       Operator_Type range Operator_Type'First .. Op_Or_Else;
 
    type Parameter_Id is
      (P_From,
@@ -340,10 +345,11 @@ package Ocarina.Backends.C_Tree.Nutils is
       Expression          : Node_Id) return Node_Id;
 
    function Make_Defining_Identifier
-     (Name           : Name_Id;
-      C_Conversion   : Boolean := True;
-      Ada_Conversion : Boolean := False;
-      Pointer        : Boolean := False) return Node_Id;
+     (Name             : Name_Id;
+      C_Conversion     : Boolean := True;
+      Ada_Conversion   : Boolean := False;
+      Pointer          : Boolean := False;
+      Variable_Address : Boolean := False) return Node_Id;
 
    function Make_Expression
      (Left_Expr  : Node_Id;
