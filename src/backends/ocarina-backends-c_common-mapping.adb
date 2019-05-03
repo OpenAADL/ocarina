@@ -1,3 +1,7 @@
+--  pragma Style_Checks (Off);
+with Ocarina.ME_AADL_BA.BA_Tree.Debug;
+use Ocarina.ME_AADL_BA.BA_Tree.Debug;
+
 ------------------------------------------------------------------------------
 --                                                                          --
 --                           OCARINA COMPONENTS                             --
@@ -52,6 +56,8 @@ with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
 
+with Ocarina.Backends.C_Common.BA;
+
 package body Ocarina.Backends.C_Common.Mapping is
 
    use Ocarina.Namet;
@@ -79,6 +85,7 @@ package body Ocarina.Backends.C_Common.Mapping is
    package CTU renames Ocarina.Backends.C_Tree.Nutils;
    package PKR renames Ocarina.Backends.POK_C.Runtime;
    package PHR renames Ocarina.Backends.PO_HI_C.Runtime;
+   package CCBA renames Ocarina.Backends.C_Common.BA;
 
    ---------------------------
    -- Call_Remote_Functions --
@@ -2915,6 +2922,24 @@ package body Ocarina.Backends.C_Common.Mapping is
                 (Spec,
                  Declarations,
                  Statements);
+
+         when Subrogram_With_Behavior_Specification =>
+
+            --  1) Mapping BA variables into local variable declarations
+            --  in the generated C-subprogram.
+
+            --  2) Mapping BA states, transitions and actions:
+            --  For an AADL subprogram with BA, we have: a single state
+            --  as initial final state; a single transition without
+            --  condition with a Behavior_Action_Block.
+            --  Thus, we need to map the Behavior_Action_Block
+            --  To C-statements in the generated C-subprogram
+            --  Map_C_Behavior_Variables (S,Declarations);
+
+            return CTU.Make_Function_Implementation
+                (Spec,
+                 CCBA.Map_C_Behavior_Variables (S),
+                 CCBA.Map_C_Behavior_Actions (S));
 
          when others =>
             Display_Located_Error
