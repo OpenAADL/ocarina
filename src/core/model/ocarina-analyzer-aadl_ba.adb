@@ -107,6 +107,13 @@ package body Ocarina.Analyzer.AADL_BA is
       Parent_Component  : Node_Id)
       return Boolean;
 
+   function Analyze_Behav_Acts
+     (Node              : Node_Id;
+      Root              : Node_Id;
+      BA_Root           : Node_Id;
+      Parent_Component  : Node_Id)
+      return Boolean;
+
    function Analyze_Behavior_Action
      (Node             : Node_Id;
       Root             : Node_Id;
@@ -116,6 +123,7 @@ package body Ocarina.Analyzer.AADL_BA is
 
    function Analyze_If_Cond_Struct
      (Node              : Node_Id;
+      Root              : Node_Id;
       BA_Root           : Node_Id;
       Parent_Component  : Node_Id)
       return Boolean;
@@ -907,64 +915,85 @@ package body Ocarina.Analyzer.AADL_BA is
       pragma Assert (ATN.Kind (Parent_Component) = ATN.K_Component_Type
                      or else Kind (Parent_Component) =
                        ATN.K_Component_Implementation);
+   begin
+
+      return Analyze_Behav_Acts (Action_Block, Root,
+                                 BA_Root, Parent_Component);
+   end Analyze_Behavior_Action_Block;
+
+   ------------------------
+   -- Analyze_Behav_Acts --
+   ------------------------
+
+   function Analyze_Behav_Acts
+     (Node              : Node_Id;
+      Root              : Node_Id;
+      BA_Root           : Node_Id;
+      Parent_Component  : Node_Id)
+      return Boolean
+   is
+      use ATN;
+      pragma Assert (BATN.Kind (Node) = BATN.K_Behavior_Action_Block
+                     or else BATN.Kind (Node) = K_Conditional_Statement);
+      pragma Assert (BATN.Kind (BA_Root) = BATN.K_Behavior_Annex);
+      pragma Assert (ATN.Kind (Parent_Component) = ATN.K_Component_Type
+                     or else Kind (Parent_Component) =
+                       ATN.K_Component_Implementation);
 
       Success         : Boolean := True;
       Behav_actions   : Node_Id;
       Behav_action    : Node_Id;
+
    begin
 
-      if Present (BATN.Behav_Acts (Action_Block)) then
+      Behav_actions := BATN.Behav_Acts (Node);
 
-         Behav_actions := BATN.Behav_Acts (Action_Block);
+      --  In the case of a sequence of behavior actions
+      --
+      if not Is_Empty (BATN.Behavior_Action_Sequence (Behav_actions))
+      then
 
-         --  In the case of a sequence of behavior actions
-         --
-         if not Is_Empty (BATN.Behavior_Action_Sequence (Behav_actions))
-         then
+         Behav_action := BATN.First_Node
+           (BATN.Behavior_Action_Sequence (Behav_actions));
 
-            Behav_action := BATN.First_Node
-              (BATN.Behavior_Action_Sequence (Behav_actions));
-
-            while Present (Behav_action) loop
-               Success := Success and then Analyze_Behavior_Action
-                 (Behav_action, Root, BA_Root, Parent_Component);
-
-               Behav_action := BATN.Next_Node (Behav_action);
-            end loop;
-         end if;
-
-         --  In the case of a set of behavior actions:
-         --
-         if not Is_Empty (BATN.Behavior_Action_Set (Behav_actions))
-         then
-            Behav_action := BATN.First_Node
-              (BATN.Behavior_Action_Set (Behav_actions));
-
-            while Present (Behav_action) loop
-               Success := Success and then Analyze_Behavior_Action
-                 (Behav_action, Root, BA_Root, Parent_Component);
-
-               Behav_action := BATN.Next_Node (Behav_action);
-            end loop;
-         end if;
-
-         --  In the case of a single action
-         --
-         if Present (BATN.Behavior_Action (Behav_actions))
-           and then
-             Is_Empty (BATN.Behavior_Action_Sequence (Behav_actions))
-             and then
-               Is_Empty (BATN.Behavior_Action_Set (Behav_actions))
-         then
+         while Present (Behav_action) loop
             Success := Success and then Analyze_Behavior_Action
-              (BATN.Behavior_Action (Behav_actions),
-               Root, BA_Root, Parent_Component);
+              (Behav_action, Root, BA_Root, Parent_Component);
 
-         end if;
-
+            Behav_action := BATN.Next_Node (Behav_action);
+         end loop;
       end if;
+
+      --  In the case of a set of behavior actions:
+      --
+      if not Is_Empty (BATN.Behavior_Action_Set (Behav_actions))
+      then
+         Behav_action := BATN.First_Node
+           (BATN.Behavior_Action_Set (Behav_actions));
+
+         while Present (Behav_action) loop
+            Success := Success and then Analyze_Behavior_Action
+              (Behav_action, Root, BA_Root, Parent_Component);
+
+            Behav_action := BATN.Next_Node (Behav_action);
+         end loop;
+      end if;
+
+      --  In the case of a single action
+      --
+      if Present (BATN.Behavior_Action (Behav_actions))
+        and then
+          Is_Empty (BATN.Behavior_Action_Sequence (Behav_actions))
+          and then
+            Is_Empty (BATN.Behavior_Action_Set (Behav_actions))
+      then
+         Success := Success and then Analyze_Behavior_Action
+           (BATN.Behavior_Action (Behav_actions),
+            Root, BA_Root, Parent_Component);
+      end if;
+
       return Success;
-   end Analyze_Behavior_Action_Block;
+   end Analyze_Behav_Acts;
 
    -----------------------------
    -- Analyze_Behavior_Action --
@@ -1008,7 +1037,7 @@ package body Ocarina.Analyzer.AADL_BA is
 
       when K_If_Cond_Struct         =>
          Success := Analyze_If_Cond_Struct
-           (Action_Node, BA_Root, Parent_Component);
+           (Action_Node, Root, BA_Root, Parent_Component);
 
       when K_For_Cond_Structure     =>
          Success := Analyze_For_Cond_Struct
@@ -1057,6 +1086,7 @@ package body Ocarina.Analyzer.AADL_BA is
 
    function Analyze_If_Cond_Struct
      (Node              : Node_Id;
+      Root              : Node_Id;
       BA_Root           : Node_Id;
       Parent_Component  : Node_Id)
       return Boolean
@@ -1067,8 +1097,32 @@ package body Ocarina.Analyzer.AADL_BA is
       pragma Assert (ATN.Kind (Parent_Component) = ATN.K_Component_Type
                      or else Kind (Parent_Component) =
                        ATN.K_Component_Implementation);
+      Success : boolean;
    begin
-      return True;
+      Success := Analyze_Behav_Acts
+        (Node             => If_Statement (Node),
+         Root             => Root,
+         BA_Root          => BA_Root,
+         Parent_Component => Parent_Component);
+
+      if Present (Elsif_Statement (Node)) then
+         Success := Success and then Analyze_Behav_Acts
+        (Node             => Elsif_Statement (Node),
+         Root             => Root,
+         BA_Root          => BA_Root,
+         Parent_Component => Parent_Component);
+      end if;
+
+      if Present (Else_Statement (Node)) then
+         Success := Success and then Analyze_Behav_Acts
+        (Node             => Else_Statement (Node),
+         Root             => Root,
+         BA_Root          => BA_Root,
+         Parent_Component => Parent_Component);
+      end if;
+
+      return Success;
+
    end Analyze_If_Cond_Struct;
 
    -----------------------------
@@ -1341,7 +1395,6 @@ package body Ocarina.Analyzer.AADL_BA is
               (BATN.First_Node
                  (BATN.Idt (BATN.Identifier (Node))), N1);
             Success := True;
-
          end if;
 
          exit when Success;
@@ -2080,13 +2133,6 @@ package body Ocarina.Analyzer.AADL_BA is
            (Root, Parent_Component);
       end if;
 
-      --        if not AINU.Is_Empty (Features (S)) then
-      --           F := AIN.First_Node (Features (S));
-      --
-      --           while Present (F) loop
-      --              if Kind (F) = K_Subcomponent_Access_Instance then
-      --                 case Get_Required_Data_Access (Corresponding_Instance (F)) is
-
       if not ANU.Is_Empty (ATN.Features (Type_Of_Parent_Component)) then
 
          Parameter := ATN.First_Node (ATN.Features (Type_Of_Parent_Component));
@@ -2167,7 +2213,7 @@ package body Ocarina.Analyzer.AADL_BA is
                   Access_property_association := ATN.First_Node
                     (ATN.Properties (F));
                   Put_Line (ATN.Kind (Property_Association_Value
-                              (Access_property_association))'Img);
+                            (Access_property_association))'Img);
                   Put_Line ("Is_Access = "
                             & ATN.Is_Access (Access_property_association)'Img);
                end if;
