@@ -63,6 +63,7 @@ package Ocarina.Backends.Helper is
           Post => (Features_Of'Result = No_Nodes or else
                    (for all E of Features_Of'Result =>
                     Kind (E) in K_Feature_Instance |
+                                K_Parameter_Instance |
                                 K_Port_Spec_Instance |
                                 K_Subcomponent_Access_Instance));
 

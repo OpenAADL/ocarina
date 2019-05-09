@@ -514,4 +514,8 @@ package Ocarina.Backends.Utils is
    function Get_Number_Of_Cores (P : Node_Id) return Unsigned_Long_Long;
    --  Return the number of cores attached to the processor P
 
+   function Has_Behavior_Specification (E : Node_Id) return Boolean;
+   --  Return True IFF the subprogram instance E contains a Behavior
+   --  Specification.
+
 end Ocarina.Backends.Utils;

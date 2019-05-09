@@ -1,3 +1,5 @@
+with Ada.Text_IO; use Ada.Text_IO;
+
 ------------------------------------------------------------------------------
 --                                                                          --
 --                           OCARINA COMPONENTS                             --
@@ -6,7 +8,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2019 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -917,10 +919,6 @@ package body Ocarina.Backends.Build_Utils is
 
       procedure Visit_Device_Instance (E : Node_Id) is
       begin
-         if Get_Implementation (E) /= No_Node then
-            Visit (Get_Implementation (E));
-         end if;
-
          Visit_Subcomponents_Of (E);
       end Visit_Device_Instance;
 
@@ -930,10 +928,6 @@ package body Ocarina.Backends.Build_Utils is
 
       procedure Visit_Virtual_Bus_Instance (E : Node_Id) is
       begin
-         if Get_Implementation (E) /= No_Node then
-            Visit (Get_Implementation (E));
-         end if;
-
          Visit_Subcomponents_Of (E);
       end Visit_Virtual_Bus_Instance;
 
@@ -1109,7 +1103,6 @@ package body Ocarina.Backends.Build_Utils is
          end if;
 
          --  Visit all the subcomponents of the system
-
          Visit_Subcomponents_Of (E);
       end Visit_System_Instance;
 
@@ -1131,9 +1124,11 @@ package body Ocarina.Backends.Build_Utils is
          F            : Node_Id;
       begin
          if Present (Get_Container_Process (E)) then
+            Put_Line ("@1");
             Parent_Process :=
               Corresponding_Instance (Get_Container_Process (E));
          else
+            Put_Line ("@2" & Current_Process'Img);
             Parent_Process := Current_Process; --  XXX
          end if;
 
@@ -1452,8 +1447,7 @@ package body Ocarina.Backends.Build_Utils is
                Write_Eol;
                Write_Line
                  ("SUBDIRS = " &
-                    "$(filter-out Makefile polyorb-hi-c polyorb-hi-ada"
-                    & ", $(wildcard *))");
+                    "$(filter-out Makefile polyorb-hi-c, $(wildcard *))");
                Write_Eol;
                Write_Line ("all:");
                Write_Line
