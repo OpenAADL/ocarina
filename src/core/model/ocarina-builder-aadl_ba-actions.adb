@@ -166,7 +166,7 @@ package body Ocarina.Builder.AADL_BA.Actions is
       pragma Assert (Kind (If_Stat) = K_Conditional_Statement);
       pragma Assert (No (Elsif_Stat)
                        or else Kind (Elsif_Stat) = K_Conditional_Statement);
-      pragma Assert (No (Elsif_Stat)
+      pragma Assert (No (Else_Stat)
                        or else Kind (Else_Stat) = K_Conditional_Statement);
    begin
       Set_BE_Container (If_Cond_Struct, Container);
