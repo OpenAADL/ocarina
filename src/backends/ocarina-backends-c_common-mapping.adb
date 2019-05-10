@@ -1,7 +1,3 @@
---  pragma Style_Checks (Off);
-with Ocarina.ME_AADL_BA.BA_Tree.Debug;
-use Ocarina.ME_AADL_BA.BA_Tree.Debug;
-
 ------------------------------------------------------------------------------
 --                                                                          --
 --                           OCARINA COMPONENTS                             --
