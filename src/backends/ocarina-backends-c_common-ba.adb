@@ -1,8 +1,9 @@
-pragma Style_Checks (off);
-pragma Warnings(off);
-
-with Ocarina.ME_AADL_BA.BA_Tree.Debug;
-use Ocarina.ME_AADL_BA.BA_Tree.Debug;
+--  pragma Style_Checks (off);
+--  pragma Warnings(off);
+--
+--  with Ocarina.ME_AADL_BA.BA_Tree.Debug;
+--  use Ocarina.ME_AADL_BA.BA_Tree.Debug;
+--  with ada.Text_IO; use ada.Text_IO;
 
 ------------------------------------------------------------------------------
 --                                                                          --
@@ -34,20 +35,12 @@ use Ocarina.ME_AADL_BA.BA_Tree.Debug;
 --                      (taste-users@lists.tuxfamily.org)                   --
 --                                                                          --
 ------------------------------------------------------------------------------
---  pragma Style_Checks (Off);
-with Ocarina.ME_AADL_BA.BA_Tree.Debug;
-use Ocarina.ME_AADL_BA.BA_Tree.Debug;
-with ada.Text_IO; use ada.Text_IO;
---  with Ocarina.ME_AADL.AADL_Instances.Debug;
-
 with Ocarina.Namet;
 with Utils; use Utils;
 
 with Ocarina.Backends.Messages;
---  with Ocarina.Backends.Utils;
 with Ocarina.Backends.C_Tree.Nodes;
 with Ocarina.Backends.C_Tree.Nutils;
---  with Ocarina.Backends.PO_HI_C.Runtime;
 with Ocarina.Backends.C_Values;
 with Ocarina.Backends.Properties;
 with Ocarina.Backends.C_Common.Mapping;
@@ -55,7 +48,6 @@ with Ocarina.Backends.C_Common.Mapping;
 with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_AADL_BA;
---  with Ocarina.ME_AADL.AADL_Tree.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Instances.Nutils;
 
@@ -72,35 +64,24 @@ package body Ocarina.Backends.C_Common.BA is
    use Ocarina.Backends.Helper;
    use Ocarina.Backends.Messages;
    use Ocarina.Backends.Properties;
-   --  use Ocarina.Backends.Utils;
-   --  use Ocarina.Backends.C_Values;
    use Ocarina.Backends.C_Tree.Nodes;
-   --  use Ocarina.Backends.C_Tree.Nutils;
    use Ocarina.ME_AADL_BA;
-
-   --  use Ocarina.ME_AADL.AADL_Instances.Nodes;
-   --  use Ocarina.ME_AADL_BA.BA_Tree.Nutils;
    use Ocarina.ME_AADL_BA.BA_Tree.Nodes;
-   --  use Ocarina.Backends.PO_HI_C.Runtime;
    use Ocarina.Backends.C_Common.Mapping;
 
    package AAN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
-   --  package ATU renames Ocarina.ME_AADL.AADL_Tree.Nutils;
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
-   package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package CTN renames Ocarina.Backends.C_Tree.Nodes;
    package CTU renames Ocarina.Backends.C_Tree.Nutils;
    package BATN renames Ocarina.ME_AADL_BA.BA_Tree.Nodes;
    package BANu renames Ocarina.ME_AADL_BA.BA_Tree.Nutils;
    package CV renames Ocarina.Backends.C_Values;
-   --  package PHR renames Ocarina.Backends.PO_HI_C.Runtime;
 
---     function Get_Instances_Of_Component_Type
---       (Root : Node_Id; E : Node_Id) return Node_Id;
+   --  function Get_Instances_Of_Component_Type
+   --    (Root : Node_Id; E : Node_Id) return Node_Id;
 
    function Get_Behavior_Specification_Of_Subprogram
      (S : Node_Id) return Node_Id;
-
 
    function Map_C_Behavior_Action_Block
      (Node       : Node_Id;
@@ -118,11 +99,6 @@ package body Ocarina.Backends.C_Common.BA is
       Statements : List_Id);
 
    procedure Map_C_If_Cond_Struct
-     (Node       : Node_Id;
-      S          : Node_Id;
-      Statements : List_Id);
-
-   procedure Map_C_For_Cond_Struct
      (Node       : Node_Id;
       S          : Node_Id;
       Statements : List_Id);
@@ -148,7 +124,6 @@ package body Ocarina.Backends.C_Common.BA is
       Is_Out_parameter : Boolean := False;
       BA_Root          : Node_Id := No_Node;
       Subprogram_Root  : Node_Id := No_Node) return Node_Id;
-
 
    function Evaluate_BA_Operator (Node : Node_Id) return Operator_Type;
 
@@ -192,36 +167,36 @@ package body Ocarina.Backends.C_Common.BA is
 
    function Evaluate_BA_Boolean_Literal (Node : Node_Id) return Node_Id;
 
---     -------------------------------------
---     -- Get_Instances_Of_Component_Type --
---     -------------------------------------
---
---     function Get_Instances_Of_Component_Type
---       (Root : Node_Id; E : Node_Id) return Node_Id
---     is
---        use type Aan.Node_Kind;
---
---        pragma Assert
---          (AAN.Kind (E) = Aan.K_Component_Type
---           or else AAN.Kind (E) = Aan.K_Component_Implementation
---           or else AAN.Kind (E) = Aan.K_Feature_Group_Type);
---
---        Fs : constant Ocarina.ME_AADL.AADL_Instances.Nutils.Node_Array
---          := Features_Of (Root);
---     begin
---        for F of Fs loop
---           if AIN.Corresponding_Declaration
---             (AIN.Corresponding_Instance (F)) = E
---           then
---              return AIN.Corresponding_Instance (F);
---           end if;
---
---        end loop;
---
---        --  raise Program_Error;
---        return No_Node;
---
---     end Get_Instances_Of_Component_Type;
+   --     -------------------------------------
+   --     -- Get_Instances_Of_Component_Type --
+   --     -------------------------------------
+   --
+   --     function Get_Instances_Of_Component_Type
+   --       (Root : Node_Id; E : Node_Id) return Node_Id
+   --     is
+   --        use type Aan.Node_Kind;
+   --
+   --        pragma Assert
+   --          (AAN.Kind (E) = Aan.K_Component_Type
+   --           or else AAN.Kind (E) = Aan.K_Component_Implementation
+   --           or else AAN.Kind (E) = Aan.K_Feature_Group_Type);
+   --
+   --        Fs : constant Ocarina.ME_AADL.AADL_Instances.Nutils.Node_Array
+   --          := Features_Of (Root);
+   --     begin
+   --        for F of Fs loop
+   --           if AIN.Corresponding_Declaration
+   --             (AIN.Corresponding_Instance (F)) = E
+   --           then
+   --              return AIN.Corresponding_Instance (F);
+   --           end if;
+   --
+   --        end loop;
+   --
+   --        --  raise Program_Error;
+   --        return No_Node;
+   --
+   --     end Get_Instances_Of_Component_Type;
 
    ----------------------------------------------
    -- Get_Behavior_Specification_Of_Subprogram --
@@ -254,9 +229,9 @@ package body Ocarina.Backends.C_Common.BA is
    ------------------------------
 
    function Map_C_Behavior_Variables (S : Node_Id) return List_Id is
-      BA, P, T, N  : Node_Id;
+      BA, P, T     : Node_Id;
       Declarations : constant List_Id := New_List (CTN.K_Declaration_List);
-      Used_Type : Node_Id;
+      Used_Type    : Node_Id;
    begin
 
       BA := Get_Behavior_Specification_Of_Subprogram (S);
@@ -358,12 +333,11 @@ package body Ocarina.Backends.C_Common.BA is
 
       Statements := Map_C_Behav_Acts (Node, S);
 
-      --        if Present (Behavior_Time (Node)) then
-      --           Write_Space;
-      --           Print_Token (T_Timeout);
-      --           Write_Space;
-      --           Print_Behavior_Time (Behavior_Time (Node));
-      --        end if;
+      --  Behavior_Time (Node) is not yet supported
+      --
+      --  if Present (Behavior_Time (Node)) then
+      --
+      --  end if;
 
       return Statements;
 
@@ -473,17 +447,17 @@ package body Ocarina.Backends.C_Common.BA is
          when K_If_Cond_Struct         =>
             Map_C_If_Cond_Struct (Action_Node, S, Statements);
 
-         when K_For_Cond_Structure     =>
-            Map_C_For_Cond_Struct (Action_Node, S, Statements);
+            --  when K_For_Cond_Structure     =>
+            --     Map_C_For_Cond_Struct (Action_Node, S, Statements);
 
             --  when K_While_Cond_Structure   =>
-            --  Map_C_While_Cond_Struct (Action_Node);
+            --    Map_C_While_Cond_Struct (Action_Node);
 
             --  when K_ForAll_Cond_Structure  =>
-            --  Map_C_Forall_Cond_Struct (Action_Node);
+            --    Map_C_Forall_Cond_Struct (Action_Node);
 
-            --    when K_DoUntil_Cond_Structure =>
-            --  Map_C_DoUntil_Cond_Struct (Action_Node);
+            --  when K_DoUntil_Cond_Structure =>
+            --    Map_C_DoUntil_Cond_Struct (Action_Node);
 
          when BATN.K_Assignment_Action      =>
             Map_C_Assignment_Action (Action_Node, S, Statements);
@@ -492,7 +466,7 @@ package body Ocarina.Backends.C_Common.BA is
             Map_C_Communication_Action (Action_Node, S, Statements);
 
             --  when K_Timed_Act           =>
-            --  Map_C_Timed_Action (Action_Node);
+            --    Map_C_Timed_Action (Action_Node);
 
          when others                   =>
             N := Message_Comment ("Behavior Actions not yet mapped");
@@ -535,7 +509,8 @@ package body Ocarina.Backends.C_Common.BA is
             CTU.Append_Node_To_List
               (CTU.Make_If_Statement
                  (Condition       => Evaluate_BA_Value_Expression
-                      (Node             => Logical_Expr (Elsif_Statement (Node)),
+                      (Node             => Logical_Expr
+                           (Elsif_Statement (Node)),
                        Subprogram_Root  => S),
                   Statements      => Map_C_Behav_Acts
                     (Node       => Elsif_Statement (Node),
@@ -550,7 +525,8 @@ package body Ocarina.Backends.C_Common.BA is
             CTU.Append_Node_To_List
               (CTU.Make_If_Statement
                  (Condition       => Evaluate_BA_Value_Expression
-                      (Node             => Logical_Expr (Elsif_Statement (Node)),
+                      (Node             => Logical_Expr
+                           (Elsif_Statement (Node)),
                        Subprogram_Root  => S),
                   Statements      => Map_C_Behav_Acts
                     (Node       => Elsif_Statement (Node),
@@ -579,92 +555,6 @@ package body Ocarina.Backends.C_Common.BA is
 
    end Map_C_If_Cond_Struct;
 
-   --------------------------
-   -- Map_C_For_Cond_Struct --
-   --------------------------
-
-   procedure Map_C_For_Cond_Struct
-     (Node       : Node_Id;
-      S          : Node_Id;
-      Statements : List_Id)
-   is
-      pragma Assert (BATN.Kind (Node) = K_For_Cond_Structure);
-      pragma Assert (not CTU.Is_Empty (Statements));
-      pragma Assert (AINU.Is_Subprogram (S));
-
-      Map_C_Element_Idt   : Node_Id;
-      --  Counter_Lower_Value : Node_Id;
-      --  Counter_Upper_Value : Node_Id;
-
-   begin
-
-      Put_Line ("kind (Element_Idt (Node)) = "
-                & BATN.kind (Element_Idt (Node))'img);
-
-      Map_C_Element_Idt :=  CTU.Make_Defining_Identifier
-                (Name  => BATN.Display_Name (Element_Idt (Node)));
-
---        Append_Node_To_List
---          (Make_Variable_Declaration
---             (Defining_Identifier => Map_C_Element_Idt,
---              Used_Type           => Ocarina.Backends.C_Common.Mapping.
---                Map_C_Data_Type_Designator
---                  (AAN.Default_Instance
---                       (BATN.Corresponding_Declaration
---                          (BATN.Classifier_Ref (Node))))),
---           Statements);
-
-
-      ---------------- Je suis la ----------------
-      --        Print_Element_Values (In_Element_Values (Node));
-      --        Print_Token (T_Right_Parenthesis);
-      --
-      --
---        case Kind (In_Element_Values (Node)) is
---           when K_Integer_Range =>
---              CTU.Append_Node_To_List
---                (CTU.Make_For_Statement
---                   (Pre_Cond            => Make_Assignment_Statement
---                        (Variable_Identifier => Map_C_Element_Idt,
---                         Expression          => ),
---
---                    Condition           => ,
---
---                    Post_Cond           => Make_Assignment_Statement
---                      (Variable_Identifier => Map_C_Element_Idt,
---                       Expression          => Make_Expression
---                         (Left_Expr  => Map_C_Element_Idt,
---                          Operator   => CTU.Op_Plus,
---                          Right_Expr => Make_Literal (CV.New_Int_Value (1, 0, 10)))),
---
---                    Statements          => Map_C_Behav_Acts
---                      (Node       => Node,
---                       S          => S)),
---                 Statements);
---
---        Print_Integer_Value (Lower_Int_Val (Node));
---        Write_Space;
---        Print_Token (T_Interval);
---        Write_Space;
---        Print_Integer_Value (Upper_Int_Val (Node));
-
-
---        case Kind (Entity_Node) is
---           when K_Value_Variable    => Print_Value_Variable    (Entity_Node);
---           when K_Literal           => Print_Literal           (Entity_Node);
---           when K_Property_Constant => Print_Property_Constant (Entity_Node);
---           when others              => Write_Line              (Bug_Str);
---        end case;
---
---           when K_Data_Component_Reference =>
---              Print_Data_Component_Reference (Node);
---
---           when others =>
---              Write_Line (Bug_Str);
---        end case;
-
-   end Map_C_For_Cond_Struct;
-
    --------------------------------
    -- Map_C_Communication_Action --
    --------------------------------
@@ -683,7 +573,7 @@ package body Ocarina.Backends.C_Common.BA is
       Call_Parameters          : List_Id;
       N, k                     : Node_Id;
       Param_Node               : Node_Id;
-      BA_Root                  : Node_Id
+      BA_Root                  : constant Node_Id
         := Get_Behavior_Specification_Of_Subprogram (S);
       decl                     : Node_Id;
       Called_Spg_Spec_Exist    : Boolean := False;
@@ -696,8 +586,11 @@ package body Ocarina.Backends.C_Common.BA is
                    (BATN.Idt (BATN.Identifier (Node)))),
             Pointer => False);
 
-         --  else
-         --   Print_Data_Component_Reference (BAN.Identifier (Node));
+      --  else
+      --  i.e.
+      --     Kind (BATN.Identifier (Node))
+      --       = BATN.K_Data_Component_Reference
+      --  We must treat this case in the future
       end if;
 
       case Communication_Kind'Val (Comm_Kind (Node)) is
@@ -707,8 +600,9 @@ package body Ocarina.Backends.C_Common.BA is
             --  This means we have a call to a subprogram
             --
 
-            --  If not yet added to the declarations of the current source file
-            --  we must add the definition of the called spg
+            --  If not yet added to the declarations of the
+            --  current source file we must add the definition
+            --  of the called spg
 
             --  First, we search if the called Spg is already declared
             --  in the current file, i.e. the called spg is not the
@@ -765,7 +659,7 @@ package body Ocarina.Backends.C_Common.BA is
                Call_Parameters := New_List (CTN.K_Parameter_List);
                N := BATN.First_Node (Subprogram_Parameter_List (Node));
 
-               While Present (N) loop
+               while Present (N) loop
                   Param_Node := Parameter (N);
 
                   case BATN.Kind (Param_Node) is
@@ -793,7 +687,7 @@ package body Ocarina.Backends.C_Common.BA is
                            Call_Parameters);
 
                         --  when K_Data_Component_Reference =>
-                        --    Print_Data_Component_Reference (Param_Node);
+                        --    This case is not yet treated
 
                      when others =>
                         Display_Error ("Other param label Kinds are not"
@@ -811,25 +705,22 @@ package body Ocarina.Backends.C_Common.BA is
 
             CTU.Append_Node_To_List (N, Statements);
 
-            --       when CK_Interrogative    => Print_Token (T_Interrogative);
-            --       when CK_Greater_Greater  => Print_Token (T_Greater_Greater_Than);
-            --       when CK_Exclamation_Greater => Print_Token (T_Exclamation_Greater);
-            --       when CK_Exclamation_Lesser  => Print_Token (T_Exclamation_Lesser);
+         --  when CK_Interrogative    =>
+         --  when CK_Greater_Greater  =>
+         --  when CK_Exclamation_Greater =>
+         --  when CK_Exclamation_Lesser  =>
+
          when others              =>
-            Display_Error ("Other Communication Action Kinds are not yet supported",
+            Display_Error ("Other Communication Action Kinds"
+                           & " are not yet supported",
                            Fatal => True);
       end case;
 
-      --        if Present (Target (Node)) then
-      --           Write_Space;
-      --           Print_Token (T_Left_Parenthesis);
-      --           if Kind (Target (Node)) = K_Name then
-      --              Print_Name (Target (Node));
-      --           else
-      --              Print_Data_Component_Reference (Target (Node));
-      --           end if;
-      --           Print_Token (T_Right_Parenthesis);
-      --        end if;
+      --  Target (Node) is not yet treated
+      --
+      --  if Present (Target (Node)) then
+      --
+      --  end if;
    end Map_C_Communication_Action;
 
    -----------------------------
@@ -904,21 +795,12 @@ package body Ocarina.Backends.C_Common.BA is
 
       if Present (BATN.Value_Expression (Node)) then
 
-         -- Evaluate_BA_Value_Expression (BATN.Value_Expression (Node));
-         --  N :=
-         --    Make_Assignment_Statement
-         --      (Var_identifier,
-         --       --Make_Literal (CV.New_Int_Value (10, 0, 10)));
-         --       Expr);
-
          CTU.Append_Node_To_List
            (Make_Assignment_Statement
               (Variable_Identifier => Var_identifier,
                Expression          => Evaluate_BA_Value_Expression
                  (Node             => BATN.Value_Expression (Node),
                   Subprogram_Root  => S)),
-            --  Make_Literal (CV.New_Int_Value (10, 0, 10)));
-            --Expr),
             Statements);
 
       end if;
@@ -929,10 +811,6 @@ package body Ocarina.Backends.C_Common.BA is
          Display_Error
            ("the mapping of any is not supported", Fatal => True);
       end if;
-
-      --  N := Message_Comment
-      --    ("Assignment_Action must be mapped into C- Assignment_Statement");
-      --  CTU.Append_Node_To_List (N, Statements);
 
    end Map_C_Assignment_Action;
 
@@ -954,11 +832,9 @@ package body Ocarina.Backends.C_Common.BA is
       Right_Expr : Node_Id := No_Node;
       Op         : Operator_Type := Op_None;
       Expr       : Node_Id;
-      i          : Integer := 1;
    begin
 
       N := BATN.First_Node (BATN.Relations (Node));
-      Put_Line ("Evaluate_BA_Value_Expression: " & BATN.Kind (N)'Img);
 
       Left_Expr := Evaluate_BA_Relation
         (N, Is_Out_Parameter, BA_Root, Subprogram_Root);
@@ -966,14 +842,10 @@ package body Ocarina.Backends.C_Common.BA is
       N := BATN.Next_Node (N);
 
       if No (N) then
-         Put_Line ("--- Evaluate_BA_Value_Expression: 1 BA_Relation ---");
          return Left_Expr;
-
       else
 
          while Present (N) loop
-            i := i+1;
-            Put_Line ("Evaluate_BA_Value_Expression: " & BATN.Kind (N)'Img);
 
             case BATN.Kind (N) is
                when BATN.K_Relation =>
@@ -988,7 +860,8 @@ package body Ocarina.Backends.C_Common.BA is
             end case;
 
             if Right_Expr /= No_Node and then
-              Op /= Op_None then
+              Op /= Op_None
+            then
                Expr := Make_Expression (Left_Expr, Op, Right_Expr);
                Left_Expr := Expr;
                Op := Op_None;
@@ -997,8 +870,7 @@ package body Ocarina.Backends.C_Common.BA is
 
             N := BATN.Next_Node (N);
          end loop;
-         Put_Line ("--- Evaluate_BA_Value_Expression: "
-                   & i'Img & " BA_Relations ---");
+
          return Expr;
       end if;
 
@@ -1021,16 +893,11 @@ package body Ocarina.Backends.C_Common.BA is
       Right_Expr : Node_Id := No_Node;
       Op         : Operator_Type := Op_None;
       Expr       : Node_Id;
-      i          : Integer := 1;
    begin
 
       if not BANu.Is_Empty (BATN.Simple_Exprs (Node)) then
 
          N := BATN.First_Node (BATN.Simple_Exprs (Node));
-
-         --return Evaluate_BA_Simple_Expression (N);
-
-         Put_Line ("Evaluate_BA_Relation: " & BATN.Kind (N)'Img);
 
          Left_Expr := Evaluate_BA_Simple_Expression
            (N, Is_Out_Parameter, BA_Root, Subprogram_Root);
@@ -1038,14 +905,10 @@ package body Ocarina.Backends.C_Common.BA is
          N := BATN.Next_Node (N);
 
          if No (N) then
-
-            Put_Line ("--- Evaluate_BA_Relation: 1 Simple_Expression ---");
             return Left_Expr;
          else
 
             while Present (N) loop
-               i := i+1;
-               Put_Line ("Evaluate_BA_Relation: " & BATN.Kind (N)'Img);
 
                case BATN.Kind (N) is
                   when BATN.K_Simple_Expression =>
@@ -1059,7 +922,8 @@ package body Ocarina.Backends.C_Common.BA is
                end case;
 
                if Right_Expr /= No_Node and then
-                 Op /= Op_None then
+                 Op /= Op_None
+               then
                   Expr := Make_Expression (Left_Expr, Op, Right_Expr);
                   Left_Expr := Expr;
                   Op := Op_None;
@@ -1068,12 +932,14 @@ package body Ocarina.Backends.C_Common.BA is
 
                N := BATN.Next_Node (N);
             end loop;
-            Put_Line ("--- Evaluate_BA_Relation : "
-                      & i'Img & " Simple_Expressions ---");
+
             return Expr;
          end if;
 
       end if;
+
+      raise Program_Error;
+      return No_Node;
    end Evaluate_BA_Relation;
 
    --------------------------
@@ -1087,8 +953,6 @@ package body Ocarina.Backends.C_Common.BA is
       pragma Assert (BATN.Kind (Node) = BATN.K_Operator);
 
    begin
-      Put_Line ("Evaluate_BA_Operator: " &
-                  Operator_Kind'Val (BATN.Operator_Category (Node))'Img);
 
       case Operator_Kind'Val (BATN.Operator_Category (Node)) is
 
@@ -1100,7 +964,7 @@ package body Ocarina.Backends.C_Common.BA is
          when OK_Or_Else          => return CTU.Op_Or;
          when OK_And_Then         => return CTU.Op_And;
 
-            --  relational_operator
+         --  relational_operator
          when OK_Equal            => return CTU.Op_Equal_Equal;
          when OK_Non_Equal        => return CTU.Op_Not_Equal;
          when OK_Less_Than        => return CTU.Op_Less;
@@ -1108,19 +972,19 @@ package body Ocarina.Backends.C_Common.BA is
          when OK_Greater_Than     => return CTU.Op_Greater;
          when OK_Greater_Or_Equal => return CTU.Op_Greater_Equal;
 
-            --  unary_adding_opetor
-            --  binary_adding_operator
+         --  unary_adding_opetor
+         --  binary_adding_operator
          when OK_Plus             => return CTU.Op_Plus;
          when OK_Minus            => return CTU.Op_Minus;
 
-            --  multiplying operator
+         --  multiplying operator
          when OK_Multiply         => return CTU.Op_Asterisk;
          when OK_Divide           => return CTU.Op_Slash;
          when OK_Mod              => return CTU.Op_Modulo;
          when OK_Rem              => Display_Error
               ("Not supported Operator", Fatal => True);
 
-            --  highest precedence operator
+         --  highest precedence operator
          when OK_Exponent         => Display_Error
               ("Not supported Operator", Fatal => True);
          when OK_Abs              => Display_Error
@@ -1130,6 +994,9 @@ package body Ocarina.Backends.C_Common.BA is
          when others              => Display_Error
               ("Not valid Operator", Fatal => True);
       end case;
+
+      raise Program_Error;
+      return CTU.Op_None;
 
    end Evaluate_BA_Operator;
 
@@ -1146,33 +1013,24 @@ package body Ocarina.Backends.C_Common.BA is
       pragma Assert (BATN.Kind (Node) = BATN.K_Simple_Expression);
       pragma Assert (not BANu.Is_Empty (BATN.Term_And_Operator (Node)));
 
-
       N          : Node_Id;
       Left_Expr  : Node_Id;
       Right_Expr : Node_Id := No_Node;
       Op         : Operator_Type := Op_None;
       Expr       : Node_Id;
-      i          : Integer := 1;
    begin
 
       N := BATN.First_Node (BATN.Term_And_Operator (Node));
 
-      Put_Line ("Evaluate_BA_Simple_Expression: " & BATN.Kind (N)'Img);
-
-      Left_Expr := Evaluate_BA_Term (N, Is_Out_Parameter, BA_Root, Subprogram_Root);
+      Left_Expr := Evaluate_BA_Term
+        (N, Is_Out_Parameter, BA_Root, Subprogram_Root);
 
       N := BATN.Next_Node (N);
 
       if No (N) then
-
-         Put_Line ("--- Evaluate_BA_Simple_Expression: 1 Term_And_Operator ---");
          return Left_Expr;
-
       else
-
          while Present (N) loop
-            i := i+1;
-            Put_Line ("Evaluate_BA_Simple_Expression: " & BATN.Kind (N)'Img);
 
             case BATN.Kind (N) is
                when BATN.K_Term =>
@@ -1186,7 +1044,8 @@ package body Ocarina.Backends.C_Common.BA is
             end case;
 
             if Right_Expr /= No_Node and then
-              Op /= Op_None then
+              Op /= Op_None
+            then
                Expr := Make_Expression (Left_Expr, Op, Right_Expr);
                Left_Expr := Expr;
                Op := Op_None;
@@ -1195,8 +1054,7 @@ package body Ocarina.Backends.C_Common.BA is
 
             N := BATN.Next_Node (N);
          end loop;
-         Put_Line ("--- Evaluate_BA_Simple_Expression: "
-                   & i'Img & " Term_And_Operator ---");
+
          return Expr;
       end if;
 
@@ -1220,14 +1078,9 @@ package body Ocarina.Backends.C_Common.BA is
       Right_Expr : Node_Id := No_Node;
       Op         : Operator_Type := Op_None;
       Expr       : Node_Id;
-      i          : Integer := 1;
    begin
 
       N := BATN.First_Node (Factors (Node));
-
-      --return Evaluate_BA_Factor (N);
-
-      Put_Line ("Evaluate_BA_Term: " & BATN.Kind (N)'Img);
 
       Left_Expr := Evaluate_BA_Factor (N, Is_Out_Parameter,
                                        BA_Root, Subprogram_Root);
@@ -1235,13 +1088,10 @@ package body Ocarina.Backends.C_Common.BA is
       N := BATN.Next_Node (N);
 
       if No (N) then
-         Put_Line ("--- Evaluate_BA_Term: 1 Factor ---");
          return Left_Expr;
       else
 
          while Present (N) loop
-            i := i+1;
-            Put_Line ("Evaluate_BA_Term: " & BATN.Kind (N)'Img);
 
             case BATN.Kind (N) is
                when BATN.K_Factor =>
@@ -1255,7 +1105,8 @@ package body Ocarina.Backends.C_Common.BA is
             end case;
 
             if Right_Expr /= No_Node and then
-              Op /= Op_None then
+              Op /= Op_None
+            then
                Expr := Make_Expression (Left_Expr, Op, Right_Expr);
                Left_Expr := Expr;
                Op := Op_None;
@@ -1264,7 +1115,7 @@ package body Ocarina.Backends.C_Common.BA is
 
             N := BATN.Next_Node (N);
          end loop;
-         Put_Line ("--- Evaluate_BA_Term: " & i'Img & " Factors ---");
+
          return Expr;
       end if;
 
@@ -1329,12 +1180,10 @@ package body Ocarina.Backends.C_Common.BA is
                      or else Kind (Node) = BATN.K_Identifier);
    begin
 
-      Put_Line ("Evaluate_BA_Value: " & BATN.Kind (Node)'Img);
-
       case BATN.Kind (Node) is
 
          --  when BATN.K_Value_Variable     =>
-         --  Evaluate_BA_Value_Variable (Node);
+         --    Evaluate_BA_Value_Variable (Node);
 
          when BATN.K_Literal              =>
             return Evaluate_BA_Literal (Node);
@@ -1346,14 +1195,11 @@ package body Ocarina.Backends.C_Common.BA is
             return Evaluate_BA_Property_Constant
               (Node, Is_Out_Parameter, BA_Root, Subprogram_Root);
 
-            --  when BATN.K_Property_Reference =>
-            --  Evaluate_BA_Property_Reference (Node);
+         --  when BATN.K_Property_Reference =>
+         --    Evaluate_BA_Property_Reference (Node);
 
          when BATN.K_Value_Expression   =>
             return Evaluate_BA_Value_Expression (Node);
-            --   Print_Token (T_Left_Parenthesis);
-            --   Print_Value_Expression (Node);
-            --   Print_Token (T_Right_Parenthesis);
 
          when BATN.K_Identifier           =>
             return Evaluate_BA_Identifier (Node);
@@ -1362,6 +1208,9 @@ package body Ocarina.Backends.C_Common.BA is
             Display_Error ("others cases are not yet treated",
                            Fatal => True);
       end case;
+
+      raise Program_Error;
+      return No_Node;
 
    end Evaluate_BA_Value;
 
@@ -1399,6 +1248,7 @@ package body Ocarina.Backends.C_Common.BA is
             --  then it must be mapped to a variable
             --  address to enable its modification
             --  by the called subprogram
+            --
             Variable_Address := True;
          else
             --  The given parameter is an OUT/INOUT parameter
@@ -1412,17 +1262,18 @@ package body Ocarina.Backends.C_Common.BA is
          --  OUT parameter (ex. p1) of the subprogram implementing
          --  the BA, then in the generated code C, in order
          --  to have the value of p1, it must be mapped to *p1
+         --
          if Subprogram_Root /= No_Node then
             declare
                use type AIN.Node_Kind;
-               Fs : Ocarina.ME_AADL.AADL_Instances.Nutils.Node_Array
+               Fs : constant Ocarina.ME_AADL.AADL_Instances.Nutils.Node_Array
                  := Features_Of (Subprogram_Root);
             begin
                for F of Fs loop
                   if To_Upper (AIN.Display_Name (AIN.Identifier (F)))
                     = To_Upper
                     (BATN.Display_Name (Node))
-                      -- and then AIN.Is_Out (F)
+                    --  and then AIN.Is_Out (F)
                     and then
                       ((AIN.Kind (F) = AIN.K_Parameter_Instance
                         and then AIN.Is_Out (F))
@@ -1430,7 +1281,8 @@ package body Ocarina.Backends.C_Common.BA is
                          (AIN.Kind (F) = AIN.K_Subcomponent_Access_Instance
                           and then
                           Get_Required_Data_Access
-                            (AIN.Corresponding_Instance (F)) /= Access_Read_Only))
+                            (AIN.Corresponding_Instance (F))
+                          /= Access_Read_Only))
                   then
                      Pointer := True;
                   end if;
@@ -1460,9 +1312,10 @@ package body Ocarina.Backends.C_Common.BA is
       pragma Assert (BATN.Kind (Node) = BATN.K_Property_Constant);
 
    begin
+      --  We must treat later the case of Property_Set (Node)
+      --
       --        if Present (BATN.Property_Set (Node)) then
-      --           Print_Identifier (Property_Set (Node));
-      --           Print_Token (T_Colon_Colon);
+      --
       --        end if;
 
       return Evaluate_BA_Identifier
@@ -1493,6 +1346,5 @@ package body Ocarina.Backends.C_Common.BA is
       end if;
 
    end Evaluate_BA_Boolean_Literal;
-
 
 end Ocarina.Backends.C_Common.BA;
