@@ -1,5 +1,3 @@
-with Ada.Text_IO; use Ada.Text_IO;
-
 ------------------------------------------------------------------------------
 --                                                                          --
 --                           OCARINA COMPONENTS                             --
@@ -1124,11 +1122,9 @@ package body Ocarina.Backends.Build_Utils is
          F            : Node_Id;
       begin
          if Present (Get_Container_Process (E)) then
-            Put_Line ("@1");
             Parent_Process :=
               Corresponding_Instance (Get_Container_Process (E));
          else
-            Put_Line ("@2" & Current_Process'Img);
             Parent_Process := Current_Process; --  XXX
          end if;
 
@@ -1447,7 +1443,8 @@ package body Ocarina.Backends.Build_Utils is
                Write_Eol;
                Write_Line
                  ("SUBDIRS = " &
-                    "$(filter-out Makefile polyorb-hi-c, $(wildcard *))");
+                    "$(filter-out Makefile polyorb-hi-c polyorb-hi-ada"
+                    & ", $(wildcard *))");
                Write_Eol;
                Write_Line ("all:");
                Write_Line
