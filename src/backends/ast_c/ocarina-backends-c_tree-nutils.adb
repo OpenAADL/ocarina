@@ -348,10 +348,6 @@ package body Ocarina.Backends.C_Tree.Nutils is
       New_Token (Tok_Arrow, "->");
       New_Token (Tok_Vertical_Bar, "|");
 
---        for O in Op_And .. Op_Or_Else loop
---           New_Operator (O);
---        end loop;
-
       New_Operator (Op_Not, "!");
       New_Operator (Op_And, "&&");
       New_Operator (Op_Or, "||");
@@ -1031,11 +1027,6 @@ package body Ocarina.Backends.C_Tree.Nutils is
 
    procedure New_Operator (O : Operator_Type; I : String := "") is
    begin
---        if O in Keyword_Operator then
---           Set_Str_To_Name_Buffer (Image (O));
---        else
---           Set_Str_To_Name_Buffer (I);
---        end if;
 
       Set_Str_To_Name_Buffer (I);
       Operator_Image (Operator_Type'Pos (O)) := Name_Find;

@@ -733,12 +733,6 @@ package body Ocarina.Backends.C_Tree.Generator is
          Generate (R_Expr);
       end if;
 
---        Generate (L_Expr);
---        Write_Space;
---        Write_Name (Operator_Image (Standard.Integer (Op)));
---        Write_Space;
---        Generate (R_Expr);
-
    end Generate_Expression;
 
    ----------------------------

@@ -147,13 +147,6 @@ package Ocarina.Backends.C_Tree.Nutils is
    (Operator_Type'Pos (Op_Not) ..
         Operator_Type'Pos (Op_Vertical_Bar)) of Name_Id;
 
---     Operator_Image : array
---     (Operator_Type'Pos (Op_And) ..
---          Operator_Type'Pos (Op_Vertical_Bar)) of Name_Id;
-
---     subtype Keyword_Operator is
---       Operator_Type range Operator_Type'First .. Op_Or_Else;
-
    type Parameter_Id is
      (P_From,
       P_To,
