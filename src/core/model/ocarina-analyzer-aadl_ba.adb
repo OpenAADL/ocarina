@@ -1,5 +1,3 @@
-pragma Style_Checks (Off);
-with Ada.Text_IO; use Ada.Text_IO;
 ------------------------------------------------------------------------------
 --                                                                          --
 --                           OCARINA COMPONENTS                             --
@@ -159,7 +157,6 @@ package body Ocarina.Analyzer.AADL_BA is
       BA_Root           : Node_Id;
       Parent_Component  : Node_Id)
       return Boolean;
-
 
    function Analyze_Communication_Action
      (Node              : Node_Id;
@@ -325,7 +322,6 @@ package body Ocarina.Analyzer.AADL_BA is
       return Node_Id;
 
    function Length (L : Node_List) return Natural;
-
 
    Language : constant String := "behavior_specification";
 
@@ -523,8 +519,8 @@ package body Ocarina.Analyzer.AADL_BA is
          if Present (BATN.Classifier_Ref (Behavior_Variable)) then
             Success := Link_Variable (Root, Behavior_Variable);
             if not Success then
-               Error_Loc (1) := BATN.Loc (BATN.First_Node
-                                          (BATN.Identifiers (Behavior_Variable)));
+               Error_Loc (1) := BATN.Loc
+                 (BATN.First_Node (BATN.Identifiers (Behavior_Variable)));
                DE ("behavior variable(s) must be explicitly typed "
                    & "with a valid data component classifier.");
             end if;
@@ -813,8 +809,8 @@ package body Ocarina.Analyzer.AADL_BA is
          then
             Cond_Node := Condition (Behavior_Condition (Transition));
             if Kind (Cond_Node) = K_Dispatch_Condition_Thread
-              and then Component_Category'Val (Category
-                                               (Parent_Component)) = CC_Subprogram
+              and then Component_Category'Val
+                (Category (Parent_Component)) = CC_Subprogram
             then
                Error_Loc (1) := BATN.Loc (Node_Id (Source_Transition_List));
                DE ("Subprogram components must not contain" &
@@ -883,7 +879,7 @@ package body Ocarina.Analyzer.AADL_BA is
             BA_Root, Parent_Component);
       end if;
 
-      -- Analyze the Behavior_Action_Block of the transition
+      --  Analyze the Behavior_Action_Block of the transition
       --
       if Success  and then
         Present (BATN.Behavior_Action_Block (Transition)) and then
@@ -1108,18 +1104,18 @@ package body Ocarina.Analyzer.AADL_BA is
 
       if Present (Elsif_Statement (Node)) then
          Success := Success and then Analyze_Behav_Acts
-        (Node             => Elsif_Statement (Node),
-         Root             => Root,
-         BA_Root          => BA_Root,
-         Parent_Component => Parent_Component);
+           (Node             => Elsif_Statement (Node),
+            Root             => Root,
+            BA_Root          => BA_Root,
+            Parent_Component => Parent_Component);
       end if;
 
       if Present (Else_Statement (Node)) then
          Success := Success and then Analyze_Behav_Acts
-        (Node             => Else_Statement (Node),
-         Root             => Root,
-         BA_Root          => BA_Root,
-         Parent_Component => Parent_Component);
+           (Node             => Else_Statement (Node),
+            Root             => Root,
+            BA_Root          => BA_Root,
+            Parent_Component => Parent_Component);
       end if;
 
       return Success;
@@ -1147,19 +1143,21 @@ package body Ocarina.Analyzer.AADL_BA is
    begin
 
       if Present (BATN.Classifier_Ref (Node)) then
-            Success := Link_Variable (Root, Node);
-            if not Success then
-               Error_Loc (1) := BATN.Loc (Element_Idt (Node));
-            DE ("counter of for structure in behavior specification "
-                & "must be explicitly typed "
-                & "with a valid data component classifier.");
-            end if;
+         Success := Link_Variable (Root, Node);
+         if not Success then
+
+            Error_Loc (1) := BATN.Loc (Element_Idt (Node));
+
+            DE ("counter of for structure in behavior specification"
+                & " must be explicitly typed"
+                & " with a valid data component classifier.");
          end if;
+      end if;
       return Success;
 
-      -- if kind (In_Element_Values (Node)) = K_Integer_Range
-      -- nous devons vérifier que la borne_inf < borne_sup
-      -- Lower_Int_Val (In_Element_Values (Node)) <
+      --  if kind (In_Element_Values (Node)) = K_Integer_Range
+      --  nous devons vérifier que la borne_inf < borne_sup
+      --  Lower_Int_Val (In_Element_Values (Node)) <
       --              Upper_Int_Val (In_Element_Values (Node))
    end Analyze_For_Cond_Struct;
 
@@ -1382,11 +1380,10 @@ package body Ocarina.Analyzer.AADL_BA is
                      or else Kind (Parent_Component) =
                        ATN.K_Component_Implementation);
 
-
-      Success                 : Boolean := False;
-      N1,N2                   : Node_Id;
-      L1                      : Node_List;
-      Spg_params              : List_Id;
+      Success      : Boolean := False;
+      N1, N2       : Node_Id;
+      L1           : Node_List;
+      Spg_params   : List_Id;
    begin
 
       --  1) Check the called Subprogram Name : i.e.
@@ -1419,8 +1416,8 @@ package body Ocarina.Analyzer.AADL_BA is
       end loop;
 
       if not Success then
-         -- This means the subprogram_name called in the BA
-         -- does not refer to any subprogram in the AADL model
+         --  This means the subprogram_name called in the BA
+         --  does not refer to any subprogram in the AADL model
          Error_Loc (1) := BATN.Loc (BATN.First_Node
                                     (BATN.Idt (BATN.Identifier (Node))));
          Error_Name (1) := BATN.Display_Name
@@ -1444,7 +1441,8 @@ package body Ocarina.Analyzer.AADL_BA is
                    (BATN.Idt (BATN.Identifier (Node)))));
 
          if ANU.Length (Spg_params) /=
-           Length (Subprogram_Parameter_List (Node)) then
+           Length (Subprogram_Parameter_List (Node))
+         then
 
             Success := False;
             Error_Loc (1) := BATN.Loc (BATN.First_Node
@@ -1468,14 +1466,14 @@ package body Ocarina.Analyzer.AADL_BA is
          --  3) Check the given parameters :
          --
          if Success and then
-           not Is_Empty (Subprogram_Parameter_List (Node)) then
+           not Is_Empty (Subprogram_Parameter_List (Node))
+         then
 
             N1 := BATN.First_Node (Subprogram_Parameter_List (Node));
             N2 := ATN.First_Node (Spg_params);
 
-            While Success and then Present (N2)
+            while Success and then Present (N2)
               and then Present (N1) loop
-
 
                if ATN.Is_Out (N2) then
 
@@ -1497,7 +1495,8 @@ package body Ocarina.Analyzer.AADL_BA is
                      Parent_Component  => Parent_Component,
                      Is_Parameter_Expr => True,
                      Is_Out_Parameter  => True,
-                     Parameter_Type    => ATN.Full_Identifier (ATN.Entity_Ref (N2)));
+                     Parameter_Type    => ATN.Full_Identifier
+                       (ATN.Entity_Ref (N2)));
 
                   BATN.Set_Is_Out (N1, True);
 
@@ -1581,10 +1580,10 @@ package body Ocarina.Analyzer.AADL_BA is
                  (N, Root, BA_Root,
                   Parent_Component, Is_Parameter_Expr, Is_Out_Parameter);
             end if;
-            -- if BATN.Kind (N) = BATN.K_Operator then
-            -- -- K_Operator doit etre relational_operator
-            -- -- i.e. = | != | < | <= | > |>=
-            -- end if
+            --  if BATN.Kind (N) = BATN.K_Operator then
+            --  -- K_Operator doit etre relational_operator
+            --  -- i.e. = | != | < | <= | > |>=
+            --  end if
 
             N := BATN.Next_Node (N);
          end loop;
@@ -1614,7 +1613,6 @@ package body Ocarina.Analyzer.AADL_BA is
                        ATN.K_Component_Implementation);
       pragma Assert (ATN.Kind (Root) = ATN.K_AADL_Specification);
       pragma Assert (BATN.Kind (Node) = BATN.K_Relation);
-      --pragma Assert (ATN.Kind (Parameter_Type) = ATN.K_Identifier);
 
       Success : Boolean := True;
       N       : Node_Id;
@@ -1670,7 +1668,6 @@ package body Ocarina.Analyzer.AADL_BA is
                        ATN.K_Component_Implementation);
       pragma Assert (ATN.Kind (Root) = ATN.K_AADL_Specification);
       pragma Assert (BATN.Kind (Node) = BATN.K_Simple_Expression);
-      --pragma Assert (ATN.Kind (Parameter_Type) = ATN.K_Identifier);
 
       Success : Boolean := True;
       N       : Node_Id;
@@ -1726,7 +1723,6 @@ package body Ocarina.Analyzer.AADL_BA is
                        ATN.K_Component_Implementation);
       pragma Assert (ATN.Kind (Root) = ATN.K_AADL_Specification);
       pragma Assert (BATN.Kind (Node) = BATN.K_Term);
-      --pragma Assert (ATN.Kind (Parameter_Type) = ATN.K_Identifier);
 
       Success : Boolean := True;
       N       : Node_Id;
@@ -1783,7 +1779,6 @@ package body Ocarina.Analyzer.AADL_BA is
                        ATN.K_Component_Implementation);
       pragma Assert (ATN.Kind (Root) = ATN.K_AADL_Specification);
       pragma Assert (BATN.Kind (Node) = BATN.K_Factor);
-      --pragma Assert (ATN.Kind (Parameter_Type) = ATN.K_Identifier);
 
       Success : Boolean := True;
       Lower_val, Upper_val     : Node_Id;
@@ -1793,7 +1788,8 @@ package body Ocarina.Analyzer.AADL_BA is
       Upper_val := BATN.Upper_Value (Node);
 
       if Is_Parameter_Expr and then Is_Out_Parameter
-        and then Present (Upper_val) then
+        and then Present (Upper_val)
+      then
          return False;
       end if;
 
@@ -1856,8 +1852,9 @@ package body Ocarina.Analyzer.AADL_BA is
             BA_Var := Find_BA_Variable (BATN.Identifier (Node), BA_Root);
             Out_param := Find_Out_Parameter_Of_Parent_Component
               (BATN.Identifier (Node), Root, Parent_Component);
-            Requires_data_access := Find_Requires_Data_Access_Of_Parent_Component
-              (BATN.Identifier (Node), Root, Parent_Component);
+            Requires_data_access :=
+              Find_Requires_Data_Access_Of_Parent_Component
+                (BATN.Identifier (Node), Root, Parent_Component);
 
             Success := Present (BA_Var) or else Present (Out_param)
               or else Present (Requires_data_access);
@@ -1866,9 +1863,10 @@ package body Ocarina.Analyzer.AADL_BA is
                Error_Loc (1) := BATN.Loc (BATN.Identifier (Node));
                Error_Name (1) := BATN.Display_Name
                  (BATN.Identifier (Node));
-               DE (" The parameter (" & Get_Name_String (Remove_Prefix_From_Name
-                   ("%ba%", BATN.Display_Name
-                      (BATN.Identifier (Node)))) & ")"
+               DE (" The parameter ("
+                   & Get_Name_String (Remove_Prefix_From_Name
+                     ("%ba%", BATN.Display_Name
+                        (BATN.Identifier (Node)))) & ")"
                    & " does not point to "
                    & "anything or point to something unreachable.");
 
@@ -1906,27 +1904,24 @@ package body Ocarina.Analyzer.AADL_BA is
                     (Utils.To_Lower (ATN.Name (Parameter_Type)));
                end if;
 
-
                if not Success then
                   Error_Loc (1) := BATN.Loc (BATN.Identifier (Node));
                   Error_Name (1) := BATN.Display_Name
                     (BATN.Identifier (Node));
-                  DE (" The type of the parameter label (" & Get_Name_String (Remove_Prefix_From_Name
-                      ("%ba%", BATN.Display_Name
-                         (BATN.Identifier (Node)))) & ")"
-                      & " is not consistent with the corresponding parameter type"
-                      & " in the called subprogram declaration.");
+                  DE (" The type of the parameter label ("
+                      & Get_Name_String (Remove_Prefix_From_Name
+                        ("%ba%", BATN.Display_Name
+                           (BATN.Identifier (Node)))) & ")"
+                      & " is not consistent with the corresponding parameter"
+                      & " type in the called subprogram declaration.");
 
                end if;
 
-
             end if;
-
 
          end if;
 
       else
-         --Put_Line (" not Is_Parameter_Expr or else not Is_Out_Parameter");
 
          if BATN.Kind (Node) = BATN.K_Property_Constant then
             --  Check if the current Node refers to a valid
@@ -1935,13 +1930,18 @@ package body Ocarina.Analyzer.AADL_BA is
             --  implementing the current BA
             --
 
-            Success := Present (Find_BA_Variable (BATN.Identifier (Node), BA_Root))
+            Success := Present (Find_BA_Variable
+                                (BATN.Identifier (Node),
+                                   BA_Root))
               or else Present (Find_In_Parameter_Of_Parent_Component
-                               (BATN.Identifier (Node), Root, Parent_Component))
+                               (BATN.Identifier (Node),
+                                  Root, Parent_Component))
               or else Present (Find_Out_Parameter_Of_Parent_Component
-                               (BATN.Identifier (Node), Root, Parent_Component))
+                               (BATN.Identifier (Node),
+                                  Root, Parent_Component))
               or else Present (Find_Requires_Data_Access_Of_Parent_Component
-                               (BATN.Identifier (Node), Root, Parent_Component));
+                               (BATN.Identifier (Node),
+                                  Root, Parent_Component));
 
             if not Success then
                Error_Loc (1) := BATN.Loc (BATN.Identifier (Node));
@@ -2037,7 +2037,8 @@ package body Ocarina.Analyzer.AADL_BA is
    is
       use ATN;
       pragma Assert (ATN.Kind (Root) = ATN.K_AADL_Specification);
-      pragma Assert (ATN.Kind (Component_Impl) = ATN.K_Component_Implementation);
+      pragma Assert (ATN.Kind (Component_Impl) =
+                       ATN.K_Component_Implementation);
 
       L1                       : Node_List;
       N1                       : Node_Id;
@@ -2097,7 +2098,7 @@ package body Ocarina.Analyzer.AADL_BA is
       if not ANU.Is_Empty (ATN.Features (Type_Of_Parent_Component)) then
 
          Parameter := ATN.First_Node (ATN.Features (Type_Of_Parent_Component));
-         Put_Line (Parameter'Img);
+
          while Present (Parameter) loop
             if ATN.Kind (Parameter) = K_Parameter
               and then ATN.Is_In (Parameter)
@@ -2153,7 +2154,7 @@ package body Ocarina.Analyzer.AADL_BA is
       if not ANU.Is_Empty (ATN.Features (Type_Of_Parent_Component)) then
 
          Parameter := ATN.First_Node (ATN.Features (Type_Of_Parent_Component));
-         Put_Line (Parameter'Img);
+
          while Present (Parameter) loop
 
             if ((ATN.Kind (Parameter) = K_Parameter
@@ -2196,10 +2197,10 @@ package body Ocarina.Analyzer.AADL_BA is
                        ATN.K_Component_Implementation);
       pragma Assert (BATN.Kind (Node) = BATN.K_Identifier);
 
-      F                : Node_Id;
+      F                        : Node_Id;
       Type_Of_Parent_Component : Node_Id := No_Node;
       result                   : Node_Id := No_Node;
-      Access_property_association : Node_Id;
+      --  Access_property_association : Node_Id;
    begin
       if ATN.Kind (Parent_Component) = ATN.K_Component_Type then
          Type_Of_Parent_Component := Parent_Component;
@@ -2208,32 +2209,28 @@ package body Ocarina.Analyzer.AADL_BA is
            (Root, Parent_Component);
       end if;
 
-      --        if not AINU.Is_Empty (Features (S)) then
-      --           F := AIN.First_Node (Features (S));
-      --
-      --           while Present (F) loop
-      --              if Kind (F) = K_Subcomponent_Access_Instance then
-      --                 case Get_Required_Data_Access (Corresponding_Instance (F)) is
+      --  Here, we make the analyze on the declarative model
+      --  But it must be made on the instance model to be able
+      --  to use Get_Required_Data_Access (Corresponding_Instance (F))
+      --  and check if it is Access_Read_Only, Access_Write_Only
+      --  Access_Read_Write or Access_None.
 
       if not ANU.Is_Empty (ATN.Features (Type_Of_Parent_Component)) then
 
          F := ATN.First_Node (ATN.Features (Type_Of_Parent_Component));
-         --Put_Line (F'Img);
+
          while Present (F) loop
 
             if (ATN.Kind (F) = ATN.K_Subcomponent_Access) then
-               Put_Line (Component_Category'Val
-                         (Subcomponent_Category (F))'Img);
-               Put_Line ("Is provided = " & ATN.Is_Provided (F)'Img);
 
-               if not ANU.Is_Empty (ATN.Properties (F)) then
-                  Access_property_association := ATN.First_Node
-                    (ATN.Properties (F));
-                  Put_Line (ATN.Kind (Property_Association_Value
-                            (Access_property_association))'Img);
-                  Put_Line ("Is_Access = "
-                            & ATN.Is_Access (Access_property_association)'Img);
-               end if;
+               --  if not ANU.Is_Empty (ATN.Properties (F)) then
+               --     Access_property_association := ATN.First_Node
+               --       (ATN.Properties (F));
+               --     Put_Line (ATN.Kind (Property_Association_Value
+               --               (Access_property_association))'Img);
+               --     Put_Line ("Is_Access = "
+               --           & ATN.Is_Access (Access_property_association)'Img);
+               --  end if;
 
                if Component_Category'Val (Subcomponent_Category (F)) = CC_Data
                  and then not ATN.Is_Provided (F)
@@ -2258,7 +2255,6 @@ package body Ocarina.Analyzer.AADL_BA is
 
       return result;
    end Find_Requires_Data_Access_Of_Parent_Component;
-
 
    --------------------------
    -- Analyze_Timed_Action --
@@ -2312,11 +2308,15 @@ package body Ocarina.Analyzer.AADL_BA is
       if not Is_Empty (Dispatch_Conjunction
                        (Dispatch_Trigger_Condition (Condition)))
       then
-         Dispatch_Conjunction_Node := BATN.First_Node (Dispatch_Conjunction
-                                                       (Dispatch_Trigger_Condition (Condition)));
+         Dispatch_Conjunction_Node :=
+           BATN.First_Node
+             (Dispatch_Conjunction
+                (Dispatch_Trigger_Condition (Condition)));
          while Present (Dispatch_Conjunction_Node) loop
-            Dispatch_Trigger_Event := BATN.First_Node (Dispatch_Triggers
-                                                       (Dispatch_Conjunction_Node));
+            Dispatch_Trigger_Event :=
+              BATN.First_Node
+                (Dispatch_Triggers
+                   (Dispatch_Conjunction_Node));
             while Present (Dispatch_Trigger_Event) loop
                Pointed_Node := Link_Dispatch_Trigger_Event
                  (Dispatch_Trigger_Event, Parent_Component);
@@ -2894,7 +2894,6 @@ package body Ocarina.Analyzer.AADL_BA is
                                           (BATN.Classifier_Ref (Node)))))
                     = Get_Name_String (ATN.Name (ATN.Identifier (N1)))
                   then
-                     Put_Line ("@1");
                      Success := True;
                   end if;
                end if;
@@ -2926,7 +2925,6 @@ package body Ocarina.Analyzer.AADL_BA is
                   then
                      Set_Corresponding_Declaration
                        (BATN.Classifier_Ref (Node), N1);
-                     Put_Line ("@2 " & ATN.Kind (N1)'Img);
                      Success := True;
                   end if;
                end if;
@@ -2936,8 +2934,8 @@ package body Ocarina.Analyzer.AADL_BA is
             if not Success then
                Error_Loc (1) := BATN.Loc (BATN.Component_Type
                                           (BATN.Classifier_Ref (Node)));
-               Error_Name (1) := BATN.Display_Name (BATN.Component_Type
-                                                    (BATN.Classifier_Ref (Node)));
+               Error_Name (1) := BATN.Display_Name
+                 (BATN.Component_Type (BATN.Classifier_Ref (Node)));
                DE ("(" & Get_Name_String (Remove_Prefix_From_Name
                    ("%ba%", BATN.Name (BATN.Component_Type
                       (BATN.Classifier_Ref (Node))))) & ")"
