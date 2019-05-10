@@ -479,8 +479,8 @@ module Ocarina::ME_AADL_BA::BA_Tree::Nodes {
 
   interface Parameter_Label : Behavior_Entity {
     Node_Id  Parameter;
-    boolean  Is_In; //added by Rahma
-    boolean  Is_Out; // added by Rahma
+    boolean  Is_In;
+    boolean  Is_Out;
   };
 
 
