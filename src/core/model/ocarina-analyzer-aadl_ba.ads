@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---                     Copyright (C) 2016 ESA & ISAE.                       --
+--                   Copyright (C) 2016-2019 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -41,16 +41,21 @@ package Ocarina.Analyzer.AADL_BA is
    function Is_Complete
      (BA_Root : Node_Id;
       State   : Node_Id)
-     return boolean;
+     return Boolean;
 
    function Is_Initial
      (BA_Root : Node_Id;
       State   : Node_Id)
-     return boolean;
+     return Boolean;
 
    function Is_Final
      (BA_Root : Node_Id;
       State   : Node_Id)
-     return boolean;
+      return Boolean;
+
+   function Find_BA_Variable
+     (Node             : Node_Id;
+      BA_Root          : Node_Id)
+      return Node_Id;
 
 end Ocarina.Analyzer.AADL_BA;

@@ -130,6 +130,7 @@ module Ocarina::ME_AADL_BA::BA_Tree::Nodes {
     Node_Id  Component_Impl;
 
     Node_Id  Full_Identifier;  // ex: package::comp_type.comp_impl
+    Node_Id  Corresponding_Declaration;  // AADL Declarative tree node
   };
 
   interface Behavior_Variable : Behavior_Entity {
@@ -478,6 +479,8 @@ module Ocarina::ME_AADL_BA::BA_Tree::Nodes {
 
   interface Parameter_Label : Behavior_Entity {
     Node_Id  Parameter;
+    boolean  Is_In;
+    boolean  Is_Out;
   };
 
 
