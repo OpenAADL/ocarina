@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2019 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -665,6 +665,10 @@ package body Ocarina.Backends.C_Tree.Generator is
          Write (Tok_Asterisk);
       end if;
 
+      if Is_Variable_Address (N) then
+         Write (Tok_Ampersand);
+      end if;
+
       Write_Name (Name (N));
    end Generate_Defining_Identifier;
 
@@ -680,11 +684,53 @@ package body Ocarina.Backends.C_Tree.Generator is
       --  Each expression having a right part and a left part is
       --  systematically put between two parentheses.
 
-      Generate (L_Expr);
-      Write_Space;
-      Write_Name (Operator_Image (Standard.Integer (Op)));
-      Write_Space;
-      Generate (R_Expr);
+      if Get_Name_String (Operator_Image (Standard.Integer (Op))) = "*"
+        or else
+          Get_Name_String (Operator_Image (Standard.Integer (Op))) = "/"
+        or else
+          Get_Name_String (Operator_Image (Standard.Integer (Op))) = "&&"
+        or else
+          Get_Name_String (Operator_Image (Standard.Integer (Op))) = "||"
+      then
+         if Kind (L_Expr) = K_Expression then
+            Write (Tok_Left_Paren);
+            Generate (L_Expr);
+            Write (Tok_Right_Paren);
+         else
+            Generate (L_Expr);
+         end if;
+
+         Write_Space;
+         Write_Name (Operator_Image (Standard.Integer (Op)));
+         Write_Space;
+
+         if Kind (R_Expr) = K_Expression then
+            Write (Tok_Left_Paren);
+            Generate (R_Expr);
+            Write (Tok_Right_Paren);
+         else
+            Generate (R_Expr);
+         end if;
+
+      elsif
+        Get_Name_String (Operator_Image (Standard.Integer (Op))) = "!"
+      then
+         Write_Name (Operator_Image (Standard.Integer (Op)));
+         if Kind (L_Expr) = K_Expression then
+            Write (Tok_Left_Paren);
+            Generate (L_Expr);
+            Write (Tok_Right_Paren);
+         else
+            Generate (L_Expr);
+         end if;
+
+      else
+         Generate (L_Expr);
+         Write_Space;
+         Write_Name (Operator_Image (Standard.Integer (Op)));
+         Write_Space;
+         Generate (R_Expr);
+      end if;
 
    end Generate_Expression;
 
