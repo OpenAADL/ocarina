@@ -1356,7 +1356,7 @@ package body Ocarina.Backends.Properties is
                --  and a null source name and a null source text is a
                --  wrong built subprogram.
 
-               return Subprogram_Opaque_C;
+               return Subprogram_Unknown;
             end if;
 
          when Language_CPP =>
@@ -1441,11 +1441,17 @@ package body Ocarina.Backends.Properties is
                      return Subprogram_Unknown;
                   end if;
                else
-                  --  A subprogram having no implementation language
-                  --  and a *null* call sequence list is an empty
-                  --  subprogram.
+                  if Has_Behavior_Specification (S) then
+                     --  A subprogram is defined using a behavior specification
 
-                  return Subprogram_Empty;
+                     return Subrogram_With_Behavior_Specification;
+                  else
+                     --  A subprogram having no implementation language
+                     --  and a *null* call sequence list and no behavior
+                     --  specification is an empty subprogram.
+
+                     return Subprogram_Empty;
+                  end if;
                end if;
             end if;
 
