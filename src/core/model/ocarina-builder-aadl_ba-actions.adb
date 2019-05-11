@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2010-2016 ESA & ISAE.                    --
+--                   Copyright (C) 2010-2019 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -166,7 +166,7 @@ package body Ocarina.Builder.AADL_BA.Actions is
       pragma Assert (Kind (If_Stat) = K_Conditional_Statement);
       pragma Assert (No (Elsif_Stat)
                        or else Kind (Elsif_Stat) = K_Conditional_Statement);
-      pragma Assert (No (Elsif_Stat)
+      pragma Assert (No (Else_Stat)
                        or else Kind (Else_Stat) = K_Conditional_Statement);
    begin
       Set_BE_Container (If_Cond_Struct, Container);
