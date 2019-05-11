@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---                     Copyright (C) 2018 ESA & ISAE.                       --
+--                   Copyright (C) 2018-2019 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -63,6 +63,7 @@ package Ocarina.Backends.Helper is
           Post => (Features_Of'Result = No_Nodes or else
                    (for all E of Features_Of'Result =>
                     Kind (E) in K_Feature_Instance |
+                                K_Parameter_Instance |
                                 K_Port_Spec_Instance |
                                 K_Subcomponent_Access_Instance));
 
