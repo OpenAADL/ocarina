@@ -49,6 +49,7 @@ with Ocarina.Backends.Ada_Tree.Nutils;
 with Ocarina.Backends.Ada_Values;
 with Ocarina.Instances.Queries;
 with Ocarina.Backends.Helper;
+with Utils; use Utils;
 
 package body Ocarina.Backends.Utils is
 
@@ -4155,5 +4156,29 @@ package body Ocarina.Backends.Utils is
          end loop;
       end if;
    end Visit_Subcomponents_Of_G;
+
+   --------------------------------
+   -- Has_Behavior_Specification --
+   --------------------------------
+
+   function Has_Behavior_Specification (E : Node_Id) return Boolean is
+      F : Node_Id;
+   begin
+      if not AAU.Is_Empty (Annexes (E)) then
+         F := First_Node (Annexes (E));
+
+         while Present (F) loop
+            if (To_Upper (AIN.Display_Name (AIN.Identifier (F))) =
+                  To_Upper (Get_String_Name ("behavior_specification")))
+            then
+               return True;
+            end if;
+
+            F := Next_Node (F);
+         end loop;
+      end if;
+
+      return False;
+   end Has_Behavior_Specification;
 
 end Ocarina.Backends.Utils;
