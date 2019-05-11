@@ -927,7 +927,8 @@ package body Ocarina.Analyzer.AADL_BA is
 
       --  In the case of a sequence of behavior actions
 
-      if not Is_Empty (BATN.Behavior_Action_Sequence (Behav_actions))
+      if Present (Behav_Actions) and then
+        not Is_Empty (BATN.Behavior_Action_Sequence (Behav_actions))
       then
 
          Behav_action := BATN.First_Node
@@ -943,7 +944,8 @@ package body Ocarina.Analyzer.AADL_BA is
 
       --  In the case of a set of behavior actions:
 
-      if not Is_Empty (BATN.Behavior_Action_Set (Behav_actions))
+      if Present (Behav_Actions) and then
+        not Is_Empty (BATN.Behavior_Action_Set (Behav_actions))
       then
          Behav_action := BATN.First_Node
            (BATN.Behavior_Action_Set (Behav_actions));
@@ -958,11 +960,10 @@ package body Ocarina.Analyzer.AADL_BA is
 
       --  In the case of a single action
 
-      if Present (BATN.Behavior_Action (Behav_actions))
-        and then
-          Is_Empty (BATN.Behavior_Action_Sequence (Behav_actions))
-          and then
-            Is_Empty (BATN.Behavior_Action_Set (Behav_actions))
+      if Present (Behav_Actions) and then
+        Present (BATN.Behavior_Action (Behav_actions)) and then
+        Is_Empty (BATN.Behavior_Action_Sequence (Behav_actions)) and then
+        Is_Empty (BATN.Behavior_Action_Set (Behav_actions))
       then
          Success := Success and then Analyze_Behavior_Action
            (BATN.Behavior_Action (Behav_actions),
