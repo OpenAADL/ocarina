@@ -455,7 +455,7 @@ module Ocarina::ME_AADL_BA::BA_Tree::Nodes {
     Node_Id  Identifier;
     List_Id  Subprogram_Parameter_List;
     Node_Id  Target;
-
+    boolean  Is_Subprogram_Call;
     octet    Comm_Kind; // ! , ? , >> , !< , !>
   };
 

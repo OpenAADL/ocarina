@@ -162,7 +162,7 @@ package body Ocarina.Analyzer.AADL_BA is
       Parent_Component  : Node_Id)
       return Boolean;
 
-   function Analyze_Spg_Call
+   function Analyze_Spg_Call_Or_Port_Sending
      (Node              : Node_Id;
       Root              : Node_Id;
       BA_Root           : Node_Id;
@@ -170,6 +170,13 @@ package body Ocarina.Analyzer.AADL_BA is
       return Boolean;
 
    function Link_Spg
+     (Node              : Node_Id;
+      Root              : Node_Id;
+      BA_Root           : Node_Id;
+      Parent_Component  : Node_Id)
+      return Boolean;
+
+   function Link_Output_Or_Internal_Port
      (Node              : Node_Id;
       Root              : Node_Id;
       BA_Root           : Node_Id;
@@ -1292,8 +1299,9 @@ package body Ocarina.Analyzer.AADL_BA is
 
       when CK_Exclamation      =>
          --  This means we have a call to a subprogram
-         --
-         Success := Analyze_Spg_Call (Node, Root, BA_Root, Parent_Component);
+         --  or a port sending
+         Success := Analyze_Spg_Call_Or_Port_Sending
+           (Node, Root, BA_Root, Parent_Component);
 
          --  when CK_Interrogative    => Success := ;
          --  when CK_Greater_Greater  => Success := ;
@@ -1307,10 +1315,10 @@ package body Ocarina.Analyzer.AADL_BA is
 
    end Analyze_Communication_Action;
 
-   ----------------------
-   -- Analyze_Spg_Call --
-   ----------------------
-   function Analyze_Spg_Call
+   --------------------------------------
+   -- Analyze_Spg_Call_Or_Port_Sending --
+   --------------------------------------
+   function Analyze_Spg_Call_Or_Port_Sending
      (Node              : Node_Id;
       Root              : Node_Id;
       BA_Root           : Node_Id;
@@ -1330,12 +1338,55 @@ package body Ocarina.Analyzer.AADL_BA is
 
       if Kind (BATN.Identifier (Node)) = BATN.K_Name then
 
-         Success := Link_Spg (Node, Root, BA_Root, Parent_Component);
+         Success := Link_Spg (Node, Root, BA_Root, Parent_Component)
+           or else Link_Output_Or_Internal_Port
+             (Node, Root, BA_Root, Parent_Component);
+
+         if not Success then
+
+            --  This means that the identifier of the communication action
+            --  does not refer to a subprogram or or a port name
+
+            Error_Loc (1) := BATN.Loc (BATN.First_Node
+                                       (BATN.Idt (BATN.Identifier (Node))));
+            Error_Name (1) := BATN.Display_Name
+              (BATN.First_Node
+                 (BATN.Idt (BATN.Identifier (Node))));
+            DE ("(" & Get_Name_String (Remove_Prefix_From_Name
+                ("%ba%", BATN.Display_Name
+                   (BATN.First_Node
+                      (BATN.Idt (BATN.Identifier (Node)))))) & ")"
+                & " does not point to "
+                & " a valid subprogram or a port name.");
+         end if;
 
       end if;
       return Success;
 
-   end Analyze_Spg_Call;
+   end Analyze_Spg_Call_Or_Port_Sending;
+
+   ----------------------------------
+   -- Link_Output_Or_Internal_Port --
+   ----------------------------------
+
+   function Link_Output_Or_Internal_Port
+     (Node              : Node_Id;
+      Root              : Node_Id;
+      BA_Root           : Node_Id;
+      Parent_Component  : Node_Id)
+      return Boolean
+   is
+      use ATN;
+      pragma Assert (ATN.Kind (Root) = ATN.K_AADL_Specification);
+      pragma Assert (BATN.Kind (BA_Root) = BATN.K_Behavior_Annex);
+      pragma Assert (ATN.Kind (Parent_Component) = ATN.K_Component_Type
+                     or else Kind (Parent_Component) =
+                       ATN.K_Component_Implementation);
+      pragma Assert (Kind (BATN.Identifier (Node)) = BATN.K_Name);
+
+   begin
+      return True;
+   end Link_Output_Or_Internal_Port;
 
    --------------
    -- Link_Spg --
@@ -1390,23 +1441,11 @@ package body Ocarina.Analyzer.AADL_BA is
          N1 := ATN.Next_Entity (N1);
       end loop;
 
-      if not Success then
-         --  This means the subprogram_name called in the BA
-         --  does not refer to any subprogram in the AADL model
-         Error_Loc (1) := BATN.Loc (BATN.First_Node
-                                    (BATN.Idt (BATN.Identifier (Node))));
-         Error_Name (1) := BATN.Display_Name
-           (BATN.First_Node
-              (BATN.Idt (BATN.Identifier (Node))));
-         DE ("(" & Get_Name_String (Remove_Prefix_From_Name
-             ("%ba%", BATN.Display_Name
-                (BATN.First_Node
-                   (BATN.Idt (BATN.Identifier (Node)))))) & ")"
-             & " does not point to "
-             & "any subprogram in the AADL model.");
-      else
-         --  The subprogram_name is valid, now we must verify
-         --  the parameter list
+      if Success then
+         --  The identifier of the communication action
+         --  is a valid subprogram_name
+
+         --  Now we must verify the parameter list
          --  2) we check the consistency of the number
          --  of parameters
          --
@@ -1506,6 +1545,8 @@ package body Ocarina.Analyzer.AADL_BA is
          end if;
 
       end if;
+
+      BATN.Set_Is_Subprogram_Call (Node, Success);
 
       return Success;
    end Link_Spg;

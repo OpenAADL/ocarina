@@ -580,83 +580,86 @@ package body Ocarina.Backends.C_Common.BA is
                    (BATN.Idt (BATN.Identifier (Node)))),
             Pointer => False);
 
-      --  else
-      --  i.e.
-      --     Kind (BATN.Identifier (Node))
-      --       = BATN.K_Data_Component_Reference
-      --  We must treat this case in the future
+         --  else
+         --  i.e.
+         --     Kind (BATN.Identifier (Node))
+         --       = BATN.K_Data_Component_Reference
+         --  We must treat this case in the future
       end if;
 
       case Communication_Kind'Val (Comm_Kind (Node)) is
 
          when CK_Exclamation      =>
 
-            --  This means we have a call to a subprogram
-            --
+            if Is_Subprogram_Call (Node) then
 
-            --  If not yet added to the declarations of the
-            --  current source file we must add the definition
-            --  of the called spg
+               --  This means we have a call to a subprogram
+               --
 
-            --  First, we search if the called Spg is already declared
-            --  in the current file, i.e. the called spg is not the
-            --  first time is called
-            --
-            decl := CTN.First_Node (CTN.Declarations (Current_File));
-            while Present (decl) loop
+               --  If not yet added to the declarations of the
+               --  current source file we must add the definition
+               --  of the called spg
 
-               if Kind (decl) = CTN.K_Function_Specification
-                 and then
-                   Get_Name_String
-                     (Utils.To_Lower
-                        (CTN.Name (CTN.Defining_Identifier (decl))))
-                 = Get_Name_String
-                 (Utils.To_Lower
-                    (CTN.Name (Var_identifier)))
+               --  First, we search if the called Spg is already declared
+               --  in the current file, i.e. the called spg is not the
+               --  first time is called
+               --
+               decl := CTN.First_Node (CTN.Declarations (Current_File));
+               while Present (decl) loop
 
-               then
-                  Called_Spg_Spec_Exist := True;
+                  if Kind (decl) = CTN.K_Function_Specification
+                    and then
+                      Get_Name_String
+                        (Utils.To_Lower
+                           (CTN.Name (CTN.Defining_Identifier (decl))))
+                    = Get_Name_String
+                    (Utils.To_Lower
+                       (CTN.Name (Var_identifier)))
+
+                  then
+                     Called_Spg_Spec_Exist := True;
+                  end if;
+                  exit when Called_Spg_Spec_Exist;
+                  decl := CTN.Next_Node (decl);
+               end loop;
+
+               if not Called_Spg_Spec_Exist then
+
+                  Called_Spg :=
+                    BATN.Corresponding_Entity
+                      (BATN.First_Node
+                         (BATN.Idt (BATN.Identifier (Node))));
+
+                  Called_Spg_Instance := AAN.Default_Instance (Called_Spg);
+
+                  Called_Spg_Spec := Map_C_Subprogram_Spec
+                    (Called_Spg_Instance);
+
+                  Set_Defining_Identifier
+                    (Called_Spg_Spec,
+                     Var_identifier);
+
+                  Append_Node_To_List
+                    (Called_Spg_Spec,
+                     CTN.Declarations (Current_File));
                end if;
-               exit when Called_Spg_Spec_Exist;
-               decl := CTN.Next_Node (decl);
-            end loop;
 
-            if not Called_Spg_Spec_Exist then
+               --  Then, call the function provided by the user in our
+               --  subprogram.
 
-               Called_Spg :=
-                 BATN.Corresponding_Entity
-                   (BATN.First_Node
-                      (BATN.Idt (BATN.Identifier (Node))));
+               if BANu.Is_Empty (Subprogram_Parameter_List (Node)) then
 
-               Called_Spg_Instance := AAN.Default_Instance (Called_Spg);
+                  N := Make_Call_Profile (Var_identifier);
 
-               Called_Spg_Spec := Map_C_Subprogram_Spec (Called_Spg_Instance);
+               else
 
-               Set_Defining_Identifier
-                 (Called_Spg_Spec,
-                  Var_identifier);
+                  Call_Parameters := New_List (CTN.K_Parameter_List);
+                  N := BATN.First_Node (Subprogram_Parameter_List (Node));
 
-               Append_Node_To_List
-                 (Called_Spg_Spec,
-                  CTN.Declarations (Current_File));
-            end if;
+                  while Present (N) loop
+                     Param_Node := Parameter (N);
 
-            --  Then, call the function provided by the user in our
-            --  subprogram.
-
-            if BANu.Is_Empty (Subprogram_Parameter_List (Node)) then
-
-               N := Make_Call_Profile (Var_identifier);
-
-            else
-
-               Call_Parameters := New_List (CTN.K_Parameter_List);
-               N := BATN.First_Node (Subprogram_Parameter_List (Node));
-
-               while Present (N) loop
-                  Param_Node := Parameter (N);
-
-                  case BATN.Kind (Param_Node) is
+                     case BATN.Kind (Param_Node) is
 
                      when K_Value_Expression =>
 
@@ -686,23 +689,27 @@ package body Ocarina.Backends.C_Common.BA is
                      when others =>
                         Display_Error ("Other param label Kinds are not"
                                        & " supported", Fatal => True);
-                  end case;
+                     end case;
 
-                  N := BATN.Next_Node (N);
+                     N := BATN.Next_Node (N);
 
-               end loop;
+                  end loop;
 
-               N := Make_Call_Profile
-                 (Defining_Identifier => Var_identifier,
-                  Parameters          => Call_Parameters);
+                  N := Make_Call_Profile
+                    (Defining_Identifier => Var_identifier,
+                     Parameters          => Call_Parameters);
+               end if;
+
+               CTU.Append_Node_To_List (N, Statements);
+
+               --  else
+               --  It is a port sending action
             end if;
 
-            CTU.Append_Node_To_List (N, Statements);
-
-         --  when CK_Interrogative    =>
-         --  when CK_Greater_Greater  =>
-         --  when CK_Exclamation_Greater =>
-         --  when CK_Exclamation_Lesser  =>
+            --  when CK_Interrogative    =>
+            --  when CK_Greater_Greater  =>
+            --  when CK_Exclamation_Greater =>
+            --  when CK_Exclamation_Lesser  =>
 
          when others              =>
             Display_Error ("Other Communication Action Kinds"
@@ -958,7 +965,7 @@ package body Ocarina.Backends.C_Common.BA is
          when OK_Or_Else          => return CTU.Op_Or;
          when OK_And_Then         => return CTU.Op_And;
 
-         --  relational_operator
+            --  relational_operator
          when OK_Equal            => return CTU.Op_Equal_Equal;
          when OK_Non_Equal        => return CTU.Op_Not_Equal;
          when OK_Less_Than        => return CTU.Op_Less;
@@ -966,19 +973,19 @@ package body Ocarina.Backends.C_Common.BA is
          when OK_Greater_Than     => return CTU.Op_Greater;
          when OK_Greater_Or_Equal => return CTU.Op_Greater_Equal;
 
-         --  unary_adding_opetor
-         --  binary_adding_operator
+            --  unary_adding_opetor
+            --  binary_adding_operator
          when OK_Plus             => return CTU.Op_Plus;
          when OK_Minus            => return CTU.Op_Minus;
 
-         --  multiplying operator
+            --  multiplying operator
          when OK_Multiply         => return CTU.Op_Asterisk;
          when OK_Divide           => return CTU.Op_Slash;
          when OK_Mod              => return CTU.Op_Modulo;
          when OK_Rem              => Display_Error
               ("Not supported Operator", Fatal => True);
 
-         --  highest precedence operator
+            --  highest precedence operator
          when OK_Exponent         => Display_Error
               ("Not supported Operator", Fatal => True);
          when OK_Abs              => Display_Error
@@ -1189,8 +1196,8 @@ package body Ocarina.Backends.C_Common.BA is
             return Evaluate_BA_Property_Constant
               (Node, Is_Out_Parameter, BA_Root, Subprogram_Root);
 
-         --  when BATN.K_Property_Reference =>
-         --    Evaluate_BA_Property_Reference (Node);
+            --  when BATN.K_Property_Reference =>
+            --    Evaluate_BA_Property_Reference (Node);
 
          when BATN.K_Value_Expression   =>
             return Evaluate_BA_Value_Expression (Node);
