@@ -1,2 +1,288 @@
-ba_example_th_3.aadl:56:30: (pre) does not point to any subprogram in the AADL model.
-Cannot analyze BEHAVIOR_SPECIFICATION specifications
+
+
+
+
+
+
+
+
+property set Data_Model is
+  Base_Type : list of classifier (
+data)
+    applies to (data);
+
+  Code_Set : aadlinteger
+    applies to (data);
+
+  Data_Digits : aadlinteger
+    applies to (data);
+
+  Data_Scale : aadlinteger
+    applies to (data);
+
+  Data_Representation : enumeration (Array, Boolean, Bounded_Array, Character, Enum, Float, Fixed, Integer, String, Struct, Union)
+    applies to (data);
+
+  Dimension : list of aadlinteger
+    applies to (data);
+
+  Indefinite_Dimension : constant aadlinteger => -1;
+  Infinite_Dimension : constant aadlinteger => -2;
+  Element_Names : list of aadlstring
+    applies to (data);
+
+  Enumerators : list of aadlstring
+    applies to (data);
+
+  IEEE754_Precision : enumeration (Simple, Double)
+    applies to (data);
+
+  Initial_Value : list of aadlstring
+    applies to (data, port, parameter);
+
+  Integer_Range : range of aadlinteger
+    applies to (data, port, parameter);
+
+  Measurement_Unit : aadlstring
+    applies to (data, port, parameter);
+
+  Number_Representation : enumeration (Signed, Unsigned)
+    applies to (data);
+
+  Real_Range : range of aadlreal
+    applies to (data, port, parameter);
+
+  Representation : list of aadlstring
+    applies to (data);
+
+end Data_Model;
+
+package Base_Types
+
+public
+  with data_model;
+
+  data Boolean
+  properties
+    Data_Model::Data_Representation => Boolean;
+
+  end Boolean;
+
+  data Integer
+  properties
+    Data_Model::Data_Representation => Integer;
+
+  end Integer;
+
+  data Integer_8 extends Integer
+  properties
+    Data_Model::Number_Representation => Signed;
+    Source_Data_Size => 1 Bytes;
+
+  end Integer_8;
+
+  data Integer_16 extends Integer
+  properties
+    Data_Model::Number_Representation => Signed;
+    Source_Data_Size => 2 Bytes;
+
+  end Integer_16;
+
+  data Integer_32 extends Integer
+  properties
+    Data_Model::Number_Representation => Signed;
+    Source_Data_Size => 4 Bytes;
+
+  end Integer_32;
+
+  data Integer_64 extends Integer
+  properties
+    Data_Model::Number_Representation => Signed;
+    Source_Data_Size => 8 Bytes;
+
+  end Integer_64;
+
+  data Unsigned_8 extends Integer
+  properties
+    Data_Model::Number_Representation => Unsigned;
+    Source_Data_Size => 1 Bytes;
+
+  end Unsigned_8;
+
+  data Unsigned_16 extends Integer
+  properties
+    Data_Model::Number_Representation => Unsigned;
+    Source_Data_Size => 2 Bytes;
+
+  end Unsigned_16;
+
+  data Unsigned_32 extends Integer
+  properties
+    Data_Model::Number_Representation => Unsigned;
+    Source_Data_Size => 4 Bytes;
+
+  end Unsigned_32;
+
+  data Unsigned_64 extends Integer
+  properties
+    Data_Model::Number_Representation => Unsigned;
+    Source_Data_Size => 8 Bytes;
+
+  end Unsigned_64;
+
+  data Natural extends Integer
+  properties
+    Data_Model::Integer_Range => 0 .. Max_Target_Integer;
+
+  end Natural;
+
+  data Float
+  properties
+    Data_Model::Data_Representation => Float;
+
+  end Float;
+
+  data Float_32 extends Float
+  properties
+    Data_Model::IEEE754_Precision => Simple;
+    Source_Data_Size => 4 Bytes;
+
+  end Float_32;
+
+  data Float_64 extends Float
+  properties
+    Data_Model::IEEE754_Precision => Double;
+    Source_Data_Size => 8 Bytes;
+
+  end Float_64;
+
+  data Character
+  properties
+    Data_Model::Data_Representation => Character;
+
+  end Character;
+
+  data String
+  properties
+    Data_Model::Data_Representation => String;
+
+  end String;
+
+end Base_Types;
+
+property set Behavior_Properties is
+  Subprogram_Call_Protocol : enumeration (HSER, LSER, ASER) => HSER
+    applies to (subprogram access);
+
+end Behavior_Properties;
+
+package BA_example3
+
+public
+  with Base_Types;
+  with Behavior_Properties;
+
+  process client_server
+  end client_server;
+
+  subprogram long_computation
+  features
+    result : requires data access result_type.i;
+
+  end long_computation;
+
+  subprogram send_result
+  features
+    result : requires data access result_type.i;
+    output : out parameter result_type;
+
+  end send_result;
+
+  data result_type
+  end result_type;
+
+  data implementation result_type.i
+  subcomponents
+    contents : data Base_Types::Integer;
+    status : data Base_Types::Boolean;
+
+  end result_type.i;
+
+  thread a_client
+  features
+    pre : requires subprogram access long_computation;
+    post : requires subprogram access send_result;
+
+  properties
+    Dispatch_Protocol => Periodic;
+    Period => 200 ms;
+
+    annex behavior_specification {**
+    variables
+      x : result_type;
+    states
+      s : initial complete final state;
+    transitions      
+      s -[on dispatch]-> s {
+         pre !(x);
+         computation ( 60 ms ) ;
+         post !(x, x)
+        };
+    **};
+  end a_client;
+
+  thread a_server
+  features
+    long : provides subprogram access long_computation
+      {Behavior_Properties::Subprogram_Call_Protocol => LSER;};
+    short : provides subprogram access send_result
+      {Behavior_Properties::Subprogram_Call_Protocol => HSER;};
+
+  properties
+    Dispatch_Protocol => timed;
+    Period => 100 ms;
+
+  end a_server;
+
+  thread implementation a_server.i
+  subcomponents
+    local_result : data result_type.i;
+
+  connections
+    cnx1 : data access local_result -> long.result;
+    cnx2 : data access local_result -> short.result;
+
+    annex behavior_specification {**
+    states
+      s0 : initial complete final state;
+      s1 : complete state;
+      s2 : complete state;
+    transitions      
+      s0 -[on dispatch long]-> s1;      
+      s1 -[on dispatch]-> s2 {
+         long_computation !(local_result);
+        local_result. status  := 1
+        } timeout  60 ms;      
+      s1 -[on dispatch timeout]-> s2 {
+        local_result. status  := 0
+        };      
+      s2 -[on dispatch short]-> s0 {
+         send_result !(local_result, local_result)
+        };
+    **};
+  end a_server.i;
+
+  process implementation client_server.i
+  subcomponents
+    c : thread a_client;
+    s : thread a_server.i;
+
+  connections
+    cnx1 : subprogram access s.long -> c.pre;
+    cnx2 : subprogram access s.short -> c.post;
+
+  end client_server.i;
+
+end BA_example3;
+
+
