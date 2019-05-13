@@ -261,6 +261,12 @@ package body Ocarina.Analyzer.AADL_BA is
       Parent_Component  : Node_Id)
       return Node_Id;
 
+   function Find_Subcomponent_Of_Parent_Component
+     (Node              : Node_Id;
+      Root              : Node_Id;
+      Parent_Component  : Node_Id)
+      return Boolean;
+
    function Get_Component_Type_From_Impl
      (Root            : Node_Id;
       Component_Impl  : Node_Id)
@@ -1234,6 +1240,7 @@ package body Ocarina.Analyzer.AADL_BA is
 
          --  Target must be a BA_Variable or a parameter/requires data access
          --  of the subprogram implementing the BA
+         --  or a subcomponent of the Parent_Component.
 
          if No (Find_BA_Variable (Target_Idt, BA_Root))
            and then No (Find_In_Parameter_Of_Parent_Component
@@ -1242,6 +1249,8 @@ package body Ocarina.Analyzer.AADL_BA is
                         (Target_Idt, Root, Parent_Component))
            and then No (Find_Requires_Data_Access_Of_Parent_Component
                         (Target_Idt, Root, Parent_Component))
+           and then not (Find_Subcomponent_Of_Parent_Component
+                         (Target_Idt, Root, Parent_Component))
          then
             Success := False;
             Error_Loc (1)  := BATN.Loc (Target_Idt);
@@ -1253,7 +1262,8 @@ package body Ocarina.Analyzer.AADL_BA is
                 & " any variable of the current BA or a parameter"
                 & " or a required data access feature"
                 & " of the subprogram having"
-                & " the current BA.");
+                & " the current BA;"
+                & " or a subcomponent of the parent component.");
          end if;
 
       end if;
@@ -1345,7 +1355,7 @@ package body Ocarina.Analyzer.AADL_BA is
          if not Success then
 
             --  This means that the identifier of the communication action
-            --  does not refer to a subprogram or or a port name
+            --  does not refer to a valid subprogram or or a port name
 
             Error_Loc (1) := BATN.Loc (BATN.First_Node
                                        (BATN.Idt (BATN.Identifier (Node))));
@@ -1385,6 +1395,7 @@ package body Ocarina.Analyzer.AADL_BA is
       pragma Assert (Kind (BATN.Identifier (Node)) = BATN.K_Name);
 
    begin
+      --  To be implemented
       return True;
    end Link_Output_Or_Internal_Port;
 
@@ -2269,6 +2280,27 @@ package body Ocarina.Analyzer.AADL_BA is
 
       return result;
    end Find_Requires_Data_Access_Of_Parent_Component;
+
+   -------------------------------------------
+   -- Find_Subcomponent_Of_Parent_Component --
+   -------------------------------------------
+
+   function Find_Subcomponent_Of_Parent_Component
+     (Node              : Node_Id;
+      Root              : Node_Id;
+      Parent_Component  : Node_Id)
+      return Boolean
+   is
+      use ATN;
+      pragma Assert (ATN.Kind (Root) = ATN.K_AADL_Specification);
+      pragma Assert (ATN.Kind (Parent_Component) = ATN.K_Component_Type
+                     or else Kind (Parent_Component) =
+                       ATN.K_Component_Implementation);
+      pragma Assert (BATN.Kind (Node) = BATN.K_Identifier);
+   begin
+      --  To be implemented
+      return True;
+   end Find_Subcomponent_Of_Parent_Component;
 
    --------------------------
    -- Analyze_Timed_Action --
