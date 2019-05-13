@@ -261,7 +261,7 @@ package body Ocarina.Analyzer.AADL_BA is
       Parent_Component  : Node_Id)
       return Node_Id;
 
-   function Is_Subcomponent_Of_Parent_Component
+   function Is_Data_Subcomponent_Of_Parent_Component
      (Node              : Node_Id;
       Root              : Node_Id;
       Parent_Component  : Node_Id)
@@ -1255,8 +1255,8 @@ package body Ocarina.Analyzer.AADL_BA is
                         (Target_Idt, Root, Parent_Component))
            and then No (Find_Requires_Data_Access_Of_Parent_Component
                         (Target_Idt, Root, Parent_Component))
-           and then not (Is_Subcomponent_Of_Parent_Component
-                         (Target_Idt, Root, Parent_Component))
+           and then not Is_Data_Subcomponent_Of_Parent_Component
+                         (Target_Idt, Root, Parent_Component)
          then
             Success := False;
             Error_Loc (1)  := BATN.Loc (Target_Idt);
@@ -1506,53 +1506,56 @@ package body Ocarina.Analyzer.AADL_BA is
             while Success and then Present (N2)
               and then Present (N1) loop
 
-               if ATN.Is_Out (N2) then
+               if ATN.Kind (N2) = ATN.K_Parameter then
 
-                  --  i.e. N2 is OUT or INOUT parameter
-                  --  in this case the value_expression of N1
-                  --  should be either a variable of the current BA
-                  --  or an OUT/INOUT parameter of the subprogram
-                  --  Parent_Component.
-                  --  If the analyze of the expression value of N1
-                  --  gives that it is a BA variable or a OUT/INOUT
-                  --  parameter of the subprogram Parent_Component
-                  --  then we check the type of the parameter
-                  --  See function Analyze_Value
-                  --
-                  Success := Analyze_BA_Value_Expression
-                    (Node              => Parameter (N1),
-                     Root              => Root,
-                     BA_Root           => BA_Root,
-                     Parent_Component  => Parent_Component,
-                     Is_Parameter_Expr => True,
-                     Is_Out_Parameter  => True,
-                     Parameter_Type    => ATN.Full_Identifier
-                       (ATN.Entity_Ref (N2)));
+                  if ATN.Is_Out (N2) then
 
-                  BATN.Set_Is_Out (N1, True);
+                     --  i.e. N2 is OUT or INOUT parameter
+                     --  in this case the value_expression of N1
+                     --  should be either a variable of the current BA
+                     --  or an OUT/INOUT parameter of the subprogram
+                     --  Parent_Component.
+                     --  If the analyze of the expression value of N1
+                     --  gives that it is a BA variable or a OUT/INOUT
+                     --  parameter of the subprogram Parent_Component
+                     --  then we check the type of the parameter
+                     --  See function Analyze_Value
+                     --
+                     Success := Analyze_BA_Value_Expression
+                       (Node              => Parameter (N1),
+                        Root              => Root,
+                        BA_Root           => BA_Root,
+                        Parent_Component  => Parent_Component,
+                        Is_Parameter_Expr => True,
+                        Is_Out_Parameter  => True,
+                        Parameter_Type    => ATN.Full_Identifier
+                          (ATN.Entity_Ref (N2)));
 
-                  if ATN.Is_In (N2) then
-                     BATN.Set_Is_In (N1, True);
+                     BATN.Set_Is_Out (N1, True);
+
+                     if ATN.Is_In (N2) then
+                        BATN.Set_Is_In (N1, True);
+                     else
+                        BATN.Set_Is_In (N1, False);
+                     end if;
+
                   else
-                     BATN.Set_Is_In (N1, False);
+
+                     --  In the case of a NON OUT parameter
+                     --  The parameter should be any valid expression
+                     --
+                     Success := Analyze_BA_Value_Expression
+                       (Node              => Parameter (N1),
+                        Root              => Root,
+                        BA_Root           => BA_Root,
+                        Parent_Component  => Parent_Component,
+                        Is_Parameter_Expr => True,
+                        Is_Out_Parameter  => False);
+
+                     BATN.Set_Is_Out (N1, False);
+                     BATN.Set_Is_In (N1, True);
+
                   end if;
-
-               else
-
-                  --  In the case of a NON OUT parameter
-                  --  The parameter should be any valid expression
-                  --
-                  Success := Analyze_BA_Value_Expression
-                    (Node              => Parameter (N1),
-                     Root              => Root,
-                     BA_Root           => BA_Root,
-                     Parent_Component  => Parent_Component,
-                     Is_Parameter_Expr => True,
-                     Is_Out_Parameter  => False);
-
-                  BATN.Set_Is_Out (N1, False);
-                  BATN.Set_Is_In (N1, True);
-
                end if;
 
                N1 := BATN.Next_Node (N1);
@@ -1890,7 +1893,9 @@ package body Ocarina.Analyzer.AADL_BA is
                 (BATN.Identifier (Node), Root, Parent_Component);
 
             Success := Present (BA_Var) or else Present (Out_param)
-              or else Present (Requires_data_access);
+              or else Present (Requires_data_access)
+              or else Is_Data_Subcomponent_Of_Parent_Component
+                (BATN.Identifier (Node), Root, Parent_Component);
 
             if not Success then
                Error_Loc (1) := BATN.Loc (BATN.Identifier (Node));
@@ -1978,7 +1983,7 @@ package body Ocarina.Analyzer.AADL_BA is
                                   Root, Parent_Component))
               or else Is_Feature_Of_Parent_Component
                 (BATN.Identifier (Node), Root, Parent_Component)
-                or else Is_Subcomponent_Of_Parent_Component
+                or else Is_Data_Subcomponent_Of_Parent_Component
                   (BATN.Identifier (Node), Root, Parent_Component);
 
             if not Success then
@@ -2292,9 +2297,9 @@ package body Ocarina.Analyzer.AADL_BA is
       return result;
    end Find_Requires_Data_Access_Of_Parent_Component;
 
-   -----------------------------------------
-   -- Is_Subcomponent_Of_Parent_Component --
-   -----------------------------------------
+   ------------------------------------
+   -- Is_Feature_Of_Parent_Component --
+   ------------------------------------
 
    function Is_Feature_Of_Parent_Component
      (Node              : Node_Id;
@@ -2313,11 +2318,11 @@ package body Ocarina.Analyzer.AADL_BA is
       return True;
    end Is_Feature_Of_Parent_Component;
 
-   -------------------------------------------
-   -- Is_Subcomponent_Of_Parent_Component --
-   -------------------------------------------
+   ----------------------------------------------
+   -- Is_Data_Subcomponent_Of_Parent_Component --
+   ----------------------------------------------
 
-   function Is_Subcomponent_Of_Parent_Component
+   function Is_Data_Subcomponent_Of_Parent_Component
      (Node              : Node_Id;
       Root              : Node_Id;
       Parent_Component  : Node_Id)
@@ -2332,7 +2337,7 @@ package body Ocarina.Analyzer.AADL_BA is
    begin
       --  To be implemented
       return True;
-   end Is_Subcomponent_Of_Parent_Component;
+   end Is_Data_Subcomponent_Of_Parent_Component;
 
    --------------------------
    -- Analyze_Timed_Action --
