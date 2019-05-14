@@ -261,17 +261,17 @@ package body Ocarina.Analyzer.AADL_BA is
       Parent_Component  : Node_Id)
       return Node_Id;
 
-   function Is_Data_Subcomponent_Of_Parent_Component
+   function Find_Data_Subcomponent_Of_Parent_Component
      (Node              : Node_Id;
       Root              : Node_Id;
       Parent_Component  : Node_Id)
-      return Boolean;
+      return Node_Id;
 
-   function Is_Feature_Of_Parent_Component
+   function Find_Feature_Of_Parent_Component
      (Node              : Node_Id;
       Root              : Node_Id;
       Parent_Component  : Node_Id)
-      return Boolean;
+      return Node_Id;
 
    function Get_Component_Type_From_Impl
      (Root            : Node_Id;
@@ -1255,8 +1255,10 @@ package body Ocarina.Analyzer.AADL_BA is
                         (Target_Idt, Root, Parent_Component))
            and then No (Find_Requires_Data_Access_Of_Parent_Component
                         (Target_Idt, Root, Parent_Component))
-           and then not Is_Data_Subcomponent_Of_Parent_Component
-                         (Target_Idt, Root, Parent_Component)
+           and then No (Find_Feature_Of_Parent_Component
+                        (Target_Idt, Root, Parent_Component))
+           and then No (Find_Data_Subcomponent_Of_Parent_Component
+                        (Target_Idt, Root, Parent_Component))
          then
             Success := False;
             Error_Loc (1)  := BATN.Loc (Target_Idt);
@@ -1894,8 +1896,9 @@ package body Ocarina.Analyzer.AADL_BA is
 
             Success := Present (BA_Var) or else Present (Out_param)
               or else Present (Requires_data_access)
-              or else Is_Data_Subcomponent_Of_Parent_Component
-                (BATN.Identifier (Node), Root, Parent_Component);
+              or else Present
+                (Find_Data_Subcomponent_Of_Parent_Component
+                   (BATN.Identifier (Node), Root, Parent_Component));
 
             if not Success then
                Error_Loc (1) := BATN.Loc (BATN.Identifier (Node));
@@ -1969,22 +1972,14 @@ package body Ocarina.Analyzer.AADL_BA is
             --  or a feature or Data subcomponent of the
             --  Parent component.
 
-            Success := Present (Find_BA_Variable
-                                (BATN.Identifier (Node),
-                                   BA_Root))
-              or else Present (Find_In_Parameter_Of_Parent_Component
-                               (BATN.Identifier (Node),
-                                  Root, Parent_Component))
-              or else Present (Find_Out_Parameter_Of_Parent_Component
-                               (BATN.Identifier (Node),
-                                  Root, Parent_Component))
-              or else Present (Find_Requires_Data_Access_Of_Parent_Component
-                               (BATN.Identifier (Node),
-                                  Root, Parent_Component))
-              or else Is_Feature_Of_Parent_Component
-                (BATN.Identifier (Node), Root, Parent_Component)
-                or else Is_Data_Subcomponent_Of_Parent_Component
-                  (BATN.Identifier (Node), Root, Parent_Component);
+            Success := Present
+              (Find_BA_Variable (BATN.Identifier (Node), BA_Root))
+              or else Present
+                (Find_Feature_Of_Parent_Component
+                   (BATN.Identifier (Node), Root, Parent_Component))
+              or else Present
+                (Find_Data_Subcomponent_Of_Parent_Component
+                   (BATN.Identifier (Node), Root, Parent_Component));
 
             if not Success then
                Error_Loc (1) := BATN.Loc (BATN.Identifier (Node));
@@ -2297,15 +2292,15 @@ package body Ocarina.Analyzer.AADL_BA is
       return result;
    end Find_Requires_Data_Access_Of_Parent_Component;
 
-   ------------------------------------
-   -- Is_Feature_Of_Parent_Component --
-   ------------------------------------
+   --------------------------------------
+   -- Find_Feature_Of_Parent_Component --
+   --------------------------------------
 
-   function Is_Feature_Of_Parent_Component
+   function Find_Feature_Of_Parent_Component
      (Node              : Node_Id;
       Root              : Node_Id;
       Parent_Component  : Node_Id)
-      return Boolean
+      return Node_Id
    is
       use ATN;
       pragma Assert (ATN.Kind (Root) = ATN.K_AADL_Specification);
@@ -2313,20 +2308,53 @@ package body Ocarina.Analyzer.AADL_BA is
                      or else Kind (Parent_Component) =
                        ATN.K_Component_Implementation);
       pragma Assert (BATN.Kind (Node) = BATN.K_Identifier);
+
+      F                        : Node_Id;
+      Type_Of_Parent_Component : Node_Id := No_Node;
+      result                   : Node_Id := No_Node;
    begin
-      --  To be implemented
-      return True;
-   end Is_Feature_Of_Parent_Component;
+      if ATN.Kind (Parent_Component) = ATN.K_Component_Type then
+         Type_Of_Parent_Component := Parent_Component;
+      else
+         Type_Of_Parent_Component := Get_Component_Type_From_Impl
+           (Root, Parent_Component);
+      end if;
 
-   ----------------------------------------------
-   -- Is_Data_Subcomponent_Of_Parent_Component --
-   ----------------------------------------------
+      if not ANU.Is_Empty (ATN.Features (Type_Of_Parent_Component)) then
 
-   function Is_Data_Subcomponent_Of_Parent_Component
+         F := ATN.First_Node (ATN.Features (Type_Of_Parent_Component));
+
+         while Present (F) loop
+
+            if Get_Name_String
+              (Utils.To_Lower
+                 (Remove_Prefix_From_Name
+                      ("%ba%", BATN.Name (Node))))
+                  = Get_Name_String
+              (Utils.To_Lower (ATN.Name (ATN.Identifier (F))))
+            then
+               result := F;
+            end if;
+
+            exit when result /= No_Node;
+
+            F := ATN.Next_Node (F);
+         end loop;
+      end if;
+
+      return result;
+
+   end Find_Feature_Of_Parent_Component;
+
+   ------------------------------------------------
+   -- Find_Data_Subcomponent_Of_Parent_Component --
+   ------------------------------------------------
+
+   function Find_Data_Subcomponent_Of_Parent_Component
      (Node              : Node_Id;
       Root              : Node_Id;
       Parent_Component  : Node_Id)
-      return Boolean
+      return Node_Id
    is
       use ATN;
       pragma Assert (ATN.Kind (Root) = ATN.K_AADL_Specification);
@@ -2334,10 +2362,33 @@ package body Ocarina.Analyzer.AADL_BA is
                      or else Kind (Parent_Component) =
                        ATN.K_Component_Implementation);
       pragma Assert (BATN.Kind (Node) = BATN.K_Identifier);
+
+      List_Of_Subcomponents : Node_List;
+      N1                    : Node_Id;
+      result                : Node_Id := No_Node;
    begin
-      --  To be implemented
-      return True;
-   end Is_Data_Subcomponent_Of_Parent_Component;
+      List_Of_Subcomponents := Find_All_Subclauses
+        (Parent_Component, (1 => ATN.K_Subcomponent));
+
+      N1 := List_Of_Subcomponents.First;
+      while Present (N1) loop
+         if  (ATN.Kind (N1) = ATN.k_Subcomponent and then
+              Component_Category'Val (Category (N1)) = CC_Data)
+           and then
+             Get_Name_String
+               (Utils.To_Lower
+                  (Remove_Prefix_From_Name
+                     ("%ba%", BATN.Name (Node))))
+             = Get_Name_String
+           (Utils.To_Lower (ATN.Name (ATN.Identifier (N1))))
+         then
+            result := N1;
+         end if;
+         exit when result /= No_Node;
+         N1 := ATN.Next_Entity (N1);
+      end loop;
+      return result;
+   end Find_Data_Subcomponent_Of_Parent_Component;
 
    --------------------------
    -- Analyze_Timed_Action --
