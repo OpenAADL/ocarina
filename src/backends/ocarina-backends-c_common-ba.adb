@@ -74,7 +74,7 @@ package body Ocarina.Backends.C_Common.BA is
    --  function Get_Instances_Of_Component_Type
    --    (Root : Node_Id; E : Node_Id) return Node_Id;
 
-   function Get_Behavior_Specification_Of_Subprogram
+   function Get_Behavior_Specification
      (S : Node_Id) return Node_Id;
 
    function Map_C_Behavior_Action_Block
@@ -192,11 +192,11 @@ package body Ocarina.Backends.C_Common.BA is
    --
    --     end Get_Instances_Of_Component_Type;
 
-   ----------------------------------------------
-   -- Get_Behavior_Specification_Of_Subprogram --
-   ----------------------------------------------
+   --------------------------------
+   -- Get_Behavior_Specification --
+   --------------------------------
 
-   function Get_Behavior_Specification_Of_Subprogram
+   function Get_Behavior_Specification
      (S : Node_Id) return Node_Id is
       D, BA  : Node_Id;
    begin
@@ -216,7 +216,7 @@ package body Ocarina.Backends.C_Common.BA is
       raise Program_Error;
 
       return No_Node;
-   end Get_Behavior_Specification_Of_Subprogram;
+   end Get_Behavior_Specification;
 
    ------------------------------
    -- Map_C_Behavior_Variables --
@@ -228,7 +228,7 @@ package body Ocarina.Backends.C_Common.BA is
       Used_Type    : Node_Id;
    begin
 
-      BA := Get_Behavior_Specification_Of_Subprogram (S);
+      BA := Get_Behavior_Specification (S);
       if not BANu.Is_Empty (BATN.Variables (BA)) then
          P := BATN.First_Node (BATN.Variables (BA));
          loop
@@ -273,7 +273,7 @@ package body Ocarina.Backends.C_Common.BA is
       Statements         : List_Id;
    begin
 
-      BA := Get_Behavior_Specification_Of_Subprogram (S);
+      BA := Get_Behavior_Specification (S);
 
       --  For an AADL subprogram with BA, we have: a single state
       --  as initial final state; a single transition without
@@ -568,7 +568,7 @@ package body Ocarina.Backends.C_Common.BA is
       N, k                     : Node_Id;
       Param_Node               : Node_Id;
       BA_Root                  : constant Node_Id
-        := Get_Behavior_Specification_Of_Subprogram (S);
+        := Get_Behavior_Specification (S);
       decl                     : Node_Id;
       Called_Spg_Spec_Exist    : Boolean := False;
    begin
