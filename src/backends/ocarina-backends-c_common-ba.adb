@@ -607,11 +607,13 @@ package body Ocarina.Backends.C_Common.BA is
                decl := CTN.First_Node (CTN.Declarations (Current_File));
                while Present (decl) loop
 
-                  if Kind (decl) = CTN.K_Function_Specification
+                  if Kind (decl) = CTN.K_Extern_Entity_Declaration
+                    --  CTN.K_Function_Specification
                     and then
                       Get_Name_String
                         (Utils.To_Lower
-                           (CTN.Name (CTN.Defining_Identifier (decl))))
+                           (CTN.Name (CTN.Defining_Identifier
+                            (CTN.Entity (decl)))))
                     = Get_Name_String
                     (Utils.To_Lower
                        (CTN.Name (Var_identifier)))
@@ -638,6 +640,9 @@ package body Ocarina.Backends.C_Common.BA is
                   Set_Defining_Identifier
                     (Called_Spg_Spec,
                      Var_identifier);
+
+                  Called_Spg_Spec := Make_Extern_Entity_Declaration
+                    (Called_Spg_Spec);
 
                   Append_Node_To_List
                     (Called_Spg_Spec,
