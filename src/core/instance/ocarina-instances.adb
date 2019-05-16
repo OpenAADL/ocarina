@@ -58,6 +58,7 @@ package body Ocarina.Instances is
    use Ocarina.Namet;
    use Ocarina.Output;
 
+   use Ocarina.ME_AADL;
    use Ocarina.ME_AADL.AADL_Tree.Nodes;
    use Ocarina.ME_AADL.AADL_Instances.Nodes;
    use Ocarina.ME_AADL.AADL_Instances.Entities;
@@ -319,8 +320,11 @@ package body Ocarina.Instances is
       List_Node := L1.First;
       while Present (List_Node) loop
          if No (Default_Instance (List_Node)) then
-            Set_Instance (List_Node,
-                          Instantiate_Component (Instance_Root, List_Node));
+            if ATE.Get_Category_Of_Component (List_Node) = CC_Subprogram
+            then
+               Set_Instance (List_Node,
+                             Instantiate_Component (Instance_Root, List_Node));
+            end if;
          end if;
          List_Node := ATN.Next_Entity (List_Node);
       end loop;
