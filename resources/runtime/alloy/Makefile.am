@@ -13,4 +13,4 @@ alloy_files = ${shell $(CYGPATH_U) '$(includedir)/ocarina/runtime/alloy'}
 
 install-data-local:
 	$(INSTALL) -d $(DESTDIR)$(alloy_files)
-	for f in $(BASE_ALLOY_FILES); do $(INSTALL) -m 444 $(srcdir)/$$f $(DESTDIR)$(alloy_files)/$$f; done
+	for f in $(BASE_ALLOY_FILES); do $(INSTALL) -D -m 444 $(srcdir)/$$f $(DESTDIR)$(alloy_files)/$$f; done
