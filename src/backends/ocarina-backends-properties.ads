@@ -368,6 +368,7 @@ package Ocarina.Backends.Properties is
      (Thread_With_Call_Sequence,
       Thread_With_Compute_Entrypoint,
       Thread_With_Port_Compute_Entrypoint,
+      Thread_With_Behavior_Specification,
       Thread_Unknown);
 
    type Supported_POSIX_Scheduling_Policy is

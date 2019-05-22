@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2019 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -40,6 +40,8 @@ with Ocarina.Backends.C_Tree.Nutils;
 with Ocarina.Backends.C_Tree.Nodes;
 with Ocarina.Backends.C_Common.Mapping;
 with Ocarina.Backends.PO_HI_C.Runtime;
+with Ocarina.Backends.C_Common.BA;
+with Ocarina.Namet;
 
 package body Ocarina.Backends.C_Common.Subprograms is
 
@@ -50,6 +52,9 @@ package body Ocarina.Backends.C_Common.Subprograms is
    use Ocarina.Backends.Properties;
    use Ocarina.Backends.C_Tree.Nutils;
    use Ocarina.Backends.C_Common.Mapping;
+   use Ocarina.Backends.C_Common.BA;
+   use Ocarina.Namet;
+   use Ocarina.Backends.PO_HI_C.Runtime;
 
    package PHCR renames Ocarina.Backends.PO_HI_C.Runtime;
 
@@ -463,7 +468,7 @@ package body Ocarina.Backends.C_Common.Subprograms is
                if AINU.Is_Device (Corresponding_Instance (C))
                  and then
                    Get_Bound_Processor (Corresponding_Instance (C)) =
-                   Get_Bound_Processor (E)
+                     Get_Bound_Processor (E)
                then
                   --  Build the enumerator corresponding to the device
                   --  Note: we reuse the process name XXX
@@ -552,7 +557,7 @@ package body Ocarina.Backends.C_Common.Subprograms is
                if Get_Current_Backend_Kind = PolyORB_Kernel_C
                  and then
                    Get_Category_Of_Component (Corresponding_Instance (S)) =
-                   CC_Process
+                     CC_Process
                then
                   null;
                else
@@ -580,6 +585,9 @@ package body Ocarina.Backends.C_Common.Subprograms is
          Call_Seq : Node_Id;
          Spg_Call : Node_Id;
          Feature  : Node_Id;
+         N        : Node_Id;
+         Def_Idt  : Node_Id;
+         Parameter_List : constant List_Id := New_List (CTN.K_List_Id);
       begin
          if Has_In_Ports (E) then
             Feature := First_Node (Features (E));
@@ -620,6 +628,30 @@ package body Ocarina.Backends.C_Common.Subprograms is
                Call_Seq := Next_Node (Call_Seq);
             end loop;
          end if;
+
+         if Has_Behavior_Specification (E) then
+
+            Set_Str_To_Name_Buffer ("");
+
+            Get_Name_String (Name (Identifier (E)));
+            Add_Str_To_Name_Buffer ("_ba_body");
+            Def_Idt := Make_Defining_Identifier (Name_Find);
+
+            N :=
+              Make_Parameter_Specification
+                (Make_Defining_Identifier (PN (P_Self)),
+                 Parameter_Type => RE (RE_Task_Id));
+            Append_Node_To_List (N, Parameter_List);
+
+            N := Make_Function_Specification
+              (Defining_Identifier => Def_Idt,
+               Parameters          => Parameter_List,
+               Return_Type         => New_Node (CTN.K_Void));
+
+            Append_Node_To_List (N, CTN.Declarations (Current_File));
+
+         end if;
+
       end Visit_Thread_Instance;
 
    end Header_File;
@@ -910,7 +942,7 @@ package body Ocarina.Backends.C_Common.Subprograms is
                   if Get_Current_Backend_Kind = PolyORB_HI_C
                     and then
                       Get_Data_Representation (Corresponding_Instance (S)) =
-                      Data_With_Accessors
+                        Data_With_Accessors
                   then
 
                      --  For POHIC, generate globvars that have only accessors
@@ -953,7 +985,7 @@ package body Ocarina.Backends.C_Common.Subprograms is
                  and then AINU.Is_Data (Corresponding_Instance (S))
                  and then
                    Get_Data_Representation (Corresponding_Instance (S)) =
-                   Data_With_Accessors
+                     Data_With_Accessors
                then
 
                   N :=
@@ -978,7 +1010,7 @@ package body Ocarina.Backends.C_Common.Subprograms is
                if AINU.Is_Device (Corresponding_Instance (C))
                  and then
                    Get_Bound_Processor (Corresponding_Instance (C)) =
-                   Get_Bound_Processor (E)
+                     Get_Bound_Processor (E)
                then
                   Visit_Device_Instance (Corresponding_Instance (C));
                end if;
@@ -1065,14 +1097,14 @@ package body Ocarina.Backends.C_Common.Subprograms is
                Append_Node_To_List
                  (Make_Variable_Declaration
                     (Defining_Identifier =>
-                       Make_Defining_Identifier (VN (V_In)),
+                         Make_Defining_Identifier (VN (V_In)),
                      Used_Type => Map_Scade_Struct_In (E)),
                   CTN.Declarations (Current_File));
 
                Append_Node_To_List
                  (Make_Variable_Declaration
                     (Defining_Identifier =>
-                       Make_Defining_Identifier (VN (V_Out)),
+                         Make_Defining_Identifier (VN (V_Out)),
                      Used_Type => Map_Scade_Struct_Out (E)),
                   CTN.Declarations (Current_File));
             end if;
@@ -1130,7 +1162,7 @@ package body Ocarina.Backends.C_Common.Subprograms is
                if Get_Current_Backend_Kind = PolyORB_Kernel_C
                  and then
                    Get_Category_Of_Component (Corresponding_Instance (S)) =
-                   CC_Process
+                     CC_Process
                then
                   null;
                else
@@ -1160,6 +1192,9 @@ package body Ocarina.Backends.C_Common.Subprograms is
          Call_Seq : Node_Id;
          Spg_Call : Node_Id;
          Feature  : Node_Id;
+         N        : Node_Id;
+         Def_Idt  : Node_Id;
+         Parameter_List : constant List_Id := New_List (CTN.K_List_Id);
       begin
          if Has_In_Ports (E) then
             Feature := First_Node (Features (E));
@@ -1200,6 +1235,34 @@ package body Ocarina.Backends.C_Common.Subprograms is
                Call_Seq := Next_Node (Call_Seq);
             end loop;
          end if;
+
+         if Has_Behavior_Specification (E) then
+
+            Set_Str_To_Name_Buffer ("");
+
+            Get_Name_String (Name (Identifier (E)));
+            Add_Str_To_Name_Buffer ("_ba_body");
+            Def_Idt := Make_Defining_Identifier (Name_Find);
+
+            N :=
+              Make_Parameter_Specification
+                (Make_Defining_Identifier (PN (P_Self)),
+                 Parameter_Type => RE (RE_Task_Id));
+            Append_Node_To_List (N, Parameter_List);
+
+            N := Make_Function_Specification
+              (Defining_Identifier => Def_Idt,
+               Parameters          => Parameter_List,
+               Return_Type         => New_Node (CTN.K_Void));
+
+            N := Make_Function_Implementation
+              (Specification => N,
+               Declarations  => Map_C_Behavior_Variables (E),
+               Statements    => Map_C_Behavior_Actions (E));
+
+            Append_Node_To_List (N, CTN.Declarations (Current_File));
+         end if;
+
       end Visit_Thread_Instance;
 
       ---------------------------

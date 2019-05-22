@@ -2097,6 +2097,8 @@ package body Ocarina.Backends.Properties is
             Result := Thread_With_Compute_Entrypoint;
          elsif CS_Cnt >= 1 then
             Result := Thread_With_Call_Sequence;
+         elsif Has_Behavior_Specification (T) then
+            Result := Thread_With_Behavior_Specification;
          end if;
       end if;
 

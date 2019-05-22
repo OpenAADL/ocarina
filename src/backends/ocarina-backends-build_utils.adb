@@ -1188,6 +1188,8 @@ package body Ocarina.Backends.Build_Utils is
                Call_Seq := Next_Node (Call_Seq);
             end loop;
          end if;
+
+         Visit_Subcomponents_Of (E);
       end Visit_Thread_Instance;
 
       -------------------------------

@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2019 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -233,8 +233,8 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             while Present (S) loop
                if AAU.Is_Device (Corresponding_Instance (S))
                  and then
-                   Get_Bound_Processor (Corresponding_Instance (S)) =
-                   Get_Bound_Processor (E)
+                 Get_Bound_Processor (Corresponding_Instance (S)) =
+                 Get_Bound_Processor (E)
                then
                   Visit_Device_Instance (Corresponding_Instance (S));
                end if;
@@ -368,6 +368,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          procedure Make_Fetch_In_Ports;
          procedure Make_Wait_Offset;
          procedure Make_Thread_Compute_Entrypoint;
+         procedure Make_Thread_Behavior_Specification;
          procedure Make_Ports_Compute_Entrypoint;
          procedure Make_Activate_Entrypoint;
          function Make_Get_Valid_Value (F : Node_Id) return Node_Id;
@@ -592,7 +593,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                             (Make_Defining_Identifier
                                (Map_C_Variable_Name (F, Port_Request => True)),
                              RE (RE_Request_T),
-                            Is_Static => True);
+                             Is_Static => True);
                         Append_Node_To_List (N, Declarations);
 
                         L :=
@@ -847,7 +848,6 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                        (Make_Variable_Address
                           (Make_Defining_Identifier (VN (V_Offset))))),
                   Statements);
-
             end if;
          end Make_Wait_Offset;
 
@@ -1108,10 +1108,75 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                Display_Located_Error
                  (Loc (E),
                   "Threads with mode controlled compute entrypoints not" &
-                  " supported yet",
+                    " supported yet",
                   Fatal => True);
             end if;
          end Make_Thread_Compute_Entrypoint;
+
+         ----------------------------------------
+         -- Make_Thread_Behavior_Specification --
+         ----------------------------------------
+
+         procedure Make_Thread_Behavior_Specification is
+            N              : Node_Id;
+            Parameter_List : constant List_Id := New_List (CTN.K_List_Id);
+            Def_Idt        : Node_Id;
+         begin
+
+            --  Add_Include (RH (RH_Subprograms));
+
+            N := Message_Comment
+              ("Call the function implementing"
+                 & " the C-Mapping of the Behavior_Specification");
+
+            Append_Node_To_List (N, WStatements);
+
+            Call_Parameters := New_List (CTN.K_Parameter_List);
+            N := Make_Defining_Identifier (Map_C_Enumerator_Name (S));
+            Append_Node_To_List (N, Call_Parameters);
+
+            N :=
+              Make_Parameter_Specification
+                (Make_Defining_Identifier (PN (P_Self)),
+                 Parameter_Type => RE (RE_Task_Id));
+            Append_Node_To_List (N, Parameter_List);
+
+            Set_Str_To_Name_Buffer ("");
+            Get_Name_String (Name (Identifier (E)));
+            Add_Str_To_Name_Buffer ("_ba_body");
+            Def_Idt := Make_Defining_Identifier (Name_Find);
+
+            if P = Thread_Sporadic then
+
+               Append_Node_To_List
+                 (Make_Defining_Identifier (VN (V_Port)),
+                  Call_Parameters);
+
+               N :=
+                 Make_Parameter_Specification
+                   (Make_Defining_Identifier (VN (V_Port)),
+                    Parameter_Type => RE (RE_Port_T));
+               Append_Node_To_List (N, Parameter_List);
+
+            end if;
+
+            N :=
+              Make_Extern_Entity_Declaration
+                (Make_Function_Specification
+                   (Defining_Identifier => Def_Idt,
+                    Parameters          => Parameter_List,
+                    Return_Type         => New_Node (CTN.K_Void)));
+
+            Append_Node_To_List (N, CTN.Declarations (Current_File));
+
+            N :=
+              Make_Call_Profile
+                (Defining_Identifier => Def_Idt,
+                 Parameters          => Call_Parameters);
+
+            Append_Node_To_List (N, WStatements);
+
+         end Make_Thread_Behavior_Specification;
 
       begin
          case P is
@@ -1119,21 +1184,21 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                N :=
                  Message_Comment
                    ("Periodic task : " &
-                    Get_Name_String (Display_Name (Identifier (S))));
+                      Get_Name_String (Display_Name (Identifier (S))));
                Append_Node_To_List (N, CTN.Declarations (Current_File));
 
             when Thread_Sporadic =>
                N :=
                  Message_Comment
                    ("Sporadic task : " &
-                    Get_Name_String (Display_Name (Identifier (S))));
+                      Get_Name_String (Display_Name (Identifier (S))));
                Append_Node_To_List (N, CTN.Declarations (Current_File));
 
             when Thread_Background =>
                N :=
                  Message_Comment
                    ("Background task : " &
-                    Get_Name_String (Display_Name (Identifier (S))));
+                      Get_Name_String (Display_Name (Identifier (S))));
                Append_Node_To_List (N, CTN.Declarations (Current_File));
 
             when others =>
@@ -1299,6 +1364,10 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                   Make_Send_Out_Ports;
                end if;
 
+            when Thread_With_Behavior_Specification =>
+
+               Make_Thread_Behavior_Specification;
+
             when others =>
                raise Program_Error with "Unconsistency in Task_Job_Body";
          end case;
@@ -1371,25 +1440,25 @@ package body Ocarina.Backends.PO_HI_C.Activity is
 
             N :=
               Make_Doxygen_C_Comment
-              ("Waiting for the first dispatch instant",
-               Has_Header_Spaces => False);
+                ("Waiting for the first dispatch instant",
+                 Has_Header_Spaces => False);
             Append_Node_To_List (N, Statements);
 
             Call_Parameters := New_List (CTN.K_Parameter_List);
             if Current_Device /= No_Node then
                N :=
                  Make_Defining_Identifier
-                 (Map_C_Enumerator_Name
-                    (S,
-                     Custom_Parent => Current_Device));
+                   (Map_C_Enumerator_Name
+                      (S,
+                       Custom_Parent => Current_Device));
             else
                N := Make_Defining_Identifier (Map_C_Enumerator_Name (S));
             end if;
             Append_Node_To_List (N, Call_Parameters);
             N :=
               CTU.Make_Call_Profile
-              (RE (RE_Wait_For_Next_Period),
-               Call_Parameters);
+                (RE (RE_Wait_For_Next_Period),
+                 Call_Parameters);
             Append_Node_To_List (N, Statements);
          end if;
 
@@ -1397,8 +1466,8 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             --  Make the while (1){} and add all statements
             N :=
               Make_Doxygen_C_Comment
-              ("Task body",
-               Has_Header_Spaces => False);
+                ("Task body",
+                 Has_Header_Spaces => False);
             Append_Node_To_List (N, Statements);
 
             N :=
@@ -1532,8 +1601,8 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             while Present (S) loop
                if AAU.Is_Device (Corresponding_Instance (S))
                  and then
-                   Get_Bound_Processor (Corresponding_Instance (S)) =
-                   Get_Bound_Processor (E)
+                 Get_Bound_Processor (Corresponding_Instance (S)) =
+                 Get_Bound_Processor (E)
                then
                   Visit_Device_Instance (Corresponding_Instance (S));
                end if;
@@ -1590,14 +1659,14 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                 (Is_Function  => True,
                  Element_Name =>
                    "void __po_hi_main_deliver " &
-                   "(__po_hi_request_t* request)",
+                     "(__po_hi_request_t* request)",
                  Brief => "Used to deliver request to the appropriate ports",
                  Desc  =>
                    "This function takes a request as argument (\arg request)" &
-                   " and calls the appropriate function for its delivery." &
-                   "To specify which function should be called, it " &
-                   "extracts the receiver entity using the destination " &
-                   "port.",
+                     " and calls the appropriate function for its delivery." &
+                     "To specify which function should be called, it " &
+                     "extracts the receiver entity using the destination " &
+                     "port.",
                  Has_Header_Spaces => False);
             Append_Node_To_List (N, CTN.Declarations (Current_File));
 
@@ -1711,7 +1780,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                         Display_Located_Error
                           (Loc (F),
                            "This OUT port is not connected to any" &
-                           " destination",
+                             " destination",
                            Fatal => True);
                      end if;
 
@@ -2056,26 +2125,26 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                    (Is_Function  => True,
                     Element_Name =>
                       "void " &
-                      Get_Name_String
+                        Get_Name_String
                         (CTN.Name
                            (CTN.Defining_Identifier
                               (CTN.Global_Port_Node
                                  (Backend_Node (Identifier (S)))))) &
-                      " (__po_hi_request_t* request)",
+                        " (__po_hi_request_t* request)",
                     Brief =>
                       "Function that delivers requests to the task " &
-                      Get_Name_String (Name (Identifier (S))),
+                        Get_Name_String (Name (Identifier (S))),
                     Desc =>
                       "When the generated application received a request," &
-                      " it calls a main delivery function that redirects" &
-                      " to localfunctions for each task. This function (" &
-                      Get_Name_String
+                        " it calls a main delivery function that redirects" &
+                        " to localfunctions for each task. This function (" &
+                        Get_Name_String
                         (CTN.Name
                            (CTN.Defining_Identifier
                               (CTN.Global_Port_Node
                                  (Backend_Node (Identifier (S)))))) &
-                      ") stores the incoming request for the task" &
-                      Get_Name_String (Name (Identifier (S))),
+                        ") stores the incoming request for the task" &
+                        Get_Name_String (Name (Identifier (S))),
                     Has_Header_Spaces => False);
                Append_Node_To_List (N, CTN.Declarations (Current_File));
 
@@ -2120,18 +2189,18 @@ package body Ocarina.Backends.PO_HI_C.Activity is
              (Is_Function  => True,
               Element_Name =>
                 "void* " &
-                Get_Name_String
+                  Get_Name_String
                   (CTN.Name (Map_Task_Job_Identifier (S, Current_Device))) &
-                " (void)",
+                  " (void)",
               Brief =>
                 "Function executed by the task " &
-                Get_Name_String (Name (Identifier (S))),
+                  Get_Name_String (Name (Identifier (S))),
               Desc =>
                 "This function is executed as soon as the task " &
-                " is created. It performs the following operations: " &
-                " Receive incoming data, " &
-                " Execute tasks subprograms, " &
-                " Send output data.",
+                  " is created. It performs the following operations: " &
+                  " Receive incoming data, " &
+                  " Execute tasks subprograms, " &
+                  " Send output data.",
               Has_Header_Spaces => False);
          Append_Node_To_List (N, CTN.Declarations (Current_File));
 
