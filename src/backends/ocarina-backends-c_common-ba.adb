@@ -661,7 +661,8 @@ package body Ocarina.Backends.C_Common.BA is
                           AINU.New_Node (AIN.K_Subcomponent_Instance,
                                          AIN.Loc (Proxy_Instance));
                      begin
-                        AIN.Set_Parent_Component (The_Sub, Called_Spg_Instance);
+                        AIN.Set_Parent_Component
+                          (The_Sub, Called_Spg_Instance);
                         AIN.Set_Corresponding_Instance
                           (The_Sub, Called_Spg_Instance);
 
