@@ -1195,6 +1195,9 @@ package body Ocarina.Backends.C_Common.Subprograms is
          N        : Node_Id;
          Def_Idt  : Node_Id;
          Parameter_List : constant List_Id := New_List (CTN.K_List_Id);
+         Declarations   : constant List_Id :=
+           New_List (CTN.K_Declaration_List);
+         Statements : constant List_Id := New_List (CTN.K_Statement_List);
       begin
          if Has_In_Ports (E) then
             Feature := First_Node (Features (E));
@@ -1255,10 +1258,13 @@ package body Ocarina.Backends.C_Common.Subprograms is
                Parameters          => Parameter_List,
                Return_Type         => New_Node (CTN.K_Void));
 
+            Map_C_Behavior_Variables (E, Declarations);
+            Map_C_Behavior_Actions (E, Declarations, Statements);
+
             N := Make_Function_Implementation
               (Specification => N,
-               Declarations  => Map_C_Behavior_Variables (E),
-               Statements    => Map_C_Behavior_Actions (E));
+               Declarations  => Declarations,
+               Statements    => Statements);
 
             Append_Node_To_List (N, CTN.Declarations (Current_File));
          end if;

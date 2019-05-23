@@ -2932,10 +2932,13 @@ package body Ocarina.Backends.C_Common.Mapping is
             --  To C-statements in the generated C-subprogram
             --  Map_C_Behavior_Variables (S,Declarations);
 
+            CCBA.Map_C_Behavior_Variables (S, Declarations);
+            CCBA.Map_C_Behavior_Actions (S, Declarations, Statements);
+
             return CTU.Make_Function_Implementation
                 (Spec,
-                 CCBA.Map_C_Behavior_Variables (S),
-                 CCBA.Map_C_Behavior_Actions (S));
+                 Declarations,
+                 Statements);
 
          when others =>
             Display_Located_Error
