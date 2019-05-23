@@ -834,6 +834,11 @@ package body Ocarina.Backends.C_Common.BA is
                                      & " the REQUEST_PORT macro. ");
                Append_Node_To_List (N, Statements);
 
+               Get_Name_String (CTU.To_C_Name
+                                (AIN.Display_Name (AIN.Identifier (S))));
+               Add_Str_To_Name_Buffer ("_thread");
+               N1 := Name_Find;
+
                CTU.Append_Node_To_List
                  (Make_Assignment_Statement
                     (Variable_Identifier => Make_Member_Designator
@@ -844,9 +849,7 @@ package body Ocarina.Backends.C_Common.BA is
                      Expression          => Make_Call_Profile
                        (RE (RE_REQUEST_PORT),
                         Make_List_Id
-                          (Make_Defining_Identifier
-                               (AIN.Display_Name
-                                    (AIN.Identifier (S))),
+                          (Make_Defining_Identifier (N1),
                            Make_Defining_Identifier
                              (BATN.Display_Name (BATN.First_Node
                               (BATN.Idt (BATN.Identifier (Node)))))))),
@@ -864,12 +867,14 @@ package body Ocarina.Backends.C_Common.BA is
                                            & " following similar pattern. ");
                      Append_Node_To_List (N, Statements);
 
+                     Get_Name_String (CTU.To_C_Name
+                                      (AIN.Display_Name (AIN.Identifier (S))));
+                     Add_Str_To_Name_Buffer ("_thread");
+                     N1 := Name_Find;
                      N := Make_Call_Profile
                        (RE (RE_PORT_VARIABLE),
                         Make_List_Id
-                          (Make_Defining_Identifier
-                               (AIN.Display_Name
-                                    (AIN.Identifier (S))),
+                          (Make_Defining_Identifier (N1),
                            Make_Defining_Identifier
                              (BATN.Display_Name (BATN.First_Node
                               (BATN.Idt (BATN.Identifier (Node)))))));
@@ -905,12 +910,16 @@ package body Ocarina.Backends.C_Common.BA is
                N := Make_Defining_Identifier (N1);
                Append_Node_To_List (N, Call_Parameters);
 
+               Get_Name_String (CTU.To_C_Name
+                                (AIN.Display_Name (AIN.Identifier (S))));
+               Add_Str_To_Name_Buffer ("_thread");
+               N1 := Name_Find;
+
                Append_Node_To_List
                  (Make_Call_Profile
                     (RE (RE_Local_Port),
                      Make_List_Id
-                       (Make_Defining_Identifier
-                            (AIN.Display_Name (AIN.Identifier (S))),
+                       (Make_Defining_Identifier (N1),
                         Make_Defining_Identifier
                           (BATN.Display_Name (BATN.First_Node
                            (BATN.Idt (BATN.Identifier (Node))))))),
@@ -1650,12 +1659,17 @@ package body Ocarina.Backends.C_Common.BA is
             N := Make_Defining_Identifier (N1);
             Append_Node_To_List (N, Call_Parameters);
 
+            Get_Name_String (CTU.To_C_Name
+                             (AIN.Display_Name
+                                (AIN.Identifier (Subprogram_Root))));
+            Add_Str_To_Name_Buffer ("_thread");
+            N1 := Name_Find;
+
             Append_Node_To_List
               (Make_Call_Profile
                  (RE (RE_Local_Port),
                   Make_List_Id
-                    (Make_Defining_Identifier
-                         (AIN.Display_Name (AIN.Identifier (Subprogram_Root))),
+                    (Make_Defining_Identifier (N1),
                      Make_Defining_Identifier (BATN.Display_Name (Node)))),
                Call_Parameters);
 
@@ -1672,25 +1686,29 @@ package body Ocarina.Backends.C_Common.BA is
 
             --  Make the call to __po_hi_gqueue_next_value
             --  if it is an event port
+            Call_Parameters := New_List (CTN.K_Parameter_List);
+
+            Set_Str_To_Name_Buffer ("self");
+            N1 := Name_Find;
+            N := Make_Defining_Identifier (N1);
+            Append_Node_To_List (N, Call_Parameters);
+
+            Get_Name_String (CTU.To_C_Name
+                             (AIN.Display_Name
+                                (AIN.Identifier (Subprogram_Root))));
+            Add_Str_To_Name_Buffer ("_thread");
+            N1 := Name_Find;
+
+            Append_Node_To_List
+              (Make_Call_Profile
+                 (RE (RE_Local_Port),
+                  Make_List_Id
+                    (Make_Defining_Identifier (N1),
+                     Make_Defining_Identifier
+                       (BATN.Display_Name (Node)))),
+               Call_Parameters);
+
             if AAN.Is_Event (BATN.Corresponding_Entity (Node)) then
-               Call_Parameters := New_List (CTN.K_Parameter_List);
-
-               Set_Str_To_Name_Buffer ("self");
-               N1 := Name_Find;
-               N := Make_Defining_Identifier (N1);
-               Append_Node_To_List (N, Call_Parameters);
-
-               Append_Node_To_List
-                 (Make_Call_Profile
-                    (RE (RE_Local_Port),
-                     Make_List_Id
-                       (Make_Defining_Identifier
-                            (AIN.Display_Name
-                                 (AIN.Identifier (Subprogram_Root))),
-                        Make_Defining_Identifier
-                          (BATN.Display_Name (Node)))),
-                  Call_Parameters);
-
                N :=
                  CTU.Make_Call_Profile
                    (RE (RE_Gqueue_Next_Value),
