@@ -142,6 +142,24 @@ package body Ocarina.Backends.PO_HI_C.Runtime is
          Set_Name (RED (E), Name);
       end loop;
 
+      for E in RM_Id loop
+         Set_Str_To_Name_Buffer (RC_Id'Image (E));
+         Set_Str_To_Name_Buffer (Name_Buffer (4 .. Name_Len));
+         Apply_Casing_Rules (Name_Buffer (1 .. Name_Len));
+
+         while Name_Buffer (Name_Len) in '0' .. '9'
+           or else Name_Buffer (Name_Len) = '_'
+         loop
+            Name_Len := Name_Len - 1;
+         end loop;
+
+         Name := Name_Find;
+
+         Name    := To_Upper (Name);
+         RED (E) := New_Node (K_Defining_Identifier);
+         Set_Name (RED (E), Name);
+      end loop;
+
       for E in RH_Id loop
          Set_Str_To_Name_Buffer (RH_Id'Image (E));
          Set_Str_To_Name_Buffer (Name_Buffer (4 .. Name_Len));
