@@ -1372,7 +1372,7 @@ package body Ocarina.Analyzer.AADL_BA is
                 ("%ba%", BATN.Display_Name
                    (BATN.First_Node
                       (BATN.Idt (BATN.Identifier (Node)))))) & ")"
-                & " does not point to "
+                & " does not point to"
                 & " a valid subprogram or a port name.");
          end if;
 
@@ -1400,9 +1400,50 @@ package body Ocarina.Analyzer.AADL_BA is
                        ATN.K_Component_Implementation);
       pragma Assert (Kind (BATN.Identifier (Node)) = BATN.K_Name);
 
+      Success                  : Boolean := False;
+      F                        : Node_Id;
+      Type_Of_Parent_Component : Node_Id := No_Node;
+
    begin
-      --  To be implemented
-      return True;
+
+      if ATN.Kind (Parent_Component) = ATN.K_Component_Type then
+         Type_Of_Parent_Component := Parent_Component;
+      else
+         Type_Of_Parent_Component := Get_Component_Type_From_Impl
+           (Root, Parent_Component);
+      end if;
+
+      if not ANU.Is_Empty (ATN.Features (Type_Of_Parent_Component)) then
+
+         F := ATN.First_Node (ATN.Features (Type_Of_Parent_Component));
+
+         while Present (F) loop
+
+            if ATN.Kind (F) = K_Port_Spec
+              and then Is_Data (F) and then ATN.Is_Out (F)
+              and then
+                Get_Name_String
+                  (Utils.To_Lower
+                     (Remove_Prefix_From_Name
+                        ("%ba%",
+                         BATN.Display_Name
+                           (BATN.First_Node
+                                (BATN.Idt (BATN.Identifier (Node)))))))
+                = Get_Name_String
+              (Utils.To_Lower (ATN.Name (ATN.Identifier (F))))
+            then
+               Success := True;
+               BATN.Set_Corresponding_Entity
+                 (BATN.First_Node
+                    (BATN.Idt (BATN.Identifier (Node))), F);
+            end if;
+
+            exit when Success /= False;
+            F := ATN.Next_Node (F);
+         end loop;
+      end if;
+
+      return Success;
    end Link_Output_Or_Internal_Port;
 
    --------------
