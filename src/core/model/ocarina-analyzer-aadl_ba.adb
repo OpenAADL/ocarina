@@ -1373,7 +1373,7 @@ package body Ocarina.Analyzer.AADL_BA is
                    (BATN.First_Node
                       (BATN.Idt (BATN.Identifier (Node)))))) & ")"
                 & " does not point to"
-                & " a valid subprogram or a port name.");
+                & " a valid subprogram name or a port name.");
          end if;
 
       end if;
@@ -1420,7 +1420,8 @@ package body Ocarina.Analyzer.AADL_BA is
          while Present (F) loop
 
             if ATN.Kind (F) = K_Port_Spec
-              and then Is_Data (F) and then ATN.Is_Out (F)
+              and then ATN.Is_Out (F)
+              and then (Is_Data (F) or else Is_Event (F))
               and then
                 Get_Name_String
                   (Utils.To_Lower
@@ -1465,13 +1466,62 @@ package body Ocarina.Analyzer.AADL_BA is
                      or else Kind (Parent_Component) =
                        ATN.K_Component_Implementation);
 
-      Success      : Boolean := False;
-      N1, N2       : Node_Id;
-      L1           : Node_List;
-      Spg_params   : List_Id;
+      Success                  : Boolean := False;
+      N1, N2                   : Node_Id;
+      L1                       : Node_List;
+      Spg_params               : List_Id;
+      F                        : Node_Id;
+      Type_Of_Parent_Component : Node_Id := No_Node;
    begin
       --  1) Check the called Subprogram Name : i.e.  It must refer to
-      --  a Subprogram declared in the AADL model
+      --  a Subprogram declared in the AADL model or a required subprogram
+      --  subprogram access of the parent_component
+
+      --  1.a) a required subprogram subprogram access
+      --  of the parent_component
+
+      if ATN.Kind (Parent_Component) = ATN.K_Component_Type then
+         Type_Of_Parent_Component := Parent_Component;
+      else
+         Type_Of_Parent_Component := Get_Component_Type_From_Impl
+           (Root, Parent_Component);
+      end if;
+
+      if not ANU.Is_Empty (ATN.Features (Type_Of_Parent_Component)) then
+
+         F := ATN.First_Node (ATN.Features (Type_Of_Parent_Component));
+
+         while Present (F) loop
+
+            if ATN.Kind (F) = K_Subcomponent_Access
+              and then Component_Category'Val (Subcomponent_Category (F))
+                  = CC_Subprogram
+              and then not ATN.Is_Provided (F)
+              and then
+                Get_Name_String
+                  (Utils.To_Lower
+                     (BATN.Display_Name
+                           (BATN.First_Node
+                                (BATN.Idt (BATN.Identifier (Node))))))
+                = Get_Name_String
+              (Utils.To_Lower (ATN.Name (ATN.Identifier (F))))
+            then
+               Success := True;
+               BATN.Set_Corresponding_Entity
+                 (BATN.First_Node
+                    (BATN.Idt (BATN.Identifier (Node))), F);
+            end if;
+
+            exit when Success /= False;
+            F := ATN.Next_Node (F);
+         end loop;
+      end if;
+
+      if Success then
+         return True;
+      end if;
+
+      --  1.b) a Subprogram declared in the AADL model
 
       L1 := Find_All_Declarations (Root,
                                    (ATN.K_Component_Type,
