@@ -54,7 +54,8 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RH_Types,                      --  the types header
       RH_Marshallers,                --  the marshallers header
       RH_Subprograms,                --  the subprograms
-      RH_Deployment);
+      RH_Deployment,
+      RH_AADL);
 
    --  Runtime Entities
 
@@ -255,7 +256,11 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Node_Addr,                      --  __po_hi_node_addr
       RE_Entity_Table,                   --  __po_hi_entity_table
       RE_Port_Global_Model_Names,        --  __po_hi_port_global_model_names
-      RE_Port_Global_To_Local            --  __po_hi_port_global_to_local
+      RE_Port_Global_To_Local,           --  __po_hi_port_global_to_local
+
+      RE_Local_Port,                     --  LOCAL_PORT
+      RE_PORT_VARIABLE,                  --  PORT_VARIABLE
+      RE_REQUEST_PORT                    --  REQUEST_PORT
       );
 
    --  Runtime types
@@ -264,6 +269,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
    subtype RC_Id is RE_Id range RE_Default_Priority .. RE_SUCCESS;
    subtype RF_Id is RE_Id range RE_Null .. RE_Wait_For_Tasks;
    subtype RV_Id is RE_Id range RE_Operation_Names .. RE_Port_Global_To_Local;
+   subtype RM_Id is RE_Id range RE_Local_Port .. RE_REQUEST_PORT;
 
    RE_Header_Table : constant array (RE_Id) of RH_Id :=
      (RE_Null => RH_Null,
@@ -469,7 +475,12 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Node_Addr                    => RH_Deployment,
       RE_Entity_Table                 => RH_Deployment,
       RE_Port_Global_Model_Names      => RH_Deployment,
-      RE_Port_Global_To_Local         => RH_Deployment);
+      RE_Port_Global_To_Local         => RH_Deployment,
+
+      RE_Local_Port                   => RH_AADL,
+      RE_PORT_VARIABLE                => RH_AADL,
+      RE_REQUEST_PORT                 => RH_AADL
+      );
    procedure Initialize;
    procedure Reset;
 

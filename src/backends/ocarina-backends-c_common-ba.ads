@@ -31,12 +31,15 @@
 
 package Ocarina.Backends.C_Common.BA is
 
-   function Map_C_Behavior_Variables (S : Node_Id) return List_Id;
+   procedure Map_C_Behavior_Variables (S            : Node_Id;
+                                       Declarations : List_Id);
    --  This function maps variables declared in the BA variables
    --  section to variables in the corresponding genereted C-subprogram
    --  having the same identifiers. It returns the declarations list of
    --  the generated C-subprogram.
 
-   function Map_C_Behavior_Actions (S : Node_Id) return List_Id;
+   procedure Map_C_Behavior_Actions (S            : Node_Id;
+                                     Declarations : List_Id;
+                                     Statements   : List_Id);
 
 end Ocarina.Backends.C_Common.BA;
