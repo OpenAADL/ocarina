@@ -1365,8 +1365,10 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                end if;
 
             when Thread_With_Behavior_Specification =>
-
                Make_Thread_Behavior_Specification;
+               if Has_Out_Ports (E) then
+                  Make_Send_Out_Ports;
+               end if;
 
             when others =>
                raise Program_Error with "Unconsistency in Task_Job_Body";
