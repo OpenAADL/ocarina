@@ -4409,4 +4409,21 @@ package body Ocarina.Backends.C_Common.Mapping is
       return To_Lower (Converted);
    end Map_ASN_Type;
 
+   -----------------------------------
+   -- Map_Thread_Port_Variable_Name --
+   -----------------------------------
+
+   function Map_Thread_Port_Variable_Name
+     (E : Node_Id) return Name_Id
+   is
+      Converted : Name_Id;
+   begin
+      Get_Name_String (CTU.To_C_Name
+                         (Display_Name (Identifier (E))));
+
+      Add_Str_To_Name_Buffer ("_thread");
+      Converted := Name_Find;
+      return To_Lower (Converted);
+   end Map_Thread_Port_Variable_Name;
+
 end Ocarina.Backends.C_Common.Mapping;
