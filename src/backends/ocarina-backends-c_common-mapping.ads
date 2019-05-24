@@ -391,4 +391,8 @@ package Ocarina.Backends.C_Common.Mapping is
    function Map_ASN_Type (ASN_Name : Name_Id) return Name_Id;
    --  Map the name of an ASN.1 type into the C mapping.
 
+   function Map_Thread_Port_Variable_Name (E : Node_Id) return Name_Id;
+   --  Map the thread identifier name into a variable name
+   --  that is used in port sending or reading.
+
 end Ocarina.Backends.C_Common.Mapping;
