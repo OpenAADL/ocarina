@@ -1686,35 +1686,51 @@ package body Ocarina.Backends.C_Common.BA is
 
             --  Make the call to __po_hi_gqueue_next_value
             --  if it is an event port
-            Call_Parameters := New_List (CTN.K_Parameter_List);
-
-            Set_Str_To_Name_Buffer ("self");
-            N1 := Name_Find;
-            N := Make_Defining_Identifier (N1);
-            Append_Node_To_List (N, Call_Parameters);
-
-            Get_Name_String (CTU.To_C_Name
-                             (AIN.Display_Name
-                                (AIN.Identifier (Subprogram_Root))));
-            Add_Str_To_Name_Buffer ("_thread");
-            N1 := Name_Find;
-
-            Append_Node_To_List
-              (Make_Call_Profile
-                 (RE (RE_Local_Port),
-                  Make_List_Id
-                    (Make_Defining_Identifier (N1),
-                     Make_Defining_Identifier
-                       (BATN.Display_Name (Node)))),
-               Call_Parameters);
-
             if AAN.Is_Event (BATN.Corresponding_Entity (Node)) then
+               Call_Parameters := New_List (CTN.K_Parameter_List);
+
+               Set_Str_To_Name_Buffer ("self");
+               N1 := Name_Find;
+               N := Make_Defining_Identifier (N1);
+               Append_Node_To_List (N, Call_Parameters);
+
+               Get_Name_String (CTU.To_C_Name
+                                  (AIN.Display_Name
+                                     (AIN.Identifier (Subprogram_Root))));
+               Add_Str_To_Name_Buffer ("_thread");
+               N1 := Name_Find;
+
+               Append_Node_To_List
+                 (Make_Call_Profile
+                    (RE (RE_Local_Port),
+                     Make_List_Id
+                       (Make_Defining_Identifier (N1),
+                        Make_Defining_Identifier
+                          (BATN.Display_Name (Node)))),
+                  Call_Parameters);
+
                N :=
                  CTU.Make_Call_Profile
                    (RE (RE_Gqueue_Next_Value),
                     Call_Parameters);
                Append_Node_To_List (N, Statements);
             end if;
+
+            Call_Parameters := New_List (CTN.K_Parameter_List);
+
+            Get_Name_String (CTU.To_C_Name
+                               (AIN.Display_Name
+                                  (AIN.Identifier (Subprogram_Root))));
+            Add_Str_To_Name_Buffer ("_thread");
+            N1 := Name_Find;
+
+            Append_Node_To_List
+            (Make_Defining_Identifier (N1),
+             Call_Parameters);
+
+            Append_Node_To_List
+              (Make_Defining_Identifier (BATN.Display_Name (Node)),
+               Call_Parameters);
 
             result := CTU.Make_Call_Profile
               (Make_Member_Designator
