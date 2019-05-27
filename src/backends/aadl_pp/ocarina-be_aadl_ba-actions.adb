@@ -203,18 +203,22 @@ package body Ocarina.BE_AADL_BA.Actions is
 
    procedure Print_If_Cond_Struct (Node : Node_Id) is
       pragma Assert (Kind (Node) = K_If_Cond_Struct);
-
+      List_Node : Node_Id;
    begin
       Print_Token (T_If);
       Write_Space;
       Print_Conditional_Statement (If_Statement (Node));
 
-      if Present (Elsif_Statement (Node)) then
-         Write_Eol;
-         Write_Indentation (+4);
-         Print_Token (T_Elsif);
-         Write_Space;
-         Print_Conditional_Statement (Elsif_Statement (Node));
+      if not Is_Empty (Elsif_Statement (Node)) then
+         List_Node := First_Node (Elsif_Statement (Node));
+         while Present (List_Node) loop
+            Write_Eol;
+            Write_Indentation (+4);
+            Print_Token (T_Elsif);
+            Write_Space;
+            Print_Conditional_Statement (List_Node);
+            List_Node := Next_Node (List_Node);
+         end loop;
       end if;
 
       if Present (Else_Statement (Node)) then
