@@ -157,15 +157,13 @@ package body Ocarina.Builder.AADL_BA.Actions is
      (If_Cond_Struct  : Node_Id;
       Container       : Node_Id  := No_Node;
       If_Stat         : Node_Id  := No_Node;
-      Elsif_Stat      : Node_Id  := No_Node;
+      Elsif_Stat      : List_Id  := No_List;
       Else_Stat       : Node_Id  := No_Node)
    is
       pragma Assert (No (Container)
                        or else Kind (Container) = K_Behavior_Action);
       pragma Assert (Kind (If_Cond_Struct) = K_If_Cond_Struct);
       pragma Assert (Kind (If_Stat) = K_Conditional_Statement);
-      pragma Assert (No (Elsif_Stat)
-                       or else Kind (Elsif_Stat) = K_Conditional_Statement);
       pragma Assert (No (Else_Stat)
                        or else Kind (Else_Stat) = K_Conditional_Statement);
    begin
@@ -173,7 +171,9 @@ package body Ocarina.Builder.AADL_BA.Actions is
       --  Container may be No_Node
 
       Set_If_Statement (If_Cond_Struct, If_Stat);
-      Set_Elsif_Statement (If_Cond_Struct, Elsif_Stat);
+      if not Is_Empty (Elsif_Stat) then
+         Set_Elsif_Statement (If_Cond_Struct, Elsif_Stat);
+      end if;
       Set_Else_Statement (If_Cond_Struct, Else_Stat);
 
    end Add_New_If_Cond_Struct;

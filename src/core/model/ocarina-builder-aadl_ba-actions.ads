@@ -67,7 +67,7 @@ package Ocarina.Builder.AADL_BA.Actions is
      (If_Cond_Struct  : Node_Id;
       Container       : Node_Id  := No_Node;
       If_Stat         : Node_Id  := No_Node;
-      Elsif_Stat      : Node_Id  := No_Node;
+      Elsif_Stat      : List_Id  := No_List;
       Else_Stat       : Node_Id  := No_Node);
 
    function Add_New_Conditional_Statement
