@@ -369,7 +369,7 @@ module Ocarina::ME_AADL_BA::BA_Tree::Nodes {
 
   interface If_Cond_Struct : Behavior_Entity {
     Node_Id  If_Statement;    //  node kind is Conditional_Statement
-    Node_Id  Elsif_Statement;  //  i.e
+    List_Id  Elsif_Statement;  //  i.e
     Node_Id  Else_Statement;  //  i.e
   };
 
