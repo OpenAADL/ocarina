@@ -1095,6 +1095,7 @@ package body Ocarina.Analyzer.AADL_BA is
                      or else Kind (Parent_Component) =
                        ATN.K_Component_Implementation);
       Success : boolean;
+      N       : Node_Id;
    begin
       Success := Analyze_Behav_Acts
         (Node             => If_Statement (Node),
@@ -1102,12 +1103,16 @@ package body Ocarina.Analyzer.AADL_BA is
          BA_Root          => BA_Root,
          Parent_Component => Parent_Component);
 
-      if Present (Elsif_Statement (Node)) then
-         Success := Success and then Analyze_Behav_Acts
-           (Node             => Elsif_Statement (Node),
-            Root             => Root,
-            BA_Root          => BA_Root,
-            Parent_Component => Parent_Component);
+      if not Is_Empty (Elsif_Statement (Node)) then
+         N := BATN.First_Node (Elsif_Statement (Node));
+         while Present (N) loop
+            Success := Success and then Analyze_Behav_Acts
+              (Node             => N,
+               Root             => Root,
+               BA_Root          => BA_Root,
+               Parent_Component => Parent_Component);
+            N := BATN.Next_Node (N);
+         end loop;
       end if;
 
       if Present (Else_Statement (Node)) then
