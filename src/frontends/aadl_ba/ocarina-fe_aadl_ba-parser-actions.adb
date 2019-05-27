@@ -38,6 +38,7 @@ with Ocarina.ME_AADL_BA.Tokens;
 with Ocarina.ME_AADL_BA.BA_Tree.Nutils;
 
 with Ocarina.Builder.Aadl_Ba.Actions;
+with Ocarina.ME_AADL_BA.BA_Tree.Nodes;
 
 package body Ocarina.FE_AADL_BA.Parser.Actions is
 
@@ -51,6 +52,7 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
    use Ocarina.ME_AADL_BA.BA_Tree.Nutils;
 
    use Ocarina.Builder.Aadl_Ba.Actions;
+   use Ocarina.ME_AADL_BA.BA_Tree.Nodes;
 
    function P_Behavior_Actions (Container : Node_Id) return Node_Id;
 
@@ -308,7 +310,8 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
       Loc            : Location;
       If_Cond_Struct : Node_Id;
       If_Node        : Node_Id;
-      Elsif_Node     : Node_Id := No_Node;
+      Elsif_List     : List_Id := No_List;
+      Elsif_Node     : Node_Id;
       Else_Node      : Node_Id := No_Node;
    begin
       If_Cond_Struct := Add_New_If_Cond_Struct (Start_Loc);
@@ -328,18 +331,30 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
          return No_Node;
       end if;
 
-      Save_Lexer (Loc);
-      Scan_Token;
-      if Token = T_Elsif then
-         Elsif_Node := P_Conditional_Statement (If_Cond_Struct,
-                                                PC_Elsif_Cond_Statement);
-         if No (Elsif_Node) then
-            DPE (PC_If_Cond_Struct, EMC_Failed);
-            Skip_Tokens (T_Semicolon);
-            return No_Node;
+      Elsif_List := New_List (K_List_Id, Token_Location);
+      loop
+         Save_Lexer (Loc);
+         Scan_Token;
+         if Token = T_Elsif then
+            Elsif_Node := P_Conditional_Statement (If_Cond_Struct,
+                                                   PC_Elsif_Cond_Statement);
+            if Present (Elsif_Node) then
+               Append_Node_To_List (Elsif_Node, Elsif_List);
+            else
+               DPE (PC_If_Cond_Struct, EMC_Failed);
+               Skip_Tokens (T_Semicolon);
+               return No_Node;
+            end if;
+         else
+            Restore_Lexer (Loc);
+            exit;
          end if;
-      else
-         Restore_Lexer (Loc);
+      end loop;
+
+      if not Is_Empty (Elsif_List) then
+         Set_Loc (Node_Id (Elsif_List),
+                  Ocarina.ME_AADL_BA.BA_Tree.Nodes.Loc (First_Node
+                                                        (Elsif_List)));
       end if;
 
       Save_Lexer (Loc);
@@ -371,7 +386,7 @@ package body Ocarina.FE_AADL_BA.Parser.Actions is
       end if;
 
       Add_New_If_Cond_Struct (If_Cond_Struct, No_Node,
-                              If_Node, Elsif_Node, Else_Node);
+                              If_Node, Elsif_List, Else_Node);
       return If_Cond_Struct;
    end P_If_Cond_Struct;
 
