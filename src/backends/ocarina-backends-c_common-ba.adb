@@ -100,6 +100,13 @@ package body Ocarina.Backends.C_Common.BA is
       Declarations : List_Id;
       Statements   : List_Id);
 
+   function Map_C_Elsif_stat
+     (Node         : Node_Id;
+      S            : Node_Id;
+      Declarations : List_Id;
+      Statements   : List_Id;
+      Else_st      : Node_Id) return List_Id;
+
    procedure Map_C_If_Cond_Struct
      (Node         : Node_Id;
       S            : Node_Id;
@@ -496,6 +503,91 @@ package body Ocarina.Backends.C_Common.BA is
 
    end Map_C_Behavior_Action;
 
+   ----------------------
+   -- Map_C_Elsif_stat --
+   ----------------------
+
+   function Map_C_Elsif_stat
+     (Node         : Node_Id;
+      S            : Node_Id;
+      Declarations : List_Id;
+      Statements   : List_Id;
+      Else_st      : Node_Id) return List_Id
+   is
+      N                : Node_Id;
+      Else_stats       : constant List_Id := New_List (CTN.K_Statement_List);
+      elsif_statements : constant List_Id := New_List (CTN.K_Statement_List);
+   begin
+      N := BATN.Next_Node (Node);
+
+      if Present (N) then
+         Map_C_Behav_Acts
+           (Node         => Node,
+            S            => S,
+            Declarations => Declarations,
+            WStatements  => elsif_statements);
+
+         CTU.Append_Node_To_List
+           (CTU.Make_If_Statement
+              (Condition       => Evaluate_BA_Value_Expression
+                   (Node             => Logical_Expr (Node),
+                    Subprogram_Root  => S,
+                    Declarations     => Declarations,
+                    Statements       => Statements),
+               Statements      => elsif_statements,
+               Else_Statements =>
+                 Map_C_Elsif_stat
+                   (Node         => N,
+                    S            => S,
+                    Declarations => Declarations,
+                    Statements   => Statements,
+                    Else_st      => Else_st)),
+            Else_stats);
+      else
+         Map_C_Behav_Acts
+           (Node         => Node,
+            S            => S,
+            Declarations => Declarations,
+            WStatements  => elsif_statements);
+         declare
+            else_sts : constant List_Id := New_List (CTN.K_Statement_List);
+         begin
+            if Present (Else_st) then
+
+               Map_C_Behav_Acts
+                 (Node         => Else_st,
+                  S            => S,
+                  Declarations => Declarations,
+                  WStatements  => else_sts);
+
+               CTU.Append_Node_To_List
+                 (CTU.Make_If_Statement
+                    (Condition       => Evaluate_BA_Value_Expression
+                         (Node             => Logical_Expr (Node),
+                          Subprogram_Root  => S,
+                          Declarations     => Declarations,
+                          Statements       => Statements),
+                     Statements      => elsif_statements,
+                     Else_Statements => else_sts),
+                  Else_stats);
+            else
+               CTU.Append_Node_To_List
+                 (CTU.Make_If_Statement
+                    (Condition       => Evaluate_BA_Value_Expression
+                         (Node             => Logical_Expr (Node),
+                          Subprogram_Root  => S,
+                          Declarations     => Declarations,
+                          Statements       => Statements),
+                     Statements      => elsif_statements),
+                  Else_stats);
+            end if;
+         end;
+      end if;
+
+      return Else_stats;
+
+   end Map_C_Elsif_stat;
+
    --------------------------
    -- Map_C_If_Cond_Struct --
    --------------------------
@@ -515,8 +607,7 @@ package body Ocarina.Backends.C_Common.BA is
       Condition        : Node_Id;
       else_Statements  : List_Id;
       if_Statements    : constant List_Id := New_List (CTN.K_Statement_List);
-      else_sts         : constant List_Id := New_List (CTN.K_Statement_List);
-      elsif_statements : constant List_Id := New_List (CTN.K_Statement_List);
+      List_Node1       : Node_Id;
    begin
 
       Condition := Evaluate_BA_Value_Expression
@@ -531,46 +622,12 @@ package body Ocarina.Backends.C_Common.BA is
          Declarations => Declarations,
          WStatements  => if_Statements);
 
-      if Present (Elsif_Statement (Node)) then
-         Map_C_Behav_Acts
-           (Node         => Elsif_Statement (Node),
-            S            => S,
-            Declarations => Declarations,
-            WStatements  => elsif_statements);
-         else_statements := New_List (CTN.K_Statement_List);
-         if Present (Else_Statement (Node)) then
-            Map_C_Behav_Acts
-              (Node         => Else_Statement (Node),
-               S            => S,
-               Declarations => Declarations,
-               WStatements  => else_sts);
-            CTU.Append_Node_To_List
-              (CTU.Make_If_Statement
-                 (Condition       => Evaluate_BA_Value_Expression
-                      (Node             => Logical_Expr
-                           (Elsif_Statement (Node)),
-                       Subprogram_Root  => S,
-                       Declarations     => Declarations,
-                       Statements       => Statements),
-                  Statements      => elsif_statements,
-                  Else_Statements => else_sts),
-               else_statements);
+      if not BANu.Is_Empty (Elsif_Statement (Node)) then
 
-         else
+         List_Node1 := BATN.First_Node (Elsif_Statement (Node));
 
-            CTU.Append_Node_To_List
-              (CTU.Make_If_Statement
-                 (Condition       => Evaluate_BA_Value_Expression
-                      (Node             => Logical_Expr
-                           (Elsif_Statement (Node)),
-                       Subprogram_Root  => S,
-                       Declarations     => Declarations,
-                       Statements       => Statements),
-                  Statements      => elsif_statements),
-               else_statements);
-
-         end if;
-
+         else_statements := Map_C_Elsif_stat (List_Node1, S, Declarations,
+                           Statements, Else_Statement (Node));
       else
          if Present (Else_Statement (Node)) then
             else_statements := New_List (CTN.K_Statement_List);
