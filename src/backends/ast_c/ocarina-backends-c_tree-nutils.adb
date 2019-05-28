@@ -324,6 +324,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
       New_Token (Tok_Minus, "-");
       New_Token (Tok_Underscore, "_");
       New_Token (Tok_Plus, "+");
+      New_Token (Tok_Plus_Plus, "++");
       New_Token (Tok_Asterisk, "*");
       New_Token (Tok_Slash, "/");
       New_Token (Tok_Dot, ".");
@@ -356,6 +357,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
       New_Operator (Op_Asterisk, "**");
       New_Operator (Op_Minus, "-");
       New_Operator (Op_Plus, "+");
+      New_Operator (Op_Plus_Plus, "++");
       New_Operator (Op_Asterisk, "*");
       New_Operator (Op_Slash, "/");
       New_Operator (Op_Less, "<");
@@ -740,7 +742,8 @@ package body Ocarina.Backends.C_Tree.Nutils is
    function Make_Variable_Declaration
      (Defining_Identifier : Node_Id;
       Used_Type           : Node_Id;
-      Is_Static           : Boolean := False) return Node_Id
+      Is_Static           : Boolean := False;
+      Value               : Node_Id := No_Node) return Node_Id
    is
       P : Node_Id;
    begin
@@ -748,6 +751,7 @@ package body Ocarina.Backends.C_Tree.Nutils is
       Set_Defining_Identifier (P, Defining_Identifier);
       Set_Used_Type (P, Used_Type);
       Set_Is_Static (P, Is_Static);
+      Set_Initialization_Value (P, Value);
       return P;
    end Make_Variable_Declaration;
 

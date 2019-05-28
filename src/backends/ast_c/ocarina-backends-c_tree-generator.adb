@@ -723,7 +723,11 @@ package body Ocarina.Backends.C_Tree.Generator is
          else
             Generate (L_Expr);
          end if;
-
+      elsif
+        Get_Name_String (Operator_Image (Standard.Integer (Op))) = "++"
+      then
+         Generate (L_Expr);
+         Write_Name (Operator_Image (Standard.Integer (Op)));
       else
          Generate (L_Expr);
          Write_Space;
@@ -1250,6 +1254,12 @@ package body Ocarina.Backends.C_Tree.Generator is
       Generate (Used_Type (N));
       Write_Space;
       Generate (Defining_Identifier (N));
+      if not No (Initialization_Value (N)) then
+         Write_Space;
+         Write (Tok_Equal);
+         Write_Space;
+         Generate (Initialization_Value (N));
+      end if;
    end Generate_Variable_Declaration;
 
    ---------------------------------

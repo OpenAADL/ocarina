@@ -87,6 +87,7 @@ package Ocarina.Backends.C_Tree.Nutils is
       Tok_Minus,           -- -
       Tok_Underscore,      -- _
       Tok_Plus,            -- +
+      Tok_Plus_Plus,       -- ++
       Tok_Asterisk,        -- *
       Tok_Slash,           -- /
       Tok_Quote,           -- "
@@ -126,6 +127,7 @@ package Ocarina.Backends.C_Tree.Nutils is
       Op_Double_Asterisk, -- **
       Op_Minus,           -- -
       Op_Plus,            -- +
+      Op_Plus_Plus,       -- ++
       Op_Asterisk,        -- *
       Op_Slash,           -- /
       Op_Less,            -- <
@@ -358,7 +360,8 @@ package Ocarina.Backends.C_Tree.Nutils is
    function Make_Variable_Declaration
      (Defining_Identifier : Node_Id;
       Used_Type           : Node_Id;
-      Is_Static           : Boolean := False) return Node_Id;
+      Is_Static           : Boolean := False;
+      Value               : Node_Id := No_Node) return Node_Id;
 
    function Make_Member_Declaration
      (Defining_Identifier : Node_Id;
