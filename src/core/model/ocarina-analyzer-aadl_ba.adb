@@ -132,6 +132,7 @@ package body Ocarina.Analyzer.AADL_BA is
 
    function Analyze_While_Cond_Struct
      (Node              : Node_Id;
+      Root              : Node_Id;
       BA_Root           : Node_Id;
       Parent_Component  : Node_Id)
       return Boolean;
@@ -930,7 +931,9 @@ package body Ocarina.Analyzer.AADL_BA is
    is
       use ATN;
       pragma Assert (BATN.Kind (Node) = BATN.K_Behavior_Action_Block
-                     or else BATN.Kind (Node) = K_Conditional_Statement);
+                     or else BATN.Kind (Node) = K_Conditional_Statement
+                     or else BATN.Kind (Node) = K_While_Cond_Structure
+                     or else BATN.Kind (Node) = K_For_Cond_Structure);
       pragma Assert (BATN.Kind (BA_Root) = BATN.K_Behavior_Annex);
       pragma Assert (ATN.Kind (Parent_Component) = ATN.K_Component_Type
                      or else Kind (Parent_Component) =
@@ -1042,7 +1045,7 @@ package body Ocarina.Analyzer.AADL_BA is
 
       when K_While_Cond_Structure   =>
          Success := Analyze_While_Cond_Struct
-           (Action_Node, BA_Root, Parent_Component);
+           (Action_Node, Root, BA_Root, Parent_Component);
 
       when K_ForAll_Cond_Structure  =>
          Success := Analyze_Forall_Cond_Struct
@@ -1167,6 +1170,7 @@ package body Ocarina.Analyzer.AADL_BA is
 
    function Analyze_While_Cond_Struct
      (Node              : Node_Id;
+      Root              : Node_Id;
       BA_Root           : Node_Id;
       Parent_Component  : Node_Id)
       return Boolean
@@ -1177,9 +1181,14 @@ package body Ocarina.Analyzer.AADL_BA is
                      or else Kind (Parent_Component) =
                        ATN.K_Component_Implementation);
       pragma Assert (BATN.Kind (Node) = BATN.K_While_Cond_Structure);
-
+      Success : Boolean;
    begin
-      return True;
+      Success := Analyze_Behav_Acts
+        (Node             => Node,
+         Root             => Root,
+         BA_Root          => BA_Root,
+         Parent_Component => Parent_Component);
+      return Success;
    end Analyze_While_Cond_Struct;
 
    --------------------------------
