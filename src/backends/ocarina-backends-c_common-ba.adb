@@ -113,6 +113,12 @@ package body Ocarina.Backends.C_Common.BA is
       Declarations : List_Id;
       Statements   : List_Id);
 
+   procedure Map_C_For_Cond_Struct
+     (Node         : Node_Id;
+      S            : Node_Id;
+      Declarations : List_Id;
+      Statements   : List_Id);
+
    procedure Map_C_While_Cond_Struct
      (Node         : Node_Id;
       S            : Node_Id;
@@ -481,8 +487,8 @@ package body Ocarina.Backends.C_Common.BA is
          when K_If_Cond_Struct         =>
             Map_C_If_Cond_Struct (Action_Node, S, Declarations, Statements);
 
-            --  when K_For_Cond_Structure     =>
-            --     Map_C_For_Cond_Struct (Action_Node, S, Statements);
+         when K_For_Cond_Structure     =>
+            Map_C_For_Cond_Struct (Action_Node, S, Declarations, Statements);
 
          when K_While_Cond_Structure   =>
             Map_C_While_Cond_Struct (Action_Node, S, Declarations, Statements);
@@ -656,6 +662,80 @@ package body Ocarina.Backends.C_Common.BA is
          Statements);
 
    end Map_C_If_Cond_Struct;
+
+   --------------------------
+   -- Map_C_For_Cond_Struct --
+   --------------------------
+
+   procedure Map_C_For_Cond_Struct
+     (Node         : Node_Id;
+      S            : Node_Id;
+      Declarations : List_Id;
+      Statements   : List_Id)
+   is
+
+      pragma Assert (BATN.Kind (Node) = K_For_Cond_Structure);
+
+      Pre_Cond       : Node_Id;
+      Post_Cond      : Node_Id;
+      Used_Type      : Node_Id;
+      init_value     : Node_Id;
+      Condition      : Node_Id;
+      For_Statements : constant List_Id := New_List (CTN.K_Statement_List);
+   begin
+
+      if BATN.Kind (In_Element_Values (Node)) = BATN.K_Integer_Range then
+
+         Used_Type :=
+           Ocarina.Backends.C_Common.Mapping.
+             Map_C_Data_Type_Designator
+               (AAN.Default_Instance
+                  (BATN.Corresponding_Declaration
+                     (BATN.Classifier_Ref (Node))));
+
+         init_value := Evaluate_BA_Literal
+           (BATN.Entity (BATN.Lower_Int_Val (In_Element_Values (Node))));
+
+         Pre_Cond := Make_Variable_Declaration
+           (Defining_Identifier => Make_Defining_Identifier
+              (BATN.Display_Name (Element_Idt (Node))),
+            Used_Type           => Used_Type,
+            Value               => init_value);
+
+         Condition := CTU.Make_Expression
+           (Left_Expr  => Make_Defining_Identifier
+              (BATN.Display_Name (Element_Idt (Node))),
+            Operator   => CTU.Op_Less_Equal,
+            Right_Expr => Evaluate_BA_Literal
+              (BATN.Entity (BATN.Upper_Int_Val (In_Element_Values (Node)))));
+
+         Post_Cond := CTU.Make_Expression
+              (Left_Expr  => Make_Defining_Identifier
+                   (BATN.Display_Name (Element_Idt (Node))),
+               Operator   => CTU.Op_Plus_Plus,
+               Right_Expr => No_Node);
+
+         Map_C_Behav_Acts
+           (Node         => Node,
+            S            => S,
+            Declarations => Declarations,
+            WStatements  => For_Statements);
+
+         CTU.Append_Node_To_List
+           (CTU.Make_For_Statement
+              (Pre_Cond   => Pre_Cond,
+               Condition  => Condition,
+               Post_Cond  => Post_Cond,
+               Statements => For_Statements),
+            Statements);
+
+      else
+         Display_Error ("In For structure, Kinds"
+                        & " other than K_Integer_Range are not yet"
+                        & " supported", Fatal => True);
+      end if;
+
+   end Map_C_For_Cond_Struct;
 
    -----------------------------
    -- Map_C_While_Cond_Struct --
