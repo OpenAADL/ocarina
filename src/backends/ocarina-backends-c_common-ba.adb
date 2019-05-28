@@ -113,6 +113,12 @@ package body Ocarina.Backends.C_Common.BA is
       Declarations : List_Id;
       Statements   : List_Id);
 
+   procedure Map_C_While_Cond_Struct
+     (Node         : Node_Id;
+      S            : Node_Id;
+      Declarations : List_Id;
+      Statements   : List_Id);
+
    procedure Map_C_Communication_Action
      (Node         : Node_Id;
       S            : Node_Id;
@@ -384,6 +390,7 @@ package body Ocarina.Backends.C_Common.BA is
    is
       pragma Assert (BATN.Kind (Node) = BATN.K_Behavior_Action_Block
                      or else BATN.Kind (Node) = K_Conditional_Statement
+                     or else BATN.Kind (Node) = K_While_Cond_Structure
                      or else BATN.Kind (Node) = K_For_Cond_Structure);
 
       pragma Assert (Present (BATN.Behav_Acts (Node)));
@@ -477,8 +484,8 @@ package body Ocarina.Backends.C_Common.BA is
             --  when K_For_Cond_Structure     =>
             --     Map_C_For_Cond_Struct (Action_Node, S, Statements);
 
-            --  when K_While_Cond_Structure   =>
-            --    Map_C_While_Cond_Struct (Action_Node);
+         when K_While_Cond_Structure   =>
+            Map_C_While_Cond_Struct (Action_Node, S, Declarations, Statements);
 
             --  when K_ForAll_Cond_Structure  =>
             --    Map_C_Forall_Cond_Struct (Action_Node);
@@ -649,6 +656,46 @@ package body Ocarina.Backends.C_Common.BA is
          Statements);
 
    end Map_C_If_Cond_Struct;
+
+   -----------------------------
+   -- Map_C_While_Cond_Struct --
+   -----------------------------
+
+   procedure Map_C_While_Cond_Struct
+     (Node         : Node_Id;
+      S            : Node_Id;
+      Declarations : List_Id;
+      Statements   : List_Id)
+   is
+
+      pragma Assert (BATN.Kind (Node) = K_While_Cond_Structure);
+
+      pragma Assert (Present (Logical_Expr (Node)));
+      pragma Assert (Present (Behav_Acts (Node)));
+
+      Condition        : Node_Id;
+      while_statements : constant List_Id := New_List (CTN.K_Statement_List);
+   begin
+
+      Condition := Evaluate_BA_Value_Expression
+        (Node             => Logical_Expr (Node),
+         Subprogram_Root  => S,
+         Declarations     => Declarations,
+         Statements       => Statements);
+
+      Map_C_Behav_Acts
+        (Node         => Node,
+         S            => S,
+         Declarations => Declarations,
+         WStatements  => while_statements);
+
+      CTU.Append_Node_To_List
+        (CTU.Make_While_Statement
+           (Condition  => Condition,
+            Statements => while_statements),
+         Statements);
+
+   end Map_C_While_Cond_Struct;
 
    --------------------------------
    -- Map_C_Communication_Action --
