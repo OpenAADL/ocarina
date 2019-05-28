@@ -1161,6 +1161,13 @@ package body Ocarina.Analyzer.AADL_BA is
                 & " with a valid data component classifier.");
          end if;
       end if;
+
+      Success := Success and then Analyze_Behav_Acts
+           (Node             => Node,
+            Root             => Root,
+            BA_Root          => BA_Root,
+            Parent_Component => Parent_Component);
+
       return Success;
    end Analyze_For_Cond_Struct;
 
@@ -2110,11 +2117,12 @@ package body Ocarina.Analyzer.AADL_BA is
                       & " does not point to"
                       & " anything or point to something unreachable.");
                else
-                  DE (" (" & Get_Name_String (Remove_Prefix_From_Name
-                      ("%ba%", BATN.Display_Name
-                         (BATN.Identifier (Node)))) & ")"
-                      & " does not point to"
-                      & " anything or point to something unreachable.");
+                  Success := True;
+--                    DE (" (" & Get_Name_String (Remove_Prefix_From_Name
+--                        ("%ba%", BATN.Display_Name
+--                           (BATN.Identifier (Node)))) & ")"
+--                        & " does not point to"
+--                        & " anything or point to something unreachable.");
                end if;
 
             end if;
