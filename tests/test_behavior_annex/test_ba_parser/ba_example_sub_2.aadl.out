@@ -58,7 +58,6 @@ data)
 end Data_Model;
 
 package Base_Types
-
 public
   with data_model;
 
@@ -171,7 +170,6 @@ public
 end Base_Types;
 
 package BA_example2
-
 public
   with Base_Types;
 
@@ -210,11 +208,11 @@ public
     states
       s0 : initial state;
       s1 : final state;
-    transitions
-      s0 -[this. sp  >= 100]-> s1 {
+    transitions      
+      s0 -[this. sp  <= 100]-> s1 {
         this. elems [ this. sp  ] := v;
         this. sp  := this. sp  + 1
-        };
+        };      
       s0 -[this. sp  > 100]-> s1 {
          overflow !
         };
@@ -226,11 +224,11 @@ public
     states
       s0 : initial state;
       s1 : final state;
-    transitions
+    transitions      
       s0 -[this. sp  > 0]-> s1 {
         this. sp  := this. sp  - 1;
         v  := this. elems [ this. sp  ]
-        };
+        };      
       s0 -[this. sp  = 0]-> s1 {
          underflow !
         };
@@ -238,5 +236,4 @@ public
   end pop.default;
 
 end BA_example2;
-
 
