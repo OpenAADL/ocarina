@@ -731,10 +731,10 @@ package body Ocarina.FE_AADL_BA.Parser.Expressions is
             Operator_Cat := OK_Greater_Than;
 
          when T_Greater_Or_Equal =>
-            Operator_Cat := OK_Less_Or_Equal;
+            Operator_Cat := OK_Greater_Or_Equal;
 
          when T_Less_Or_Equal =>
-            Operator_Cat := OK_Greater_Or_Equal;
+            Operator_Cat := OK_Less_Or_Equal;
 
          --  unary and Binary adding operator
          when T_Plus =>

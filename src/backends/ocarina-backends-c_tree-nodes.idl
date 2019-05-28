@@ -373,6 +373,7 @@ module Ocarina::Backends::C_Tree::Nodes {
    */
   interface Variable_Declaration : Definition {
     Node_Id    Used_Type;
+    Node_Id    Initialization_Value;
     boolean    Is_Static;
   };
 
