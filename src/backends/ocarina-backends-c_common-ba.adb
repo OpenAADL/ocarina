@@ -142,6 +142,11 @@ package body Ocarina.Backends.C_Common.BA is
       Declarations : List_Id;
       Statements   : List_Id);
 
+   procedure Make_Output_Port_Name
+     (Node       : Node_Id;
+      S          : Node_Id;
+      Statements : List_Id);
+
    procedure Map_C_Assignment_Action
      (Node         : Node_Id;
       S            : Node_Id;
@@ -1000,41 +1005,23 @@ package body Ocarina.Backends.C_Common.BA is
             else
                --  It is a port sending action
 
-               --  Declare request variable if it is not yet declared
-               Make_Request_Variable_Declaration (Declarations);
-
-               --  Generate the following code :
-               --  request.port =
-               --           REQUEST_PORT (thread_instance_name, port_name);
-
-               N := Message_Comment (" The name of an output port is built"
-                                     & " from the thread_instance name"
-                                     & " and the port name using"
-                                     & " the REQUEST_PORT macro. ");
-               Append_Node_To_List (N, Statements);
-
-               CTU.Append_Node_To_List
-                 (Make_Assignment_Statement
-                    (Variable_Identifier => Make_Member_Designator
-                         (Defining_Identifier =>
-                              Make_Defining_Identifier (MN (M_Port)),
-                          Aggregate_Name      =>
-                            Make_Defining_Identifier (VN (V_Request))),
-                     Expression          => Make_Call_Profile
-                       (RE (RE_REQUEST_PORT),
-                        Make_List_Id
-                          (Make_Defining_Identifier
-                               (Map_Thread_Port_Variable_Name (S)),
-                           Make_Defining_Identifier
-                             (BATN.Display_Name (BATN.First_Node
-                              (BATN.Idt (BATN.Identifier (Node)))))))),
-                  Statements);
-
                if not BANu.Is_Empty (Subprogram_Parameter_List (Node))
                  and then BANu.Length (Subprogram_Parameter_List (Node)) = 1
                then
+                  --  Declare request variable if it is not yet declared
+                  Make_Request_Variable_Declaration (Declarations);
+
+                  Make_Output_Port_Name
+                 (Node       => BATN.First_Node
+                    (BATN.Idt (BATN.Identifier (Node))),
+                  S          => S,
+                  Statements => Statements);
+
                   Make_Put_Value_On_port (Node, S, Declarations, Statements);
                end if;
+
+               --  Declare request variable if it is not yet declared
+               Make_Request_Variable_Declaration (Declarations);
 
                Make_Send_Output_Port (Node, S, Statements);
 
@@ -1078,6 +1065,46 @@ package body Ocarina.Backends.C_Common.BA is
       --
       --  end if;
    end Map_C_Communication_Action;
+
+   ---------------------------
+   -- Make_Output_Port_Name --
+   ---------------------------
+
+   procedure Make_Output_Port_Name
+     (Node       : Node_Id;
+      S          : Node_Id;
+      Statements : List_Id)
+   is
+      N               : Node_Id;
+   begin
+
+      --  Generate the following code :
+      --  request.port =
+      --           REQUEST_PORT (thread_instance_name, port_name);
+
+      N := Message_Comment (" The name of an output port is built"
+                            & " from the thread_instance name"
+                            & " and the port name using"
+                            & " the REQUEST_PORT macro. ");
+      Append_Node_To_List (N, Statements);
+
+      CTU.Append_Node_To_List
+        (Make_Assignment_Statement
+           (Variable_Identifier => Make_Member_Designator
+                (Defining_Identifier =>
+                     Make_Defining_Identifier (MN (M_Port)),
+                 Aggregate_Name      =>
+                   Make_Defining_Identifier (VN (V_Request))),
+            Expression          => Make_Call_Profile
+              (RE (RE_REQUEST_PORT),
+               Make_List_Id
+                 (Make_Defining_Identifier
+                      (Map_Thread_Port_Variable_Name (S)),
+                  Make_Defining_Identifier
+                    (BATN.Display_Name (Node))))),
+         Statements);
+
+   end Make_Output_Port_Name;
 
    ----------------------------
    -- Make_Put_Value_On_port --
@@ -1222,8 +1249,17 @@ package body Ocarina.Backends.C_Common.BA is
                       (BATN.First_Node (BATN.Idt (BATN.Target (Node)))),
                     Pointer        => True);
             elsif AAN.Kind (Corresponding_Entity) = AAN.K_Port_Spec
-              and then AAN.Is_In (Corresponding_Entity)
+              and then AAN.Is_Out (Corresponding_Entity)
             then
+               --  Declare request variable if it is not yet declared
+               Make_Request_Variable_Declaration (Declarations);
+
+               Make_Output_Port_Name
+                 (Node       => BATN.First_Node
+                    (BATN.Idt (BATN.Target (Node))),
+                  S          => S,
+                  Statements => Statements);
+
                N := Message_Comment (" The name of the corresponding"
                                      & " port variable is built from"
                                      & " the port name,"
@@ -1263,20 +1299,17 @@ package body Ocarina.Backends.C_Common.BA is
             Fatal => True);
       end if;
 
-      if Present (BATN.Value_Expression (Node)) then
+      Expr := Evaluate_BA_Value_Expression
+        (Node             => BATN.Value_Expression (Node),
+         Subprogram_Root  => S,
+         Declarations     => Declarations,
+         Statements       => Statements);
 
-         Expr := Evaluate_BA_Value_Expression
-           (Node             => BATN.Value_Expression (Node),
-            Subprogram_Root  => S,
-            Declarations     => Declarations,
-            Statements       => Statements);
-
-         CTU.Append_Node_To_List
-           (CTU.Make_Assignment_Statement
-              (Variable_Identifier => Var_identifier,
-               Expression          => Expr),
-           Statements);
-      end if;
+      CTU.Append_Node_To_List
+        (CTU.Make_Assignment_Statement
+           (Variable_Identifier => Var_identifier,
+            Expression          => Expr),
+         Statements);
 
       if BATN.Is_Any (Node) then
          --  i.e. the case of target with Data_Component_Reference
