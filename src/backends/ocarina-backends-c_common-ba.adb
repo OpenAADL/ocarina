@@ -113,7 +113,7 @@ package body Ocarina.Backends.C_Common.BA is
       Declarations : List_Id;
       Statements   : List_Id);
 
-   procedure Map_C_For_Cond_Struct
+   procedure Map_C_For_or_ForAll_Cond_Struct
      (Node         : Node_Id;
       S            : Node_Id;
       Declarations : List_Id;
@@ -432,7 +432,8 @@ package body Ocarina.Backends.C_Common.BA is
       pragma Assert (BATN.Kind (Node) = BATN.K_Behavior_Action_Block
                      or else BATN.Kind (Node) = K_Conditional_Statement
                      or else BATN.Kind (Node) = K_While_Cond_Structure
-                     or else BATN.Kind (Node) = K_For_Cond_Structure);
+                     or else BATN.Kind (Node) = K_For_Cond_Structure
+                     or else BATN.Kind (Node) = K_ForAll_Cond_Structure);
 
       pragma Assert (Present (BATN.Behav_Acts (Node)));
 
@@ -523,13 +524,15 @@ package body Ocarina.Backends.C_Common.BA is
             Map_C_If_Cond_Struct (Action_Node, S, Declarations, Statements);
 
          when K_For_Cond_Structure     =>
-            Map_C_For_Cond_Struct (Action_Node, S, Declarations, Statements);
+            Map_C_For_or_ForAll_Cond_Struct
+              (Action_Node, S, Declarations, Statements);
 
          when K_While_Cond_Structure   =>
             Map_C_While_Cond_Struct (Action_Node, S, Declarations, Statements);
 
-            --  when K_ForAll_Cond_Structure  =>
-            --    Map_C_Forall_Cond_Struct (Action_Node);
+         when K_ForAll_Cond_Structure  =>
+            Map_C_For_or_ForAll_Cond_Struct
+              (Action_Node, S, Declarations, Statements);
 
             --  when K_DoUntil_Cond_Structure =>
             --    Map_C_DoUntil_Cond_Struct (Action_Node);
@@ -698,18 +701,19 @@ package body Ocarina.Backends.C_Common.BA is
 
    end Map_C_If_Cond_Struct;
 
-   --------------------------
-   -- Map_C_For_Cond_Struct --
-   --------------------------
+   -------------------------------------
+   -- Map_C_For_or_ForAll_Cond_Struct --
+   -------------------------------------
 
-   procedure Map_C_For_Cond_Struct
+   procedure Map_C_For_or_ForAll_Cond_Struct
      (Node         : Node_Id;
       S            : Node_Id;
       Declarations : List_Id;
       Statements   : List_Id)
    is
 
-      pragma Assert (BATN.Kind (Node) = K_For_Cond_Structure);
+      pragma Assert (BATN.Kind (Node) = K_For_Cond_Structure
+                     or else BATN.Kind (Node) = K_ForAll_Cond_Structure);
 
       Pre_Cond       : Node_Id;
       Post_Cond      : Node_Id;
@@ -769,12 +773,12 @@ package body Ocarina.Backends.C_Common.BA is
             Statements);
 
       else
-         Display_Error ("In For structure, Kinds"
-                        & " other than K_Integer_Range are not yet"
-                        & " supported", Fatal => True);
+         Display_Error ("In For/ForAll construct, Kinds"
+                        & " other than K_Integer_Range for In_Element_Values"
+                        & " are not yet supported", Fatal => True);
       end if;
 
-   end Map_C_For_Cond_Struct;
+   end Map_C_For_or_ForAll_Cond_Struct;
 
    -----------------------------
    -- Map_C_While_Cond_Struct --
