@@ -341,7 +341,13 @@ module Ocarina::ME_AADL_BA::BA_Tree::Nodes {
     Node_Id  Behavior_Action;
     List_Id  Behavior_Action_Sequence;
     List_Id  Behavior_Action_Set;
+    List_Id  Scope_BA_Entities;  // this attribute is used to enable analysis
+			       // of the element in For/Forall construct
+			       // that acts as local variable with the scope
+			       // of the For/Forall construct
  };
+
+ interface BA_Entity_List : List_Id {};
 
   //  behavior_action ::= 
   //    basic_action

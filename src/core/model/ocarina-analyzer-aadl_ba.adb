@@ -110,37 +110,35 @@ package body Ocarina.Analyzer.AADL_BA is
       return Boolean;
 
    function Analyze_Behavior_Action
-     (Node             : Node_Id;
-      Root             : Node_Id;
-      BA_Root          : Node_Id;
-      Parent_Component : Node_Id)
+     (Node              : Node_Id;
+      Root              : Node_Id;
+      BA_Root           : Node_Id;
+      Parent_Component  : Node_Id;
+      Scope_BA_Entities : List_Id)
       return Boolean;
 
    function Analyze_If_Cond_Struct
      (Node              : Node_Id;
       Root              : Node_Id;
       BA_Root           : Node_Id;
-      Parent_Component  : Node_Id)
+      Parent_Component  : Node_Id;
+      Scope_BA_Entities : List_Id)
       return Boolean;
 
-   function Analyze_For_Cond_Struct
+   function Analyze_For_or_ForAll_Cond_Struct
      (Node              : Node_Id;
       Root              : Node_Id;
       BA_Root           : Node_Id;
-      Parent_Component  : Node_Id)
+      Parent_Component  : Node_Id;
+      Scope_BA_Entities : List_Id)
       return Boolean;
 
    function Analyze_While_Cond_Struct
      (Node              : Node_Id;
       Root              : Node_Id;
       BA_Root           : Node_Id;
-      Parent_Component  : Node_Id)
-      return Boolean;
-
-   function Analyze_Forall_Cond_Struct
-     (Node              : Node_Id;
-      BA_Root           : Node_Id;
-      Parent_Component  : Node_Id)
+      Parent_Component  : Node_Id;
+      Scope_BA_Entities : List_Id)
       return Boolean;
 
    function Analyze_DoUntil_Cond_Struct
@@ -153,7 +151,8 @@ package body Ocarina.Analyzer.AADL_BA is
      (Node              : Node_Id;
       Root              : Node_Id;
       BA_Root           : Node_Id;
-      Parent_Component  : Node_Id)
+      Parent_Component  : Node_Id;
+      Scope_BA_Entities : List_Id)
       return Boolean;
 
    function Link_Target
@@ -205,7 +204,8 @@ package body Ocarina.Analyzer.AADL_BA is
       Parent_Component  : Node_Id;
       Is_Parameter_Expr : Boolean := False;
       Is_Out_Parameter  : Boolean := False;
-      Parameter_Type    : Node_Id := No_Node)
+      Parameter_Type    : Node_Id := No_Node;
+      Scope_BA_Entities : List_Id := No_List)
       return Boolean;
 
    function Analyze_BA_Relation
@@ -215,7 +215,8 @@ package body Ocarina.Analyzer.AADL_BA is
       Parent_Component  : Node_Id;
       Is_Parameter_Expr : Boolean := False;
       Is_Out_Parameter  : Boolean := False;
-      Parameter_Type    : Node_Id := No_Node)
+      Parameter_Type    : Node_Id := No_Node;
+      Scope_BA_Entities : List_Id)
       return Boolean;
 
    function Analyze_BA_Simple_Expression
@@ -225,7 +226,8 @@ package body Ocarina.Analyzer.AADL_BA is
       Parent_Component  : Node_Id;
       Is_Parameter_Expr : Boolean := False;
       Is_Out_Parameter  : Boolean := False;
-      Parameter_Type    : Node_Id := No_Node)
+      Parameter_Type    : Node_Id := No_Node;
+      Scope_BA_Entities : List_Id)
       return Boolean;
 
    function Analyze_Term
@@ -235,7 +237,8 @@ package body Ocarina.Analyzer.AADL_BA is
       Parent_Component  : Node_Id;
       Is_Parameter_Expr : Boolean := False;
       Is_Out_Parameter  : Boolean := False;
-      Parameter_Type    : Node_Id := No_Node)
+      Parameter_Type    : Node_Id := No_Node;
+      Scope_BA_Entities : List_Id)
       return Boolean;
 
    function Analyze_Factor
@@ -245,7 +248,8 @@ package body Ocarina.Analyzer.AADL_BA is
       Parent_Component  : Node_Id;
       Is_Parameter_Expr : Boolean := False;
       Is_Out_Parameter  : Boolean := False;
-      Parameter_Type : Node_Id := No_Node)
+      Parameter_Type    : Node_Id := No_Node;
+      Scope_BA_Entities : List_Id)
       return Boolean;
 
    function Analyze_Value
@@ -255,7 +259,8 @@ package body Ocarina.Analyzer.AADL_BA is
       Parent_Component  : Node_Id;
       Is_Parameter_Expr : Boolean := False;
       Is_Out_Parameter  : Boolean := False;
-      Parameter_Type    : Node_Id := No_Node)
+      Parameter_Type    : Node_Id := No_Node;
+      Scope_BA_Entities : List_Id)
       return Boolean;
 
    function Find_Parameter_Of_Parent_Component
@@ -953,16 +958,16 @@ package body Ocarina.Analyzer.AADL_BA is
       pragma Assert (BATN.Kind (Node) = BATN.K_Behavior_Action_Block
                      or else BATN.Kind (Node) = K_Conditional_Statement
                      or else BATN.Kind (Node) = K_While_Cond_Structure
-                     or else BATN.Kind (Node) = K_For_Cond_Structure);
+                     or else BATN.Kind (Node) = K_For_Cond_Structure
+                     or else BATN.Kind (Node) = K_ForAll_Cond_Structure);
       pragma Assert (BATN.Kind (BA_Root) = BATN.K_Behavior_Annex);
       pragma Assert (ATN.Kind (Parent_Component) = ATN.K_Component_Type
                      or else Kind (Parent_Component) =
                        ATN.K_Component_Implementation);
 
-      Success         : Boolean := True;
-      Behav_actions   : Node_Id;
-      Behav_action    : Node_Id;
-
+      Success           : Boolean := True;
+      Behav_actions     : Node_Id;
+      Behav_action      : Node_Id;
    begin
 
       Behav_actions := BATN.Behav_Acts (Node);
@@ -978,7 +983,8 @@ package body Ocarina.Analyzer.AADL_BA is
 
          while Present (Behav_action) loop
             Success := Success and then Analyze_Behavior_Action
-              (Behav_action, Root, BA_Root, Parent_Component);
+              (Behav_action, Root, BA_Root, Parent_Component,
+               Scope_BA_Entities (Behav_Acts (Node)));
 
             Behav_action := BATN.Next_Node (Behav_action);
          end loop;
@@ -994,7 +1000,8 @@ package body Ocarina.Analyzer.AADL_BA is
 
          while Present (Behav_action) loop
             Success := Success and then Analyze_Behavior_Action
-              (Behav_action, Root, BA_Root, Parent_Component);
+              (Behav_action, Root, BA_Root, Parent_Component,
+               Scope_BA_Entities (Behav_Acts (Node)));
 
             Behav_action := BATN.Next_Node (Behav_action);
          end loop;
@@ -1009,7 +1016,8 @@ package body Ocarina.Analyzer.AADL_BA is
       then
          Success := Success and then Analyze_Behavior_Action
            (BATN.Behavior_Action (Behav_actions),
-            Root, BA_Root, Parent_Component);
+            Root, BA_Root, Parent_Component,
+            Scope_BA_Entities (Behav_Acts (Node)));
       end if;
 
       return Success;
@@ -1023,7 +1031,8 @@ package body Ocarina.Analyzer.AADL_BA is
      (Node              : Node_Id;
       Root              : Node_Id;
       BA_Root           : Node_Id;
-      Parent_Component  : Node_Id)
+      Parent_Component  : Node_Id;
+      Scope_BA_Entities : List_Id)
       return Boolean
    is
       use ATN;
@@ -1057,31 +1066,34 @@ package body Ocarina.Analyzer.AADL_BA is
 
       when K_If_Cond_Struct         =>
          Success := Analyze_If_Cond_Struct
-           (Action_Node, Root, BA_Root, Parent_Component);
+           (Action_Node, Root, BA_Root, Parent_Component, Scope_BA_Entities);
 
       when K_For_Cond_Structure     =>
-         Success := Analyze_For_Cond_Struct
-           (Action_Node, Root, BA_Root, Parent_Component);
+         Success := Analyze_For_or_ForAll_Cond_Struct
+           (Action_Node, Root, BA_Root, Parent_Component,
+            Scope_BA_Entities);
 
       when K_While_Cond_Structure   =>
          Success := Analyze_While_Cond_Struct
-           (Action_Node, Root, BA_Root, Parent_Component);
+           (Action_Node, Root, BA_Root, Parent_Component, Scope_BA_Entities);
 
       when K_ForAll_Cond_Structure  =>
-         Success := Analyze_Forall_Cond_Struct
-           (Action_Node, BA_Root, Parent_Component);
+         Success := Analyze_For_or_ForAll_Cond_Struct
+           (Action_Node, Root, BA_Root, Parent_Component,
+            Scope_BA_Entities);
 
       when K_DoUntil_Cond_Structure =>
          Success := Analyze_DoUntil_Cond_Struct
-           (Action_Node, BA_Root, Parent_Component);
+           (Action_Node, BA_Root, Parent_Component); --  , Scope_BA_Entities);
 
       when BATN.K_Assignment_Action =>
          Success := Analyze_Assignment_Action
-           (Action_Node, Root, BA_Root, Parent_Component);
+           (Action_Node, Root, BA_Root, Parent_Component, Scope_BA_Entities);
 
       when K_Communication_Action   =>
          Success := Analyze_Communication_Action
            (Action_Node, Root, BA_Root, Parent_Component);
+         --  , Scope_BA_Entities);
 
       when K_Timed_Act              =>
          Success := Analyze_Timed_Action
@@ -1108,7 +1120,8 @@ package body Ocarina.Analyzer.AADL_BA is
      (Node              : Node_Id;
       Root              : Node_Id;
       BA_Root           : Node_Id;
-      Parent_Component  : Node_Id)
+      Parent_Component  : Node_Id;
+      Scope_BA_Entities : List_Id)
       return Boolean
    is
       use ATN;
@@ -1120,6 +1133,8 @@ package body Ocarina.Analyzer.AADL_BA is
       Success : boolean;
       N       : Node_Id;
    begin
+      BATN.Set_Scope_BA_Entities (BATN.Behav_Acts (If_Statement (Node)),
+                                  Scope_BA_Entities);
       Success := Analyze_Behav_Acts
         (Node             => If_Statement (Node),
          Root             => Root,
@@ -1129,6 +1144,8 @@ package body Ocarina.Analyzer.AADL_BA is
       if not Is_Empty (Elsif_Statement (Node)) then
          N := BATN.First_Node (Elsif_Statement (Node));
          while Present (N) loop
+            BATN.Set_Scope_BA_Entities (BATN.Behav_Acts (N),
+                                        Scope_BA_Entities);
             Success := Success and then Analyze_Behav_Acts
               (Node             => N,
                Root             => Root,
@@ -1139,6 +1156,8 @@ package body Ocarina.Analyzer.AADL_BA is
       end if;
 
       if Present (Else_Statement (Node)) then
+         BATN.Set_Scope_BA_Entities (BATN.Behav_Acts (Else_Statement (Node)),
+                                     Scope_BA_Entities);
          Success := Success and then Analyze_Behav_Acts
            (Node             => Else_Statement (Node),
             Root             => Root,
@@ -1150,15 +1169,16 @@ package body Ocarina.Analyzer.AADL_BA is
 
    end Analyze_If_Cond_Struct;
 
-   -----------------------------
-   -- Analyze_For_Cond_Struct --
-   -----------------------------
+   ---------------------------------------
+   -- Analyze_For_or_ForAll_Cond_Struct --
+   ---------------------------------------
 
-   function Analyze_For_Cond_Struct
+   function Analyze_For_or_ForAll_Cond_Struct
      (Node              : Node_Id;
       Root              : Node_Id;
       BA_Root           : Node_Id;
-      Parent_Component  : Node_Id)
+      Parent_Component  : Node_Id;
+      Scope_BA_Entities : List_Id)
       return Boolean
    is
       use ATN;
@@ -1166,8 +1186,10 @@ package body Ocarina.Analyzer.AADL_BA is
       pragma Assert (ATN.Kind (Parent_Component) = ATN.K_Component_Type
                      or else Kind (Parent_Component) =
                        ATN.K_Component_Implementation);
-      pragma Assert (BATN.Kind (Node) = BATN.K_For_Cond_Structure);
+      pragma Assert (BATN.Kind (Node) = BATN.K_For_Cond_Structure
+                     or else BATN.Kind (Node) = BATN.K_ForAll_Cond_Structure);
       Success : boolean;
+      L       : List_Id;
    begin
 
       if Present (BATN.Classifier_Ref (Node)) then
@@ -1182,14 +1204,27 @@ package body Ocarina.Analyzer.AADL_BA is
          end if;
       end if;
 
+      if Is_Empty (Scope_BA_Entities) then
+         L := New_List (BATN.K_BA_Entity_List, No_Location);
+      else
+         L := Scope_BA_Entities;
+      end if;
+
+      Append_Node_To_List (Node, L);
+
+      BATN.Set_Scope_BA_Entities (BATN.Behav_Acts (Node), L);
+
       Success := Success and then Analyze_Behav_Acts
            (Node             => Node,
             Root             => Root,
             BA_Root          => BA_Root,
             Parent_Component => Parent_Component);
 
+      Remove_Node_From_List (Node, L);
+      BATN.Set_Scope_BA_Entities (BATN.Behav_Acts (Node), L);
+
       return Success;
-   end Analyze_For_Cond_Struct;
+   end Analyze_For_or_ForAll_Cond_Struct;
 
    -------------------------------
    -- Analyze_While_Cond_Struct --
@@ -1199,7 +1234,8 @@ package body Ocarina.Analyzer.AADL_BA is
      (Node              : Node_Id;
       Root              : Node_Id;
       BA_Root           : Node_Id;
-      Parent_Component  : Node_Id)
+      Parent_Component  : Node_Id;
+      Scope_BA_Entities : List_Id)
       return Boolean
    is
       use ATN;
@@ -1210,6 +1246,8 @@ package body Ocarina.Analyzer.AADL_BA is
       pragma Assert (BATN.Kind (Node) = BATN.K_While_Cond_Structure);
       Success : Boolean;
    begin
+      BATN.Set_Scope_BA_Entities (BATN.Behav_Acts (Node),
+                                  Scope_BA_Entities);
       Success := Analyze_Behav_Acts
         (Node             => Node,
          Root             => Root,
@@ -1217,27 +1255,6 @@ package body Ocarina.Analyzer.AADL_BA is
          Parent_Component => Parent_Component);
       return Success;
    end Analyze_While_Cond_Struct;
-
-   --------------------------------
-   -- Analyze_Forall_Cond_Struct --
-   --------------------------------
-
-   function Analyze_Forall_Cond_Struct
-     (Node              : Node_Id;
-      BA_Root           : Node_Id;
-      Parent_Component  : Node_Id)
-      return Boolean
-   is
-      use ATN;
-      pragma Assert (BATN.Kind (BA_Root) = BATN.K_Behavior_Annex);
-      pragma Assert (ATN.Kind (Parent_Component) = ATN.K_Component_Type
-                     or else Kind (Parent_Component) =
-                       ATN.K_Component_Implementation);
-      pragma Assert (BATN.Kind (Node) = BATN.K_ForAll_Cond_Structure);
-
-   begin
-      return True;
-   end Analyze_Forall_Cond_Struct;
 
    ---------------------------------
    -- Analyze_DoUntil_Cond_Struct --
@@ -1268,7 +1285,8 @@ package body Ocarina.Analyzer.AADL_BA is
      (Node              : Node_Id;
       Root              : Node_Id;
       BA_Root           : Node_Id;
-      Parent_Component  : Node_Id)
+      Parent_Component  : Node_Id;
+      Scope_BA_Entities : List_Id)
       return Boolean
    is
       use ATN;
@@ -1290,7 +1308,8 @@ package body Ocarina.Analyzer.AADL_BA is
             BA_Root           => BA_Root,
             Parent_Component  => Parent_Component,
             Is_Parameter_Expr => False,
-            Is_Out_Parameter  => False);
+            Is_Out_Parameter  => False,
+            Scope_BA_Entities => Scope_BA_Entities);
 
       end if;
 
@@ -1833,7 +1852,8 @@ package body Ocarina.Analyzer.AADL_BA is
       Parent_Component  : Node_Id;
       Is_Parameter_Expr : Boolean := False;
       Is_Out_Parameter  : Boolean := False;
-      Parameter_Type    : Node_Id := No_Node)
+      Parameter_Type    : Node_Id := No_Node;
+      Scope_BA_Entities : List_Id := No_List)
       return Boolean
    is
       use ATN;
@@ -1854,7 +1874,7 @@ package body Ocarina.Analyzer.AADL_BA is
             Success := Analyze_BA_Relation
               (N, Root, BA_Root,
                Parent_Component, Is_Parameter_Expr,
-               Is_Out_Parameter, Parameter_Type);
+               Is_Out_Parameter, Parameter_Type, Scope_BA_Entities);
          else
             Success := False;
             Error_Loc (1) := BATN.Loc (N);
@@ -1864,8 +1884,13 @@ package body Ocarina.Analyzer.AADL_BA is
          while Success and then Present (N) loop
             if BATN.Kind (N) = BATN.K_Relation then
                Success := Analyze_BA_Relation
-                 (N, Root, BA_Root,
-                  Parent_Component, Is_Parameter_Expr, Is_Out_Parameter);
+                 (Node              => N,
+                  Root              => Root,
+                  BA_Root           => BA_Root,
+                  Parent_Component  => Parent_Component,
+                  Is_Parameter_Expr => Is_Parameter_Expr,
+                  Is_Out_Parameter  => Is_Out_Parameter,
+                  Scope_BA_Entities   => Scope_BA_Entities);
             end if;
             --  if BATN.Kind (N) = BATN.K_Operator then
             --  -- K_Operator doit etre relational_operator
@@ -1875,7 +1900,6 @@ package body Ocarina.Analyzer.AADL_BA is
             N := BATN.Next_Node (N);
          end loop;
       end if;
-
       return Success;
    end Analyze_BA_Value_Expression;
 
@@ -1890,7 +1914,8 @@ package body Ocarina.Analyzer.AADL_BA is
       Parent_Component  : Node_Id;
       Is_Parameter_Expr : Boolean := False;
       Is_Out_Parameter  : Boolean := False;
-      Parameter_Type    : Node_Id := No_Node)
+      Parameter_Type    : Node_Id := No_Node;
+      Scope_BA_Entities : List_Id)
       return Boolean
    is
       use ATN;
@@ -1904,7 +1929,6 @@ package body Ocarina.Analyzer.AADL_BA is
       Success : Boolean := True;
       N       : Node_Id;
    begin
-
       N := BATN.First_Node (BATN.Simple_Exprs (Node));
 
       if Is_Parameter_Expr and then Is_Out_Parameter then
@@ -1912,7 +1936,7 @@ package body Ocarina.Analyzer.AADL_BA is
             Success := Analyze_BA_Simple_Expression
               (N, Root, BA_Root,
                Parent_Component, Is_Parameter_Expr,
-               Is_Out_Parameter, Parameter_Type);
+               Is_Out_Parameter, Parameter_Type, Scope_BA_Entities);
          else
             Success := False;
             Error_Loc (1) := BATN.Loc (N);
@@ -1923,8 +1947,13 @@ package body Ocarina.Analyzer.AADL_BA is
          while Success and then Present (N) loop
             if BATN.Kind (N) = BATN.K_Simple_Expression then
                Success := Analyze_BA_Simple_Expression
-                 (N, Root, BA_Root, Parent_Component,
-                  Is_Parameter_Expr, Is_Out_Parameter);
+                 (Node              => N,
+                  Root              => Root,
+                  BA_Root           => BA_Root,
+                  Parent_Component  => Parent_Component,
+                  Is_Parameter_Expr => Is_Parameter_Expr,
+                  Is_Out_Parameter  => Is_Out_Parameter,
+                  Scope_BA_Entities => Scope_BA_Entities);
             end if;
 
             N := BATN.Next_Node (N);
@@ -1945,7 +1974,8 @@ package body Ocarina.Analyzer.AADL_BA is
       Parent_Component  : Node_Id;
       Is_Parameter_Expr : Boolean := False;
       Is_Out_Parameter  : Boolean := False;
-      Parameter_Type : Node_Id := No_Node)
+      Parameter_Type    : Node_Id := No_Node;
+      Scope_BA_Entities : List_Id)
       return Boolean
    is
       use ATN;
@@ -1967,7 +1997,7 @@ package body Ocarina.Analyzer.AADL_BA is
             Success := Analyze_Term
               (N, Root, BA_Root,
                Parent_Component, Is_Parameter_Expr,
-               Is_Out_Parameter, Parameter_Type);
+               Is_Out_Parameter, Parameter_Type, Scope_BA_Entities);
          else
             Success := False;
             Error_Loc (1) := BATN.Loc (N);
@@ -1978,8 +2008,13 @@ package body Ocarina.Analyzer.AADL_BA is
          while Success and then Present (N) loop
             if BATN.Kind (N) = BATN.K_Term then
                Success := Analyze_Term
-                 (N, Root, BA_Root, Parent_Component,
-                  Is_Parameter_Expr, Is_Out_Parameter);
+                 (Node              => N,
+                  Root              => Root,
+                  BA_Root           => BA_Root,
+                  Parent_Component  => Parent_Component,
+                  Is_Parameter_Expr => Is_Parameter_Expr,
+                  Is_Out_Parameter  => Is_Out_Parameter,
+                  Scope_BA_Entities => Scope_BA_Entities);
             end if;
 
             N := BATN.Next_Node (N);
@@ -2000,7 +2035,8 @@ package body Ocarina.Analyzer.AADL_BA is
       Parent_Component  : Node_Id;
       Is_Parameter_Expr : Boolean := False;
       Is_Out_Parameter  : Boolean := False;
-      Parameter_Type : Node_Id := No_Node)
+      Parameter_Type    : Node_Id := No_Node;
+      Scope_BA_Entities : List_Id)
       return Boolean
    is
       use ATN;
@@ -2022,7 +2058,7 @@ package body Ocarina.Analyzer.AADL_BA is
             Success := Analyze_Factor
               (N, Root, BA_Root,
                Parent_Component, Is_Parameter_Expr,
-               Is_Out_Parameter, Parameter_Type);
+               Is_Out_Parameter, Parameter_Type, Scope_BA_Entities);
          else
             Success := False;
             Error_Loc (1) := BATN.Loc (N);
@@ -2033,8 +2069,13 @@ package body Ocarina.Analyzer.AADL_BA is
          while Success and then Present (N) loop
             if BATN.Kind (N) = BATN.K_Factor then
                Success := Analyze_Factor
-                 (N, Root, BA_Root, Parent_Component,
-                  Is_Parameter_Expr, Is_Out_Parameter);
+                 (Node              => N,
+                  Root              => Root,
+                  BA_Root           => BA_Root,
+                  Parent_Component  => Parent_Component,
+                  Is_Parameter_Expr => Is_Parameter_Expr,
+                  Is_Out_Parameter  => Is_Out_Parameter,
+                  Scope_BA_Entities => Scope_BA_Entities);
             end if;
 
             N := BATN.Next_Node (N);
@@ -2055,7 +2096,8 @@ package body Ocarina.Analyzer.AADL_BA is
       Parent_Component  : Node_Id;
       Is_Parameter_Expr : Boolean := False;
       Is_Out_Parameter  : Boolean := False;
-      Parameter_Type    : Node_Id := No_Node)
+      Parameter_Type    : Node_Id := No_Node;
+      Scope_BA_Entities : List_Id)
       return Boolean
 
    is
@@ -2083,13 +2125,19 @@ package body Ocarina.Analyzer.AADL_BA is
       if Present (Lower_val) then
          Success := Analyze_Value
            (Lower_val, Root, BA_Root, Parent_Component,
-            Is_Parameter_Expr, Is_Out_Parameter, Parameter_Type);
+            Is_Parameter_Expr, Is_Out_Parameter, Parameter_Type,
+            Scope_BA_Entities);
       end if;
 
       if Success and then Present (Upper_val) then
          Success := Analyze_Value
-           (Upper_val, Root, BA_Root, Parent_Component,
-            Is_Parameter_Expr, Is_Out_Parameter);
+           (Node              => Upper_val,
+            Root              => Root,
+            BA_Root           => BA_Root,
+            Parent_Component  => Parent_Component,
+            Is_Parameter_Expr => Is_Parameter_Expr,
+            Is_Out_Parameter  => Is_Out_Parameter,
+            Scope_BA_Entities => Scope_BA_Entities);
       end if;
 
       return Success;
@@ -2106,7 +2154,8 @@ package body Ocarina.Analyzer.AADL_BA is
       Parent_Component  : Node_Id;
       Is_Parameter_Expr : Boolean := False;
       Is_Out_Parameter  : Boolean := False;
-      Parameter_Type    : Node_Id := No_Node)
+      Parameter_Type    : Node_Id := No_Node;
+      Scope_BA_Entities : List_Id)
       return Boolean
    is
       use ATN;
@@ -2123,11 +2172,13 @@ package body Ocarina.Analyzer.AADL_BA is
                      or else BATN.Kind (Node) = BATN.K_Property_Reference
                      or else BATN.Kind (Node) = BATN.K_Identifier);
 
-      Success   : Boolean := True;
-      BA_Var    : Node_Id := No_Node;
-      Out_param : Node_Id := No_Node;
+      Success              : Boolean := True;
+      BA_Var               : Node_Id := No_Node;
+      Out_param            : Node_Id := No_Node;
       Requires_data_access : Node_Id := No_Node;
-      N : Node_Id;
+      For_counter          : Node_Id := No_Node;
+      N                    : Node_Id;
+      Scope_BA_Entity      : Node_Id;
    begin
 
       if Is_Parameter_Expr and then Is_Out_Parameter then
@@ -2149,6 +2200,38 @@ package body Ocarina.Analyzer.AADL_BA is
               or else Present
                 (Find_Data_Subcomponent_Of_Parent_Component
                    (BATN.Identifier (Node), Root, Parent_Component));
+
+            if not Is_Empty (Scope_BA_Entities) then
+               Scope_BA_Entity := BATN.First_Node (Scope_BA_Entities);
+               while Present (Scope_BA_Entity) loop
+
+                  if BATN.Kind (Scope_BA_Entity) = BATN.K_For_Cond_Structure
+                    or else BATN.Kind (Scope_BA_Entity)
+                    = BATN.K_ForAll_Cond_Structure
+                  then
+                     Success := Success or else
+                       Get_Name_String
+                         (Utils.To_Lower
+                            (BATN.Display_Name
+                               (Element_Idt (Scope_BA_Entity))))
+                         = Get_Name_String
+                       (Utils.To_Lower (BATN.Display_Name
+                        (BATN.Identifier (Node))));
+
+                     if Get_Name_String
+                       (Utils.To_Lower
+                          (BATN.Display_Name (Element_Idt (Scope_BA_Entity))))
+                         = Get_Name_String
+                       (Utils.To_Lower (BATN.Display_Name
+                        (BATN.Identifier (Node))))
+                     then
+                        For_counter := Element_Idt (Scope_BA_Entity);
+                     end if;
+                  end if;
+                  exit when Success;
+                  Scope_BA_Entity := BATN.Next_Node (Scope_BA_Entity);
+               end loop;
+            end if;
 
             if not Success then
                Error_Loc (1) := BATN.Loc (BATN.Identifier (Node));
@@ -2175,6 +2258,17 @@ package body Ocarina.Analyzer.AADL_BA is
                                (BATN.Classifier_Ref (BA_Var))))))
                     = Get_Name_String
                     (Utils.To_Lower (ATN.Name (Parameter_Type)));
+               end if;
+
+               if Present (For_counter) then
+                  Success := Get_Name_String
+                    (Utils.To_Lower
+                       (Remove_Prefix_From_Name
+                            ("%ba%",
+                             BATN.Display_Name (BATN.Component_Type
+                               (BATN.Classifier_Ref (Scope_BA_Entity))))))
+                    = Get_Name_String
+                    (Utils.To_Lower (ATN.Display_Name (Parameter_Type)));
                end if;
 
                if Present (Out_param) then
@@ -2207,9 +2301,7 @@ package body Ocarina.Analyzer.AADL_BA is
                       & " type in the called subprogram declaration.");
 
                end if;
-
             end if;
-
          end if;
 
       else
@@ -2237,6 +2329,28 @@ package body Ocarina.Analyzer.AADL_BA is
                 (Find_Data_Subcomponent_Of_Parent_Component
                    (BATN.Identifier (Node), Root, Parent_Component));
 
+            if not Is_Empty (Scope_BA_Entities) then
+               Scope_BA_Entity := BATN.First_Node (Scope_BA_Entities);
+               while Present (Scope_BA_Entity) loop
+
+                  if BATN.Kind (Scope_BA_Entity) = BATN.K_For_Cond_Structure
+                    or else BATN.Kind (Scope_BA_Entity)
+                    = BATN.K_ForAll_Cond_Structure
+                  then
+                     Success := Success or else
+                       Get_Name_String
+                         (Utils.To_Lower
+                            (BATN.Display_Name
+                               (Element_Idt (Scope_BA_Entity))))
+                         = Get_Name_String
+                       (Utils.To_Lower (BATN.Display_Name
+                        (BATN.Identifier (Node))));
+                  end if;
+                  exit when Success;
+                  Scope_BA_Entity := BATN.Next_Node (Scope_BA_Entity);
+               end loop;
+            end if;
+
             N := Find_Data_Port_Of_Parent_Component
               (BATN.Identifier (Node), Root, Parent_Component);
 
@@ -2256,14 +2370,13 @@ package body Ocarina.Analyzer.AADL_BA is
                       & " does not point to"
                       & " anything or point to something unreachable.");
                else
-                  Success := True;
---                    DE (" (" & Get_Name_String (Remove_Prefix_From_Name
---                        ("%ba%", BATN.Display_Name
---                           (BATN.Identifier (Node)))) & ")"
---                        & " does not point to"
---                        & " anything or point to something unreachable.");
+                  --  Success := True;
+                  DE (" (" & Get_Name_String (Remove_Prefix_From_Name
+                      ("%ba%", BATN.Display_Name
+                         (BATN.Identifier (Node)))) & ")"
+                      & " does not point to"
+                      & " anything or point to something unreachable.");
                end if;
-
             end if;
          end if;
 
