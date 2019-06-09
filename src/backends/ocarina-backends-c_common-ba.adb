@@ -30,6 +30,7 @@
 ------------------------------------------------------------------------------
 
 with Ocarina.Namet;
+with Locations;
 with Utils;
 with Ocarina.Backends.Utils;
 
@@ -57,6 +58,7 @@ package body Ocarina.Backends.C_Common.BA is
    use Ocarina.Analyzer.AADL_BA;
    use Ocarina.Backends.C_Tree.Nutils;
    use Ocarina.Namet;
+   use Locations;
    use Ocarina.Backends.Helper;
    use Ocarina.Backends.Messages;
    use Ocarina.Backends.Properties;
@@ -321,13 +323,24 @@ package body Ocarina.Backends.C_Common.BA is
          loop
             T := BATN.First_Node (BATN.Identifiers (P));
             loop
-
-               Used_Type :=
-                 Ocarina.Backends.C_Common.Mapping.
-                   Map_C_Data_Type_Designator
-                     (AAN.Default_Instance
-                        (BATN.Corresponding_Declaration
-                           (BATN.Classifier_Ref (P))));
+               if Present (BATN.Corresponding_Declaration
+                           (BATN.Classifier_Ref (P)))
+               then
+                  Used_Type :=
+                    Ocarina.Backends.C_Common.Mapping.
+                      Map_C_Data_Type_Designator
+                        (AAN.Default_Instance
+                           (BATN.Corresponding_Declaration
+                              (BATN.Classifier_Ref (P))));
+               else
+                  Display_Error
+                    (" The mapping of ("
+                     & Get_Name_String (BATN.Display_Name
+                       (BATN.Full_Identifier (BATN.Classifier_Ref (P))))
+                     & ") at " & Image (BATN.Loc (BATN.Classifier_Ref (P)))
+                     & ", is not yet supported",
+                     Fatal => True);
+               end if;
 
                CTU.Append_Node_To_List
                  (CTU.Make_Variable_Declaration
