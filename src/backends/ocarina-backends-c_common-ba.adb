@@ -203,6 +203,11 @@ package body Ocarina.Backends.C_Common.BA is
       Declarations     : List_Id;
       Statements       : List_Id) return Node_Id;
 
+   function Evaluate_BA_Integer_Value
+     (Node         : Node_Id;
+      Declarations : List_Id;
+      Statements   : List_Id) return Node_Id;
+
    function Evaluate_BA_Literal (Node : Node_Id) return Node_Id;
 
    function Evaluate_BA_Property_Constant
@@ -723,8 +728,10 @@ package body Ocarina.Backends.C_Common.BA is
                   (BATN.Corresponding_Declaration
                      (BATN.Classifier_Ref (Node))));
 
-         init_value := Evaluate_BA_Literal
-           (BATN.Entity (BATN.Lower_Int_Val (In_Element_Values (Node))));
+         init_value := Evaluate_BA_Integer_Value
+           (BATN.Lower_Int_Val (In_Element_Values (Node)),
+            Declarations,
+            Statements);
 
          Pre_Cond := Make_Variable_Declaration
            (Defining_Identifier => Make_Defining_Identifier
@@ -736,8 +743,10 @@ package body Ocarina.Backends.C_Common.BA is
            (Left_Expr  => Make_Defining_Identifier
               (BATN.Display_Name (Element_Idt (Node))),
             Operator   => CTU.Op_Less_Equal,
-            Right_Expr => Evaluate_BA_Literal
-              (BATN.Entity (BATN.Upper_Int_Val (In_Element_Values (Node)))));
+            Right_Expr => Evaluate_BA_Integer_Value
+              (BATN.Upper_Int_Val (In_Element_Values (Node)),
+               Declarations,
+               Statements));
 
          Post_Cond := CTU.Make_Expression
               (Left_Expr  => Make_Defining_Identifier
@@ -1752,6 +1761,43 @@ package body Ocarina.Backends.C_Common.BA is
       return No_Node;
 
    end Evaluate_BA_Value;
+
+   -------------------------------
+   -- Evaluate_BA_Integer_Value --
+   -------------------------------
+
+   function Evaluate_BA_Integer_Value
+     (Node         : Node_Id;
+      Declarations : List_Id;
+      Statements   : List_Id) return Node_Id
+   is
+      pragma Assert (BATN.Kind (Node) = BATN.K_Integer_Value);
+      pragma Assert (BATN.Kind (BATN.Entity (Node)) = K_Value_Variable
+                       or else BATN.Kind (BATN.Entity (Node)) = K_Literal
+                     or else BATN.Kind (BATN.Entity (Node))
+                     = K_Property_Constant);
+
+      Entity_Node : constant Node_Id := BATN.Entity (Node);
+      result      : Node_Id;
+   begin
+      case BATN.Kind (Entity_Node) is
+         --  when K_Value_Variable    =>
+         when K_Literal           =>
+            result := Evaluate_BA_Literal (Entity_Node);
+         when K_Property_Constant =>
+            result := Evaluate_BA_Property_Constant
+              (Node             => Entity_Node,
+               Declarations     => Declarations,
+               Statements       => Statements);
+         when others              =>
+            Display_Error (" For Lower value in Interger range, Kinds"
+                           & " other than K_Literal and K_Property_Constant"
+                           & " are not yet supported", Fatal => True);
+      end case;
+
+      return result;
+
+   end Evaluate_BA_Integer_Value;
 
    -------------------------
    -- Evaluate_BA_Literal --
