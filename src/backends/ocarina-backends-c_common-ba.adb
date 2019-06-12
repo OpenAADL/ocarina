@@ -892,13 +892,14 @@ package body Ocarina.Backends.C_Common.BA is
                decl := CTN.First_Node (CTN.Declarations (Current_File));
                while Present (decl) loop
 
-                  if Kind (decl) = CTN.K_Extern_Entity_Declaration
-                    --  CTN.K_Function_Specification
+                  if Kind (decl) = CTN.K_Function_Specification
+                    --  CTN.K_Extern_Entity_Declaration
                     and then
-                    Get_Name_String
+                      Get_Name_String
                         (Standard.Utils.To_Lower
                            (CTN.Name (CTN.Defining_Identifier
-                            (CTN.Entity (decl)))))
+                            (decl))))
+                    --   (CTN.Entity (decl)))))
                     = Get_Name_String
                     (Standard.Utils.To_Lower
                        (CTN.Name (Var_identifier)))
