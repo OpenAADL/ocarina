@@ -59,6 +59,12 @@ package body Ocarina.Analyzer.AADL.Finder is
       Declaration_Identifier : Node_Id;
       Declaration_Kinds      : Node_Kind_Array) return Node_Id;
 
+   function Find_AADL_Declaration_Classifier_By_Name
+     (Root                   : Node_Id;
+      Package_Identifier     : Node_Id;
+      Declaration_Name       : Name_Id;
+      Declaration_Kinds      : Node_Kind_Array) return Node_Id;
+
    function Find_Subclause_Declaration_Classifier
      (Component              : Node_Id;
       Declaration_Identifier : Node_Id;
@@ -207,6 +213,133 @@ package body Ocarina.Analyzer.AADL.Finder is
 
       return Pointed_Node;
    end Filter_Declarations_According_To_Modes;
+
+   ----------------------------------------------
+   -- Find_AADL_Declaration_Classifier_By_Name --
+   ----------------------------------------------
+
+   function Find_AADL_Declaration_Classifier_By_Name
+     (Root                   : Node_Id;
+      Package_Identifier     : Node_Id;
+      Declaration_Name       : Name_Id;
+      Declaration_Kinds      : Node_Kind_Array) return Node_Id
+   is
+      pragma Assert (Kind (Root) = K_AADL_Specification);
+      pragma Assert
+        (No (Package_Identifier)
+         or else Kind (Package_Identifier) = K_Identifier);
+      pragma Assert (Declaration_Kinds'Length > 0);
+
+      Pack               : Node_Id;
+      Pointed_Node       : Node_Id := No_Node;
+      Homonym_Node       : Node_Id;
+      Homonym_Identifier : Node_Id;
+      Success            : Boolean;
+      Was_First_Homonym  : Boolean;
+   begin
+      if Present (Package_Identifier) then
+         Pack := Node_In_Scope (Package_Identifier, Entity_Scope (Root));
+         Pointed_Node := No_Node;
+
+         --  Node_In_Scope returns a node with all its homonyms. We
+         --  have to look for a package in this list. Naming rules
+         --  ensure there is at most one package in the list.
+
+         while Present (Pack) and then Kind (Pack) /= K_Package_Specification
+         loop
+            Homonym_Identifier := Homonym (Identifier (Pack));
+
+            if Present (Homonym_Identifier) then
+               Pack := Corresponding_Entity (Homonym_Identifier);
+            else
+               Pack := No_Node;
+            end if;
+         end loop;
+
+         --  If the package has been found, we look for the declaration
+
+         if Present (Pack) then
+            Pointed_Node :=
+              Node_In_Scope
+                (Name_Of_Identifier => Declaration_Name,
+                 Scope              => Entity_Scope (Pack));
+
+            if Current_Scope /= Entity_Scope (Pack) then
+               --  If the search is not done from the local package,
+               --  then we must ignore the private declarations
+
+               Homonym_Node := Pointed_Node;
+
+               while Present (Homonym_Node) loop
+                  Was_First_Homonym := (Homonym_Node = Pointed_Node);
+                  Success           := not Is_Private (Homonym_Node);
+
+                  if not Success then
+                     Homonym_Identifier :=
+                       Remove_From_Homonyms
+                         (Identifier (Pointed_Node),
+                          Identifier (Homonym_Node));
+                  --  Beware: Remove_From_Homonyms only handles
+                  --  identifiers.
+                  else
+                     Homonym_Identifier := Homonym (Identifier (Homonym_Node));
+                  end if;
+
+                  if Present (Homonym_Identifier) then
+                     Homonym_Node := Corresponding_Entity (Homonym_Identifier);
+                  else
+                     Homonym_Node := No_Node;
+                  end if;
+
+                  if Was_First_Homonym and then not Success then
+                     Pointed_Node := Homonym_Node;
+                  end if;
+               end loop;
+            end if;
+         end if;
+      else
+         Pointed_Node := Node_In_Scope
+           (Name_Of_Identifier => Declaration_Name,
+            Scope              => Current_Scope);
+         --  Current_Scope is supposed to be the one of the package
+      end if;
+
+      --  We then filter out the node kinds we do not seek
+
+      Homonym_Node := Pointed_Node;
+
+      while Present (Homonym_Node) loop
+         Success           := False;
+         Was_First_Homonym := (Homonym_Node = Pointed_Node);
+
+         for K in Declaration_Kinds'Range loop
+            Success :=
+              (Kind (Pointed_Node) = Declaration_Kinds (K)) or else Success;
+         end loop;
+
+         if not Success then
+            Homonym_Identifier :=
+              Remove_From_Homonyms
+                (Identifier (Pointed_Node),
+                 Identifier (Homonym_Node));
+         --  Beware: Remove_From_Homonyms only handles identifiers.
+         else
+            Homonym_Identifier := Homonym (Identifier (Homonym_Node));
+         end if;
+
+         if Present (Homonym_Identifier) then
+            Homonym_Node := Corresponding_Entity (Homonym_Identifier);
+         else
+            Homonym_Node := No_Node;
+         end if;
+
+         if Was_First_Homonym and then not Success then
+            Pointed_Node := Homonym_Node;
+         end if;
+      end loop;
+
+      return Pointed_Node;
+   end Find_AADL_Declaration_Classifier_By_Name;
 
    --------------------------------------
    -- Find_AADL_Declaration_Classifier --
@@ -847,6 +980,43 @@ package body Ocarina.Analyzer.AADL.Finder is
 
       return Top_Level_Systems;
    end Find_All_Root_Systems;
+
+   ---------------------------------------
+   -- Find_Component_Classifier_By_Name --
+   ---------------------------------------
+
+   function Find_Component_Classifier_By_Name
+     (Root                 : Node_Id;
+      Package_Identifier   : Node_Id;
+      Component_Name       : Name_Id) return Node_Id
+   is
+      pragma Assert (Kind (Root) = K_AADL_Specification);
+      pragma Assert
+        (No (Package_Identifier)
+         or else Kind (Package_Identifier) = K_Identifier);
+
+      Pointed_Node : Node_Id;
+
+   begin
+      Pointed_Node :=
+        Find_AADL_Declaration_Classifier_By_Name
+          (Root,
+           Package_Identifier,
+           Component_Name,
+           (K_Component_Type,
+            K_Component_Implementation,
+            K_Alias_Declaration));
+
+      --  In case the classifier is an alias, return the renamed entity
+
+      if Present (Pointed_Node)
+        and then Kind (Pointed_Node) = K_Alias_Declaration
+      then
+         Pointed_Node := Renamed_Entity (Pointed_Node);
+      end if;
+
+      return Pointed_Node;
+   end Find_Component_Classifier_By_Name;
 
    -------------------------------
    -- Find_Component_Classifier --

@@ -63,6 +63,11 @@ package Ocarina.Analyzer.AADL.Finder is
       Component_Identifier : Node_Id) return Node_Id;
    --  Same as above, but find a component classifier
 
+   function Find_Component_Classifier_By_Name
+     (Root                 : Node_Id;
+      Package_Identifier   : Node_Id;
+      Component_Name       : Name_Id) return Node_Id;
+
    function Find_Port_Group_Classifier
      (Root                  : Node_Id;
       Package_Identifier    : Node_Id;
