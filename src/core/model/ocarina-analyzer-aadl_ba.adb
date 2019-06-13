@@ -42,6 +42,7 @@ with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_AADL_BA.BA_Tree.Nutils;
 with Ocarina.ME_AADL.AADL_Tree.Nutils;
 with Ocarina.ME_AADL_BA.Tokens;
+with Ocarina.ME_AADL.AADL_Tree.Entities;
 
 package body Ocarina.Analyzer.AADL_BA is
 
@@ -362,6 +363,9 @@ package body Ocarina.Analyzer.AADL_BA is
      (Dispatch_Trigger_Event : Node_Id;
       Component              : Node_Id)
       return Node_Id;
+
+   function Build_Full_Package_Name
+     (Package_Name  : List_Id) return Name_Id;
 
    function Length (L : Node_List) return Natural;
 
@@ -3439,6 +3443,32 @@ package body Ocarina.Analyzer.AADL_BA is
 
    end Exist_In_Modes;
 
+   -----------------------------
+   -- Build_Full_Package_Name --
+   -----------------------------
+
+   function Build_Full_Package_Name
+     (Package_Name  : List_Id)
+      return Name_Id
+   is
+      N : Node_Id;
+
+   begin
+      N := BATN.First_Node (Package_Name);
+      Set_Str_To_Name_Buffer ("");
+      while Present (N) loop
+         Get_Name_String_And_Append (Display_Name (N));
+
+         N := Next_Node (N);
+         if Present (N) then
+            Add_Str_To_Name_Buffer ("::");
+         end if;
+
+      end loop;
+
+      return Name_Find;
+   end Build_Full_Package_Name;
+
    -------------------
    -- Link_Variable --
    -------------------
@@ -3449,17 +3479,66 @@ package body Ocarina.Analyzer.AADL_BA is
       return Boolean
    is
       use ATN;
+      use Ocarina.ME_AADL.AADL_Tree.Entities;
       pragma Assert (ATN.Kind (Root) = ATN.K_AADL_Specification);
 
-      Success            : Boolean := False;
+      Success                 : Boolean := False;
       List_Of_Component_Types : Node_List;
       List_Of_Component_Impls : Node_List;
-      N1 : Node_Id;
+      List_Package_Spec_Decls : Node_List;
+      N1                      : Node_Id;
+      Full_Package_Name       : Name_Id;
+      Corresponding_Package   : Node_Id;
+      Corresponding_Component : Node_Id;
    begin
       if not Is_Empty (Package_Name (BATN.Classifier_Ref (Node)))
       then
-         --  à revoir ce test
-         Success := True;
+         Full_Package_Name := Build_Full_Package_Name
+           (Package_Name (BATN.Classifier_Ref (Node)));
+
+         Success := False;
+         List_Package_Spec_Decls := Find_All_Declarations
+           (Root, (1 => ATN.K_Package_Specification),
+            No_Node);
+         N1 := List_Package_Spec_Decls.First;
+         while Present (N1) loop
+            if Get_Name_String
+              (Utils.To_Lower (Full_Package_Name))
+                = Get_Name_String
+              (Utils.To_Lower (ATN.Name (ATN.Identifier (N1))))
+            then
+               Success := True;
+               Corresponding_Package := N1;
+            end if;
+            exit when Success;
+            N1 := ATN.Next_Entity (N1);
+         end loop;
+
+         if not Success then
+            N1 := List_Package_Spec_Decls.First;
+
+            Error_Loc (1) := BATN.Loc (BATN.First_Node
+                                       (BATN.Package_Name
+                                          (BATN.Classifier_Ref (Node))));
+            DE ("(" &  Get_Name_String (Full_Package_Name) & ")"
+                & " name not found in 'with' statements of "
+                & Get_Name_String
+                  (Get_Name_Of_Entity (N1, Get_Display_Name => True))
+                & " (package specification)");
+         end if;
+
+         if Present (BATN.Component_Type (BATN.Classifier_Ref (Node)))
+         then
+
+            Corresponding_Component := Find_Component_Classifier_By_Name
+              (Root                 => Root,
+               Package_Identifier   => ATN.Identifier (Corresponding_Package),
+               Component_Name => Utils.To_Lower (BATN.Display_Name
+                 (BATN.Component_Type (BATN.Classifier_Ref (Node)))));
+
+            Set_Corresponding_Declaration
+              (BATN.Classifier_Ref (Node), Corresponding_Component);
+         end if;
       else
          if Present (BATN.Component_Impl (BATN.Classifier_Ref (Node)))
          then
