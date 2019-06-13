@@ -3548,6 +3548,7 @@ package body Ocarina.Analyzer.AADL_BA is
             N1 := List_Of_Component_Impls.First;
             while Present (N1) loop
                if Component_Category'Val (Category (N1)) = CC_Data then
+
                   if Get_Name_String (Remove_Prefix_From_Name
                                       ("%ba%", BATN.Name (BATN.Component_Type
                                          (BATN.Classifier_Ref (Node)))))
@@ -3557,6 +3558,8 @@ package body Ocarina.Analyzer.AADL_BA is
                                           (BATN.Classifier_Ref (Node)))))
                     = Get_Name_String (ATN.Name (ATN.Identifier (N1)))
                   then
+                     Set_Corresponding_Declaration
+                       (BATN.Classifier_Ref (Node), N1);
                      Success := True;
                   end if;
                end if;

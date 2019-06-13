@@ -325,6 +325,9 @@ package body Ocarina.Backends.C_Common.BA is
             loop
                if Present (BATN.Corresponding_Declaration
                            (BATN.Classifier_Ref (P)))
+                 and then Present (AAN.Default_Instance
+                                   (BATN.Corresponding_Declaration
+                                      (BATN.Classifier_Ref (P))))
                then
                   Used_Type :=
                     Ocarina.Backends.C_Common.Mapping.
@@ -333,13 +336,47 @@ package body Ocarina.Backends.C_Common.BA is
                            (BATN.Corresponding_Declaration
                               (BATN.Classifier_Ref (P))));
                else
-                  Display_Error
-                    (" The mapping of ("
-                     & Get_Name_String (BATN.Display_Name
-                       (BATN.Full_Identifier (BATN.Classifier_Ref (P))))
-                     & ") at " & Image (BATN.Loc (BATN.Classifier_Ref (P)))
-                     & ", is not yet supported",
-                     Fatal => True);
+                  if not BANu.Is_Empty (BATN.Package_Name
+                                        (BATN.Classifier_Ref (P)))
+                  then
+                     Display_Error
+                       (" The mapping of BA variable type ("
+                        & Get_Name_String (BATN.Display_Name
+                          (BATN.Full_Identifier (BATN.Classifier_Ref (P))))
+                        & ") at " & Image (BATN.Loc (BATN.Classifier_Ref (P)))
+                        & ", is not yet supported",
+                        Fatal => True);
+                  else
+                     if Present (BATN.Component_Impl (BATN.Classifier_Ref (P)))
+                     then
+                        Display_Error
+                          (" The mapping of BA variable type ("
+                           & Get_Name_String
+                             (Standard.Utils.Remove_Prefix_From_Name
+                                  ("%ba%", BATN.Name (BATN.Component_Type
+                                   (BATN.Classifier_Ref (P)))))
+                           & "."
+                           & Get_Name_String
+                             (Standard.Utils.Remove_Prefix_From_Name
+                                  ("%ba%", BATN.Name (BATN.Component_Impl
+                                   (BATN.Classifier_Ref (P)))))
+                           & ") at "
+                           & Image (BATN.Loc (BATN.Classifier_Ref (P)))
+                           & ", is not yet supported",
+                           Fatal => True);
+                     else
+                        Display_Error
+                          (" The mapping of BA variable type ("
+                           & Get_Name_String
+                             (Standard.Utils.Remove_Prefix_From_Name
+                                  ("%ba%", BATN.Name (BATN.Component_Type
+                                   (BATN.Classifier_Ref (P)))))
+                           & ") at "
+                           & Image (BATN.Loc (BATN.Classifier_Ref (P)))
+                           & ", is not yet supported",
+                           Fatal => True);
+                     end if;
+                  end if;
                end if;
 
                CTU.Append_Node_To_List
