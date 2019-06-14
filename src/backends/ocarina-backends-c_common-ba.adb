@@ -85,6 +85,8 @@ package body Ocarina.Backends.C_Common.BA is
    function Get_Behavior_Specification
      (S : Node_Id) return Node_Id;
 
+   function Map_Used_Type (N : Node_Id) return Node_Id;
+
    procedure Map_C_Behavior_Action_Block
      (Node         : Node_Id;
       S            : Node_Id;
@@ -307,6 +309,24 @@ package body Ocarina.Backends.C_Common.BA is
       return No_Node;
    end Get_Behavior_Specification;
 
+   -------------------
+   -- Map_Used_Type --
+   -------------------
+
+   function Map_Used_Type (N : Node_Id) return Node_Id
+   is
+      Data_Instance : Node_Id;
+   begin
+      Data_Instance := AAN.Default_Instance (N);
+
+      if No (AIN.Backend_Node (AIN.Identifier (Data_Instance))) then
+         Ocarina.Backends.C_Common.Types.Header_File.Visit (Data_Instance);
+      end if;
+
+      return Map_C_Data_Type_Designator (Data_Instance);
+
+   end Map_Used_Type;
+
    ------------------------------
    -- Map_C_Behavior_Variables --
    ------------------------------
@@ -315,7 +335,6 @@ package body Ocarina.Backends.C_Common.BA is
                                        Declarations : List_Id)
    is
       BA, P, T      : Node_Id;
-      Data_Instance : Node_Id;
    begin
 
       BA := Get_Behavior_Specification (S);
@@ -331,23 +350,13 @@ package body Ocarina.Backends.C_Common.BA is
                                       (BATN.Classifier_Ref (P))))
                then
 
-                  Data_Instance := AAN.Default_Instance
-                    (BATN.Corresponding_Declaration
-                       (BATN.Classifier_Ref (P)));
-
-                  if No (AIN.Backend_Node
-                         (AIN.Identifier (Data_Instance)))
-                  then
-                     Ocarina.Backends.C_Common.Types.Header_File.Visit
-                       (Data_Instance);
-                  end if;
-
                   CTU.Append_Node_To_List
                     (CTU.Make_Variable_Declaration
                        (Defining_Identifier => CTU.Make_Defining_Identifier
                             (BATN.Display_Name (T)),
-                        Used_Type =>  Map_C_Data_Type_Designator
-                          (Data_Instance)),
+                        Used_Type =>  Map_Used_Type
+                          (BATN.Corresponding_Declaration
+                               (BATN.Classifier_Ref (P)))),
                      Declarations);
 
                else
@@ -776,7 +785,6 @@ package body Ocarina.Backends.C_Common.BA is
       Pre_Cond       : Node_Id;
       Post_Cond      : Node_Id;
       Used_Type      : Node_Id;
-      Data_Instance  : Node_Id;
       init_value     : Node_Id;
       Condition      : Node_Id;
       For_Statements : constant List_Id := New_List (CTN.K_Statement_List);
@@ -784,20 +792,8 @@ package body Ocarina.Backends.C_Common.BA is
 
       if BATN.Kind (In_Element_Values (Node)) = BATN.K_Integer_Range then
 
-         Data_Instance := AAN.Default_Instance
-           (BATN.Corresponding_Declaration
-              (BATN.Classifier_Ref (Node)));
-
-         if No (AIN.Backend_Node
-                (AIN.Identifier (Data_Instance)))
-         then
-            Ocarina.Backends.C_Common.Types.Header_File.Visit
-              (Data_Instance);
-         end if;
-
-         Used_Type :=
-           Ocarina.Backends.C_Common.Mapping.
-             Map_C_Data_Type_Designator (Data_Instance);
+         Used_Type := Map_Used_Type (BATN.Corresponding_Declaration
+                                     (BATN.Classifier_Ref (Node)));
 
          init_value := Evaluate_BA_Integer_Value
            (BATN.Lower_Int_Val (In_Element_Values (Node)),
