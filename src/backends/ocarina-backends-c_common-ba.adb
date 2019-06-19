@@ -52,6 +52,7 @@ with Ocarina.ME_AADL_BA.BA_Tree.Nutils;
 with Ocarina.Backends.Helper;
 with Ocarina.Analyzer.AADL_BA;
 with Ocarina.Backends.PO_HI_C.Runtime;
+with Ocarina.Backends.C_Common.Types;
 
 package body Ocarina.Backends.C_Common.BA is
 
@@ -83,6 +84,8 @@ package body Ocarina.Backends.C_Common.BA is
 
    function Get_Behavior_Specification
      (S : Node_Id) return Node_Id;
+
+   function Map_Used_Type (N : Node_Id) return Node_Id;
 
    procedure Map_C_Behavior_Action_Block
      (Node         : Node_Id;
@@ -306,6 +309,24 @@ package body Ocarina.Backends.C_Common.BA is
       return No_Node;
    end Get_Behavior_Specification;
 
+   -------------------
+   -- Map_Used_Type --
+   -------------------
+
+   function Map_Used_Type (N : Node_Id) return Node_Id
+   is
+      Data_Instance : Node_Id;
+   begin
+      Data_Instance := AAN.Default_Instance (N);
+
+      if No (AIN.Backend_Node (AIN.Identifier (Data_Instance))) then
+         Ocarina.Backends.C_Common.Types.Header_File.Visit (Data_Instance);
+      end if;
+
+      return Map_C_Data_Type_Designator (Data_Instance);
+
+   end Map_Used_Type;
+
    ------------------------------
    -- Map_C_Behavior_Variables --
    ------------------------------
@@ -313,8 +334,7 @@ package body Ocarina.Backends.C_Common.BA is
    procedure Map_C_Behavior_Variables (S            : Node_Id;
                                        Declarations : List_Id)
    is
-      BA, P, T     : Node_Id;
-      Used_Type    : Node_Id;
+      BA, P, T      : Node_Id;
    begin
 
       BA := Get_Behavior_Specification (S);
@@ -329,12 +349,16 @@ package body Ocarina.Backends.C_Common.BA is
                                    (BATN.Corresponding_Declaration
                                       (BATN.Classifier_Ref (P))))
                then
-                  Used_Type :=
-                    Ocarina.Backends.C_Common.Mapping.
-                      Map_C_Data_Type_Designator
-                        (AAN.Default_Instance
-                           (BATN.Corresponding_Declaration
-                              (BATN.Classifier_Ref (P))));
+
+                  CTU.Append_Node_To_List
+                    (CTU.Make_Variable_Declaration
+                       (Defining_Identifier => CTU.Make_Defining_Identifier
+                            (BATN.Display_Name (T)),
+                        Used_Type =>  Map_Used_Type
+                          (BATN.Corresponding_Declaration
+                               (BATN.Classifier_Ref (P)))),
+                     Declarations);
+
                else
                   if not BANu.Is_Empty (BATN.Package_Name
                                         (BATN.Classifier_Ref (P)))
@@ -378,13 +402,6 @@ package body Ocarina.Backends.C_Common.BA is
                      end if;
                   end if;
                end if;
-
-               CTU.Append_Node_To_List
-                 (CTU.Make_Variable_Declaration
-                    (Defining_Identifier => CTU.Make_Defining_Identifier
-                         (BATN.Display_Name (T)),
-                     Used_Type =>  Used_Type),
-                  Declarations);
 
                T := BATN.Next_Node (T);
                exit when No (T);
@@ -775,12 +792,8 @@ package body Ocarina.Backends.C_Common.BA is
 
       if BATN.Kind (In_Element_Values (Node)) = BATN.K_Integer_Range then
 
-         Used_Type :=
-           Ocarina.Backends.C_Common.Mapping.
-             Map_C_Data_Type_Designator
-               (AAN.Default_Instance
-                  (BATN.Corresponding_Declaration
-                     (BATN.Classifier_Ref (Node))));
+         Used_Type := Map_Used_Type (BATN.Corresponding_Declaration
+                                     (BATN.Classifier_Ref (Node)));
 
          init_value := Evaluate_BA_Integer_Value
            (BATN.Lower_Int_Val (In_Element_Values (Node)),
@@ -1359,7 +1372,8 @@ package body Ocarina.Backends.C_Common.BA is
          --  kind, this case will be treated later
          --
          Display_Error
-           ("target with Data_Component_Reference is not yet supported",
+           ("Assignment action target with Data_Component_Reference kind"
+            & " is not yet supported",
             Fatal => True);
       end if;
 

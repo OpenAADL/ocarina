@@ -321,6 +321,7 @@ package body Ocarina.Instances is
       while Present (List_Node) loop
          if No (Default_Instance (List_Node)) then
             if ATE.Get_Category_Of_Component (List_Node) = CC_Subprogram
+              or else ATE.Get_Category_Of_Component (List_Node) = CC_Data
             then
                Set_Instance (List_Node,
                              Instantiate_Component (Instance_Root, List_Node));
