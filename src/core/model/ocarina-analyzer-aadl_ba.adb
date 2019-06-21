@@ -156,6 +156,34 @@ package body Ocarina.Analyzer.AADL_BA is
       Scope_BA_Entities : List_Id)
       return Boolean;
 
+   function Analyze_Data_component_reference
+     (Node              : Node_Id;
+      Root              : Node_Id;
+      BA_Root           : Node_Id;
+      Parent_Component  : Node_Id)
+      return Boolean;
+
+   function Analyze_BA_Name
+     (Node              : Node_Id;
+      Root              : Node_Id;
+      BA_Root           : Node_Id;
+      Parent_Component  : Node_Id)
+      return Boolean;
+
+   function Analyze_BA_Value_Variable
+     (Node              : Node_Id;
+      Root              : Node_Id;
+      BA_Root           : Node_Id;
+      Parent_Component  : Node_Id)
+      return Boolean;
+
+   function Analyze_BA_Integer_Value
+     (Node              : Node_Id;
+      Root              : Node_Id;
+      BA_Root           : Node_Id;
+      Parent_Component  : Node_Id)
+      return Boolean;
+
    function Link_Target
      (Node              : Node_Id;
       Root              : Node_Id;
@@ -261,7 +289,7 @@ package body Ocarina.Analyzer.AADL_BA is
       Is_Parameter_Expr : Boolean := False;
       Is_Out_Parameter  : Boolean := False;
       Parameter_Type    : Node_Id := No_Node;
-      Scope_BA_Entities : List_Id)
+      Scope_BA_Entities : List_Id := No_List)
       return Boolean;
 
    function Find_Parameter_Of_Parent_Component
@@ -289,6 +317,12 @@ package body Ocarina.Analyzer.AADL_BA is
       return Node_Id;
 
    function Find_Data_Port_Of_Parent_Component
+     (Node              : Node_Id;
+      Root              : Node_Id;
+      Parent_Component  : Node_Id)
+      return Node_Id;
+
+   function Find_and_Link_Event_Port_Of_Parent_Component
      (Node              : Node_Id;
       Root              : Node_Id;
       Parent_Component  : Node_Id)
@@ -1306,7 +1340,7 @@ package body Ocarina.Analyzer.AADL_BA is
 
       if Present (BATN.Value_Expression (Node)) then
 
-         Success := Analyze_BA_Value_Expression
+         Success := Success and then Analyze_BA_Value_Expression
            (Node              => BATN.Value_Expression (Node),
             Root              => Root,
             BA_Root           => BA_Root,
@@ -1319,6 +1353,202 @@ package body Ocarina.Analyzer.AADL_BA is
 
       return Success;
    end Analyze_Assignment_Action;
+
+   --------------------------------------
+   -- Analyze_Data_component_reference --
+   --------------------------------------
+
+   function Analyze_Data_component_reference
+     (Node              : Node_Id;
+      Root              : Node_Id;
+      BA_Root           : Node_Id;
+      Parent_Component  : Node_Id)
+      return Boolean
+   is
+      use ATN;
+      pragma Assert (BATN.Kind (Node) = BATN.K_Data_Component_Reference);
+      pragma Assert (ATN.Kind (Root) = ATN.K_AADL_Specification);
+      pragma Assert (BATN.Kind (BA_Root) = BATN.K_Behavior_Annex);
+      pragma Assert (ATN.Kind (Parent_Component) = ATN.K_Component_Type
+                     or else Kind (Parent_Component) =
+                       ATN.K_Component_Implementation);
+      Success : Boolean := True;
+      N : Node_Id;
+   begin
+      if not Is_Empty (BATN.Identifiers (Node)) then
+         N := BATN.First_Node (BATN.Identifiers (Node));
+
+         while Present (N) loop
+            Success := Success and then
+              Analyze_BA_Name  (N, Root, BA_Root, Parent_Component);
+            exit when not Success;
+            N := BATN.Next_Node (N);
+         end loop;
+      end if;
+
+      return Success;
+   end Analyze_Data_component_reference;
+
+   ---------------------
+   -- Analyze_BA_Name --
+   ---------------------
+
+   function Analyze_BA_Name
+     (Node              : Node_Id;
+      Root              : Node_Id;
+      BA_Root           : Node_Id;
+      Parent_Component  : Node_Id)
+      return Boolean
+   is
+      use ATN;
+      pragma Assert (BATN.Kind (Node) = BATN.K_Name);
+      pragma Assert (ATN.Kind (Root) = ATN.K_AADL_Specification);
+      pragma Assert (BATN.Kind (BA_Root) = BATN.K_Behavior_Annex);
+      pragma Assert (ATN.Kind (Parent_Component) = ATN.K_Component_Type
+                     or else Kind (Parent_Component) =
+                       ATN.K_Component_Implementation);
+      Success : Boolean := True;
+      N       : Node_Id;
+   begin
+      if not Is_Empty (BATN.Idt (Node)) then
+
+         N := BATN.First_Node (BATN.Idt (Node));
+         while Present (N) loop
+            Success := Success and then Analyze_Value
+              (Node              => N,
+               Root              => Root,
+               BA_Root           => BA_Root,
+               Parent_Component  => Parent_Component);
+            N := BATN.Next_Node (N);
+         end loop;
+
+         if not Is_Empty (BATN.Array_Index (Node)) then
+            N := BATN.First_Node (BATN.Array_Index (Node));
+
+            while Present (N) loop
+               Success := Success and then
+                 Analyze_BA_Integer_Value (N, Root, BA_Root, Parent_Component);
+               exit when not Success;
+               N := BATN.Next_Node (N);
+            end loop;
+         end if;
+      end if;
+      return Success;
+   end Analyze_BA_Name;
+
+   -------------------------------
+   -- Analyze_BA_Value_Variable --
+   -------------------------------
+
+   function Analyze_BA_Value_Variable
+     (Node              : Node_Id;
+      Root              : Node_Id;
+      BA_Root           : Node_Id;
+      Parent_Component  : Node_Id)
+      return Boolean
+   is
+      use ATN;
+      pragma Assert (ATN.Kind (Root) = ATN.K_AADL_Specification);
+      pragma Assert (BATN.Kind (BA_Root) = BATN.K_Behavior_Annex);
+      pragma Assert (ATN.Kind (Parent_Component) = ATN.K_Component_Type
+                     or else Kind (Parent_Component) =
+                       ATN.K_Component_Implementation);
+      pragma Assert (BATN.Kind (Node) = BATN.K_Value_Variable);
+
+      Success : Boolean := True;
+   begin
+
+      if BATN.Kind (BATN.Identifier (Node)) = BATN.K_Name then
+         Success := Analyze_BA_Name
+           (Node             => BATN.Identifier (Node),
+            Root             => Root,
+            BA_Root          => BA_Root,
+            Parent_Component => Parent_Component);
+
+      elsif BATN.Kind (BATN.Identifier (Node))
+        = BATN.K_Data_Component_Reference
+      then
+         Success := Analyze_Data_component_reference
+           (Node             => BATN.Identifier (Node),
+            Root             => Root,
+            BA_Root          => BA_Root,
+            Parent_Component => Parent_Component);
+      end if;
+
+      if Is_Interrogative (Node) then
+         Success := Success and then Link_Input_Port
+           (Node             => Node,
+            Root             => Root,
+            BA_Root          => BA_Root,
+            Parent_Component => Parent_Component);
+
+         if not Success then
+            Error_Loc (1) := BATN.Loc (BATN.First_Node
+                                       (BATN.Idt (BATN.Identifier (Node))));
+            DE ("Only Incoming port Name are allowed.");
+         end if;
+
+      elsif Is_Count (Node) or else Is_Fresh (Node)
+        or else Is_Updated (Node)
+      then
+         Success := Success and then
+           not No (Find_and_Link_Event_Port_Of_Parent_Component
+                   (Node             => Node,
+                    Root             => Root,
+                    Parent_Component => Parent_Component));
+
+         if not Success then
+            Error_Loc (1) := BATN.Loc (BATN.First_Node
+                                       (BATN.Idt (BATN.Identifier (Node))));
+            DE ("Count, Fresh and Updated operators are applied only"
+                & " on Data_Event or Event ports.");
+         end if;
+      end if;
+
+      return Success;
+   end Analyze_BA_Value_Variable;
+
+   ------------------------------
+   -- Analyze_BA_Integer_Value --
+   ------------------------------
+
+   function Analyze_BA_Integer_Value
+     (Node              : Node_Id;
+      Root              : Node_Id;
+      BA_Root           : Node_Id;
+      Parent_Component  : Node_Id)
+      return Boolean
+   is
+      use ATN;
+      pragma Assert (ATN.Kind (Root) = ATN.K_AADL_Specification);
+      pragma Assert (BATN.Kind (BA_Root) = BATN.K_Behavior_Annex);
+      pragma Assert (ATN.Kind (Parent_Component) = ATN.K_Component_Type
+                     or else Kind (Parent_Component) =
+                       ATN.K_Component_Implementation);
+      pragma Assert (BATN.Kind (Node) = BATN.K_Integer_Value);
+      pragma Assert (BATN.Kind (BATN.Entity (Node)) = K_Value_Variable
+                       or else BATN.Kind (BATN.Entity (Node)) = K_Literal
+                     or else BATN.Kind (BATN.Entity (Node))
+                     = K_Property_Constant);
+
+      Entity_Node : constant Node_Id := BATN.Entity (Node);
+      Success : Boolean := True;
+   begin
+      if BATN.Kind (Entity_Node) = K_Value_Variable then
+            Success := Analyze_BA_Value_Variable
+              (Node             => Entity_Node,
+               Root             => Root,
+               BA_Root          => BA_Root,
+               Parent_Component => Parent_Component);
+      elsif BATN.Kind (Entity_Node) = K_Property_Constant then
+            Success := Analyze_Value
+              (Node             => Entity_Node,
+               Root             => Root,
+               BA_Root          => BA_Root,
+               Parent_Component => Parent_Component);
+      end if;
+      return Success;
+   end Analyze_BA_Integer_Value;
 
    -----------------
    -- Link_Target --
@@ -1341,58 +1571,69 @@ package body Ocarina.Analyzer.AADL_BA is
       N           : Node_Id := No_Node;
    begin
 
-      if BATN.Kind (Node) = BATN.K_Name then
+      if BATN.Kind (Node) = BATN.K_Name
+        and then not Is_Empty (BATN.Idt (Node))
+      then
          Target_Idt := BATN.First_Node
-           (BATN.Idt (Node));
+              (BATN.Idt (Node));
+         if Length (BATN.Idt (Node)) = 1 then
+            --  Target must be a BA_Variable or a parameter/requires
+            --  data access of the subprogram implementing the BA
+            --  or a subcomponent of the Parent_Component.
 
-         --  Target must be a BA_Variable or a parameter/requires data access
-         --  of the subprogram implementing the BA
-         --  or a subcomponent of the Parent_Component.
+            if No (Find_BA_Variable (Target_Idt, BA_Root))
+              and then No (Find_Out_Parameter_Of_Parent_Component
+                           (Target_Idt, Root, Parent_Component))
+              and then No (Find_Requires_Data_Access_Of_Parent_Component
+                           (Target_Idt, Root, Parent_Component))
+              and then No (Find_Output_Port_Of_Parent_Component
+                           (Target_Idt, Root, Parent_Component))
+              and then No (Find_Data_Subcomponent_Of_Parent_Component
+                           (Target_Idt, Root, Parent_Component))
+            then
+               Success := False;
+               Error_Loc (1)  := BATN.Loc (Target_Idt);
+               Error_Name (1) := BATN.Display_Name (Target_Idt);
+               DE ("(" & Get_Name_String (Remove_Prefix_From_Name
+                   ("%ba%", BATN.Display_Name
+                      (Target_Idt))) & ")"
+                   & " does not point to"
+                   & " any variable of the current BA or a parameter"
+                   & " or a required data access feature"
+                   & " of the subprogram having"
+                   & " the current BA;"
+                   & " or a data subcomponent or an output port"
+                   & " of the parent component.");
+            end if;
 
-         if No (Find_BA_Variable (Target_Idt, BA_Root))
-           and then No (Find_Out_Parameter_Of_Parent_Component
+            if Present (Find_Out_Parameter_Of_Parent_Component
                         (Target_Idt, Root, Parent_Component))
-           and then No (Find_Requires_Data_Access_Of_Parent_Component
-                        (Target_Idt, Root, Parent_Component))
-           and then No (Find_Output_Port_Of_Parent_Component
-                        (Target_Idt, Root, Parent_Component))
-           and then No (Find_Data_Subcomponent_Of_Parent_Component
-                        (Target_Idt, Root, Parent_Component))
-         then
-            Success := False;
-            Error_Loc (1)  := BATN.Loc (Target_Idt);
-            Error_Name (1) := BATN.Display_Name (Target_Idt);
-            DE ("(" & Get_Name_String (Remove_Prefix_From_Name
-                ("%ba%", BATN.Display_Name
-                   (Target_Idt))) & ")"
-                & " does not point to"
-                & " any variable of the current BA or a parameter"
-                & " or a required data access feature"
-                & " of the subprogram having"
-                & " the current BA;"
-                & " or a data subcomponent or an output port"
-                & " of the parent component.");
+            then
+               N := Find_Out_Parameter_Of_Parent_Component
+                 (Target_Idt, Root, Parent_Component);
+
+            elsif Present (Find_Output_Port_Of_Parent_Component
+                           (Target_Idt, Root, Parent_Component))
+            then
+               N := Find_Output_Port_Of_Parent_Component
+                 (Target_Idt, Root, Parent_Component);
+            end if;
+
+            if not No (N) then
+               BATN.Set_Corresponding_Entity
+                 (BATN.First_Node
+                    (BATN.Idt (Node)), N);
+            end if;
+
+         else
+            --  i.e.  Length (BATN.Idt (Node)) > 1
+            Success := Analyze_BA_Name
+              (Node, Root, BA_Root, Parent_Component);
          end if;
-
-         if Present (Find_Out_Parameter_Of_Parent_Component
-                     (Target_Idt, Root, Parent_Component))
-         then
-            N := Find_Out_Parameter_Of_Parent_Component
-              (Target_Idt, Root, Parent_Component);
-
-         elsif Present (Find_Output_Port_Of_Parent_Component
-                        (Target_Idt, Root, Parent_Component))
-         then
-            N := Find_Output_Port_Of_Parent_Component
-              (Target_Idt, Root, Parent_Component);
-         end if;
-
-         if not No (N) then
-            BATN.Set_Corresponding_Entity
-              (BATN.First_Node
-                 (BATN.Idt (Node)), N);
-         end if;
-
+      elsif BATN.Kind (Node) = BATN.K_Data_Component_Reference
+      then
+         Success := Analyze_Data_component_reference
+              (Node, Root, BA_Root, Parent_Component);
       end if;
 
       return Success;
@@ -1497,6 +1738,69 @@ package body Ocarina.Analyzer.AADL_BA is
       return Success;
 
    end Analyze_Spg_Call_Or_Port_Sending;
+
+   ---------------
+   -- Link_Port --
+   ---------------
+
+--     function Link_Port
+--       (Node              : Node_Id;
+--        Root              : Node_Id;
+--        BA_Root           : Node_Id;
+--        Parent_Component  : Node_Id)
+--        return Boolean
+--     is
+--        use ATN;
+--        pragma Assert (ATN.Kind (Root) = ATN.K_AADL_Specification);
+--        pragma Assert (BATN.Kind (BA_Root) = BATN.K_Behavior_Annex);
+--        pragma Assert (ATN.Kind (Parent_Component) = ATN.K_Component_Type
+--                       or else Kind (Parent_Component) =
+--                         ATN.K_Component_Implementation);
+--        pragma Assert (Kind (BATN.Identifier (Node)) = BATN.K_Name);
+--
+--        Success                  : Boolean := False;
+--        F                        : Node_Id;
+--        Type_Of_Parent_Component : Node_Id := No_Node;
+--
+--     begin
+--
+--        if ATN.Kind (Parent_Component) = ATN.K_Component_Type then
+--           Type_Of_Parent_Component := Parent_Component;
+--        else
+--           Type_Of_Parent_Component := Get_Component_Type_From_Impl
+--             (Root, Parent_Component);
+--        end if;
+--
+--        if not ANU.Is_Empty (ATN.Features (Type_Of_Parent_Component)) then
+--
+--           F := ATN.First_Node (ATN.Features (Type_Of_Parent_Component));
+--
+--           while Present (F) loop
+--
+--              if ATN.Kind (F) = K_Port_Spec
+--                and then Get_Name_String
+--                  (Utils.To_Lower
+--                     (Remove_Prefix_From_Name
+--                        ("%ba%",
+--                         BATN.Display_Name
+--                           (BATN.First_Node
+--                                (BATN.Idt (BATN.Identifier (Node)))))))
+--                  = Get_Name_String
+--                (Utils.To_Lower (ATN.Name (ATN.Identifier (F))))
+--              then
+--                 Success := True;
+--                 BATN.Set_Corresponding_Entity
+--                   (BATN.First_Node
+--                      (BATN.Idt (BATN.Identifier (Node))), F);
+--              end if;
+--
+--              exit when Success /= False;
+--              F := ATN.Next_Node (F);
+--           end loop;
+--        end if;
+--
+--        return Success;
+--     end Link_Port;
 
    ----------------------------------
    -- Link_Output_Or_Internal_Port --
@@ -2159,7 +2463,7 @@ package body Ocarina.Analyzer.AADL_BA is
       Is_Parameter_Expr : Boolean := False;
       Is_Out_Parameter  : Boolean := False;
       Parameter_Type    : Node_Id := No_Node;
-      Scope_BA_Entities : List_Id)
+      Scope_BA_Entities : List_Id := No_List)
       return Boolean
    is
       use ATN;
@@ -2183,6 +2487,7 @@ package body Ocarina.Analyzer.AADL_BA is
       For_counter          : Node_Id := No_Node;
       N                    : Node_Id;
       Scope_BA_Entity      : Node_Id;
+      Ident                : Node_Id;
    begin
 
       if Is_Parameter_Expr and then Is_Out_Parameter then
@@ -2310,7 +2615,15 @@ package body Ocarina.Analyzer.AADL_BA is
 
       else
 
-         if BATN.Kind (Node) = BATN.K_Property_Constant then
+         if BATN.Kind (Node) = BATN.K_Property_Constant or else
+           BATN.Kind (Node) = BATN.K_Identifier
+         then
+            if BATN.Kind (Node) = BATN.K_Property_Constant then
+               Ident := BATN.Identifier (Node);
+            else
+               Ident := Node;
+            end if;
+
             --  Check if the current Node refers to a valid
             --  variable in the current BA or a valid parameter
             --  or a valid requires data access of the subprogram
@@ -2319,19 +2632,19 @@ package body Ocarina.Analyzer.AADL_BA is
             --  Parent component.
 
             Success := Present
-              (Find_BA_Variable (BATN.Identifier (Node), BA_Root))
+              (Find_BA_Variable (Ident, BA_Root))
               or else Present
                 (Find_Data_Port_Of_Parent_Component
-                   (BATN.Identifier (Node), Root, Parent_Component))
+                   (Ident, Root, Parent_Component))
               or else Present
                 (Find_Parameter_Of_Parent_Component
-                   (BATN.Identifier (Node), Root, Parent_Component))
+                   (Ident, Root, Parent_Component))
               or else Present
                 (Find_Requires_Data_Access_Of_Parent_Component
-                   (BATN.Identifier (Node), Root, Parent_Component))
+                   (Ident, Root, Parent_Component))
               or else Present
                 (Find_Data_Subcomponent_Of_Parent_Component
-                   (BATN.Identifier (Node), Root, Parent_Component));
+                   (Ident, Root, Parent_Component));
 
             if not Is_Empty (Scope_BA_Entities) then
                Scope_BA_Entity := BATN.First_Node (Scope_BA_Entities);
@@ -2348,7 +2661,7 @@ package body Ocarina.Analyzer.AADL_BA is
                                (Element_Idt (Scope_BA_Entity))))
                          = Get_Name_String
                        (Utils.To_Lower (BATN.Display_Name
-                        (BATN.Identifier (Node))));
+                        (Ident)));
                   end if;
                   exit when Success;
                   Scope_BA_Entity := BATN.Next_Node (Scope_BA_Entity);
@@ -2356,32 +2669,45 @@ package body Ocarina.Analyzer.AADL_BA is
             end if;
 
             N := Find_Data_Port_Of_Parent_Component
-              (BATN.Identifier (Node), Root, Parent_Component);
+              (Ident, Root, Parent_Component);
 
             if Present (N) then
-               BATN.Set_Corresponding_Entity (BATN.Identifier (Node), N);
+               BATN.Set_Corresponding_Entity (Ident, N);
             end if;
 
             if not Success then
-               Error_Loc (1) := BATN.Loc (BATN.Identifier (Node));
-               Error_Name (1) := BATN.Display_Name
-                 (BATN.Identifier (Node));
-               if Is_Parameter_Expr then
-                  DE (" (" & Get_Name_String (Remove_Prefix_From_Name
-                      ("%ba%", BATN.Display_Name
-                         (BATN.Identifier (Node)))) & ")"
-                      & " in the IN parameter value expression"
-                      & " does not point to"
-                      & " anything or point to something unreachable.");
-               else
-                  --  Success := True;
-                  DE (" (" & Get_Name_String (Remove_Prefix_From_Name
-                      ("%ba%", BATN.Display_Name
-                         (BATN.Identifier (Node)))) & ")"
-                      & " does not point to"
-                      & " anything or point to something unreachable.");
-               end if;
+               --  Indeed, a BA_Value can be an Enumerator
+               --  and here we can't retreive its value, that's why
+               --  we assign Success with True
+               Success := True;
+--                 Error_Loc (1) := BATN.Loc (Ident);
+--                 Error_Name (1) := BATN.Display_Name
+--                   (Ident);
+--                 if Is_Parameter_Expr then
+--                    DE (" (" & Get_Name_String (Remove_Prefix_From_Name
+--                        ("%ba%", BATN.Display_Name
+--                           (Ident))) & ")"
+--                        & " in the IN parameter value expression"
+--                        & " does not point to"
+--                        & " anything or point to something unreachable.");
+--                 else
+--                    Success := True;
+--                      DE (" (" & Get_Name_String (Remove_Prefix_From_Name
+--                          ("%ba%", BATN.Display_Name
+--                             (Ident))) & ")"
+--                          & " does not point to"
+--                          & " anything or point to something unreachable.");
+--                 end if;
             end if;
+
+         elsif BATN.Kind (Node) = BATN.K_Value_Variable then
+
+            Success := Analyze_BA_Value_Variable
+              (Node             => Node,
+               Root             => Root,
+               BA_Root          => BA_Root,
+               Parent_Component => Parent_Component);
+
          end if;
 
       end if;
@@ -2741,6 +3067,69 @@ package body Ocarina.Analyzer.AADL_BA is
       return result;
 
    end Find_Output_Port_Of_Parent_Component;
+
+   ----------------------------------------
+   -- Find_and_Link_Event_Port_Of_Parent_Component --
+   ----------------------------------------
+
+   function Find_and_Link_Event_Port_Of_Parent_Component
+     (Node              : Node_Id;
+      Root              : Node_Id;
+      Parent_Component  : Node_Id)
+      return Node_Id
+   is
+      use ATN;
+      pragma Assert (ATN.Kind (Root) = ATN.K_AADL_Specification);
+      pragma Assert (ATN.Kind (Parent_Component) = ATN.K_Component_Type
+                     or else Kind (Parent_Component) =
+                       ATN.K_Component_Implementation);
+      pragma Assert (Kind (BATN.Identifier (Node)) = BATN.K_Name);
+
+      F                        : Node_Id;
+      Type_Of_Parent_Component : Node_Id := No_Node;
+      result                   : Node_Id := No_Node;
+
+   begin
+
+      if ATN.Kind (Parent_Component) = ATN.K_Component_Type then
+         Type_Of_Parent_Component := Parent_Component;
+      else
+         Type_Of_Parent_Component := Get_Component_Type_From_Impl
+           (Root, Parent_Component);
+      end if;
+
+      if not ANU.Is_Empty (ATN.Features (Type_Of_Parent_Component)) then
+
+         F := ATN.First_Node (ATN.Features (Type_Of_Parent_Component));
+
+         while Present (F) loop
+
+            if ATN.Kind (F) = K_Port_Spec
+              and then Is_Event (F) and then
+              Get_Name_String
+                (Utils.To_Lower
+                   (Remove_Prefix_From_Name
+                      ("%ba%",
+                       BATN.Display_Name
+                         (BATN.First_Node
+                              (BATN.Idt (BATN.Identifier (Node)))))))
+                = Get_Name_String
+              (Utils.To_Lower (ATN.Name (ATN.Identifier (F))))
+            then
+               result := F;
+               BATN.Set_Corresponding_Entity
+                 (BATN.First_Node
+                    (BATN.Idt (BATN.Identifier (Node))), F);
+            end if;
+
+            exit when result /= No_Node;
+            F := ATN.Next_Node (F);
+         end loop;
+      end if;
+
+      return result;
+
+   end Find_and_Link_Event_Port_Of_Parent_Component;
 
    ----------------------------------------
    -- Find_Data_Port_Of_Parent_Component --
