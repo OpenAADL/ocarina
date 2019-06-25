@@ -148,9 +148,32 @@ package body Ocarina.Backends.C_Common.BA is
       Statements   : List_Id);
 
    procedure Make_Output_Port_Name
-     (Node       : Node_Id;
-      S          : Node_Id;
-      Statements : List_Id);
+     (Node         : Node_Id;
+      S            : Node_Id;
+      Declarations : List_Id;
+      Statements   : List_Id);
+
+   function Map_C_Data_Component_Reference
+     (Node             : Node_Id;
+      Is_Out_Parameter : Boolean := False;
+      BA_Root          : Node_Id := No_Node;
+      S                : Node_Id;
+      Declarations     : List_Id;
+      Statements       : List_Id) return Node_Id;
+
+   function Map_C_BA_Name
+     (Node             : Node_Id;
+      Is_Out_Parameter : Boolean := False;
+      BA_Root          : Node_Id := No_Node;
+      S                : Node_Id;
+      Declarations     : List_Id;
+      Statements       : List_Id) return Node_Id;
+
+   function Map_C_Target
+     (Node         : Node_Id;
+      S            : Node_Id;
+      Declarations : List_Id;
+      Statements   : List_Id) return Node_Id;
 
    procedure Map_C_Assignment_Action
      (Node         : Node_Id;
@@ -210,26 +233,46 @@ package body Ocarina.Backends.C_Common.BA is
 
    function Evaluate_BA_Integer_Value
      (Node         : Node_Id;
+      S            : Node_Id;
       Declarations : List_Id;
       Statements   : List_Id) return Node_Id;
 
    function Evaluate_BA_Literal (Node : Node_Id) return Node_Id;
 
+   procedure Make_Intermediate_Variable_Declaration
+     (N            : Name_Id;
+      Used_Type    : Node_Id;
+      Declarations : List_Id);
+
+   function Get_Port_Spec_Instance
+     (Node             : Node_Id;
+      Parent_Component : Node_Id) return Node_Id;
+
+   function Evaluate_BA_Value_Variable
+     (Node             : Node_Id;
+      S                : Node_Id;
+      Declarations     : List_Id;
+      Statements       : List_Id) return Node_Id;
+
    function Evaluate_BA_Property_Constant
      (Node             : Node_Id;
       Is_Out_parameter : Boolean := False;
       BA_Root          : Node_Id := No_Node;
-      Subprogram_Root  : Node_Id := No_Node;
+      Subprogram_Root  : Node_Id;
       Declarations     : List_Id;
       Statements       : List_Id) return Node_Id;
 
---     function Get_Port_Spec_Instance
---       (Node             : Node_Id;
---        Parent_Component : Node_Id) return Node_Id;
+   function Make_Call_Parameter_For_Get_Count_and_Next_Value
+     (Node : Node_Id;
+      S    : Node_Id) return List_Id;
+
+   function Make_Get_Count_of_Port
+     (Node             : Node_Id;
+      S                : Node_Id) return Node_Id;
 
    procedure Make_Next_Value_of_Port
      (Node             : Node_Id;
-      Subprogram_Root  : Node_Id;
+      S                : Node_Id;
       Statements       : List_Id);
 
    procedure Make_Request_Variable_Declaration
@@ -797,6 +840,7 @@ package body Ocarina.Backends.C_Common.BA is
 
          init_value := Evaluate_BA_Integer_Value
            (BATN.Lower_Int_Val (In_Element_Values (Node)),
+            S,
             Declarations,
             Statements);
 
@@ -812,6 +856,7 @@ package body Ocarina.Backends.C_Common.BA is
             Operator   => CTU.Op_Less_Equal,
             Right_Expr => Evaluate_BA_Integer_Value
               (BATN.Upper_Int_Val (In_Element_Values (Node)),
+               S,
                Declarations,
                Statements));
 
@@ -909,17 +954,27 @@ package body Ocarina.Backends.C_Common.BA is
    begin
 
       if Kind (BATN.Identifier (Node)) = BATN.K_Name then
-         Var_identifier := CTU.Make_Defining_Identifier
-           (Name => BATN.Display_Name
-              (BATN.First_Node
-                   (BATN.Idt (BATN.Identifier (Node)))),
-            Pointer => False);
+         if BANu.Length (BATN.Idt (BATN.Identifier (Node))) = 1 then
+            Var_identifier := CTU.Make_Defining_Identifier
+              (Name => BATN.Display_Name
+                 (BATN.First_Node
+                      (BATN.Idt (BATN.Identifier (Node)))),
+               Pointer => False);
+         else
+            Var_identifier := Map_C_BA_Name
+              (Node         => BATN.Identifier (Node),
+               S            => S,
+               Declarations => Declarations,
+               Statements   => Statements);
+         end if;
 
-         --  else
-         --  i.e.
-         --     Kind (BATN.Identifier (Node))
-         --       = BATN.K_Data_Component_Reference
-         --  We must treat this case in the future
+      elsif Kind (BATN.Identifier (Node)) = BATN.K_Data_Component_Reference
+      then
+         Var_identifier := Map_C_Data_Component_Reference
+           (Node         => BATN.Identifier (Node),
+            S            => S,
+            Declarations => Declarations,
+            Statements   => Statements);
       end if;
 
       case Communication_Kind'Val (Comm_Kind (Node)) is
@@ -943,13 +998,11 @@ package body Ocarina.Backends.C_Common.BA is
                while Present (decl) loop
 
                   if Kind (decl) = CTN.K_Function_Specification
-                    --  CTN.K_Extern_Entity_Declaration
                     and then
                       Get_Name_String
                         (Standard.Utils.To_Lower
                            (CTN.Name (CTN.Defining_Identifier
                             (decl))))
-                    --   (CTN.Entity (decl)))))
                     = Get_Name_String
                     (Standard.Utils.To_Lower
                        (CTN.Name (Var_identifier)))
@@ -1050,18 +1103,25 @@ package body Ocarina.Backends.C_Common.BA is
 
                      when K_Name =>
                         Append_Node_To_List
-                          (Evaluate_BA_Identifier
-                             (Node             => BATN.First_Node
-                                  (BATN.Idt (BATN.Identifier (Param_Node))),
+                          (Map_C_BA_Name
+                             (Node             => Param_Node,
                               Is_Out_Parameter => BATN.Is_Out (N),
                               BA_Root          => BA_Root,
-                              Subprogram_Root  => S,
+                              S                => S,
                               Declarations     => Declarations,
                               Statements       => Statements),
                            Call_Parameters);
 
-                        --  when K_Data_Component_Reference =>
-                        --    This case is not yet treated
+                     when K_Data_Component_Reference =>
+                        Append_Node_To_List
+                          (Map_C_Data_Component_Reference
+                             (Node             => Param_Node,
+                              Is_Out_Parameter => BATN.Is_Out (N),
+                              BA_Root          => BA_Root,
+                              S                => S,
+                              Declarations     => Declarations,
+                              Statements       => Statements),
+                           Call_Parameters);
 
                      when others =>
                         Display_Error ("Other param label Kinds are not"
@@ -1089,10 +1149,10 @@ package body Ocarina.Backends.C_Common.BA is
                   Make_Request_Variable_Declaration (Declarations);
 
                   Make_Output_Port_Name
-                 (Node       => BATN.First_Node
-                    (BATN.Idt (BATN.Identifier (Node))),
-                  S          => S,
-                  Statements => Statements);
+                    (Node         => BATN.Identifier (Node),
+                     S            => S,
+                     Declarations => Declarations,
+                     Statements   => Statements);
 
                   Make_Put_Value_On_port (Node, S, Declarations, Statements);
                end if;
@@ -1112,10 +1172,11 @@ package body Ocarina.Backends.C_Common.BA is
             else
                CTU.Append_Node_To_List
                  (Make_Assignment_Statement
-                    (Variable_Identifier => Make_Defining_Identifier
-                         (BATN.Display_Name
-                              (BATN.First_Node
-                                 (BATN.Idt (BATN.Target (Node))))),
+                    (Variable_Identifier => Map_C_Target
+                         (Node         => BATN.Target (Node),
+                          S            => S,
+                          Declarations => Declarations,
+                          Statements   => Statements),
                      Expression          => Make_Get_Value_of_Port
                        (BATN.First_Node (BATN.Idt (BATN.Identifier (Node))),
                         S, Declarations, Statements)),
@@ -1136,11 +1197,6 @@ package body Ocarina.Backends.C_Common.BA is
                            Fatal => True);
       end case;
 
-      --  Target (Node) is not yet treated
-      --
-      --  if Present (Target (Node)) then
-      --
-      --  end if;
    end Map_C_Communication_Action;
 
    ---------------------------
@@ -1148,9 +1204,10 @@ package body Ocarina.Backends.C_Common.BA is
    ---------------------------
 
    procedure Make_Output_Port_Name
-     (Node       : Node_Id;
-      S          : Node_Id;
-      Statements : List_Id)
+     (Node         : Node_Id;
+      S            : Node_Id;
+      Declarations : List_Id;
+      Statements   : List_Id)
    is
       N               : Node_Id;
    begin
@@ -1177,8 +1234,11 @@ package body Ocarina.Backends.C_Common.BA is
                Make_List_Id
                  (Make_Defining_Identifier
                       (Map_Thread_Port_Variable_Name (S)),
-                  Make_Defining_Identifier
-                    (BATN.Display_Name (Node))))),
+                  Map_C_BA_Name
+                    (Node             => Node,
+                     S                => S,
+                     Declarations     => Declarations,
+                     Statements       => Declarations)))),
          Statements);
 
    end Make_Output_Port_Name;
@@ -1279,6 +1339,221 @@ package body Ocarina.Backends.C_Common.BA is
 
    end Make_Send_Output_Port;
 
+   ------------------------------------
+   -- Map_C_Data_Component_Reference --
+   ------------------------------------
+
+   function Map_C_Data_Component_Reference
+     (Node             : Node_Id;
+      Is_Out_Parameter : Boolean := False;
+      BA_Root          : Node_Id := No_Node;
+      S                : Node_Id;
+      Declarations     : List_Id;
+      Statements       : List_Id) return Node_Id
+   is
+      pragma Assert (BATN.Kind (Node) = BATN.K_Data_Component_Reference);
+
+      Var_identifier : Node_Id := No_Node;
+      N              : Node_Id;
+   begin
+      if not BANu.Is_Empty (BATN.Identifiers (Node)) then
+         N := BATN.First_Node (BATN.Identifiers (Node));
+         Var_identifier := Map_C_BA_Name
+           (Node             => N,
+            Is_Out_Parameter => Is_Out_Parameter,
+            BA_Root          => BA_Root,
+            S                => S,
+            Declarations     => Declarations,
+            Statements       => Statements);
+         N := BATN.Next_Node (N);
+         while Present (N) loop
+            Var_identifier := CTU.Make_Member_Designator
+              (Defining_Identifier => Map_C_BA_Name
+                 (Node             => N,
+                  Is_Out_Parameter => Is_Out_Parameter,
+                  BA_Root          => BA_Root,
+                  S                => S,
+                  Declarations     => Declarations,
+                  Statements       => Statements),
+               Aggregate_Name      => Var_identifier);
+            N := BATN.Next_Node (N);
+         end loop;
+      end if;
+
+      return Var_identifier;
+   end Map_C_Data_Component_Reference;
+
+   -------------------
+   -- Map_C_BA_Name --
+   -------------------
+
+   function Map_C_BA_Name
+     (Node             : Node_Id;
+      Is_Out_Parameter : Boolean := False;
+      BA_Root          : Node_Id := No_Node;
+      S                : Node_Id;
+      Declarations     : List_Id;
+      Statements       : List_Id) return Node_Id
+   is
+      pragma Assert (BATN.Kind (Node) = BATN.K_Name);
+
+      Var_identifier : Node_Id := No_Node;
+      N : Node_Id;
+   begin
+      if not BANu.Is_Empty (BATN.Idt (Node)) then
+         N := BATN.First_Node (BATN.Idt (Node));
+         Var_identifier := Evaluate_BA_Identifier
+           (Node             => N,
+            Is_Out_Parameter => Is_Out_Parameter,
+            BA_Root          => BA_Root,
+            Subprogram_Root  => S,
+            Declarations     => Declarations,
+            Statements       => Statements);
+
+         N := BATN.Next_Node (N);
+         while Present (N) loop
+            Var_identifier := CTU.Make_Member_Designator
+              (Defining_Identifier => Evaluate_BA_Identifier
+                 (Node             => N,
+                  Is_Out_Parameter => Is_Out_Parameter,
+                  BA_Root          => BA_Root,
+                  Subprogram_Root  => S,
+                  Declarations     => Declarations,
+                  Statements       => Statements),
+               Aggregate_Name      => Var_identifier);
+            N := BATN.Next_Node (N);
+         end loop;
+
+         if not BANu.Is_Empty (BATN.Array_Index (Node)) then
+            N := BATN.First_Node (BATN.Array_Index (Node));
+
+            while Present (N) loop
+               Var_identifier := Make_Array_Declaration
+                 (Defining_Identifier => Var_identifier,
+                  Array_Size => Evaluate_BA_Integer_Value
+                    (Node         => N,
+                     S            => S,
+                     Declarations => Declarations,
+                     Statements   => Statements));
+
+               N := BATN.Next_Node (N);
+            end loop;
+         end if;
+      end if;
+
+      return Var_identifier;
+   end Map_C_BA_Name;
+
+   ------------------
+   -- Map_C_Target --
+   ------------------
+
+   function Map_C_Target
+     (Node         : Node_Id;
+      S            : Node_Id;
+      Declarations : List_Id;
+      Statements   : List_Id) return Node_Id
+   is
+      use AAN;
+      pragma Assert (BATN.Kind (Node) = BATN.K_Name or else
+                     BATN.Kind (Node) = BATN.K_Data_Component_Reference);
+
+      Var_identifier       : Node_Id;
+      N                    : Node_Id;
+      Corresponding_Entity : Node_Id;
+   begin
+
+      if BATN.Kind (Node) = BATN.K_Name then
+
+         --  Here we suppose that the target is a single
+         --  identifier
+         --  In the future, we must support the case of records
+         --  position.x := ....
+         --  position.y := ....
+         --
+
+         if not BANu.Is_Empty (BATN.Idt (Node)) then
+            if BANu.Length (BATN.Idt (Node)) = 1 then
+               --  We verify if target is
+               --  an outgoing_subprogram_parameter_identifier
+               --  in this case the corresponding idendifier must
+               --  be a pointer
+               --
+               Corresponding_Entity := BATN.Corresponding_Entity
+                 (BATN.First_Node (BATN.Idt (Node)));
+
+               if present (Corresponding_Entity) then
+
+                  if AAN.Kind (Corresponding_Entity) = AAN.K_Parameter
+                    and then AAN.Is_Out (Corresponding_Entity)
+                  then
+                     Var_identifier :=
+                       CTU.Make_Defining_Identifier
+                         (Name           => BATN.Display_Name
+                            (BATN.First_Node (BATN.Idt (Node))),
+                          Pointer        => True);
+                  elsif AAN.Kind (Corresponding_Entity) = AAN.K_Port_Spec
+                    and then AAN.Is_Out (Corresponding_Entity)
+                  then
+                     --  Declare request variable if it is not yet declared
+                     Make_Request_Variable_Declaration (Declarations);
+
+                     Make_Output_Port_Name
+                       (Node         => Node,
+                        Declarations => Declarations,
+                        S            => S,
+                        Statements   => Statements);
+
+                     N := Message_Comment (" The name of the corresponding"
+                                           & " port variable is built from"
+                                           & " the port name,"
+                                           & " following similar pattern. ");
+                     Append_Node_To_List (N, Statements);
+
+                     N := Make_Call_Profile
+                       (RE (RE_PORT_VARIABLE),
+                        Make_List_Id
+                          (Make_Defining_Identifier
+                               (Map_Thread_Port_Variable_Name (S)),
+                           Make_Defining_Identifier
+                             (BATN.Display_Name (BATN.First_Node
+                              (BATN.Idt (Node))))));
+
+                     Var_identifier := CTU.Make_Member_Designator
+                       (Defining_Identifier => N,
+                        Aggregate_Name      =>
+                          Make_Defining_Identifier (VN (V_Request)));
+
+                  end if;
+
+               else
+                  Var_identifier :=
+                    CTU.Make_Defining_Identifier
+                      (Name           => BATN.Display_Name
+                         (BATN.First_Node (BATN.Idt (Node))),
+                       Pointer        => False);
+               end if;
+            else
+               Var_identifier := Map_C_BA_Name
+                 (Node             => Node,
+                  S                => S,
+                  Declarations     => Declarations,
+                  Statements       => Statements);
+            end if;
+
+         end if;
+
+      elsif BATN.Kind (Node) = BATN.K_Data_Component_Reference
+      then
+         Var_identifier := Map_C_Data_Component_Reference
+           (Node             => Node,
+            S                => S,
+            Declarations     => Declarations,
+            Statements       => Statements);
+      end if;
+      return Var_identifier;
+   end Map_C_Target;
+
    -----------------------------
    -- Map_C_Assignment_Action --
    -----------------------------
@@ -1289,93 +1564,9 @@ package body Ocarina.Backends.C_Common.BA is
       Declarations : List_Id;
       Statements   : List_Id)
    is
-      use AAN;
       pragma Assert (BATN.Kind (Node) = BATN.K_Assignment_Action);
-
-      Var_identifier       : Node_Id;
-      N                    : Node_Id;
-      Expr                 : Node_Id;
-      Corresponding_Entity : Node_Id;
+      Expr : Node_Id;
    begin
-
-      if BATN.Kind (BATN.Target (Node)) = BATN.K_Name then
-
-         --  Here we suppose that the target is a single
-         --  identifier
-         --  In the future, we must support the case of records
-         --  position.x := ....
-         --  position.y := ....
-         --
-
-         --  We verify if target is
-         --  an outgoing_subprogram_parameter_identifier
-         --  in this case the corresponding idendifier must
-         --  be a pointer
-         --
-         Corresponding_Entity := BATN.Corresponding_Entity
-           (BATN.First_Node (BATN.Idt (BATN.Target (Node))));
-
-         if present (Corresponding_Entity) then
-
-            if AAN.Kind (Corresponding_Entity) = AAN.K_Parameter
-              and then AAN.Is_Out (Corresponding_Entity)
-            then
-               Var_identifier :=
-                 CTU.Make_Defining_Identifier
-                   (Name           => BATN.Display_Name
-                      (BATN.First_Node (BATN.Idt (BATN.Target (Node)))),
-                    Pointer        => True);
-            elsif AAN.Kind (Corresponding_Entity) = AAN.K_Port_Spec
-              and then AAN.Is_Out (Corresponding_Entity)
-            then
-               --  Declare request variable if it is not yet declared
-               Make_Request_Variable_Declaration (Declarations);
-
-               Make_Output_Port_Name
-                 (Node       => BATN.First_Node
-                    (BATN.Idt (BATN.Target (Node))),
-                  S          => S,
-                  Statements => Statements);
-
-               N := Message_Comment (" The name of the corresponding"
-                                     & " port variable is built from"
-                                     & " the port name,"
-                                     & " following similar pattern. ");
-               Append_Node_To_List (N, Statements);
-
-               N := Make_Call_Profile
-                 (RE (RE_PORT_VARIABLE),
-                  Make_List_Id
-                    (Make_Defining_Identifier
-                         (Map_Thread_Port_Variable_Name (S)),
-                     Make_Defining_Identifier
-                       (BATN.Display_Name (BATN.First_Node
-                        (BATN.Idt (BATN.Target (Node)))))));
-
-               Var_identifier := CTU.Make_Member_Designator
-                 (Defining_Identifier => N,
-                  Aggregate_Name      =>
-                    Make_Defining_Identifier (VN (V_Request)));
-
-            end if;
-
-         else
-            Var_identifier :=
-              CTU.Make_Defining_Identifier
-                (Name           => BATN.Display_Name
-                   (BATN.First_Node (BATN.Idt (BATN.Target (Node)))),
-                 Pointer        => False);
-         end if;
-
-      else
-         --  i.e. the case of target with Data_Component_Reference
-         --  kind, this case will be treated later
-         --
-         Display_Error
-           ("Assignment action target with Data_Component_Reference kind"
-            & " is not yet supported",
-            Fatal => True);
-      end if;
 
       Expr := Evaluate_BA_Value_Expression
         (Node             => BATN.Value_Expression (Node),
@@ -1385,15 +1576,17 @@ package body Ocarina.Backends.C_Common.BA is
 
       CTU.Append_Node_To_List
         (CTU.Make_Assignment_Statement
-           (Variable_Identifier => Var_identifier,
+           (Variable_Identifier => Map_C_Target
+                (Node         => BATN.Target (Node),
+                 S            => S,
+                 Declarations => Declarations,
+                 Statements   => Statements),
             Expression          => Expr),
          Statements);
 
       if BATN.Is_Any (Node) then
-         --  i.e. the case of target with Data_Component_Reference
-         --  kind, this case will be treated later
          Display_Error
-           ("the mapping of any is not supported", Fatal => True);
+           ("The mapping of (any) is not supported", Fatal => True);
       end if;
 
    end Map_C_Assignment_Action;
@@ -1558,7 +1751,7 @@ package body Ocarina.Backends.C_Common.BA is
          when OK_Or_Else          => return CTU.Op_Or;
          when OK_And_Then         => return CTU.Op_And;
 
-            --  relational_operator
+         --  relational_operator
          when OK_Equal            => return CTU.Op_Equal_Equal;
          when OK_Non_Equal        => return CTU.Op_Not_Equal;
          when OK_Less_Than        => return CTU.Op_Less;
@@ -1566,19 +1759,19 @@ package body Ocarina.Backends.C_Common.BA is
          when OK_Greater_Than     => return CTU.Op_Greater;
          when OK_Greater_Or_Equal => return CTU.Op_Greater_Equal;
 
-            --  unary_adding_opetor
-            --  binary_adding_operator
+         --  unary_adding_opetor
+         --  binary_adding_operator
          when OK_Plus             => return CTU.Op_Plus;
          when OK_Minus            => return CTU.Op_Minus;
 
-            --  multiplying operator
+         --  multiplying operator
          when OK_Multiply         => return CTU.Op_Asterisk;
          when OK_Divide           => return CTU.Op_Slash;
          when OK_Mod              => return CTU.Op_Modulo;
          when OK_Rem              => Display_Error
               ("Not supported Operator", Fatal => True);
 
-            --  highest precedence operator
+         --  highest precedence operator
          when OK_Exponent         => Display_Error
               ("Not supported Operator", Fatal => True);
          when OK_Abs              => Display_Error
@@ -1739,15 +1932,15 @@ package body Ocarina.Backends.C_Common.BA is
    is
       pragma Assert (BATN.Kind (Node) = BATN.K_Factor);
    begin
-      --        if BATN.Is_Abs (Node) then
-      --           --  We must add the library #include <stdlib.h>
-      --           --  in order to be able to use their functions
-      --           --  abs (x), pow (x,y)
-      --           --
-      --           Display_Error ("Abs not treated yet", Fatal => True);
-      --        elsif BATN.Is_Not (Node) then
-      --           Op := CTU.Op_Not;
-      --        end if;
+      --  if BATN.Is_Abs (Node) then
+      --     --  We must add the library #include <stdlib.h>
+      --     --  in order to be able to use their functions
+      --     --  abs (x), pow (x,y)
+      --     --
+      --     Display_Error ("Abs not treated yet", Fatal => True);
+      --  elsif BATN.Is_Not (Node) then
+      --     Op := CTU.Op_Not;
+      --  end if;
 
       if BATN.Is_Not (Node) then
          return Make_Expression
@@ -1761,9 +1954,9 @@ package body Ocarina.Backends.C_Common.BA is
             BA_Root, Subprogram_Root, Declarations, Statements);
       end if;
 
-      --        if Present (BATN.Upper_Value (Node)) then
-      --           Display_Error ("Exponent not treated yet", Fatal => True);
-      --        end if;
+      --  if Present (BATN.Upper_Value (Node)) then
+      --     Display_Error ("Exponent not treated yet", Fatal => True);
+      --  end if;
 
    end Evaluate_BA_Factor;
 
@@ -1786,21 +1979,26 @@ package body Ocarina.Backends.C_Common.BA is
                      or else Kind (Node) = BATN.K_Property_Constant
                      or else Kind (Node) = BATN.K_Property_Reference
                      or else Kind (Node) = BATN.K_Identifier);
+      result : Node_Id;
    begin
 
       case BATN.Kind (Node) is
 
-         --  when BATN.K_Value_Variable     =>
-         --    Evaluate_BA_Value_Variable (Node);
+         when BATN.K_Value_Variable     =>
+            result := Evaluate_BA_Value_Variable
+              (Node         => Node,
+               S            => Subprogram_Root,
+               Declarations => Declarations,
+               Statements   => Statements);
 
          when BATN.K_Literal              =>
-            return Evaluate_BA_Literal (Node);
+            result := Evaluate_BA_Literal (Node);
 
          when BATN.K_Boolean_Literal    =>
-            return Evaluate_BA_Boolean_Literal (Node);
+            result := Evaluate_BA_Boolean_Literal (Node);
 
          when BATN.K_Property_Constant  =>
-            return Evaluate_BA_Property_Constant
+            result := Evaluate_BA_Property_Constant
               (Node, Is_Out_Parameter, BA_Root, Subprogram_Root,
                Declarations, Statements);
 
@@ -1808,26 +2006,26 @@ package body Ocarina.Backends.C_Common.BA is
             --    Evaluate_BA_Property_Reference (Node);
 
          when BATN.K_Value_Expression   =>
-            return Evaluate_BA_Value_Expression
+            result := Evaluate_BA_Value_Expression
               (Node             => Node,
                Subprogram_Root  => Subprogram_Root,
                Declarations     => Declarations,
                Statements       => Statements);
 
          when BATN.K_Identifier           =>
-            return Evaluate_BA_Identifier
+            result := Evaluate_BA_Identifier
               (Node             => Node,
                Subprogram_Root  => Subprogram_Root,
                Declarations     => Declarations,
                Statements       => Statements);
 
          when others                      =>
-            Display_Error ("others cases are not yet treated",
+            Display_Error ("Mapping of other kinds of BA Value"
+                           & " are not yet supported.",
                            Fatal => True);
       end case;
 
-      raise Program_Error;
-      return No_Node;
+      return result;
 
    end Evaluate_BA_Value;
 
@@ -1837,6 +2035,7 @@ package body Ocarina.Backends.C_Common.BA is
 
    function Evaluate_BA_Integer_Value
      (Node         : Node_Id;
+      S            : Node_Id;
       Declarations : List_Id;
       Statements   : List_Id) return Node_Id
    is
@@ -1850,18 +2049,25 @@ package body Ocarina.Backends.C_Common.BA is
       result      : Node_Id;
    begin
       case BATN.Kind (Entity_Node) is
-         --  when K_Value_Variable    =>
+         when K_Value_Variable    =>
+            result := Evaluate_BA_Value_Variable
+              (Node             => Entity_Node,
+               S                => S,
+               Declarations     => Declarations,
+               Statements       => Statements);
+
          when K_Literal           =>
             result := Evaluate_BA_Literal (Entity_Node);
+
          when K_Property_Constant =>
             result := Evaluate_BA_Property_Constant
               (Node             => Entity_Node,
+               Subprogram_Root  => S,
                Declarations     => Declarations,
                Statements       => Statements);
+
          when others              =>
-            Display_Error (" For Lower value in Interger range, Kinds"
-                           & " other than K_Literal and K_Property_Constant"
-                           & " are not yet supported", Fatal => True);
+            Display_Error (" Incorrect Integer Value ", Fatal => True);
       end case;
 
       return result;
@@ -1880,34 +2086,66 @@ package body Ocarina.Backends.C_Common.BA is
 
    end Evaluate_BA_Literal;
 
---     ----------------------------
---     -- Get_Port_Spec_Instance --
---     ----------------------------
---
---     function Get_Port_Spec_Instance
---       (Node             : Node_Id;
---        Parent_Component : Node_Id) return Node_Id
---     is
---        use type AIN.Node_Kind;
---        Fs : constant Ocarina.ME_AADL.AADL_Instances.Nutils.Node_Array
---          := Features_Of (Parent_Component);
---        result : Node_Id;
---     begin
---        for F of Fs loop
---           if Standard.Utils.To_Upper
---             (AIN.Display_Name (AIN.Identifier (F)))
---             = Standard.Utils.To_Upper
---             (BATN.Display_Name (Node))
---             and then
---               AIN.Kind (F) = AIN.K_Port_Spec_Instance
---             and then AIN.Is_In (F)
---             and then AIN.Is_Data (F)
---           then
---              result := F;
---           end if;
---        end loop;
---        return result;
---     end Get_Port_Spec_Instance;
+   ------------------------------------------------------
+   -- Make_Call_Parameter_For_Get_Count_and_Next_Value --
+   ------------------------------------------------------
+
+   function Make_Call_Parameter_For_Get_Count_and_Next_Value
+     (Node : Node_Id;
+      S    : Node_Id) return List_Id
+   is
+      N               : Node_Id;
+      N1              : Name_Id;
+      Call_Parameters : List_Id;
+   begin
+
+      Call_Parameters := New_List (CTN.K_Parameter_List);
+
+      Set_Str_To_Name_Buffer ("self");
+      N1 := Name_Find;
+      N := Make_Defining_Identifier (N1);
+      Append_Node_To_List (N, Call_Parameters);
+
+      Append_Node_To_List
+        (Make_Call_Profile
+           (RE (RE_Local_Port),
+            Make_List_Id
+              (Make_Defining_Identifier
+                   (Map_Thread_Port_Variable_Name (S)),
+               Make_Defining_Identifier
+                 (BATN.Display_Name (Node)))),
+         Call_Parameters);
+      return Call_Parameters;
+
+   end Make_Call_Parameter_For_Get_Count_and_Next_Value;
+
+   ----------------------------
+   -- Make_Get_Count_of_Port --
+   ----------------------------
+
+   function Make_Get_Count_of_Port
+     (Node             : Node_Id;
+      S                : Node_Id) return Node_Id
+   is
+      pragma Assert (BATN.Kind (Node) = BATN.K_Identifier);
+
+      Call_Parameters : List_Id;
+      result          : Node_Id := No_Node;
+   begin
+
+      --  Make the call to __po_hi_gqueue_get_count
+      --  if it is an event port
+      if AAN.Is_Event (BATN.Corresponding_Entity (Node)) then
+         Call_Parameters := Make_Call_Parameter_For_Get_Count_and_Next_Value
+           (Node, S);
+
+         result := CTU.Make_Call_Profile
+           (RE (RE_Gqueue_Get_Count),
+            Call_Parameters);
+      end if;
+      return result;
+
+   end Make_Get_Count_of_Port;
 
    -----------------------------
    -- Make_Next_Value_of_Port --
@@ -1915,41 +2153,25 @@ package body Ocarina.Backends.C_Common.BA is
 
    procedure Make_Next_Value_of_Port
      (Node             : Node_Id;
-      Subprogram_Root  : Node_Id;
+      S                : Node_Id;
       Statements       : List_Id)
    is
       pragma Assert (BATN.Kind (Node) = BATN.K_Identifier);
 
-      N               : Node_Id;
-      N1              : Name_Id;
       Call_Parameters : List_Id;
    begin
 
       --  Make the call to __po_hi_gqueue_next_value
       --  if it is an event port
       if AAN.Is_Event (BATN.Corresponding_Entity (Node)) then
-         Call_Parameters := New_List (CTN.K_Parameter_List);
-
-         Set_Str_To_Name_Buffer ("self");
-         N1 := Name_Find;
-         N := Make_Defining_Identifier (N1);
-         Append_Node_To_List (N, Call_Parameters);
+         Call_Parameters := Make_Call_Parameter_For_Get_Count_and_Next_Value
+           (Node, S);
 
          Append_Node_To_List
-           (Make_Call_Profile
-              (RE (RE_Local_Port),
-               Make_List_Id
-                 (Make_Defining_Identifier
-                      (Map_Thread_Port_Variable_Name (Subprogram_Root)),
-                  Make_Defining_Identifier
-                    (BATN.Display_Name (Node)))),
-            Call_Parameters);
-
-         N :=
-           CTU.Make_Call_Profile
-             (RE (RE_Gqueue_Next_Value),
-              Call_Parameters);
-         Append_Node_To_List (N, Statements);
+           (CTU.Make_Call_Profile
+              (RE (RE_Gqueue_Next_Value),
+               Call_Parameters),
+            Statements);
       end if;
 
    end Make_Next_Value_of_Port;
@@ -2008,14 +2230,10 @@ package body Ocarina.Backends.C_Common.BA is
       Statements       : List_Id) return Node_Id
    is
       N               : Node_Id;
-      --  F           : Node_Id;
       N1              : Name_Id;
       result          : Node_Id;
       Call_Parameters : List_Id;
    begin
-
-      --  F := Get_Port_Spec_Instance (Node, Subprogram_Root);
-
       --  Read from the in data port
       N := Message_Comment ("Read the data from the port "
                             & Get_Name_String
@@ -2090,15 +2308,10 @@ package body Ocarina.Backends.C_Common.BA is
    is
       use AAN;
       pragma Assert (BATN.Kind (Node) = BATN.K_Identifier);
-      Pointer                   : Boolean := False;
-      Variable_Address          : Boolean := False;
-
-      N                  : Node_Id;
-      --  F                         : Node_Id;
---        N1                        : Name_Id;
-      result                    : Node_Id;
---        request_declaration_exist : Boolean := False;
---        Call_Parameters           : List_Id;
+      Pointer          : Boolean := False;
+      Variable_Address : Boolean := False;
+      N                : Node_Id;
+      result           : Node_Id;
    begin
 
       if Is_Out_Parameter then
@@ -2170,6 +2383,189 @@ package body Ocarina.Backends.C_Common.BA is
 
    end Evaluate_BA_Identifier;
 
+   --------------------------------------------
+   -- Make_Intermediate_Variable_Declaration --
+   --------------------------------------------
+
+   procedure Make_Intermediate_Variable_Declaration
+     (N            : Name_Id;
+      Used_Type    : Node_Id;
+      Declarations : List_Id)
+   is
+      decl              : Node_Id;
+      declaration_exist : Boolean := False;
+   begin
+
+      decl := CTN.First_Node (Declarations);
+      while Present (decl) loop
+
+         if Kind (decl) = CTN.K_Variable_Declaration then
+
+            if Get_Name_String
+              (Standard.Utils.To_Lower
+                 (CTN.Name (CTN.Defining_Identifier (decl))))
+                = Get_Name_String
+              (Standard.Utils.To_Lower (N))
+
+            then
+               declaration_exist := True;
+            end if;
+         end if;
+
+         exit when declaration_exist;
+         decl := CTN.Next_Node (decl);
+      end loop;
+
+      if not declaration_exist then
+         CTU.Append_Node_To_List
+           (CTU.Make_Variable_Declaration
+              (Defining_Identifier => Make_Defining_Identifier (N),
+               Used_Type => Used_Type),
+            Declarations);
+      end if;
+
+   end Make_Intermediate_Variable_Declaration;
+
+   ----------------------------
+   -- Get_Port_Spec_Instance --
+   ----------------------------
+
+   function Get_Port_Spec_Instance
+     (Node             : Node_Id;
+      Parent_Component : Node_Id) return Node_Id
+   is
+      use type AIN.Node_Kind;
+      Fs : constant Ocarina.ME_AADL.AADL_Instances.Nutils.Node_Array
+        := Features_Of (Parent_Component);
+      result : Node_Id;
+   begin
+      for F of Fs loop
+         if Standard.Utils.To_Upper
+           (AIN.Display_Name (AIN.Identifier (F)))
+           = Standard.Utils.To_Upper
+           (BATN.Display_Name (Node))
+           and then
+             AIN.Kind (F) = AIN.K_Port_Spec_Instance
+           --  and then AIN.Is_In (F)
+           --  and then AIN.Is_Data (F)
+         then
+            result := F;
+         end if;
+      end loop;
+      return result;
+   end Get_Port_Spec_Instance;
+
+   --------------------------------
+   -- Evaluate_BA_Value_Variable --
+   --------------------------------
+
+   function Evaluate_BA_Value_Variable
+     (Node             : Node_Id;
+      S                : Node_Id;
+      Declarations     : List_Id;
+      Statements       : List_Id) return Node_Id
+   is
+      pragma Assert (BATN.Kind (Node) = BATN.K_Value_Variable);
+
+      Ident          : constant Node_Id := BATN.Identifier (Node);
+      result         : Node_Id;
+      Var_identifier : Node_Id;
+      N              : Name_Id;
+      Used_Type      : Node_Id;
+   begin
+
+      if Is_Interrogative (Node) then
+         --  the mapping when Is_Interrogative, i.e. :
+         --  incoming_port_name?
+
+         Set_Str_To_Name_Buffer ("__");
+         Get_Name_String_And_Append
+           (BATN.Display_Name
+              (BATN.First_Node
+                   (BATN.Idt (BATN.Identifier (Node)))));
+         Add_Str_To_Name_Buffer ("_gqueue_get_value");
+         N := Name_Find;
+         Var_identifier := CTU.Make_Defining_Identifier (N);
+
+         Used_Type := Map_C_Data_Type_Designator
+           (AIN.Corresponding_Instance
+              (Get_Port_Spec_Instance
+                   (Node             => BATN.First_Node
+                        (BATN.Idt (BATN.Identifier (Node))),
+                    Parent_Component => S)));
+
+         Make_Intermediate_Variable_Declaration
+           (N            => N,
+            Used_Type    => Used_Type,
+            Declarations => Declarations);
+
+         CTU.Append_Node_To_List
+           (CTU.Make_Assignment_Statement
+              (Variable_Identifier => Var_identifier,
+               Expression          => Make_Get_Value_of_Port
+                 (BATN.First_Node (BATN.Idt (BATN.Identifier (Node))),
+                  S, Declarations, Statements)),
+            Statements);
+
+         result := Var_identifier;
+
+         Make_Next_Value_of_Port
+           (BATN.First_Node (BATN.Idt (BATN.Identifier (Node))),
+            S, Statements);
+
+      elsif Is_Count (Node) then
+         --  Here we must add a variable and we assign it with
+         --  the returned value of the function __po_hi_gqueue_get_count
+         --  int __po_hi_gqueue_get_count
+         --     ( __po_hi_task_id id, __po_hi_local_port_t port)
+
+         Set_Str_To_Name_Buffer ("__");
+         Get_Name_String_And_Append
+           (BATN.Display_Name
+              (BATN.First_Node
+                   (BATN.Idt (BATN.Identifier (Node)))));
+         Add_Str_To_Name_Buffer ("_gqueue_get_count");
+         N := Name_Find;
+         Var_identifier := CTU.Make_Defining_Identifier (N);
+
+         Make_Intermediate_Variable_Declaration
+           (N            => N,
+            Used_Type    => RE (RE_Int16_T),
+            Declarations => Declarations);
+
+         CTU.Append_Node_To_List
+           (CTU.Make_Assignment_Statement
+              (Variable_Identifier => Var_identifier,
+               Expression          => Make_Get_Count_of_Port
+                 (BATN.First_Node
+                      (BATN.Idt (BATN.Identifier (Node))), S)),
+            Statements);
+
+         result := Var_identifier;
+
+      --  TODO: the mapping for the cases Fresh and Updated
+      --  elsif Is_Fresh (Node) then
+      --
+      --  elsif Is_Updated (Node) then
+      --
+      elsif BATN.Kind (Ident) = BATN.K_Name then
+         result := Map_C_BA_Name
+           (Node         => Ident,
+            S            => S,
+            Declarations => Declarations,
+            Statements   => Statements);
+      elsif BATN.Kind (Ident) = BATN.K_Data_Component_Reference then
+         result := Map_C_Data_Component_Reference
+           (Node         => Ident,
+            S            => S,
+            Declarations => Declarations,
+            Statements   => Statements);
+      end if;
+
+      return result;
+
+   end Evaluate_BA_Value_Variable;
+
    -----------------------------------
    -- Evaluate_BA_Property_Constant --
    -----------------------------------
@@ -2178,7 +2574,7 @@ package body Ocarina.Backends.C_Common.BA is
      (Node             : Node_Id;
       Is_Out_Parameter : Boolean := False;
       BA_Root          : Node_Id := No_Node;
-      Subprogram_Root  : Node_Id := No_Node;
+      Subprogram_Root  : Node_Id;
       Declarations     : List_Id;
       Statements       : List_Id) return Node_Id
    is
