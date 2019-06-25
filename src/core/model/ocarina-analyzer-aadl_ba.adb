@@ -156,7 +156,7 @@ package body Ocarina.Analyzer.AADL_BA is
       Scope_BA_Entities : List_Id)
       return Boolean;
 
-   function Analyze_Data_component_reference
+   function Analyze_Data_Component_Reference
      (Node              : Node_Id;
       Root              : Node_Id;
       BA_Root           : Node_Id;
@@ -1355,10 +1355,10 @@ package body Ocarina.Analyzer.AADL_BA is
    end Analyze_Assignment_Action;
 
    --------------------------------------
-   -- Analyze_Data_component_reference --
+   -- Analyze_Data_Component_Reference --
    --------------------------------------
 
-   function Analyze_Data_component_reference
+   function Analyze_Data_Component_Reference
      (Node              : Node_Id;
       Root              : Node_Id;
       BA_Root           : Node_Id;
@@ -1387,7 +1387,7 @@ package body Ocarina.Analyzer.AADL_BA is
       end if;
 
       return Success;
-   end Analyze_Data_component_reference;
+   end Analyze_Data_Component_Reference;
 
    ---------------------
    -- Analyze_BA_Name --
@@ -1468,7 +1468,7 @@ package body Ocarina.Analyzer.AADL_BA is
       elsif BATN.Kind (BATN.Identifier (Node))
         = BATN.K_Data_Component_Reference
       then
-         Success := Analyze_Data_component_reference
+         Success := Analyze_Data_Component_Reference
            (Node             => BATN.Identifier (Node),
             Root             => Root,
             BA_Root          => BA_Root,
@@ -1632,7 +1632,7 @@ package body Ocarina.Analyzer.AADL_BA is
          end if;
       elsif BATN.Kind (Node) = BATN.K_Data_Component_Reference
       then
-         Success := Analyze_Data_component_reference
+         Success := Analyze_Data_Component_Reference
               (Node, Root, BA_Root, Parent_Component);
       end if;
 
