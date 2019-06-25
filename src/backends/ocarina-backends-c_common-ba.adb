@@ -1238,7 +1238,7 @@ package body Ocarina.Backends.C_Common.BA is
                     (Node             => Node,
                      S                => S,
                      Declarations     => Declarations,
-                     Statements       => Declarations)))),
+                     Statements       => Statements)))),
          Statements);
 
    end Make_Output_Port_Name;
