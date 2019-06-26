@@ -2485,7 +2485,7 @@ package body Ocarina.Analyzer.AADL_BA is
       Out_param            : Node_Id := No_Node;
       Requires_data_access : Node_Id := No_Node;
       For_counter          : Node_Id := No_Node;
-      N                    : Node_Id;
+      N                    : Node_Id := No_Node;
       Scope_BA_Entity      : Node_Id;
       Ident                : Node_Id;
    begin
@@ -2668,8 +2668,24 @@ package body Ocarina.Analyzer.AADL_BA is
                end loop;
             end if;
 
-            N := Find_Data_Port_Of_Parent_Component
-              (Ident, Root, Parent_Component);
+            if Present (Find_Out_Parameter_Of_Parent_Component
+                        (Ident, Root, Parent_Component))
+            then
+               N := Find_Out_Parameter_Of_Parent_Component
+                 (Ident, Root, Parent_Component);
+
+            elsif Present (Find_Output_Port_Of_Parent_Component
+                           (Ident, Root, Parent_Component))
+            then
+               N := Find_Output_Port_Of_Parent_Component
+                 (Ident, Root, Parent_Component);
+            elsif Present (Find_Data_Port_Of_Parent_Component
+                           (Ident, Root, Parent_Component))
+            then
+               N := Find_Data_Port_Of_Parent_Component
+                 (Ident, Root, Parent_Component);
+
+            end if;
 
             if Present (N) then
                BATN.Set_Corresponding_Entity (Ident, N);
