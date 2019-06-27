@@ -1171,9 +1171,19 @@ package body Ocarina.Analyzer.AADL_BA is
       Success : boolean;
       N       : Node_Id;
    begin
+      Success := Analyze_BA_Value_Expression
+           (Node              => Logical_Expr (If_Statement (Node)),
+            Root              => Root,
+            BA_Root           => BA_Root,
+            Parent_Component  => Parent_Component,
+            Is_Parameter_Expr => False,
+            Is_Out_Parameter  => False,
+            Scope_BA_Entities => Scope_BA_Entities);
+
       BATN.Set_Scope_BA_Entities (BATN.Behav_Acts (If_Statement (Node)),
                                   Scope_BA_Entities);
-      Success := Analyze_Behav_Acts
+
+      Success := Success and then Analyze_Behav_Acts
         (Node             => If_Statement (Node),
          Root             => Root,
          BA_Root          => BA_Root,
@@ -1182,6 +1192,15 @@ package body Ocarina.Analyzer.AADL_BA is
       if not Is_Empty (Elsif_Statement (Node)) then
          N := BATN.First_Node (Elsif_Statement (Node));
          while Present (N) loop
+            Success := Success and then Analyze_BA_Value_Expression
+              (Node              => Logical_Expr (N),
+               Root              => Root,
+               BA_Root           => BA_Root,
+               Parent_Component  => Parent_Component,
+               Is_Parameter_Expr => False,
+               Is_Out_Parameter  => False,
+               Scope_BA_Entities => Scope_BA_Entities);
+
             BATN.Set_Scope_BA_Entities (BATN.Behav_Acts (N),
                                         Scope_BA_Entities);
             Success := Success and then Analyze_Behav_Acts
@@ -1284,9 +1303,18 @@ package body Ocarina.Analyzer.AADL_BA is
       pragma Assert (BATN.Kind (Node) = BATN.K_While_Cond_Structure);
       Success : Boolean;
    begin
+      Success := Analyze_BA_Value_Expression
+           (Node              => Logical_Expr (Node),
+            Root              => Root,
+            BA_Root           => BA_Root,
+            Parent_Component  => Parent_Component,
+            Is_Parameter_Expr => False,
+            Is_Out_Parameter  => False,
+            Scope_BA_Entities => Scope_BA_Entities);
+
       BATN.Set_Scope_BA_Entities (BATN.Behav_Acts (Node),
                                   Scope_BA_Entities);
-      Success := Analyze_Behav_Acts
+      Success := Success and then Analyze_Behav_Acts
         (Node             => Node,
          Root             => Root,
          BA_Root          => BA_Root,
