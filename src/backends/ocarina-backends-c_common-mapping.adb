@@ -4419,9 +4419,9 @@ package body Ocarina.Backends.C_Common.Mapping is
       Converted : Name_Id;
    begin
       Get_Name_String (CTU.To_C_Name
-                         (Display_Name (Identifier (E))));
+                       (Display_Name (Identifier
+                          (Parent_Subcomponent (E)))));
 
-      Add_Str_To_Name_Buffer ("_thread");
       Converted := Name_Find;
       return To_Lower (Converted);
    end Map_Thread_Port_Variable_Name;
