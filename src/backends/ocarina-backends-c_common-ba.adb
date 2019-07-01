@@ -1410,11 +1410,11 @@ package body Ocarina.Backends.C_Common.BA is
                   S            => S,
                   Statements   => Statements);
 
-               N1 := Message_Comment (" The name of the corresponding"
-                                     & " port variable is built from"
-                                     & " the port name,"
-                                     & " following similar pattern. ");
-               Append_Node_To_List (N1, Statements);
+               --  N1 := Message_Comment (" The name of the corresponding"
+               --                        & " port variable is built from"
+               --                        & " the port name,"
+               --                        & " following similar pattern. ");
+               --  Append_Node_To_List (N1, Statements);
 
                N1 := Make_Call_Profile
                  (RE (RE_PORT_VARIABLE),
