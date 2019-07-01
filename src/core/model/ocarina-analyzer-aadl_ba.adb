@@ -2752,6 +2752,16 @@ package body Ocarina.Analyzer.AADL_BA is
                BA_Root          => BA_Root,
                Parent_Component => Parent_Component);
 
+         elsif BATN.Kind (Node) = BATN.K_Value_Expression then
+            Success := Analyze_BA_Value_Expression
+              (Node              => Node,
+               Root              => Root,
+               BA_Root           => BA_Root,
+               Parent_Component  => Parent_Component,
+               Is_Parameter_Expr => Is_Parameter_Expr,
+               Is_Out_Parameter  => Is_Out_Parameter,
+               Parameter_Type    => Parameter_Type,
+               Scope_BA_Entities => Scope_BA_Entities);
          end if;
 
       end if;
