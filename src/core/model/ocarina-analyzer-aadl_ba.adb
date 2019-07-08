@@ -1261,6 +1261,24 @@ package body Ocarina.Analyzer.AADL_BA is
          end if;
       end if;
 
+      if Present (In_Element_Values (Node)) then
+
+         if BATN.Kind (In_Element_Values (Node)) = BATN.K_Integer_Range then
+            Success := Success and then Analyze_BA_Integer_Value
+              (Node             => BATN.Lower_Int_Val
+                 (In_Element_Values (Node)),
+               Root             => Root,
+               BA_Root          => BA_Root,
+               Parent_Component => Parent_Component)
+              and then Analyze_BA_Integer_Value
+              (Node             => BATN.Upper_Int_Val
+                 (In_Element_Values (Node)),
+               Root             => Root,
+               BA_Root          => BA_Root,
+               Parent_Component => Parent_Component);
+         end if;
+      end if;
+
       if Is_Empty (Scope_BA_Entities) then
          L := New_List (BATN.K_BA_Entity_List, No_Location);
       else

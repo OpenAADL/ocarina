@@ -1207,10 +1207,16 @@ package body Ocarina.Backends.C_Common.BA is
       Statement_Exist   : Boolean := False;
       Stat              : Node_Id;
       Request_Name      : Name_Id;
+      Idt               : Name_Id;
    begin
-      Request_Name := Make_Request_Variable_Name_From_Port_Name
-        (BATN.Display_Name (BATN.First_Node
-             (BATN.Idt (Node))));
+      if BATN.Kind (Node) = BATN.K_Identifier then
+         Idt := BATN.Display_Name (Node);
+      else
+         Idt := BATN.Display_Name (BATN.First_Node
+                                   (BATN.Idt (Node)));
+      end if;
+
+      Request_Name := Make_Request_Variable_Name_From_Port_Name (Idt);
 
       Stat := CTN.First_Node (Statements);
       while Present (Stat) loop
@@ -1272,9 +1278,7 @@ package body Ocarina.Backends.C_Common.BA is
                   Make_List_Id
                     (Make_Defining_Identifier
                          (Map_Thread_Port_Variable_Name (S)),
-                     Make_Defining_Identifier
-                       (BATN.Display_Name (BATN.First_Node
-                        (BATN.Idt (Node))))))),
+                     Make_Defining_Identifier (Idt)))),
             Statements);
       end if;
 
@@ -2513,10 +2517,40 @@ package body Ocarina.Backends.C_Common.BA is
       N := BATN.Corresponding_Entity (Node);
       if Present (N) then
          if AAN.kind (N) = AAN.K_Port_Spec
-           and then AAN.Is_Data (N) and then AAN.Is_In (N)
+           and then AAN.Is_Data (N)
          then
-            result := Make_Get_Value_of_Port
-              (Node, Subprogram_Root, Declarations, Statements);
+            if AAN.Is_In (N) then
+               result := Make_Get_Value_of_Port
+                 (Node, Subprogram_Root, Declarations, Statements);
+            else
+               --  i.e the identifier is an out port
+
+               Make_Request_Variable_Declaration
+                 (Declarations,
+                  BATN.Display_Name (Node));
+
+               Make_Output_Port_Name
+                 (Node         => Node,
+                  S            => Subprogram_Root,
+                  Statements   => Statements);
+
+               N := Make_Call_Profile
+                 (RE (RE_PORT_VARIABLE),
+                  Make_List_Id
+                    (Make_Defining_Identifier
+                         (Map_Thread_Port_Variable_Name (Subprogram_Root)),
+                     Make_Defining_Identifier
+                       (BATN.Display_Name (Node))));
+
+               result := CTU.Make_Member_Designator
+                 (Defining_Identifier => N,
+                  Aggregate_Name      =>
+                    Make_Defining_Identifier
+                      (Make_Request_Variable_Name_From_Port_Name
+                           (BATN.Display_Name (Node))));
+
+            end if;
+
          end if;
       end if;
 
