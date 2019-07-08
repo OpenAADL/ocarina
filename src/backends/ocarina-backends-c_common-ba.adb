@@ -265,8 +265,12 @@ package body Ocarina.Backends.C_Common.BA is
       S                : Node_Id;
       Statements       : List_Id);
 
+   function Make_Request_Variable_Name_From_Port_Name
+     (Port_Name : Name_Id) return Name_Id;
+
    procedure Make_Request_Variable_Declaration
-     (Declarations     : List_Id);
+     (Declarations : List_Id;
+      Port_Name    : Name_Id);
 
    function Make_Get_Value_of_Port
      (Node             : Node_Id;
@@ -1130,7 +1134,11 @@ package body Ocarina.Backends.C_Common.BA is
                  and then BANu.Length (Subprogram_Parameter_List (Node)) = 1
                then
                   --  Declare request variable if it is not yet declared
-                  Make_Request_Variable_Declaration (Declarations);
+                  Make_Request_Variable_Declaration
+                    (Declarations,
+                     BATN.Display_Name
+                       (BATN.First_Node
+                            (BATN.Idt (BATN.Identifier (Node)))));
 
                   Make_Output_Port_Name
                     (Node         => BATN.Identifier (Node),
@@ -1141,7 +1149,11 @@ package body Ocarina.Backends.C_Common.BA is
                end if;
 
                --  Declare request variable if it is not yet declared
-               Make_Request_Variable_Declaration (Declarations);
+               Make_Request_Variable_Declaration
+                 (Declarations,
+                  BATN.Display_Name
+                    (BATN.First_Node
+                         (BATN.Idt (BATN.Identifier (Node)))));
 
                Make_Send_Output_Port (Node, S, Statements);
 
@@ -1191,35 +1203,80 @@ package body Ocarina.Backends.C_Common.BA is
       S            : Node_Id;
       Statements   : List_Id)
    is
-      N               : Node_Id;
+      N                 : Node_Id;
+      Statement_Exist   : Boolean := False;
+      Stat              : Node_Id;
+      Request_Name      : Name_Id;
    begin
+      Request_Name := Make_Request_Variable_Name_From_Port_Name
+        (BATN.Display_Name (BATN.First_Node
+             (BATN.Idt (Node))));
 
-      --  Generate the following code :
-      --  request.port =
-      --           REQUEST_PORT (thread_instance_name, port_name);
+      Stat := CTN.First_Node (Statements);
+      while Present (Stat) loop
 
-      N := Message_Comment (" The name of an output port is built"
-                            & " from the thread_instance name"
-                            & " and the port name using"
-                            & " the REQUEST_PORT macro. ");
-      Append_Node_To_List (N, Statements);
+         if CTN.Kind (Stat) = CTN.K_Assignment_Statement
+           and then
+             CTN.Kind (CTN.Defining_Identifier (Stat))
+               = CTN.K_Member_Designator
+             and then
+               CTN.Kind (CTN.Aggregate_Name
+                         (CTN.Defining_Identifier (Stat)))
+           = CTN.K_Defining_Identifier
+         then
+            if Get_Name_String
+              (Standard.Utils.To_Lower
+                 (CTN.Name
+                  (CTN.Aggregate_Name (CTN.Defining_Identifier (Stat)))))
+                = Get_Name_String
+              (Standard.Utils.To_Lower (Request_Name))
+              and then
+                Get_Name_String
+                  (Standard.Utils.To_Lower
+                     (CTN.Name
+                        (CTN.Defining_Identifier
+                             (CTN.Defining_Identifier (Stat)))))
+                  = Get_Name_String
+              (Standard.Utils.To_Lower (MN (M_Port)))
 
-      CTU.Append_Node_To_List
-        (Make_Assignment_Statement
-           (Variable_Identifier => Make_Member_Designator
-                (Defining_Identifier =>
-                     Make_Defining_Identifier (MN (M_Port)),
-                 Aggregate_Name      =>
-                   Make_Defining_Identifier (VN (V_Request))),
-            Expression          => Make_Call_Profile
-              (RE (RE_REQUEST_PORT),
-               Make_List_Id
-                 (Make_Defining_Identifier
-                      (Map_Thread_Port_Variable_Name (S)),
-                  Make_Defining_Identifier
-                    (BATN.Display_Name (BATN.First_Node
-                     (BATN.Idt (Node))))))),
-         Statements);
+            then
+               Statement_Exist := True;
+            end if;
+         end if;
+
+         exit when Statement_Exist;
+         Stat := CTN.Next_Node (Stat);
+      end loop;
+
+      if not Statement_Exist then
+         --  Generate the following code :
+         --  request.port =
+         --           REQUEST_PORT (thread_instance_name, port_name);
+
+         N := Message_Comment (" The name of an output port is built"
+                               & " from the thread_instance name"
+                               & " and the port name using"
+                               & " the REQUEST_PORT macro. ");
+         Append_Node_To_List (N, Statements);
+
+         CTU.Append_Node_To_List
+           (Make_Assignment_Statement
+              (Variable_Identifier => Make_Member_Designator
+                   (Defining_Identifier =>
+                        Make_Defining_Identifier (MN (M_Port)),
+                    Aggregate_Name      =>
+                      Make_Defining_Identifier
+                        (Request_Name)),
+               Expression          => Make_Call_Profile
+                 (RE (RE_REQUEST_PORT),
+                  Make_List_Id
+                    (Make_Defining_Identifier
+                         (Map_Thread_Port_Variable_Name (S)),
+                     Make_Defining_Identifier
+                       (BATN.Display_Name (BATN.First_Node
+                        (BATN.Idt (Node))))))),
+            Statements);
+      end if;
 
    end Make_Output_Port_Name;
 
@@ -1255,7 +1312,10 @@ package body Ocarina.Backends.C_Common.BA is
            (Variable_Identifier => Make_Member_Designator
                 (Defining_Identifier => N,
                  Aggregate_Name      =>
-                   Make_Defining_Identifier (VN (V_Request))),
+                   Make_Defining_Identifier
+                     (Make_Request_Variable_Name_From_Port_Name
+                        (BATN.Display_Name (BATN.First_Node
+                         (BATN.Idt (BATN.Identifier (Node))))))),
             Expression          => Evaluate_BA_Value_Expression
               (Node             => Parameter
                    (BATN.First_Node
@@ -1308,7 +1368,10 @@ package body Ocarina.Backends.C_Common.BA is
 
       N :=
         Make_Variable_Address
-          (Make_Defining_Identifier (VN (V_Request)));
+          (Make_Defining_Identifier
+             (Make_Request_Variable_Name_From_Port_Name
+                (BATN.Display_Name (BATN.First_Node
+                 (BATN.Idt (BATN.Identifier (Node)))))));
       Append_Node_To_List (N, Call_Parameters);
 
       N :=
@@ -1403,7 +1466,9 @@ package body Ocarina.Backends.C_Common.BA is
               and then AAN.Is_Out (Corresponding_Entity)
             then
                --  Declare request variable if it is not yet declared
-               Make_Request_Variable_Declaration (Declarations);
+               Make_Request_Variable_Declaration
+                 (Declarations,
+                  BATN.Display_Name (N));
 
                Make_Output_Port_Name
                  (Node         => Node,
@@ -1427,7 +1492,9 @@ package body Ocarina.Backends.C_Common.BA is
                Var_identifier := CTU.Make_Member_Designator
                  (Defining_Identifier => N1,
                   Aggregate_Name      =>
-                    Make_Defining_Identifier (VN (V_Request)));
+                    Make_Defining_Identifier
+                      (Make_Request_Variable_Name_From_Port_Name
+                           (BATN.Display_Name (N))));
 
             end if;
 
@@ -1544,7 +1611,10 @@ package body Ocarina.Backends.C_Common.BA is
                     and then AAN.Is_Out (Corresponding_Entity)
                   then
                      --  Declare request variable if it is not yet declared
-                     Make_Request_Variable_Declaration (Declarations);
+                     Make_Request_Variable_Declaration
+                       (Declarations,
+                        BATN.Display_Name (BATN.First_Node
+                          (BATN.Idt (Node))));
 
                      Make_Output_Port_Name
                        (Node         => Node,
@@ -1569,7 +1639,10 @@ package body Ocarina.Backends.C_Common.BA is
                      Var_identifier := CTU.Make_Member_Designator
                        (Defining_Identifier => N,
                         Aggregate_Name      =>
-                          Make_Defining_Identifier (VN (V_Request)));
+                          Make_Defining_Identifier
+                            (Make_Request_Variable_Name_From_Port_Name
+                                 (BATN.Display_Name (BATN.First_Node
+                                  (BATN.Idt (Node))))));
 
                   end if;
 
@@ -2217,16 +2290,39 @@ package body Ocarina.Backends.C_Common.BA is
 
    end Make_Next_Value_of_Port;
 
+   -----------------------------------------------
+   -- Make_Request_Variable_Name_From_Port_Name --
+   -----------------------------------------------
+
+   function Make_Request_Variable_Name_From_Port_Name
+     (Port_Name : Name_Id) return Name_Id
+   is
+      Result : Name_Id;
+   begin
+
+      Set_Str_To_Name_Buffer ("__");
+      Get_Name_String_And_Append (Port_Name);
+      Add_Str_To_Name_Buffer ("_request");
+
+      Result := Name_Find;
+      return Standard.Utils.To_Lower (Result);
+
+   end Make_Request_Variable_Name_From_Port_Name;
+
    ---------------------------------------
    -- Make_Request_Variable_Declaration --
    ---------------------------------------
 
    procedure Make_Request_Variable_Declaration
-     (Declarations     : List_Id)
+     (Declarations : List_Id;
+      Port_Name    : Name_Id)
    is
       decl                      : Node_Id;
       request_declaration_exist : Boolean := False;
+      Request_Name              : Name_Id;
    begin
+
+      Request_Name := Make_Request_Variable_Name_From_Port_Name (Port_Name);
 
       decl := CTN.First_Node (Declarations);
       while Present (decl) loop
@@ -2236,10 +2332,7 @@ package body Ocarina.Backends.C_Common.BA is
             if Get_Name_String
               (Standard.Utils.To_Lower
                  (CTN.Name (CTN.Defining_Identifier (decl))))
-                = Get_Name_String
-              (Standard.Utils.To_Lower
-                 (Get_String_Name ("request")))
-
+                = Get_Name_String (Request_Name)
             then
                request_declaration_exist := True;
             end if;
@@ -2253,7 +2346,7 @@ package body Ocarina.Backends.C_Common.BA is
          CTU.Append_Node_To_List
            (Make_Variable_Declaration
               (Defining_Identifier =>
-                   Make_Defining_Identifier (VN (V_Request)),
+                   Make_Defining_Identifier (Request_Name),
                Used_Type           => RE (RE_Request_T)),
             Declarations);
       end if;
@@ -2282,7 +2375,8 @@ package body Ocarina.Backends.C_Common.BA is
 
       Append_Node_To_List (N, Statements);
 
-      Make_Request_Variable_Declaration (Declarations);
+      Make_Request_Variable_Declaration (Declarations,
+                                         BATN.Display_Name (Node));
 
       --  Make the call to __po_hi_gqueue_get_value
 
@@ -2304,7 +2398,9 @@ package body Ocarina.Backends.C_Common.BA is
 
       N :=
         Make_Variable_Address
-          (Make_Defining_Identifier (VN (V_Request)));
+          (Make_Defining_Identifier
+             (Make_Request_Variable_Name_From_Port_Name
+                (BATN.Display_Name (Node))));
       Append_Node_To_List (N, Call_Parameters);
 
       N :=
@@ -2328,7 +2424,9 @@ package body Ocarina.Backends.C_Common.BA is
         (Make_Member_Designator
            (Defining_Identifier => RE (RE_PORT_VARIABLE),
             Aggregate_Name      =>
-              Make_Defining_Identifier (VN (V_Request))),
+              Make_Defining_Identifier
+                (Make_Request_Variable_Name_From_Port_Name
+                     (BATN.Display_Name (Node)))),
          Call_Parameters);
 
       return result;
