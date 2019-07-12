@@ -1352,6 +1352,11 @@ package body Ocarina.Backends.C_Common.BA is
                             & " the LOCAL_PORT macro. ");
       Append_Node_To_List (N, Statements);
 
+      --  __po_hi_gqueue_store_out
+      --    (self,
+      --     LOCAL_PORT (<<thread_name>>, <<port_name>>),
+      --     &__<<port_name>>_request);
+
       Call_Parameters := New_List (CTN.K_Parameter_List);
 
       Set_Str_To_Name_Buffer ("self");
@@ -1382,6 +1387,30 @@ package body Ocarina.Backends.C_Common.BA is
         CTU.Make_Call_Profile
           (RE (RE_Gqueue_Store_Out),
            Call_Parameters);
+      Append_Node_To_List (N, Statements);
+
+      --  __po_hi_send_output
+      --    (self,REQUEST_PORT(<<thread_name>>, <<port_name>>));
+
+      Call_Parameters := New_List (CTN.K_Parameter_List);
+
+      Append_Node_To_List (Make_Defining_Identifier (N1), Call_Parameters);
+
+      Append_Node_To_List
+        (Make_Call_Profile
+           (RE (RE_REQUEST_PORT),
+            Make_List_Id
+              (Make_Defining_Identifier
+                   (Map_Thread_Port_Variable_Name (S)),
+               Make_Defining_Identifier
+                 (BATN.Display_Name (BATN.First_Node
+                  (BATN.Idt (BATN.Identifier (Node))))))),
+         Call_Parameters);
+
+      N := Make_Call_Profile
+        (RE (RE_Send_Output),
+         Call_Parameters);
+
       Append_Node_To_List (N, Statements);
 
    end Make_Send_Output_Port;
