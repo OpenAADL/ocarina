@@ -342,7 +342,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Protected_Lock                 => RH_PO_HI_Protected,
       RE_Protected_Unlock               => RH_PO_HI_Protected,
       RE_Copy_Array                     => RH_PO_HI_Types,
-      RE_Send_Output                    => RH_Activity,
+      RE_Send_Output                    => RH_PO_HI_Transport, --  RH_Activity,
       RE_Get_Entity_From_Global_Port    => RH_PO_HI_Transport,
       RE_Gqueue_Store_In                => RH_PO_HI_Gqueue,
       RE_Gqueue_Store_Out               => RH_PO_HI_Gqueue,
