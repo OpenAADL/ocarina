@@ -43,6 +43,7 @@ with Ocarina.Backends.PO_HI_Ada.Naming;
 with Ocarina.Backends.PO_HI_Ada.Marshallers;
 with Ocarina.Backends.PO_HI_Ada.Deployment;
 with Ocarina.Backends.PO_HI_Ada.Activity;
+with Ocarina.Backends.PO_HI_Ada.Job;
 with Ocarina.Backends.PO_HI_Ada.Subprograms;
 with Ocarina.Backends.PO_HI_Ada.Transport;
 with Ocarina.Backends.PO_HI_Ada.Types;
@@ -739,6 +740,7 @@ package body Ocarina.Backends.PO_HI_Ada is
       Types.Package_Spec.Visit (E);
       Subprograms.Package_Spec.Visit (E);
       Activity.Package_Spec.Visit (E);
+      Job.Package_Spec.Visit (E);
       Transport.Package_Spec.Visit (E);
       Marshallers.Package_Spec.Visit (E);
 
@@ -748,6 +750,7 @@ package body Ocarina.Backends.PO_HI_Ada is
       Subprograms.Package_Body.Visit (E);
       Transport.Package_Body.Visit (E);
       Activity.Package_Body.Visit (E);
+      Job.Package_Body.Visit (E);
       Marshallers.Package_Body.Visit (E);
 
       --  The main subprogram

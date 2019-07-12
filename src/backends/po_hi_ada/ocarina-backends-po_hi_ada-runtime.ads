@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2019 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -50,6 +50,7 @@ package Ocarina.Backends.PO_HI_Ada.Runtime is
       RU_PolyORB_HI_Generated,
       RU_PolyORB_HI_Generated_Activity,
       RU_PolyORB_HI_Generated_Deployment,
+      RU_PolyORB_HI_Generated_Job,
       RU_PolyORB_HI_Generated_Marshallers,
       RU_PolyORB_HI_Generated_Naming,
       RU_PolyORB_HI_Generated_Subprograms,
@@ -166,6 +167,7 @@ package Ocarina.Backends.PO_HI_Ada.Runtime is
       RE_Valid,                      --  PolyORB_HI.Messages.Valid
       RE_Size,                       --  PolyORB_HI.Messages.Size
       RE_Naming_Entry,               --  PolyORB_HI.Transport.Naming_Entry
+      RE_Get_Task_Id,                --  PolyORB_HI.Utils.Get_Task_Id
       RE_To_HI_String,               --  PolyORB_HI.Utils.To_HI_String
       RE_Naming_Table_Type,          --  PolyORB_HI.Utils.Naming_Table_Type
       RE_Corresponding_Port,         --  Po..HI.Port_Types.Corresponding_Port
@@ -265,6 +267,7 @@ package Ocarina.Backends.PO_HI_Ada.Runtime is
       RE_Valid                      => RU_PolyORB_HI_Messages,
       RE_Size                       => RU_PolyORB_HI_Messages,
       RE_Naming_Entry               => RU_PolyORB_HI_Utils,
+      Re_Get_Task_Id                => RU_PolyORB_HI_Utils,
       RE_To_HI_String               => RU_PolyORB_HI_Utils,
       RE_Naming_Table_Type          => RU_PolyORB_HI_Utils,
       RE_Corresponding_Port         => RU_PolyORB_HI_Port_Types,

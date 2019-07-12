@@ -344,23 +344,12 @@ module Ocarina::Backends::Ada_Tree::Nodes {
   };
 
   /* This is the root node of the packages generated specifically for
-     an PolyORB-QoS Distributed application */
-
-  interface QoS_Unit : API_Unit {
-    Node_Id    Helpers_Package;
-    Node_Id    Servants_Package;
-    Node_Id    Parameters_Package;
-    Node_Id    Obj_Adapters_Package;
-    Node_Id    Setup_Package;
-    Node_Id    Namespaces_Package;
-  };
-
-  /* This is the root node of the packages generated specifically for
      an PolyORB-HI Distributed application */
 
   interface HI_Unit : API_Unit {
     Node_Id    Marshallers_Package;
     Node_Id    Activity_Package;
+    Node_Id    Job_Package;
     Node_Id    Subprograms_Package;
     Node_Id    Transport_Package;
     Node_Id    Types_Package;

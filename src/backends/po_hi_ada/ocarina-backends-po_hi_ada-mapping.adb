@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2019 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -713,6 +713,16 @@ package body Ocarina.Backends.PO_HI_Ada.Mapping is
       Set_Activity_Package (U, P);
       Append_Node_To_List (P, L);
       Bind_AADL_To_Activity (Identifier (E), P);
+
+      --  The 'Job' package
+
+      N := Defining_Identifier (RU (RU_PolyORB_HI_Generated_Job, False));
+      P := Make_Package_Declaration (N);
+      ADN.Set_Parent (P, RG);
+      Set_Distributed_Application_Unit (P, U);
+      Set_Job_Package (U, P);
+      Append_Node_To_List (P, L);
+      Bind_AADL_To_Job (Identifier (E), P);
 
       --  The 'Transport' package
 

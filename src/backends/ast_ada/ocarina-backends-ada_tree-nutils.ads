@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2019 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -850,36 +850,19 @@ package Ocarina.Backends.Ada_Tree.Nutils is
    --  * K_Designator : The parent unit name is a K_Designator and the
    --  parent unit name of its defining identifier is also set up.
 
-   --  Units setters for the PolyORB-QoS Module
-
-   procedure Set_Main_Body (N : Node_Id := No_Node);
-
-   procedure Set_Helpers_Body (N : Node_Id := No_Node);
-   procedure Set_Helpers_Spec (N : Node_Id := No_Node);
-
-   procedure Set_Servants_Body (N : Node_Id := No_Node);
-   procedure Set_Servants_Spec (N : Node_Id := No_Node);
-
-   procedure Set_Parameters_Body (N : Node_Id := No_Node);
-   procedure Set_Parameters_Spec (N : Node_Id := No_Node);
-
-   procedure Set_Setup_Body (N : Node_Id := No_Node);
-   procedure Set_Setup_Spec (N : Node_Id := No_Node);
-
-   procedure Set_Namespaces_Body (N : Node_Id := No_Node);
-   procedure Set_Namespaces_Spec (N : Node_Id := No_Node);
-
-   procedure Set_Obj_Adapters_Spec (N : Node_Id := No_Node);
-
    --  Units Setters for the PolyORB-HI module
 
    procedure Set_Main_Spec (N : Node_Id := No_Node);
+   procedure Set_Main_Body (N : Node_Id := No_Node);
 
    procedure Set_Marshallers_Spec (N : Node_Id := No_Node);
    procedure Set_Marshallers_Body (N : Node_Id := No_Node);
 
    procedure Set_Activity_Spec (N : Node_Id := No_Node);
    procedure Set_Activity_Body (N : Node_Id := No_Node);
+
+   procedure Set_Job_Spec (N : Node_Id := No_Node);
+   procedure Set_Job_Body (N : Node_Id := No_Node);
 
    procedure Set_Transport_Spec (N : Node_Id := No_Node);
    procedure Set_Transport_Body (N : Node_Id := No_Node);

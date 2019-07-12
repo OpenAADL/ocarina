@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2019 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -2816,160 +2816,6 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
       end case;
    end Set_Homogeneous_Parent_Unit_Name;
 
-   ----------------------
-   -- Set_Helpers_Body --
-   ----------------------
-
-   procedure Set_Helpers_Body (N : Node_Id := No_Node) is
-      X : Node_Id := N;
-   begin
-      if No (X) then
-         X := Table (Last).Current_Entity;
-      end if;
-      Table (Last).Current_Package :=
-        Package_Implementation (Helpers_Package (X));
-   end Set_Helpers_Body;
-
-   ----------------------
-   -- Set_Helpers_Spec --
-   ----------------------
-
-   procedure Set_Helpers_Spec (N : Node_Id := No_Node) is
-      X : Node_Id := N;
-   begin
-      if No (X) then
-         X := Table (Last).Current_Entity;
-      end if;
-      Table (Last).Current_Package :=
-        Package_Specification (Helpers_Package (X));
-   end Set_Helpers_Spec;
-
-   -----------------------
-   -- Set_Servants_Body --
-   -----------------------
-
-   procedure Set_Servants_Body (N : Node_Id := No_Node) is
-      X : Node_Id := N;
-   begin
-      if No (X) then
-         X := Table (Last).Current_Entity;
-      end if;
-      Table (Last).Current_Package :=
-        Package_Implementation (Servants_Package (X));
-   end Set_Servants_Body;
-
-   -----------------------
-   -- Set_Servants_Spec --
-   -----------------------
-
-   procedure Set_Servants_Spec (N : Node_Id := No_Node) is
-      X : Node_Id := N;
-   begin
-      if No (X) then
-         X := Table (Last).Current_Entity;
-      end if;
-      Table (Last).Current_Package :=
-        Package_Specification (Servants_Package (X));
-   end Set_Servants_Spec;
-
-   --------------------
-   -- Set_Setup_Spec --
-   --------------------
-
-   procedure Set_Setup_Spec (N : Node_Id := No_Node) is
-      X : Node_Id := N;
-   begin
-      if No (X) then
-         X := Table (Last).Current_Entity;
-      end if;
-      Table (Last).Current_Package :=
-        Package_Specification (Setup_Package (X));
-   end Set_Setup_Spec;
-
-   --------------------
-   -- Set_Setup_Body --
-   --------------------
-
-   procedure Set_Setup_Body (N : Node_Id := No_Node) is
-      X : Node_Id := N;
-   begin
-      if No (X) then
-         X := Table (Last).Current_Entity;
-      end if;
-      Table (Last).Current_Package :=
-        Package_Implementation (Setup_Package (X));
-   end Set_Setup_Body;
-
-   -------------------------
-   -- Set_Namespaces_Spec --
-   -------------------------
-
-   procedure Set_Namespaces_Spec (N : Node_Id := No_Node) is
-      X : Node_Id := N;
-   begin
-      if No (X) then
-         X := Table (Last).Current_Entity;
-      end if;
-      Table (Last).Current_Package :=
-        Package_Specification (Namespaces_Package (X));
-   end Set_Namespaces_Spec;
-
-   -------------------------
-   -- Set_Namespaces_Body --
-   -------------------------
-
-   procedure Set_Namespaces_Body (N : Node_Id := No_Node) is
-      X : Node_Id := N;
-   begin
-      if No (X) then
-         X := Table (Last).Current_Entity;
-      end if;
-      Table (Last).Current_Package :=
-        Package_Implementation (Namespaces_Package (X));
-   end Set_Namespaces_Body;
-
-   -------------------------
-   -- Set_Parameters_Body --
-   -------------------------
-
-   procedure Set_Parameters_Body (N : Node_Id := No_Node) is
-      X : Node_Id := N;
-   begin
-      if No (X) then
-         X := Table (Last).Current_Entity;
-      end if;
-      Table (Last).Current_Package :=
-        Package_Implementation (Parameters_Package (X));
-   end Set_Parameters_Body;
-
-   -------------------------
-   -- Set_Parameters_Spec --
-   -------------------------
-
-   procedure Set_Parameters_Spec (N : Node_Id := No_Node) is
-      X : Node_Id := N;
-   begin
-      if No (X) then
-         X := Table (Last).Current_Entity;
-      end if;
-      Table (Last).Current_Package :=
-        Package_Specification (Parameters_Package (X));
-   end Set_Parameters_Spec;
-
-   ---------------------------
-   -- Set_Obj_Adapters_Spec --
-   ---------------------------
-
-   procedure Set_Obj_Adapters_Spec (N : Node_Id := No_Node) is
-      X : Node_Id := N;
-   begin
-      if No (X) then
-         X := Table (Last).Current_Entity;
-      end if;
-      Table (Last).Current_Package :=
-        Package_Specification (Obj_Adapters_Package (X));
-   end Set_Obj_Adapters_Spec;
-
    -------------------
    -- Set_Main_Body --
    -------------------
@@ -3053,6 +2899,34 @@ package body Ocarina.Backends.Ada_Tree.Nutils is
       Table (Last).Current_Package :=
         Package_Specification (Activity_Package (X));
    end Set_Activity_Spec;
+
+   ------------------
+   -- Set_Job_Body --
+   ------------------
+
+   procedure Set_Job_Body (N : Node_Id := No_Node) is
+      X : Node_Id := N;
+   begin
+      if No (X) then
+         X := Table (Last).Current_Entity;
+      end if;
+      Table (Last).Current_Package :=
+        Package_Implementation (Job_Package (X));
+   end Set_Job_Body;
+
+   ------------------
+   -- Set_Job_Spec --
+   ------------------
+
+   procedure Set_Job_Spec (N : Node_Id := No_Node) is
+      X : Node_Id := N;
+   begin
+      if No (X) then
+         X := Table (Last).Current_Entity;
+      end if;
+      Table (Last).Current_Package :=
+        Package_Specification (Job_Package (X));
+   end Set_Job_Spec;
 
    ------------------------
    -- Set_Transport_Body --
