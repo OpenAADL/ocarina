@@ -728,7 +728,7 @@ package body Ocarina.Analyzer.AADL_BA is
       elsif Component_Category'Val (Category (Parent_Component)) = CC_Thread
       then
          --  For a thread, there can be only one initial state, and
-         --  several initial and/ou final states.
+         --  several complete and/ou final states.
 
          if Length (Initial_States_List) > 1 then
             Success := False;
@@ -2554,7 +2554,19 @@ package body Ocarina.Analyzer.AADL_BA is
               or else Present (Requires_data_access)
               or else Present
                 (Find_Data_Subcomponent_Of_Parent_Component
-                   (BATN.Identifier (Node), Root, Parent_Component));
+                   (BATN.Identifier (Node), Root, Parent_Component))
+              or else
+                (Present
+                   (Find_Output_Port_Of_Parent_Component
+                      (Node             => BATN.Identifier (Node),
+                       Root             => Root,
+                       Parent_Component => Parent_Component))
+                    and then
+                      Present
+                        (Find_Data_Port_Of_Parent_Component
+                             (Node             => BATN.Identifier (Node),
+                              Root             => Root,
+                              Parent_Component => Parent_Component)));
 
             if not Is_Empty (Scope_BA_Entities) then
                Scope_BA_Entity := BATN.First_Node (Scope_BA_Entities);
