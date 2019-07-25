@@ -29,8 +29,8 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
----  This package provides accessors to the property set of the
----  ARINC653 annex document, published as part of AS5506/1A standard.
+--  This package provides accessors to the property set of the
+--  ARINC653 annex document, published as part of AS5506/1A standard.
 
 package Ocarina.Backends.Properties.ARINC653 is
 
