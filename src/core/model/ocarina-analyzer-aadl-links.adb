@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2018 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2019 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -3232,10 +3232,9 @@ package body Ocarina.Analyzer.AADL.Links is
 
                         while Present (List_Node) loop
                            --  A property type is a list of record_type element
-                           --  XXX should use case insensitive match ?
-                           if Ocarina.ME_AADL.AADL_Tree.Nodes.Display_Name
+                           if Ocarina.ME_AADL.AADL_Tree.Nodes.Name
                              (Identifier (List_Node)) =
-                             Display_Name (Identifier (Property_Container))
+                             Name (Identifier (Property_Container))
                            then
                               Unit_Type := Unwind_Units_Type (Root, List_Node);
                               exit;
