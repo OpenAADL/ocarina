@@ -781,60 +781,60 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
          O : Node_Id;
 
       begin
-         --  Create the spec of the parameterless subprogram that
-         --  executes the thread job.
-
-         case P is
-            when Thread_Periodic =>
-               N :=
-                 Message_Comment
-                   ("Periodic task : " &
-                    Get_Name_String (Display_Name (Identifier (S))));
-               Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
-
-            when Thread_Sporadic =>
-               N :=
-                 Message_Comment
-                   ("Sporadic task : " &
-                    Get_Name_String (Display_Name (Identifier (S))));
-               Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
-
-            when Thread_Hybrid =>
-               N :=
-                 Message_Comment
-                   ("Hybrid task : " &
-                    Get_Name_String (Display_Name (Identifier (S))));
-               Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
-
-            when Thread_Aperiodic =>
-               N :=
-                 Message_Comment
-                   ("Aperiodic task : " &
-                    Get_Name_String (Display_Name (Identifier (S))));
-               Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
-
-            when Thread_Background =>
-               N :=
-                 Message_Comment
-                   ("Background task : " &
-                    Get_Name_String (Display_Name (Identifier (S))));
-               Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
-
-            when Thread_ISR =>
-               N :=
-                 Message_Comment
-                   ("ISR task : " &
-                    Get_Name_String (Display_Name (Identifier (S))));
-               Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
-
-            when others =>
-               Display_Located_Error
-                 (AIN.Loc (E),
-                  "Unsupported dispatch protocol",
-                  Fatal => True);
-         end case;
-
          if Has_Ports (E) then
+            --  Create the spec of the subprograms to interact with
+            --  thread ports.
+
+            case P is
+               when Thread_Periodic =>
+                  N :=
+                    Message_Comment
+                      ("Periodic task : " &
+                         Get_Name_String (Display_Name (Identifier (S))));
+                  Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
+
+               when Thread_Sporadic =>
+                  N :=
+                    Message_Comment
+                      ("Sporadic task : " &
+                         Get_Name_String (Display_Name (Identifier (S))));
+                  Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
+
+               when Thread_Hybrid =>
+                  N :=
+                    Message_Comment
+                      ("Hybrid task : " &
+                         Get_Name_String (Display_Name (Identifier (S))));
+                  Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
+
+               when Thread_Aperiodic =>
+                  N :=
+                    Message_Comment
+                      ("Aperiodic task : " &
+                         Get_Name_String (Display_Name (Identifier (S))));
+                  Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
+
+               when Thread_Background =>
+                  N :=
+                    Message_Comment
+                      ("Background task : " &
+                         Get_Name_String (Display_Name (Identifier (S))));
+                  Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
+
+               when Thread_ISR =>
+                  N :=
+                    Message_Comment
+                      ("ISR task : " &
+                         Get_Name_String (Display_Name (Identifier (S))));
+                  Append_Node_To_List (N, ADN.Visible_Part (Current_Package));
+
+               when others =>
+                  Display_Located_Error
+                    (AIN.Loc (E),
+                     "Unsupported dispatch protocol",
+                     Fatal => True);
+            end case;
+
             --  The data types and the interrogation routines
             --  generated from a thread are not instance specific. We
             --  generate them once per thread component. This allows
@@ -2515,106 +2515,109 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
             --  Implement the routines that allow user code to
             --  manipulate the thread.
 
+            case P is
+               when Thread_Periodic =>
+                  N :=
+                    Message_Comment
+                      ("Periodic task : " &
+                         Get_Name_String (Display_Name (Identifier (S))));
+                  Append_Node_To_List (N, ADN.Statements (Current_Package));
+
+               when Thread_Sporadic =>
+                  N :=
+                    Message_Comment
+                      ("Sporadic task : " &
+                         Get_Name_String (Display_Name (Identifier (S))));
+                  Append_Node_To_List (N, ADN.Statements (Current_Package));
+
+               when Thread_Aperiodic =>
+                  N :=
+                    Message_Comment
+                      ("Aperiodic task : " &
+                         Get_Name_String (Display_Name (Identifier (S))));
+                  Append_Node_To_List (N, ADN.Statements (Current_Package));
+
+               when Thread_Background =>
+                  N :=
+                    Message_Comment
+                      ("Background task : " &
+                         Get_Name_String (Display_Name (Identifier (S))));
+                  Append_Node_To_List (N, ADN.Statements (Current_Package));
+
+               when Thread_ISR =>
+                  N :=
+                    Message_Comment
+                      ("ISR task : " &
+                         Get_Name_String (Display_Name (Identifier (S))));
+                  Append_Node_To_List (N, ADN.Statements (Current_Package));
+
+               when Thread_Hybrid =>
+                  N :=
+                    Message_Comment
+                      ("Hybrid task : " &
+                         Get_Name_String (Display_Name (Identifier (S))));
+                  Append_Node_To_List (N, ADN.Statements (Current_Package));
+
+                  --  Hybrid threads requires an extra driver thread to be
+                  --  created.
+
+                  declare
+                     Aggr : constant List_Id :=
+                       New_List (ADN.K_Component_List);
+                  begin
+                     Has_Hybrid_Threads := True;
+
+                     if Hybrid_Thread_Elements = No_List then
+                        Hybrid_Thread_Elements :=
+                          New_List (ADN.K_Element_List);
+                     end if;
+
+                     --  Append the element association corresponding to
+                     --  E to the hybrid task set.
+
+                     N := Extract_Enumerator (E);
+                     Append_Node_To_List (N, Aggr);
+
+                     --  We know that the last node added to the feature
+                     --  list of E is the one appended at exapnsion time
+                     --  and corresponding to the fake event part that
+                     --  will receive the dispatch messages from the
+                     --  driver.
+
+                     N := Extract_Enumerator (Last_Node (Features (E)));
+                     Append_Node_To_List (N, Aggr);
+
+                     N := Map_Ada_Time (Get_Thread_Period (E));
+                     Append_Node_To_List (N, Aggr);
+
+                     N := RE (RE_System_Startup_Time);
+                     Append_Node_To_List (N, Aggr);
+
+                     N := RE (RE_True);
+                     Append_Node_To_List (N, Aggr);
+
+                     N :=
+                       Make_Qualified_Expression
+                         (RE (RE_Hybrid_Task_Info),
+                          Make_Record_Aggregate (Aggr));
+
+                     Last_Hybrid_Thread_Index := Last_Hybrid_Thread_Index + 1;
+
+                     N :=
+                       Make_Element_Association
+                         (Make_Literal
+                            (New_Integer_Value
+                               (Last_Hybrid_Thread_Index, 1, 10)),
+                          N);
+                     Append_Node_To_List (N, Hybrid_Thread_Elements);
+                  end;
+
+               when others =>
+                  raise Program_Error;
+            end case;
+
             Runtime_Routine_Bodies (E);
          end if;
-
-         case P is
-            when Thread_Periodic =>
-               N :=
-                 Message_Comment
-                   ("Periodic task : " &
-                    Get_Name_String (Display_Name (Identifier (S))));
-               Append_Node_To_List (N, ADN.Statements (Current_Package));
-
-            when Thread_Sporadic =>
-               N :=
-                 Message_Comment
-                   ("Sporadic task : " &
-                    Get_Name_String (Display_Name (Identifier (S))));
-               Append_Node_To_List (N, ADN.Statements (Current_Package));
-
-            when Thread_Aperiodic =>
-               N :=
-                 Message_Comment
-                   ("Aperiodic task : " &
-                    Get_Name_String (Display_Name (Identifier (S))));
-               Append_Node_To_List (N, ADN.Statements (Current_Package));
-
-            when Thread_Background =>
-               N :=
-                 Message_Comment
-                   ("Background task : " &
-                    Get_Name_String (Display_Name (Identifier (S))));
-               Append_Node_To_List (N, ADN.Statements (Current_Package));
-
-            when Thread_ISR =>
-               N :=
-                 Message_Comment
-                   ("ISR task : " &
-                    Get_Name_String (Display_Name (Identifier (S))));
-               Append_Node_To_List (N, ADN.Statements (Current_Package));
-
-            when Thread_Hybrid =>
-               N :=
-                 Message_Comment
-                   ("Hybrid task : " &
-                    Get_Name_String (Display_Name (Identifier (S))));
-               Append_Node_To_List (N, ADN.Statements (Current_Package));
-
-               --  Hybrid threads requires an extra driver thread to be
-               --  created.
-
-               declare
-                  Aggr : constant List_Id := New_List (ADN.K_Component_List);
-               begin
-                  Has_Hybrid_Threads := True;
-
-                  if Hybrid_Thread_Elements = No_List then
-                     Hybrid_Thread_Elements := New_List (ADN.K_Element_List);
-                  end if;
-
-                  --  Append the element association corresponding to
-                  --  E to the hybrid task set.
-
-                  N := Extract_Enumerator (E);
-                  Append_Node_To_List (N, Aggr);
-
-                  --  We know that the last node added to the feature
-                  --  list of E is the one appended at exapnsion time
-                  --  and corresponding to the fake event part that
-                  --  will receive the dispatch messages from the
-                  --  driver.
-
-                  N := Extract_Enumerator (Last_Node (Features (E)));
-                  Append_Node_To_List (N, Aggr);
-
-                  N := Map_Ada_Time (Get_Thread_Period (E));
-                  Append_Node_To_List (N, Aggr);
-
-                  N := RE (RE_System_Startup_Time);
-                  Append_Node_To_List (N, Aggr);
-
-                  N := RE (RE_True);
-                  Append_Node_To_List (N, Aggr);
-
-                  N :=
-                    Make_Qualified_Expression
-                      (RE (RE_Hybrid_Task_Info),
-                       Make_Record_Aggregate (Aggr));
-
-                  Last_Hybrid_Thread_Index := Last_Hybrid_Thread_Index + 1;
-
-                  N :=
-                    Make_Element_Association
-                      (Make_Literal
-                         (New_Integer_Value (Last_Hybrid_Thread_Index, 1, 10)),
-                       N);
-                  Append_Node_To_List (N, Hybrid_Thread_Elements);
-               end;
-
-            when others =>
-               raise Program_Error;
-         end case;
 
          if Has_Modes (E) then
             --  If the thread has operational modes, then generate the
