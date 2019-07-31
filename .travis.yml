@@ -46,7 +46,7 @@ before_install:
 # 3/ Install GNAT
 
 install:
-  - git clone https://github.com/OpenAADL/ocarina-build.git ; ( cd ocarina-build ; ./build_ocarina.sh --install-gnat-ce )
+  - git clone https://github.com/OpenAADL/ocarina-build.git ; ( cd ocarina-build ; ./build_ocarina.sh --install-gnat-ce ; cd $HOME)
   - export PATH=$INSTALL_DIR:$PATH
 
 ################################################################################
@@ -58,7 +58,7 @@ script:
   - gnatls -v
 
   # Just build
-  - git clone https://github.com/OpenAADL/ocarina-build.git ; ( cd ocarina-build ; ./build_ocarina.sh --scenario=travis-ci )
+  - ( cd ocarina-build ; ./build_ocarina.sh --scenario=travis-ci )
 
 # Codecov.io
 after_success:
