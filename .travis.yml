@@ -47,7 +47,8 @@ before_install:
 
 install:
   - git clone https://github.com/OpenAADL/ocarina-build.git ; ( cd ocarina-build ; ./build_ocarina.sh --install-gnat-ce ; cd $HOME)
-  - export PATH=$INSTALL_DIR:$PATH
+  - export PATH=$HOME/tools:$PATH
+  - echo $PATH
 
 ################################################################################
 # Main processing starts here
