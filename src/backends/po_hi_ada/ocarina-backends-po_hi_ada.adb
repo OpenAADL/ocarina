@@ -501,9 +501,15 @@ package body Ocarina.Backends.PO_HI_Ada is
       case Transport_API is
          when Transport_BSD_Sockets =>
             Write_Indentation;
-            Write_Line
-              ("for Body (""PolyORB_HI.Transport_Low_Level"")" &
-               " use ""polyorb_hi-transport_low_level_sockets.adb"";");
+            if Add_SPARK2014_Annotations then
+               Write_Line
+                 ("for Body (""PolyORB_HI.Transport_Low_Level"")" &
+                    " use ""polyorb_hi-transport_low_level_spark.adb"";");
+            else
+               Write_Line
+                 ("for Body (""PolyORB_HI.Transport_Low_Level"")" &
+                    " use ""polyorb_hi-transport_low_level_sockets.adb"";");
+            end if;
 
          when Transport_SpaceWire =>
             raise Program_Error;
