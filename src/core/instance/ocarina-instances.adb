@@ -222,7 +222,7 @@ package body Ocarina.Instances is
 
          if No (Root_System) then
             Error_Loc (1) := No_Location;
-            DE ("Cannot find a root system");
+            Exit_On_Error (True, "Cannot find a root system");
          end if;
 
          if Root_System_Name /= No_Name
