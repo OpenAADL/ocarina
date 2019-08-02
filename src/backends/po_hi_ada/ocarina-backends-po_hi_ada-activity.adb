@@ -221,7 +221,18 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                      Make_Defining_Identifier (Map_Port_Interface_Name (E)),
                    Parameter_Mode => Mode_Inout)
                ),
-           Aspect_Specification => Runtime_Spec_Aspect_Definition);
+           Aspect_Specification =>
+             Make_Aspect_Specification
+             (Make_List_Id
+                (Make_Aspect
+                   (ASN (A_Global),
+                    Make_Global_Specification
+                      (Make_List_Id
+                         (Make_Moded_Global_List
+                            (Mode_In,
+                             Make_Defining_Identifier
+                             (PN (P_Elaborated_Variables)))))))));
+
       return N;
    end Get_Value_Spec;
 
@@ -1908,12 +1919,12 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
 
                --  Build a string literal for the pragma Warnings On|Off:
                --
-               --  if there is no error management, and the
+               --  If there is no error recovery function, and the
                --  current subprogram is a function, we need to shut
                --  down the warning on missing return: by construction
                --  of the source code, there cannot be situation in
                --  which we exit without entering one of the if
-               --  statemetns.
+               --  statements.
 
                Set_Str_To_Name_Buffer ("*return*");
                Pragma_Warnings_Off_Value := New_String_Value (Name_Find);

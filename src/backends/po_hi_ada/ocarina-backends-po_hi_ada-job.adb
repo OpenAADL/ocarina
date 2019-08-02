@@ -707,30 +707,6 @@ package body Ocarina.Backends.PO_HI_Ada.Job is
          The_System : constant Node_Id :=
            Parent_Component (Parent_Subcomponent (E));
 
-         function Package_Spec_Aspect_Definition return Node_Id is
-         begin
-            if Add_SPARK2014_Annotations then
-               return Make_Aspect_Specification
-                 (Make_List_Id
-                    (Make_Aspect (ASN (A_Initializes),
-                                  Make_Initialization_Spec
-                                    (Make_List_Id
-                                       (Make_Defining_Identifier
-                                          (PN (P_Elaborated_Variables))))),
-                     Make_Aspect
-                       (ASN (A_Abstract_State),
-                        Make_Abstract_State_List
-                          (Make_List_Id
-                             (Make_State_Name_With_Option
-                                (Make_Defining_Identifier
-                                   (PN (P_Elaborated_Variables)),
-                                 Synchronous => True,
-                                 External => True))))));
-            else
-               return No_Node;
-            end if;
-         end Package_Spec_Aspect_Definition;
-
       begin
          Push_Entity (P);
          Push_Entity (U);
@@ -765,9 +741,6 @@ package body Ocarina.Backends.PO_HI_Ada.Job is
             --  XXX In case of Round robin, we should also check that
             --  the scheduler is set to non-preemptive mode.
          end if;
-
-         ADN.Set_Aspect_Specification (Current_Package,
-                                       Package_Spec_Aspect_Definition);
 
          --  Visit all the subcomponents of the process
 
@@ -1111,8 +1084,6 @@ package body Ocarina.Backends.PO_HI_Ada.Job is
       --  interrogation routines. We do this to ensure all the bodies
       --  are appended after all entities generated for threads since
       --  they need visibility on these entities.
-
-      Package_Body_Refined_States : List_Id := No_List;
 
       -------------------
       -- Task_Job_Body --
@@ -2801,24 +2772,6 @@ package body Ocarina.Backends.PO_HI_Ada.Job is
          The_System : constant Node_Id :=
            Parent_Component (Parent_Subcomponent (E));
 
-         function Package_Body_Aspect_Definition return Node_Id is
-         begin
-            if Add_SPARK2014_Annotations then
-               return Make_Aspect_Specification
-                 (Make_List_Id
-                    (Make_Aspect
-                       (ASN (A_Refined_State),
-                        Make_Refinement_List
-                          (Make_List_Id
-                             (Make_Refinement_Clause
-                                (Make_Defining_Identifier
-                                   (PN (P_Elaborated_Variables)),
-                                 Package_Body_Refined_States))))));
-            else
-               return No_Node;
-            end if;
-         end Package_Body_Aspect_Definition;
-
       begin
          Push_Entity (P);
          Push_Entity (U);
@@ -2838,7 +2791,6 @@ package body Ocarina.Backends.PO_HI_Ada.Job is
          --  Initialize the runtime routine list
 
          Interrogation_Routine_List := New_List (ADN.K_Statement_List);
-         Package_Body_Refined_States := New_List (ADN.K_List_Id);
 
          --  Visit all the subcomponents of the process
 
@@ -2930,10 +2882,6 @@ package body Ocarina.Backends.PO_HI_Ada.Job is
                S := Next_Node (S);
             end loop;
          end if;
-
-         ADN.Set_Aspect_Specification
-           (Current_Package,
-            Package_Body_Aspect_Definition);
 
          --  Unmark all the marked types
 
