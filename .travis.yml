@@ -19,7 +19,7 @@ osx_image: xcode8.3
 env:
   global:
     - TOOLS_DIR=$HOME/build_tools
-    - GNAT_TAR_PATH=$TOOLS_DIR/gnat-gpl-2016-bin.tar.gz
+    - INSTALL_DIR=$HOME/tools
 
 ################################################################################
 # Host to run the various tests
@@ -36,25 +36,19 @@ os:
 cache:
   directories:
   - $HOME/build_tools
+  - $HOME/tools
 
 # 2/ Check Python installation
 
 before_install:
 - which python
 
-# 3/ Install GNAT GPL 2016
+# 3/ Install GNAT
 
 install:
-  # Check if the GNAT package is already available in the cache directory. If
-  # not, download it.
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then test -f  $GNAT_TAR_PATH ||( mkdir -p $TOOLS_DIR && wget http://mirrors.cdn.adacore.com/art/5739cefdc7a447658e0b016b -O $GNAT_TAR_PATH); fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then test -f  $GNAT_TAR_PATH ||( mkdir -p $TOOLS_DIR && wget http://mirrors.cdn.adacore.com/art/573a396cc7a447658d00e430 -O $GNAT_TAR_PATH); fi
-
-  # Extract GNAT from its package
-  - tar -xf $GNAT_TAR_PATH
-
-  # Add GNAT to $PATH
-  - export PATH=$PWD/gnat-gpl-2016-x86_64-linux-bin/bin/:$PWD/gnat-gpl-2016-x86_64-darwin-bin/bin/:$PATH
+  - git clone https://github.com/OpenAADL/ocarina-build.git ; ( cd ocarina-build ; ./build_ocarina.sh --install-gnat-ce ; cd $HOME)
+  - export PATH=$HOME/tools/bin:$PATH
+  - echo $PATH
 
 ################################################################################
 # Main processing starts here
@@ -65,7 +59,7 @@ script:
   - gnatls -v
 
   # Just build
-  - git clone https://github.com/OpenAADL/ocarina-build.git ; ( cd ocarina-build ; ./build_ocarina.sh --scenario=travis-ci )
+  - ( cd ocarina-build ; ./build_ocarina.sh --scenario=travis-ci )
 
 # Codecov.io
 after_success:

@@ -338,11 +338,15 @@ package body Ocarina.Backends.PO_HI_Ada.Main is
               Thread_Aperiodic   |
               Thread_Background  |
               Thread_ISR         =>
-               Add_With_Package
-                 (E            => RU (RU_PolyORB_HI_Generated_Activity, False),
-                  Used         => False,
-                  Warnings_Off => True,
-                  Elaborated   => True);
+
+               if Has_Ports (E) then
+                  Add_With_Package
+                    (E => RU (RU_PolyORB_HI_Generated_Activity, False),
+                     Used         => False,
+                     Warnings_Off => True,
+                     Elaborated   => True);
+               end if;
+
                Add_With_Package
                  (E            => RU (Ru_Polyorb_Hi_Generated_Job, False),
                   Used         => False,

@@ -2496,6 +2496,12 @@ package body Ocarina.Backends.PO_HI_Ada.Job is
       begin
          Check_Thread_Consistency (E);
 
+         if Has_Ports (E) then
+            Add_With_Package
+              (E    => RU (Ru_PolyORB_HI_Generated_Activity),
+               Used => True);
+         end if;
+
          --  If the thread contains operational modes. we update the
          --  value of the current mode depending on the received
          --  events.
@@ -2916,10 +2922,6 @@ package body Ocarina.Backends.PO_HI_Ada.Job is
          S : constant Node_Id := Parent_Subcomponent (E);
          N : Node_Id;
       begin
-         Add_With_Package    --  XXX
-           (E    => RU (Ru_PolyORB_HI_Generated_Activity),
-            Used => True);
-
          case P is
             when Thread_Periodic =>
                N :=
