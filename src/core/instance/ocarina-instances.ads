@@ -33,12 +33,17 @@ with Ocarina.Types; use Ocarina.Types;
 
 package Ocarina.Instances is
 
-   function Instantiate_Model (Root : Node_Id) return Node_Id;
+   function Instantiate_Model
+     (Root : Node_Id;
+      Exit_If_Error : Boolean := True)
+     return Node_Id;
    --  Instantiate the tree of the model and return the instantiated
-   --  architecture. If Root_System_Name in Ocarina.Options is set and
-   --  corresponds to a root system eligible for instantiation, then
-   --  instantiate the model from this system.
-   --  FIXME : not clear
+   --  architecture. If Root_System_Name (from Ocarina.Options) is set
+   --  and corresponds to a root system eligible for instantiation,
+   --  then instantiate the model from this system.  If Exit_If_Error
+   --  is set to true, exit immediatly in case of an error, otherwise
+   --  return No_Node.
+   --
    --  If Root_System_Name does not correspond to anything,
    --  instantiate nothing. Root_System_Name is to be used when
    --  several system implementations are electible.
