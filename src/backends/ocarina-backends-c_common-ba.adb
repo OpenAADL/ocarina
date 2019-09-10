@@ -82,10 +82,72 @@ package body Ocarina.Backends.C_Common.BA is
    --  function Get_Instances_Of_Component_Type
    --    (Root : Node_Id; E : Node_Id) return Node_Id;
 
-   function Get_Behavior_Specification
-     (S : Node_Id) return Node_Id;
-
    function Map_Used_Type (N : Node_Id) return Node_Id;
+
+   procedure Map_C_Many_Transitions_Of_A_Thread
+     (S            : Node_Id;
+      Declarations : List_Id;
+      Statements   : List_Id);
+
+   procedure Map_BA_States_To_C_Types
+     (S            : Node_Id);
+
+   function Is_State_Kind_Type_Declaration_Exist
+     return Boolean;
+
+   procedure Make_States_Initialization_Function
+     (S            : Node_Id);
+
+   function Search_State_Kind
+     (BA        : Node_Id;
+      State_Idt : Node_Id) return Ocarina.Types.Byte;
+
+   function Find_Index_In_States_Array
+     (BA        : Node_Id;
+      State_Idt : Node_Id) return Unsigned_Long_Long;
+
+   procedure Update_Current_State
+     (E                : Node_Id;
+      BA               : Node_Id;
+      Transition_Node  : Node_Id;
+      Stats            : List_Id);
+
+   function Map_C_Transition_Node
+     (Node             : Node_Id;
+      S                : Node_Id;
+      Declarations     : List_Id;
+      Statements       : List_Id;
+      Else_St          : List_Id) return List_Id;
+
+   procedure Map_C_A_List_Of_Transitions
+     (S                         : Node_Id;
+      BA                        : Node_Id;
+      Otherwise_Transition_Node : Node_Id;
+      Sub_Transition_List       : List_Id;
+      WDeclarations             : List_Id;
+      WStatements               : List_Id);
+
+   procedure Examine_Current_State_Until_Reaching_Complete_State
+     (S                         : Node_Id;
+      BA                        : Node_Id;
+      WDeclarations             : List_Id;
+      WStatements               : List_Id);
+
+   procedure Make_BA_Initialization_Function
+     (S            : Node_Id);
+
+   procedure Map_C_Implementation_of_BA_Body_Function
+     (S            : Node_Id;
+      Declarations : List_Id;
+      Statements   : List_Id);
+
+   procedure Make_BA_Body_Function
+     (S            : Node_Id;
+      Declarations : List_Id;
+      Statements   : List_Id);
+
+   function Map_C_State_Kind_Name
+     (State_Kind : Ocarina.Types.Byte) return Node_Id;
 
    procedure Map_C_Behavior_Action_Block
      (Node         : Node_Id;
@@ -318,6 +380,30 @@ package body Ocarina.Backends.C_Common.BA is
    --
    --     end Get_Instances_Of_Component_Type;
 
+   ------------------------------
+   -- Is_To_Make_Init_Sequence --
+   ------------------------------
+
+   function Is_To_Make_Init_Sequence (S : Node_Id) return Boolean
+   is
+      BA     : Node_Id;
+      State  : Node_Id;
+      Result : Boolean := False;
+   begin
+      BA := Get_Behavior_Specification (S);
+      State := BATN.First_Node (BATN.States (BA));
+
+      while Present (State) loop
+
+         Result := Behavior_State_Kind'Val (BATN.State_Kind (State))
+           = BSK_Initial;
+
+         exit when Result;
+         State := BATN.Next_Node (State);
+      end loop;
+      return Result;
+   end Is_To_Make_Init_Sequence;
+
    --------------------------------
    -- Get_Behavior_Specification --
    --------------------------------
@@ -449,13 +535,13 @@ package body Ocarina.Backends.C_Common.BA is
 
    end Map_C_Behavior_Variables;
 
-   ----------------------------
-   -- Map_C_Behavior_Actions --
-   ----------------------------
+   --------------------------------
+   -- Map_C_Behavior_Transitions --
+   --------------------------------
 
-   procedure Map_C_Behavior_Actions (S            : Node_Id;
-                                     Declarations : List_Id;
-                                     Statements   :  List_Id)
+   procedure Map_C_Behavior_Transitions (S            : Node_Id;
+                                         Declarations : List_Id;
+                                         Statements   :  List_Id)
    is
       BA                 : Node_Id;
       behav_transition   : Node_Id;
@@ -464,40 +550,1429 @@ package body Ocarina.Backends.C_Common.BA is
 
       BA := Get_Behavior_Specification (S);
 
-      --  For an AADL subprogram with BA, we have: a single state
-      --  as initial final state; a single transition without
-      --  condition with a Behavior_Action_Block.
-      --  Thus, we need to map the Behavior_Action_Block
-      --  To C-statements in the generated C-subprogram
-      --
       if not BANu.Is_Empty (BATN.Transitions (BA)) then
 
          behav_transition := BATN.First_Node (BATN.Transitions (BA));
          Transition_Node := BATN.Transition (behav_transition);
 
-         if Present (behav_transition) and then
-           Present (BATN.Behavior_Action_Block (Transition_Node))
-         then
-            if BATN.Kind (Transition_Node) =
-              BATN.K_Execution_Behavior_Transition
-            then
-               Map_C_Behavior_Action_Block
-                 (BATN.Behavior_Action_Block (Transition_Node),
-                  S, Declarations, Statements);
-            else
-               --  i.e. Kind (Transition_Node) = K_Mode_Transition
-               --  We do not support Mode transition in a subprogram
-               --
-               Display_Error
-                 ("Mode Transition is not supported for a subprogram",
-                  Fatal => True);
+         if BANu.Length (BATN.Transitions (BA)) = 1 then
+            if AINU.Is_Thread (S) then
+               Map_C_Behavior_Variables (S, Declarations);
             end if;
 
+            if Present (BATN.Behavior_Action_Block (Transition_Node)) then
+               if BATN.Kind (Transition_Node) =
+                 BATN.K_Execution_Behavior_Transition
+               then
+                  --  For an AADL subprogram or thread with BA that includes
+                  --  a unique transition, the Behavior_Action_Block
+                  --  of this transition is mapped into C-statements.
+                  Map_C_Behavior_Action_Block
+                    (BATN.Behavior_Action_Block (Transition_Node),
+                     S, Declarations, Statements);
+
+                  if AINU.Is_Thread (S) then
+                     Map_C_Implementation_of_BA_Body_Function
+                       (S, Declarations, Statements);
+                  end if;
+
+               else
+                  --  i.e. Kind (Transition_Node) = K_Mode_Transition
+                  --  We do not support Mode transition in a subprogram
+                  --
+                  Display_Error
+                    ("Mode Transition is not supported",
+                     Fatal => True);
+               end if;
+            end if;
+         else
+            --  For an AADL subprogram with BA, many transitions
+            --  are not supported.
+            if AINU.Is_Subprogram (S) then
+               Display_Error
+                 ("Many transitions in the BA of a"
+                  & "subprogram are not supported",
+                  Fatal => True);
+            elsif AINU.Is_Thread (S) then
+               if Get_Thread_Dispatch_Protocol (S) = Thread_Periodic then
+                  Map_C_Many_Transitions_Of_A_Thread
+                    (S, Declarations, Statements);
+               else
+                  Display_Error
+                 ("The mapping of many transitions in the BA of a non-periodic"
+                  & "thread is not supported",
+                  Fatal => True);
+               end if;
+            end if;
          end if;
 
       end if;
 
-   end Map_C_Behavior_Actions;
+   end Map_C_Behavior_Transitions;
+
+   ------------------------------------------
+   -- Is_State_Kind_Type_Declaration_Exist --
+   ------------------------------------------
+
+   function Is_State_Kind_Type_Declaration_Exist
+     return Boolean
+   is
+      Result : Boolean := False;
+      decl   : Node_Id;
+   begin
+
+      decl := CTN.First_Node (CTN.Declarations (Current_File));
+      while Present (decl) loop
+
+         if Kind (decl) = CTN.K_Enumeration_Literals
+           and then
+             Standard.Utils.To_Lower
+               (CTN.Name (CTN.Defining_Identifier
+                (decl)))
+           = Standard.Utils.To_Lower
+           (Get_String_Name ("__po_hi_state_kind_t"))
+         then
+            Result := True;
+         end if;
+         exit when Result;
+         decl := CTN.Next_Node (decl);
+      end loop;
+      return Result;
+   end Is_State_Kind_Type_Declaration_Exist;
+
+   ------------------------------
+   -- Map_BA_States_To_C_Types --
+   ------------------------------
+
+   procedure Map_BA_States_To_C_Types
+     (S            : Node_Id)
+   is
+      BA                         : Node_Id;
+      State, List_Node           : Node_Id;
+      N                          : Node_Id;
+      State_Enumerator_List      : List_Id;
+      State_Kind_Enumerator_List : List_Id;
+      State_Struct               : List_Id;
+      State_Identifier           : Unsigned_Long_Long;
+      Nb_States                  : Unsigned_Long_Long;
+      Q                          : Name_Id;
+      Thread_Instance_Name       : Name_Id;
+      E                          : constant Node_Id :=
+        AIN.Parent_Subcomponent (S);
+   begin
+
+      BA := Get_Behavior_Specification (S);
+
+      --  1) Create an enumeration type declaration
+      --  called __po_hi_<<thread_instance_name>>_state_name_t
+      --  that enumerates all states in the BA of the thread
+      --  typedef enum
+      --  {
+      --     s0, s1, s2, s3
+      --  } __po_hi_producer_state_name_t;
+
+      State_Enumerator_List := New_List (CTN.K_Enumeration_Literals);
+
+      State := BATN.First_Node (BATN.States (BA));
+      State_Identifier := 0;
+      Nb_States := 0;
+
+      while Present (State) loop
+
+         if not BANu.Is_Empty (BATN.Identifiers (State)) then
+            List_Node := BATN.First_Node (BATN.Identifiers (State));
+
+            while Present (List_Node) loop
+
+               N := CTU.Make_Defining_Identifier
+                 (BATN.Display_Name (List_Node));
+
+--                 N := Make_Expression
+--                   (CTU.Make_Defining_Identifier
+--                      (BATN.Display_Name (List_Node)),
+--                    Op_Equal,
+--                    Make_Literal
+--                      (CV.New_Int_Value (State_Identifier, 0, 10)));
+
+               Append_Node_To_List (N, State_Enumerator_List);
+               State_Identifier := State_Identifier + 1;
+               Nb_States        := Nb_States + 1;
+
+               List_Node := BATN.Next_Node (List_Node);
+            end loop;
+         end if;
+
+         State := BATN.Next_Node (State);
+      end loop;
+
+      Thread_Instance_Name := Map_Thread_Port_Variable_Name (S);
+      N :=
+        Message_Comment
+          ("For each state in the BA of the thread instance << " &
+             Get_Name_String (Thread_Instance_Name) &
+             " >> add an enumerator");
+      Append_Node_To_List (N, CTN.Declarations (Current_File));
+
+      N :=
+        Make_Full_Type_Declaration
+          (Defining_Identifier => Make_Defining_Identifier
+             (Map_C_Variable_Name (E, State_Name_T => True)),
+           Type_Definition => Make_Enum_Aggregate (State_Enumerator_List));
+      Append_Node_To_List (N, CTN.Declarations (Current_File));
+
+      --  2) Create an enumeration type declaration
+      --  called state_kind
+      --  that enumerates all possible kinds of state
+      --
+      --  typedef enum
+      --  {
+      --    __po_hi_initial,
+      --    __po_hi_initial_complete,
+      --    __po_hi_initial_complete_final,
+      --    __po_hi_initial_final,
+      --    __po_hi_complete,
+      --    __po_hi_complete_final,
+      --    __po_hi_final,
+      --    __po_hi_execution
+      --   } __po_hi_state_kind_t;
+      --
+      if not Is_State_Kind_Type_Declaration_Exist then
+         State_Kind_Enumerator_List := New_List (CTN.K_Enumeration_Literals);
+
+         Append_Node_To_List (RE (RE_Initial), State_Kind_Enumerator_List);
+
+         Append_Node_To_List (RE (RE_Initial_Complete),
+                              State_Kind_Enumerator_List);
+
+         Append_Node_To_List (RE (RE_Initial_Complete_Final),
+                              State_Kind_Enumerator_List);
+
+         Append_Node_To_List (RE (RE_Initial_Final),
+                              State_Kind_Enumerator_List);
+
+         Append_Node_To_List (RE (RE_Complete), State_Kind_Enumerator_List);
+
+         Append_Node_To_List (RE (RE_Complete_Final),
+                              State_Kind_Enumerator_List);
+
+         Append_Node_To_List (RE (RE_Final), State_Kind_Enumerator_List);
+
+         Append_Node_To_List (RE (RE_Execution), State_Kind_Enumerator_List);
+
+         N :=
+           Make_Full_Type_Declaration
+             (Defining_Identifier => RE (RE_State_Kind_T),
+              Type_Definition => Make_Enum_Aggregate
+                (State_Kind_Enumerator_List));
+         Append_Node_To_List (N, CTN.Declarations (Current_File));
+      end if;
+
+      --  3)
+      --  typedef struct
+      --  {
+      --    __po_hi_<<thread_instance_name>>_state_name_t name;
+      --    __po_hi_state_kind_t kind;
+      --  } __po_hi_<<thread_instance_name>>_state_t;
+
+      State_Struct := New_List (CTN.K_Enumeration_Literals);
+
+      Set_Str_To_Name_Buffer ("name");
+      Q := Name_Find;
+
+      N :=
+        Make_Member_Declaration
+          (Defining_Identifier => Make_Defining_Identifier (Q),
+           Used_Type           => Make_Defining_Identifier
+             (Map_C_Variable_Name (E, State_Name_T => True)));
+      Append_Node_To_List (N, State_Struct);
+
+      Set_Str_To_Name_Buffer ("kind");
+      Q := Name_Find;
+
+      N :=
+        Make_Member_Declaration
+          (Defining_Identifier => Make_Defining_Identifier (Q),
+           Used_Type           => RE (RE_State_Kind_T));
+      Append_Node_To_List (N, State_Struct);
+
+      N :=
+        Make_Full_Type_Declaration
+          (Defining_Identifier => Make_Defining_Identifier
+             (Map_C_Variable_Name (E, State_T => True)),
+           Type_Definition     =>
+             Make_Struct_Aggregate (Members => State_Struct));
+      Append_Node_To_List (N, CTN.Declarations (Current_File));
+
+      --  4)
+      --  #define __po_hi_<<thread_instance_name>>_nb_states <<Nb_States>>
+
+      N :=
+        Make_Define_Statement
+          (Defining_Identifier => Make_Defining_Identifier
+             (Map_C_Define_Name (E, Nb_States => True)),
+           Value               =>
+             Make_Literal
+               (CV.New_Int_Value (Nb_States, 1, 10)));
+      Append_Node_To_List (N, CTN.Declarations (Current_File));
+
+      --  5)
+      --  __po_hi_<<thread_instance_name>>_state_t
+      --       __po_hi_<<thread_instance_name>>_states_array
+      --               [__po_hi_<<thread_instance_name>>_nb_states];
+
+      N :=
+        Make_Variable_Declaration
+          (Defining_Identifier =>
+             Make_Array_Declaration
+               (Defining_Identifier =>
+                      Make_Defining_Identifier
+                  (Map_C_Variable_Name (E, States_Array => True)),
+                Array_Size =>
+                  Make_Defining_Identifier
+                    (Map_C_Define_Name (E, Nb_States => True))),
+           Used_Type =>
+             Make_Defining_Identifier
+               (Map_C_Variable_Name (E, State_T => True)));
+      Append_Node_To_List (N, CTN.Declarations (Current_File));
+
+      --  6)
+      --  __po_hi_<<thread_instance_name>>_state_t
+      --       __po_hi_<<thread_instance_name>>_current_state
+      N :=
+        Make_Variable_Declaration
+          (Defining_Identifier =>
+                Make_Defining_Identifier
+                  (Map_C_Variable_Name (E, Current_State => True)),
+           Used_Type =>
+             Make_Defining_Identifier
+               (Map_C_Variable_Name (E, State_T => True)));
+      Append_Node_To_List (N, CTN.Declarations (Current_File));
+
+   end Map_BA_States_To_C_Types;
+
+   ---------------------------
+   -- Map_C_State_Kind_Name --
+   ---------------------------
+
+   function Map_C_State_Kind_Name
+     (State_Kind : Ocarina.Types.Byte) return Node_Id
+   is
+      Result : Node_Id;
+   begin
+      case Behavior_State_Kind'Val (State_Kind) is
+         when BSK_Initial                => Result := RE (RE_Initial);
+         when BSK_Initial_Complete       =>
+            Result := RE (RE_Initial_Complete);
+         when BSK_Initial_Complete_Final =>
+            Result := RE (RE_Initial_Complete_Final);
+         when BSK_Initial_Final          =>
+            Result := RE (RE_Initial_Final);
+         when BSK_Complete               => Result := RE (RE_Complete);
+         when BSK_Complete_Final         =>
+            Result := RE (RE_Complete_Final);
+         when BSK_Final                  => Result := RE (RE_Final);
+         when BSK_No_Kind                => Result := RE (RE_Execution);
+         when others                     => raise Program_Error;
+      end case;
+      return Result;
+   end Map_C_State_Kind_Name;
+
+   -----------------------------------------
+   -- Make_States_Initialization_Function --
+   -----------------------------------------
+
+   procedure Make_States_Initialization_Function
+     (S            : Node_Id)
+   is
+      BA                         : Node_Id;
+      State, List_Node           : Node_Id;
+      N, N1                      : Node_Id;
+      State_Identifier           : Unsigned_Long_Long;
+      Q                          : Name_Id;
+      E                          : constant Node_Id :=
+        AIN.Parent_Subcomponent (S);
+      WStatements : constant List_Id := New_List (CTN.K_Statement_List);
+   begin
+
+      BA := Get_Behavior_Specification (S);
+
+      --  7)
+      --  void <<thread_name>>_states_initialization (void)
+      --  {
+      --  /* fill the __po_hi_producer_states_array with corresponding
+      --  states */
+      --  __po_hi_producer_states_array[0].name = s0;
+      --  __po_hi_producer_states_array[0].kind = __po_hi_initial;
+      --
+      --  __po_hi_producer_states_array[1].name = s1;
+      --  __po_hi_producer_states_array[1].kind = __po_hi_execution;
+      --
+      --  __po_hi_producer_states_array[2].name = s2;
+      --  __po_hi_producer_states_array[2].kind = __po_hi_execution;
+      --
+      --  __po_hi_producer_states_array[3].name = s3;
+      --  __po_hi_producer_states_array[3].kind = __po_hi_complete_final;
+
+      --  /* initialize the __po_hi_producer_current_state with */
+      --  /* the initial state */
+
+      --  __po_hi_producer_current_state = __po_hi_producer_states_array[0];
+      --  }
+
+      N1 := Make_Function_Specification
+        (Defining_Identifier => Make_Defining_Identifier
+           (Map_C_BA_Related_Function_Name
+                (E, States_Initialization => True)),
+         Parameters          => No_List,
+         Return_Type         => New_Node (CTN.K_Void));
+
+      N := Message_Comment ("fill the array "
+                            & Get_Name_String
+                              (Map_C_Variable_Name (E, States_Array => True))
+                            & " with corresponding states");
+
+      CTU.Append_Node_To_List (N, WStatements);
+
+      State := BATN.First_Node (BATN.States (BA));
+      State_Identifier := 0;
+
+      while Present (State) loop
+
+         if not BANu.Is_Empty (BATN.Identifiers (State)) then
+            List_Node := BATN.First_Node (BATN.Identifiers (State));
+
+            while Present (List_Node) loop
+
+               Set_Str_To_Name_Buffer ("name");
+               Q := Name_Find;
+
+               CTU.Append_Node_To_List
+                 (Make_Assignment_Statement
+                    (Variable_Identifier => Make_Member_Designator
+                         (Defining_Identifier => Make_Defining_Identifier (Q),
+                          Aggregate_Name      => Make_Array_Declaration
+                            (Defining_Identifier =>
+                                   Make_Defining_Identifier
+                               (Map_C_Variable_Name (E, States_Array => True)),
+                             Array_Size => Make_Literal
+                               (CV.New_Int_Value (State_Identifier, 0, 10)))),
+                     Expression          => CTU.Make_Defining_Identifier
+                       (BATN.Display_Name (List_Node))),
+                  WStatements);
+
+               Set_Str_To_Name_Buffer ("kind");
+               Q := Name_Find;
+
+               CTU.Append_Node_To_List
+                 (Make_Assignment_Statement
+                    (Variable_Identifier => Make_Member_Designator
+                         (Defining_Identifier => Make_Defining_Identifier (Q),
+                          Aggregate_Name      => Make_Array_Declaration
+                            (Defining_Identifier =>
+                                   Make_Defining_Identifier
+                               (Map_C_Variable_Name (E, States_Array => True)),
+                             Array_Size => Make_Literal
+                               (CV.New_Int_Value (State_Identifier, 0, 10)))),
+                     Expression          => Map_C_State_Kind_Name
+                       (State_Kind (State))),
+                  WStatements);
+
+               State_Identifier := State_Identifier + 1;
+
+               List_Node := BATN.Next_Node (List_Node);
+            end loop;
+         end if;
+
+         State := BATN.Next_Node (State);
+      end loop;
+
+      N := Message_Comment ("Initialize the current state of the thread "
+                            & Get_Name_String
+                              (Map_C_Variable_Name (E, Current_State => True))
+                            & " with the initial state");
+
+      CTU.Append_Node_To_List (N, WStatements);
+
+      CTU.Append_Node_To_List
+        (Make_Assignment_Statement
+           (Variable_Identifier => Make_Defining_Identifier
+                (Map_C_Variable_Name (E, Current_State => True)),
+            Expression          => Make_Array_Declaration
+              (Defining_Identifier =>
+                   Make_Defining_Identifier
+                 (Map_C_Variable_Name (E, States_Array => True)),
+               Array_Size => Make_Literal
+                 (CV.New_Int_Value (0, 0, 10)))),
+         WStatements);
+
+      N := Make_Function_Implementation
+              (Specification => N1,
+               Declarations  => No_List,
+               Statements    => WStatements);
+
+      Append_Node_To_List (N, CTN.Declarations (Current_File));
+
+   end Make_States_Initialization_Function;
+
+   ----------------------
+   -- Search_State_Kind --
+   -----------------------
+
+   function Search_State_Kind
+     (BA        : Node_Id;
+      State_Idt : Node_Id) return Ocarina.Types.Byte
+   is
+      State, List_Node : Node_Id;
+      Found            : Boolean := False;
+      Result           : Ocarina.Types.Byte;
+   begin
+
+      State := BATN.First_Node (BATN.States (BA));
+
+      while Present (State) loop
+
+         List_Node := BATN.First_Node (BATN.Identifiers (State));
+
+         while Present (List_Node) loop
+
+            if (Standard.Utils.To_Upper
+                (BATN.Display_Name (List_Node)) =
+                  Standard.Utils.To_Upper
+                    (BATN.Display_Name (State_Idt)))
+            then
+               Result := State_Kind (State);
+               Found := True;
+            end if;
+
+            exit when Found;
+            List_Node := BATN.Next_Node (List_Node);
+         end loop;
+
+         exit when Found;
+         State := BATN.Next_Node (State);
+      end loop;
+
+      if not Found then
+         Display_Error
+           ("The state '"
+              & Get_Name_String (BATN.Display_Name (State_Idt))
+            & "' is not declared",
+            Fatal => True);
+      end if;
+
+      return Result;
+
+   end Search_State_Kind;
+
+   --------------------------------
+   -- Find_Index_In_States_Array --
+   --------------------------------
+
+   function Find_Index_In_States_Array
+     (BA        : Node_Id;
+      State_Idt : Node_Id) return Unsigned_Long_Long
+   is
+      State, List_Node : Node_Id;
+      Found            : Boolean := False;
+      Result           : Unsigned_Long_Long := 0;
+   begin
+
+      State := BATN.First_Node (BATN.States (BA));
+
+      while Present (State) loop
+
+         List_Node := BATN.First_Node (BATN.Identifiers (State));
+
+         while Present (List_Node) loop
+
+            if (Standard.Utils.To_Upper
+                (BATN.Display_Name (List_Node)) =
+                  Standard.Utils.To_Upper
+                    (BATN.Display_Name (State_Idt)))
+            then
+               Found := True;
+            end if;
+
+            exit when Found;
+            Result := Result + 1;
+            List_Node := BATN.Next_Node (List_Node);
+         end loop;
+
+         exit when Found;
+         State := BATN.Next_Node (State);
+      end loop;
+
+      if not Found then
+         Display_Error
+           ("The Destination state is not declared",
+            Fatal => True);
+      end if;
+
+      return Result;
+
+   end Find_Index_In_States_Array;
+
+   --------------------------
+   -- Update_Current_State --
+   --------------------------
+
+   procedure Update_Current_State
+     (E                : Node_Id;
+      BA               : Node_Id;
+      Transition_Node  : Node_Id;
+      Stats            : List_Id)
+   is
+      N : Node_Id;
+   begin
+      N := Message_Comment (" Update the current state ");
+      CTU.Append_Node_To_List (N, Stats);
+
+      N := Make_Assignment_Statement
+        (Variable_Identifier => Make_Defining_Identifier
+           (Map_C_Variable_Name (E, Current_State => True)),
+         Expression          => Make_Array_Declaration
+           (Defining_Identifier =>
+                Make_Defining_Identifier
+              (Map_C_Variable_Name (E, States_Array => True)),
+            Array_Size => Make_Literal
+              (CV.New_Int_Value
+                   (Find_Index_In_States_Array
+                        (BA, BATN.Destination (Transition_Node)),
+                    0, 10))));
+      CTU.Append_Node_To_List (N, Stats);
+   end Update_Current_State;
+
+   ---------------------------
+   -- Map_C_Transition_Node --
+   ---------------------------
+
+   function Map_C_Transition_Node
+     (Node             : Node_Id;
+      S                : Node_Id;
+      Declarations     : List_Id;
+      Statements       : List_Id;
+      Else_St          : List_Id) return List_Id
+   is
+      N, N1            : Node_Id;
+      Else_stats       : constant List_Id := New_List (CTN.K_Statement_List);
+      elsif_statements : constant List_Id := New_List (CTN.K_Statement_List);
+      E                : constant Node_Id := AIN.Parent_Subcomponent (S);
+      BA               : constant Node_Id := Get_Behavior_Specification (S);
+      Condition        : Node_Id;
+   begin
+      N := BATN.Next_Node (Node);
+
+      if Present (BATN.Behavior_Condition (Node))
+        and then Present (BATN.Condition (BATN.Behavior_Condition (Node)))
+      then
+         Condition := Evaluate_BA_Value_Expression
+           (Node             => BATN.Value_Expression
+              (BATN.Condition
+                   (BATN.Behavior_Condition (Node))),
+            Subprogram_Root  => S,
+            Declarations     => Declarations,
+            Statements       => Statements);
+      else
+         Display_Error
+           ("As there are an more than one transition that starts from"
+            & " the same state called '"
+            & Get_Name_String
+              (BATN.Display_Name (BATN.First_Node
+               (BATN.Sources (Node))))
+            & "', all these transitions must have conditions",
+            Fatal => True);
+      end if;
+
+      if Present (N) then
+         if Present (BATN.Behavior_Action_Block (Node)) and then
+           Present (BATN.Behav_Acts (BATN.Behavior_Action_Block (Node)))
+         then
+            N1 := Message_Comment (" Mapping of actions ");
+            CTU.Append_Node_To_List (N1, elsif_statements);
+
+            Map_C_Behavior_Action_Block
+              (Node         => BATN.Behavior_Action_Block (Node),
+               S            => S,
+               Declarations => Declarations,
+               Statements  => elsif_statements);
+         end if;
+
+         Update_Current_State (E, BA, Node, elsif_statements);
+
+         CTU.Append_Node_To_List
+           (CTU.Make_If_Statement
+              (Condition       => Condition,
+               Statements      => elsif_statements,
+               Else_Statements =>
+                 Map_C_Transition_Node
+                   (Node         => N,
+                    S            => S,
+                    Declarations => Declarations,
+                    Statements   => Statements,
+                    Else_St      => Else_St)),
+            Else_stats);
+      else
+
+         if Present (BATN.Behavior_Action_Block (Node)) and then
+           Present (BATN.Behav_Acts (BATN.Behavior_Action_Block (Node)))
+         then
+            N1 := Message_Comment (" Mapping of actions ");
+            CTU.Append_Node_To_List (N1, elsif_statements);
+
+            Map_C_Behavior_Action_Block
+              (Node         => BATN.Behavior_Action_Block (Node),
+               S            => S,
+               Declarations => Declarations,
+               Statements  => elsif_statements);
+         end if;
+
+         Update_Current_State (E, BA, Node, elsif_statements);
+
+         if Present (Else_St) then
+            CTU.Append_Node_To_List
+              (CTU.Make_If_Statement
+                 (Condition       => Condition,
+                  Statements      => elsif_statements,
+                  Else_Statements => Else_St),
+               Else_stats);
+         else
+            CTU.Append_Node_To_List
+              (CTU.Make_If_Statement
+                 (Condition       => Condition,
+                  Statements      => elsif_statements),
+               Else_stats);
+         end if;
+
+      end if;
+
+      return Else_stats;
+
+   end Map_C_Transition_Node;
+
+   ---------------------------------
+   -- Map_C_A_List_Of_Transitions --
+   ---------------------------------
+
+   procedure Map_C_A_List_Of_Transitions
+     (S                         : Node_Id;
+      BA                        : Node_Id;
+      Otherwise_Transition_Node : Node_Id;
+      Sub_Transition_List       : List_Id;
+      WDeclarations             : List_Id;
+      WStatements               : List_Id)
+   is
+      N                : Node_Id;
+      Transition_Node  : Node_Id;
+      E                : constant Node_Id := AIN.Parent_Subcomponent (S);
+
+      Condition     : Node_Id;
+      If_Statements : constant List_Id := New_List (CTN.K_Statement_List);
+      Else_Stats    : List_Id;
+
+   begin
+
+      if Present (Otherwise_Transition_Node) then
+         Else_Stats := New_List (CTN.K_Statement_List);
+
+         if Present (BATN.Behavior_Action_Block (Otherwise_Transition_Node))
+           and then Present (BATN.Behav_Acts
+                             (BATN.Behavior_Action_Block
+                                (Otherwise_Transition_Node)))
+         then
+            N := Message_Comment (" Mapping of actions ");
+            CTU.Append_Node_To_List (N, Else_Stats);
+
+            Map_C_Behavior_Action_Block
+              (BATN.Behavior_Action_Block (Otherwise_Transition_Node),
+               S, WDeclarations, Else_Stats);
+         end if;
+
+         Update_Current_State (E, BA, Otherwise_Transition_Node, Else_Stats);
+      else
+         Else_Stats := No_List;
+      end if;
+
+      if (BANu.Length (Sub_Transition_List) = 1) then
+
+         Transition_Node := BATN.First_Node (Sub_Transition_List);
+
+         if Present (BATN.Behavior_Condition (Transition_Node))
+           and then Present (BATN.Condition
+                             (BATN.Behavior_Condition (Transition_Node)))
+         then
+
+            --  i) Make if .. else => in the case of otherwise transition
+            --  or if without else => in the case of one transition with
+            --  condition
+
+            Condition := Evaluate_BA_Value_Expression
+              (Node             => BATN.Value_Expression
+                 (BATN.Condition (BATN.Behavior_Condition (Transition_Node))),
+               Subprogram_Root  => S,
+               Declarations     => WDeclarations,
+               Statements       => WStatements);
+
+            if Present (BATN.Behavior_Action_Block (Transition_Node))
+              and then Present (BATN.Behav_Acts
+                                (BATN.Behavior_Action_Block (Transition_Node)))
+            then
+
+               N := Message_Comment (" Mapping of actions ");
+               CTU.Append_Node_To_List (N, If_Statements);
+
+               Map_C_Behavior_Action_Block
+                 (BATN.Behavior_Action_Block (Transition_Node),
+                  S, WDeclarations, If_Statements);
+            end if;
+
+            --  ii) Update the current state
+            Update_Current_State (E, BA, Transition_Node, If_Statements);
+
+            CTU.Append_Node_To_List
+              (CTU.Make_If_Statement
+                 (Condition       => Condition,
+                  Statements      => If_Statements,
+                  Else_Statements => Else_Stats),
+               WStatements);
+         else
+            if not Present (Otherwise_Transition_Node) then
+
+               --  i) Map actions of the transition without if statement
+               if Present (BATN.Behavior_Action_Block (Transition_Node))
+                 and then Present (BATN.Behav_Acts
+                                   (BATN.Behavior_Action_Block
+                                      (Transition_Node)))
+               then
+
+                  N := Message_Comment (" Mapping of actions ");
+                  CTU.Append_Node_To_List (N, WStatements);
+
+                  Map_C_Behavior_Action_Block
+                    (BATN.Behavior_Action_Block (Transition_Node),
+                     S, WDeclarations, WStatements);
+               end if;
+
+               --  ii) Update the current state
+               Update_Current_State (E, BA, Transition_Node, WStatements);
+
+            else
+               Display_Error
+                 ("As there is an otherwise transition then"
+                  & " the other transition that starts from"
+                  & " the same state called '"
+                  & Get_Name_String
+                    (BATN.Display_Name (BATN.First_Node
+                     (BATN.Sources (Transition_Node))))
+                  & "' must have a condition",
+                  Fatal => True);
+            end if;
+         end if;
+
+      elsif (BANu.Length (Sub_Transition_List) > 1) then
+         Transition_Node := BATN.First_Node (Sub_Transition_List);
+
+         if Present (BATN.Behavior_Condition (Transition_Node))
+           and then Present (BATN.Condition
+                             (BATN.Behavior_Condition (Transition_Node)))
+         then
+            Condition := Evaluate_BA_Value_Expression
+              (Node             => BATN.Value_Expression
+                 (BATN.Condition (BATN.Behavior_Condition (Transition_Node))),
+               Subprogram_Root  => S,
+               Declarations     => WDeclarations,
+               Statements       => WStatements);
+
+            if Present (BATN.Behavior_Action_Block (Transition_Node))
+              and then Present (BATN.Behav_Acts
+                                (BATN.Behavior_Action_Block
+                                   (Transition_Node)))
+            then
+               N := Message_Comment (" Mapping of actions ");
+               CTU.Append_Node_To_List (N, If_Statements);
+
+               Map_C_Behavior_Action_Block
+                 (BATN.Behavior_Action_Block (Transition_Node),
+                  S, WDeclarations, If_Statements);
+            end if;
+
+            Update_Current_State (E, BA, Transition_Node, If_Statements);
+
+            Transition_Node := BATN.Next_Node (Transition_Node);
+
+            Else_Stats := Map_C_Transition_Node
+              (Transition_Node, S, WDeclarations,
+               WStatements, Else_Stats);
+
+            CTU.Append_Node_To_List
+              (CTU.Make_If_Statement
+                 (Condition       => Condition,
+                  Statements      => if_Statements,
+                  Else_Statements => Else_Stats),
+               WStatements);
+         else
+            Display_Error
+              ("As there are an more than one transition that starts from"
+               & " the same state called '"
+               & Get_Name_String
+                 (BATN.Display_Name (BATN.First_Node
+                  (BATN.Sources (Transition_Node))))
+               & "', all these transitions must have conditions",
+               Fatal => True);
+         end if;
+      end if;
+
+   end Map_C_A_List_Of_Transitions;
+
+   ---------------------------------------------------------
+   -- Examine_Current_State_Until_Reaching_Complete_State --
+   ---------------------------------------------------------
+
+   procedure Examine_Current_State_Until_Reaching_Complete_State
+     (S                         : Node_Id;
+      BA                        : Node_Id;
+      WDeclarations             : List_Id;
+      WStatements               : List_Id)
+   is
+      While_Statements     : constant List_Id := New_List
+        (CTN.K_Statement_List);
+      State, List_Node     : Node_Id;
+      Switch_Alternatives  : constant List_Id := New_List
+        (CTN.K_Alternatives_List);
+      Switch_Statements    : List_Id;
+      Switch_Labels        : List_Id;
+
+      N                            : Node_Id;
+      Behav_Transition             : Node_Id;
+      Transition_Node              : Node_Id;
+      Otherwise_Transition_Node    : Node_Id := No_Node;
+      E                            : constant Node_Id :=
+        AIN.Parent_Subcomponent (S);
+      Sub_Transition_List          : List_Id;
+      Source                       : Node_Id;
+      Q : Name_Id;
+
+      Condition     : Node_Id;
+   begin
+      --  Make while (__po_hi_producer_current_state.kind ==
+      --  __po_hi_execution)
+
+      Set_Str_To_Name_Buffer ("kind");
+      Q := Name_Find;
+
+      Condition := CTU.Make_Expression
+        (Left_Expr  => Make_Member_Designator
+           (Defining_Identifier => Make_Defining_Identifier (Q),
+            Aggregate_Name      => Make_Defining_Identifier
+              (Map_C_Variable_Name (E, Current_State => True))),
+         Operator   => CTU.Op_Equal_Equal,
+         Right_Expr => RE (RE_Execution));
+
+      --  Make a « switch case » statement on all the
+      --  « execution » states
+
+      State := BATN.First_Node (BATN.States (BA));
+
+      while Present (State) loop
+         if Behavior_State_Kind'Val (BATN.State_Kind (State))
+           = BSK_No_Kind
+         then
+            List_Node := BATN.First_Node (BATN.Identifiers (State));
+
+            while Present (List_Node) loop
+
+               Switch_Statements := New_List (CTN.K_Statement_List);
+               Switch_Labels := New_List (CTN.K_Label_List);
+               Sub_Transition_List := BANu.New_List
+                 (BATN.K_List_Id, No_Location);
+
+               Otherwise_Transition_Node := No_Node;
+
+               CTU.Append_Node_To_List
+                 (Make_Defining_Identifier
+                    (BATN.Display_Name (List_Node)),
+                  Switch_Labels);
+
+               --  /** go over all transitions that have « s1 »
+               --  as source state. In the case of one transition
+               --  without condition, we don't make an « if » statement,
+               --  instead we map the actions and then we update the
+               --  current state with the destination state of
+               --  the transition. **/
+
+               Behav_Transition := BATN.First_Node
+                 (BATN.Transitions (BA));
+               while Present (Behav_Transition) loop
+                  Transition_Node := BATN.Transition (Behav_Transition);
+
+                  if BATN.Kind (Transition_Node) =
+                    BATN.K_Execution_Behavior_Transition
+                  then
+                     if BANu.Length (BATN.Sources (Transition_Node)) = 1
+                     then
+                        Source := BATN.First_Node
+                          (BATN.Sources (Transition_Node));
+                        if  (Standard.Utils.To_Upper
+                             (BATN.Display_Name (List_Node)) =
+                               Standard.Utils.To_Upper
+                                 (BATN.Display_Name (Source)))
+                        then
+                           if Present (BATN.Behavior_Condition
+                                       (Transition_Node)) and then
+                             Present (BATN.Condition
+                                      (BATN.Behavior_Condition
+                                         (Transition_Node))) and then
+
+                             BATN.Is_Otherwise
+                               (BATN.Condition
+                                  (BATN.Behavior_Condition
+                                     (Transition_Node)))
+                           then
+                              Otherwise_Transition_Node :=
+                                Transition_Node;
+                           else
+                              BATN.Set_Next_Node (Transition_Node, No_Node);
+                              BANu.Append_Node_To_List
+                                (Transition_Node,
+                                 Sub_Transition_List);
+                           end if;
+                        end if;
+                     end if;
+                  end if;
+                  Behav_Transition := BATN.Next_Node (Behav_Transition);
+               end loop;
+
+               Map_C_A_List_Of_Transitions
+                 (S, BA, Otherwise_Transition_Node, Sub_Transition_List,
+                  WDeclarations, Switch_Statements);
+
+               N :=
+                 Make_Switch_Alternative (Switch_Labels,
+                                          Switch_Statements);
+
+               CTU.Append_Node_To_List (N, Switch_Alternatives);
+
+               List_Node := BATN.Next_Node (List_Node);
+            end loop;
+         end if;
+
+         State := BATN.Next_Node (State);
+      end loop;
+
+      Set_Str_To_Name_Buffer ("name");
+      Q := Name_Find;
+
+      N :=
+        Make_Switch_Statement
+          (Expression   => Make_Member_Designator
+             (Defining_Identifier => Make_Defining_Identifier (Q),
+              Aggregate_Name      => Make_Defining_Identifier
+                (Map_C_Variable_Name (E, Current_State => True))),
+           Alternatives => Switch_Alternatives);
+
+      CTU.Append_Node_To_List (N, While_Statements);
+
+      CTU.Append_Node_To_List
+        (CTU.Make_While_Statement
+           (Condition  => Condition,
+            Statements => While_Statements),
+         WStatements);
+
+   end Examine_Current_State_Until_Reaching_Complete_State;
+
+   -------------------------------------
+   -- Make_BA_Initialization_Function --
+   -------------------------------------
+
+   procedure Make_BA_Initialization_Function
+     (S            : Node_Id)
+   is
+      BA                           : Node_Id;
+      N, N1                        : Node_Id;
+      Behav_Transition             : Node_Id;
+      Transition_Node              : Node_Id;
+      Otherwise_Transition_Node    : Node_Id := No_Node;
+      E                            : constant Node_Id :=
+        AIN.Parent_Subcomponent (S);
+      Sub_Transition_List          : List_Id;
+      Source                       : Node_Id;
+      WStatements    : constant List_Id := New_List (CTN.K_Statement_List);
+      WDeclarations  : constant List_Id := New_List (CTN.K_Declaration_List);
+      Parameter_List : constant List_Id := New_List (CTN.K_List_Id);
+      At_Least_One_Dest_State_Is_Execution : Boolean := False;
+
+   begin
+
+--  8)
+--        void producer_ba_initialization
+--      (__po_hi_task_id self)
+--  {
+--
+--  base_types__integer tmp;
+--  test__ba__backend__alpha_type tmp2;
+--
+--  /*
+--  /** 1) For all transitions that have the initial state as
+--  a source state. In the case of a single transition without condtition,
+--  we don't make an « if » statement, instead we map the actions and then
+--  we update the __po_hi_producer_current_state with the destination
+--  state of the transition.
+--  **/
+--
+--  /*  Read the data from the port Data_In*/
+--  __po_hi_gqueue_get_value (self, LOCAL_PORT (producer, data_in),
+--                            &(__data_in_request));
+--  __data_in_value =
+--  __data_in_request.PORT_VARIABLE (producer, data_in);
+--
+--  if (__data_in_value <= 10)
+--  {  /* actions */
+--     .....
+--  --  -- /* update the current state */
+--    __po_hi_producer_current_state = __po_hi_producer_states_array[1];
+--  }
+--  else if (__data_in_value > 10)
+--  {  /* actions */
+--
+--
+--     /* update the current state */
+--    __po_hi_producer_current_state = __po_hi_producer_states_array[2];
+--  }/** we add « else » statement if there is a transition with
+--     « otherwise » condition **/
+--
+      BA := Get_Behavior_Specification (S);
+
+      N :=
+        Make_Parameter_Specification
+          (Make_Defining_Identifier (PN (P_Self)),
+           Parameter_Type => RE (RE_Task_Id));
+      Append_Node_To_List (N, Parameter_List);
+
+      N1 := Make_Function_Specification
+        (Defining_Identifier => Make_Defining_Identifier
+        (Map_C_BA_Related_Function_Name (E, BA_Initialization => True)),
+         Parameters          => Parameter_List,
+         Return_Type         => New_Node (CTN.K_Void));
+
+      Map_C_Behavior_Variables (S, WDeclarations);
+
+--  1) For all transitions that have the initial state as a source state.
+--  In the case of a single transition without condition, we don't make an
+--  « if » statement, instead we map the actions and then we update the
+--  current_state with the destination state of the transition.
+
+      N := Message_Comment
+        ("1) For all transitions that have the initial"
+         & " state as a source state."
+         & " In the case of a single transition without condition,"
+         & " we don't make an 'if' statement,"
+         & " instead we map the actions and then we update the"
+         & " current_state with the destination state of the transition.");
+
+      CTU.Append_Node_To_List (N, WStatements);
+
+      Behav_Transition := BATN.First_Node (BATN.Transitions (BA));
+      Sub_Transition_List := BANu.New_List (BATN.K_List_Id, No_Location);
+
+      while Present (Behav_Transition) loop
+         Transition_Node := BATN.Transition (Behav_Transition);
+
+         if BATN.Kind (Transition_Node) =
+              BATN.K_Execution_Behavior_Transition
+         then
+            if BANu.Length (BATN.Sources (Transition_Node)) = 1 then
+               Source := BATN.First_Node (BATN.Sources (Transition_Node));
+
+               if Behavior_State_Kind'Val (Search_State_Kind (BA, Source))
+                 = BSK_Initial
+               then
+                  if not At_Least_One_Dest_State_Is_Execution then
+
+                     At_Least_One_Dest_State_Is_Execution :=
+                       Behavior_State_Kind'Val
+                         (Search_State_Kind
+                            (BA, BATN.Destination (Transition_Node)))
+                         = BSK_No_Kind;
+
+                  end if;
+
+                  if Present (BATN.Behavior_Condition (Transition_Node))
+                    and then BATN.Is_Otherwise
+                      (BATN.Condition
+                         (BATN.Behavior_Condition (Transition_Node)))
+                  then
+                     Otherwise_Transition_Node := Transition_Node;
+                  else
+                     BANu.Append_Node_To_List
+                       (Transition_Node, Sub_Transition_List);
+                  end if;
+               end if;
+            else
+               Display_Error
+                 ("Many sources states for a transition are not supported",
+               Fatal => True);
+            end if;
+         else
+            Display_Error
+              ("Mode Transition is not supported",
+               Fatal => True);
+         end if;
+
+         Behav_Transition := BATN.Next_Node (Behav_Transition);
+      end loop;
+
+      Map_C_A_List_Of_Transitions
+        (S, BA, Otherwise_Transition_Node, Sub_Transition_List,
+         WDeclarations, WStatements);
+
+--  /** 2) Now we examine __po_hi_producer_current_state if it is not a
+--    « complete » state, i.e. it is an « execution » state, then we
+--  should proceed transitions until reaching a « complete » state. **/
+--
+--  while (__po_hi_producer_current_state.kind == __po_hi_execution)
+--  {
+--  --  --  /** we make a « switch case » statement on all the
+--  « execution » states **/
+--  switch (__po_hi_producer_current_state.name)
+--  {
+--  --  --  case s1:
+--  /** go over all transitions that have « s1 » as source state.
+--  In the case of one transition without condition, we don't make an
+--  « if » statement, instead we map the actions and then we update the
+--  __po_hi_producer_current_state with the destination state of the
+--   transition. **/
+--
+--  if (tmp < 10)
+--  { /* actions */
+--    ......
+--  --  --    /* update the current state */
+--   __po_hi_producer_current_state = __po_hi_producer_states_array[2];
+--  }
+--  else if (tmp >= 12 && tmp < 16)
+--  { /* actions */
+--    .....
+--  --  --    /* update the current state */
+--  __po_hi_producer_current_state = __po_hi_producer_states_array[1];
+--  }
+--  /** There is a transition with « otherwise » condition, then we add
+--     « else » statement **/
+--  else
+--  { /* actions */
+--    ......
+--
+--  /* update the current state */
+--   __po_hi_producer_current_state = __po_hi_producer_states_array[3];
+--  }
+--  break;
+--
+--  case s2:
+--
+--  /** go over all transitions that have « s2 » as source state.
+--  In the case of one transition without condition, we don't make an
+--  « if » statement, instead we map the actions and the we update the
+--  __po_hi_producer_current_state with the destination state of the
+--   transition. Idem que « s1 » **/
+--
+--  /* actions */
+--   ....
+--
+--  /* update the current state */
+--  __po_hi_producer_current_state = __po_hi_producer_states_array[3];
+--
+--  break;
+--  --  --  default: // do nothing;
+--  break;
+--  }
+--     }
+--
+--  }
+--
+      if At_Least_One_Dest_State_Is_Execution then
+
+         N := Message_Comment
+           ("2) Now we examine current state"
+            & " if it is not a 'complete' state, i.e. it is an 'execution'"
+            & "  state, then we should proceed transitions until reaching"
+            & " a 'complete' state.");
+
+         CTU.Append_Node_To_List (N, WStatements);
+
+         Examine_Current_State_Until_Reaching_Complete_State
+           (S, BA, WDeclarations, WStatements);
+
+      end if;
+
+      N := Make_Function_Implementation
+        (Specification => N1,
+         Declarations  => WDeclarations,
+         Statements    => WStatements);
+
+      Append_Node_To_List (N, CTN.Declarations (Current_File));
+   end Make_BA_Initialization_Function;
+
+   ----------------------------------------------
+   -- Map_C_Implementation_of_BA_Body_Function --
+   ----------------------------------------------
+
+   procedure Map_C_Implementation_of_BA_Body_Function
+     (S            : Node_Id;
+      Declarations : List_Id;
+      Statements   : List_Id)
+   is
+      N  : Node_Id;
+      E  : constant Node_Id := AIN.Parent_Subcomponent (S);
+      Parameter_List : constant List_Id := New_List (CTN.K_List_Id);
+   begin
+
+      N :=
+        Make_Parameter_Specification
+          (Make_Defining_Identifier (PN (P_Self)),
+           Parameter_Type => RE (RE_Task_Id));
+      Append_Node_To_List (N, Parameter_List);
+
+      N := Make_Function_Specification
+        (Defining_Identifier => Make_Defining_Identifier
+           (Map_C_BA_Related_Function_Name (E, BA_Body => True)),
+         Parameters          => Parameter_List,
+         Return_Type         => New_Node (CTN.K_Void));
+
+      N := Make_Function_Implementation
+        (Specification => N,
+         Declarations  => Declarations,
+         Statements    => Statements);
+
+      Append_Node_To_List (N, CTN.Declarations (Current_File));
+
+   end Map_C_Implementation_of_BA_Body_Function;
+
+   ---------------------------
+   -- Make_BA_Body_Function --
+   ---------------------------
+
+   procedure Make_BA_Body_Function
+     (S            : Node_Id;
+      Declarations : List_Id;
+      Statements   : List_Id)
+   is
+      BA                         : Node_Id;
+      Behav_Transition           : Node_Id;
+      N                          : Node_Id;
+      Dispatch_Transition        : Node_Id := No_Node;
+      Transition_Node            : Node_Id;
+      E            : constant Node_Id := AIN.Parent_Subcomponent (S);
+   begin
+      --  void <<thread_name>>_ba_body
+      --      (__po_hi_task_id self)
+      --  {
+      --    base_types__integer tmp;
+      --    test__ba__backend__alpha_type tmp2;
+      --
+      --    /** 1) mapping actions of the transition having the
+      --    « on dispatch » condition **/
+      --
+      --    ...
+      --
+      --    /** 2) update the current state **/
+      --    __po_hi_producer_current_state = __po_hi_producer_states_array[1];
+      --
+      --    /** 3) Now we examine __po_hi_producer_current_state if
+      --    it is not a « complete » state, i.e. it is an « execution » state,
+      --    then we should proceed transitions until reaching
+      --    a « complete » state. **/
+      --
+
+      BA := Get_Behavior_Specification (S);
+
+      Map_C_Behavior_Variables (S, Declarations);
+
+      Behav_Transition := BATN.First_Node (BATN.Transitions (BA));
+
+      while Present (Behav_Transition) loop
+         Transition_Node := BATN.Transition (Behav_Transition);
+
+         if Present (Behavior_Condition (Transition_Node))
+           and then Present (BATN.Condition
+                             (Behavior_Condition (Transition_Node)))
+           and then
+             BATN.Kind (BATN.Condition (Behavior_Condition (Transition_Node)))
+           = BATN.K_Dispatch_Condition_Thread
+         then
+            Dispatch_Transition := Transition_Node;
+         end if;
+
+         exit when Present (Dispatch_Transition);
+
+         Behav_Transition := BATN.Next_Node (Behav_Transition);
+      end loop;
+
+      if Present (Dispatch_Transition) then
+         if Present (BATN.Behavior_Action_Block (Dispatch_Transition))
+           and then Present (BATN.Behav_Acts
+                             (BATN.Behavior_Action_Block
+                                (Dispatch_Transition)))
+         then
+            --  1) mapping actions of the transition having
+            --  the « on dispatch » condition
+
+            N := Message_Comment
+              ("1) Mapping actions of the transition having "
+               & " the 'on dispatch' condition.");
+
+            CTU.Append_Node_To_List (N, Statements);
+
+            Map_C_Behavior_Action_Block
+              (BATN.Behavior_Action_Block (Dispatch_Transition),
+               S, Declarations, Statements);
+         end if;
+
+         --  2) update the current state
+         Update_Current_State (E, BA, Dispatch_Transition, Statements);
+
+         --  3) Now we examine __po_hi_producer_current_state if
+         --  it is not a « complete » state, i.e. it is an « execution »
+         --  state,then we should proceed transitions until reaching
+         --  a « complete » state.
+         --
+         if Behavior_State_Kind'Val
+           (Search_State_Kind (BA, BATN.Destination (Dispatch_Transition)))
+           = BSK_No_Kind
+         then
+            N := Message_Comment
+              ("3) As the current state is execution state "
+               & " then we should proceed transitions until reaching"
+               & " a 'complete' state.");
+
+            CTU.Append_Node_To_List (N, Statements);
+            Examine_Current_State_Until_Reaching_Complete_State
+              (S, BA, Declarations, Statements);
+         end if;
+      end if;
+
+      Map_C_Implementation_of_BA_Body_Function (S, Declarations, Statements);
+
+   end Make_BA_Body_Function;
+
+   ----------------------------------------
+   -- Map_C_Many_Transitions_Of_A_Thread --
+   ----------------------------------------
+
+   procedure Map_C_Many_Transitions_Of_A_Thread
+     (S            : Node_Id;
+      Declarations : List_Id;
+      Statements   : List_Id)
+   is
+   begin
+
+      Map_BA_States_To_C_Types (S);
+
+      Make_States_Initialization_Function (S);
+
+      if Is_To_Make_Init_Sequence (S) then
+         Make_BA_Initialization_Function (S);
+      end if;
+
+      Make_BA_Body_Function (S, Declarations, Statements);
+
+   end Map_C_Many_Transitions_Of_A_Thread;
 
    ---------------------------------
    -- Map_C_Behavior_Action_Block --
@@ -512,7 +1987,9 @@ package body Ocarina.Backends.C_Common.BA is
       pragma Assert (BATN.Kind (Node) = BATN.K_Behavior_Action_Block);
    begin
 
-      Map_C_Behav_Acts (Node, S, Declarations, Statements);
+      if Present (BATN.Behav_Acts (Node)) then
+         Map_C_Behav_Acts (Node, S, Declarations, Statements);
+      end if;
 
       --  Behavior_Time (Node) is not yet supported
       --
