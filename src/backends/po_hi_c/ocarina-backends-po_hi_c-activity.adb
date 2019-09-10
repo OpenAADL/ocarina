@@ -43,6 +43,9 @@ with Ocarina.Backends.C_Common.Mapping;
 with Ocarina.Backends.PO_HI_C.Runtime;
 with Ocarina.Backends.C_Values;
 with Ocarina.Backends.Messages;
+with Ocarina.Backends.C_Common.BA;
+with Ocarina.ME_AADL_BA.BA_Tree.Nutils;
+with Ocarina.ME_AADL_BA.BA_Tree.Nodes;
 
 package body Ocarina.Backends.PO_HI_C.Activity is
 
@@ -56,12 +59,15 @@ package body Ocarina.Backends.PO_HI_C.Activity is
    use Ocarina.Backends.C_Common.Mapping;
    use Ocarina.Backends.PO_HI_C.Runtime;
    use Ocarina.Backends.Messages;
+   use Ocarina.Backends.C_Common.BA;
 
    package AAU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package AAN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package CTN renames Ocarina.Backends.C_Tree.Nodes;
    package CTU renames Ocarina.Backends.C_Tree.Nutils;
    package CV renames Ocarina.Backends.C_Values;
+   package BATN renames Ocarina.ME_AADL_BA.BA_Tree.Nodes;
+   package BANu renames Ocarina.ME_AADL_BA.BA_Tree.Nutils;
 
    Current_Device : Node_Id := No_Node;
 
@@ -363,8 +369,8 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          procedure Make_Wait_Event;
          procedure Make_Call_Sequence;
          procedure Make_Set_Out_Ports;
-         procedure Make_Send_Out_Ports;
-         procedure Make_Task_Blocking;
+         procedure Make_Send_Out_Ports (WStats : List_Id);
+         procedure Make_Task_Blocking (WStats : List_Id);
          procedure Make_Fetch_In_Ports;
          procedure Make_Wait_Offset;
          procedure Make_Thread_Compute_Entrypoint;
@@ -525,7 +531,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          -- Make_Task_Blocking --
          ------------------------
 
-         procedure Make_Task_Blocking is
+         procedure Make_Task_Blocking (WStats : List_Id) is
          begin
             --  Make the __po_hi_wait_for_next_period call
 
@@ -545,7 +551,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
               CTU.Make_Call_Profile
                 (RE (RE_Wait_For_Next_Period),
                  Call_Parameters);
-            Append_Node_To_List (N, WStatements);
+            Append_Node_To_List (N, WStats);
          end Make_Task_Blocking;
 
          ------------------------
@@ -710,13 +716,14 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          -- Make_Send_Out_Ports --
          -------------------------
 
-         procedure Make_Send_Out_Ports is
+         procedure Make_Send_Out_Ports (WStats : List_Id) is
             N                     : Node_Id;
             F                     : Node_Id;
             Error_Already_Defined : Boolean := False;
+            Decl                  : Node_Id;
          begin
             N := Message_Comment ("Send the OUT ports");
-            Append_Node_To_List (N, WStatements);
+            Append_Node_To_List (N, WStats);
 
             F := First_Node (Features (E));
 
@@ -756,14 +763,33 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                                          0,
                                          10)))),
                            Statements => Make_List_Id (N)),
-                        WStatements);
+                        WStats);
                   else
                      N :=
                        Make_Assignment_Statement
                          (Variable_Identifier =>
                             Make_Defining_Identifier (VN (V_Error)),
                           Expression => N);
-                     Append_Node_To_List (N, WStatements);
+                     Append_Node_To_List (N, WStats);
+
+                     declare
+                        use Ocarina.Backends.C_Tree.Nodes;
+                     begin
+                        Decl := CTN.First_Node (Declarations);
+                        while Present (Decl) loop
+
+                           if CTN.Kind (Decl) = CTN.K_Variable_Declaration
+                             and then
+                               Get_Name_String
+                                 (CTN.Name (CTN.Defining_Identifier (Decl)))
+                             = Get_Name_String (VN (V_Error))
+                           then
+                              Error_Already_Defined := True;
+                           end if;
+                           exit when Error_Already_Defined;
+                           Decl := CTN.Next_Node (Decl);
+                        end loop;
+                     end;
 
                      if not Error_Already_Defined then
                         N :=
@@ -807,7 +833,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                                      Op_Not_Equal,
                                      RE (RE_SUCCESS)),
                                 Statements => Then_Statements);
-                           Append_Node_To_List (N, WStatements);
+                           Append_Node_To_List (N, WStats);
                         end if;
                      end;
 
@@ -1141,10 +1167,8 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                  Parameter_Type => RE (RE_Task_Id));
             Append_Node_To_List (N, Parameter_List);
 
-            Set_Str_To_Name_Buffer ("");
-            Get_Name_String (Name (Identifier (E)));
-            Add_Str_To_Name_Buffer ("_ba_body");
-            Def_Idt := Make_Defining_Identifier (Name_Find);
+            Def_Idt := Make_Defining_Identifier
+              (Map_C_BA_Related_Function_Name (S, BA_Body => True));
 
             if P = Thread_Sporadic then
 
@@ -1327,7 +1351,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                --  Send OUT ports
 
                if Has_Out_Ports (E) then
-                  Make_Send_Out_Ports;
+                  Make_Send_Out_Ports (WStatements);
                end if;
 
             when Thread_With_Compute_Entrypoint =>
@@ -1344,7 +1368,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                --  OUT ports.
 
                if Has_Out_Ports (E) then
-                  Make_Send_Out_Ports;
+                  Make_Send_Out_Ports (WStatements);
                end if;
 
             when Thread_With_Port_Compute_Entrypoint =>
@@ -1361,13 +1385,56 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                --  ports.
 
                if Has_Out_Ports (E) then
-                  Make_Send_Out_Ports;
+                  Make_Send_Out_Ports (WStatements);
                end if;
 
             when Thread_With_Behavior_Specification =>
+
+               --  For a periodic thread, when its BA has more than one
+               --  state, we call the <<thread_name>>_states_initialization
+               --  /** Initialize states; this function is called
+               --   when the BA of the thread has more than one state **/
+               --
+               --  producer_th_states_initialization ();
+               if P = Thread_Periodic then
+                  declare
+                     BA : Node_Id;
+                  begin
+                     BA := Get_Behavior_Specification (E);
+                     if BANu.Length (BATN.States (BA)) > 1 then
+                        N :=
+                          Make_Doxygen_C_Comment
+                            ("Initialize states",
+                             Has_Header_Spaces => False);
+                        Append_Node_To_List (N, Statements);
+
+                        --  Call <<thread_name>>_states_initialization
+
+                        N := CTU.Make_Call_Profile
+                          (Defining_Identifier => Make_Defining_Identifier
+                             (Map_C_BA_Related_Function_Name
+                                  (S, States_Initialization => True)),
+                           Parameters          =>  No_List);
+                        Append_Node_To_List (N, Statements);
+
+                        N :=
+                          Make_Extern_Entity_Declaration
+                            (Make_Function_Specification
+                               (Defining_Identifier => Make_Defining_Identifier
+                             (Map_C_BA_Related_Function_Name
+                                  (S, States_Initialization => True)),
+                                Parameters          => No_List,
+                                Return_Type         => New_Node (CTN.K_Void)));
+
+                        Append_Node_To_List (N,
+                                             CTN.Declarations (Current_File));
+                     end if;
+                  end;
+               end if;
+
                Make_Thread_Behavior_Specification;
                if Has_Out_Ports (E) then
-                  Make_Send_Out_Ports;
+                  Make_Send_Out_Ports (WStatements);
                end if;
 
             when others =>
@@ -1379,7 +1446,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          --  thread.
 
          if P = Thread_Periodic or else P = Thread_Sporadic then
-            Make_Task_Blocking;
+            Make_Task_Blocking (WStatements);
          end if;
 
          --  If an activate entrypoint has been specified for the
@@ -1462,6 +1529,65 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                 (RE (RE_Wait_For_Next_Period),
                  Call_Parameters);
             Append_Node_To_List (N, Statements);
+
+            if Impl_Kind = Thread_With_Behavior_Specification then
+               declare
+                  BA             : Node_Id;
+                  Parameter_List : constant List_Id :=
+                       New_List (CTN.K_List_Id);
+               begin
+                  BA := Get_Behavior_Specification (E);
+                  if BANu.Length (BATN.States (BA)) > 1 then
+
+                     if Is_To_Make_Init_Sequence (E) then
+                        --  Call the function implementing the initialization
+                        --  sequence this is in the case when initial state
+                        --  is neither complete nor final
+
+                        N :=
+                          Make_Doxygen_C_Comment
+                            ("Call the function implementing the "
+                             & "initialization sequence this is in the case "
+                             & "when initial state is neither complete "
+                             & "nor final",
+                             Has_Header_Spaces => False);
+                        Append_Node_To_List (N, Statements);
+
+                        N := CTU.Make_Call_Profile
+                          (Defining_Identifier => Make_Defining_Identifier
+                             (Map_C_BA_Related_Function_Name
+                                  (S, BA_Initialization => True)),
+                           Parameters          =>  Call_Parameters);
+                        Append_Node_To_List (N, Statements);
+
+                        N :=
+                          Make_Parameter_Specification
+                            (Make_Defining_Identifier (PN (P_Self)),
+                             Parameter_Type => RE (RE_Task_Id));
+                        Append_Node_To_List (N, Parameter_List);
+
+                        N :=
+                          Make_Extern_Entity_Declaration
+                            (Make_Function_Specification
+                               (Defining_Identifier => Make_Defining_Identifier
+                             (Map_C_BA_Related_Function_Name
+                                  (S, BA_Initialization => True)),
+                                Parameters          => Parameter_List,
+                                Return_Type         => New_Node (CTN.K_Void)));
+
+                        Append_Node_To_List (N,
+                                             CTN.Declarations (Current_File));
+
+                        if Has_Out_Ports (E) then
+                           Make_Send_Out_Ports (Statements);
+                        end if;
+
+                        Make_Task_Blocking (Statements);
+
+                     end if;
+                  end if;
+               end;
+            end if;
          end if;
 
          if P /= Thread_Background then
