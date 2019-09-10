@@ -41,7 +41,6 @@ with Ocarina.Backends.C_Tree.Nodes;
 with Ocarina.Backends.C_Common.Mapping;
 with Ocarina.Backends.PO_HI_C.Runtime;
 with Ocarina.Backends.C_Common.BA;
-with Ocarina.Namet;
 
 package body Ocarina.Backends.C_Common.Subprograms is
 
@@ -53,7 +52,6 @@ package body Ocarina.Backends.C_Common.Subprograms is
    use Ocarina.Backends.C_Tree.Nutils;
    use Ocarina.Backends.C_Common.Mapping;
    use Ocarina.Backends.C_Common.BA;
-   use Ocarina.Namet;
    use Ocarina.Backends.PO_HI_C.Runtime;
 
    package PHCR renames Ocarina.Backends.PO_HI_C.Runtime;
@@ -588,6 +586,7 @@ package body Ocarina.Backends.C_Common.Subprograms is
          N        : Node_Id;
          Def_Idt  : Node_Id;
          Parameter_List : constant List_Id := New_List (CTN.K_List_Id);
+         S        : constant Node_Id := Parent_Subcomponent (E);
       begin
          if Has_In_Ports (E) then
             Feature := First_Node (Features (E));
@@ -631,11 +630,8 @@ package body Ocarina.Backends.C_Common.Subprograms is
 
          if Has_Behavior_Specification (E) then
 
-            Set_Str_To_Name_Buffer ("");
-
-            Get_Name_String (Name (Identifier (E)));
-            Add_Str_To_Name_Buffer ("_ba_body");
-            Def_Idt := Make_Defining_Identifier (Name_Find);
+            Def_Idt := Make_Defining_Identifier
+              (Map_C_BA_Related_Function_Name (S, BA_Body => True));
 
             N :=
               Make_Parameter_Specification
@@ -1192,9 +1188,6 @@ package body Ocarina.Backends.C_Common.Subprograms is
          Call_Seq : Node_Id;
          Spg_Call : Node_Id;
          Feature  : Node_Id;
-         N        : Node_Id;
-         Def_Idt  : Node_Id;
-         Parameter_List : constant List_Id := New_List (CTN.K_List_Id);
          Declarations   : constant List_Id :=
            New_List (CTN.K_Declaration_List);
          Statements : constant List_Id := New_List (CTN.K_Statement_List);
@@ -1241,32 +1234,8 @@ package body Ocarina.Backends.C_Common.Subprograms is
 
          if Has_Behavior_Specification (E) then
 
-            Set_Str_To_Name_Buffer ("");
+            Map_C_Behavior_Transitions (E, Declarations, Statements);
 
-            Get_Name_String (Name (Identifier (E)));
-            Add_Str_To_Name_Buffer ("_ba_body");
-            Def_Idt := Make_Defining_Identifier (Name_Find);
-
-            N :=
-              Make_Parameter_Specification
-                (Make_Defining_Identifier (PN (P_Self)),
-                 Parameter_Type => RE (RE_Task_Id));
-            Append_Node_To_List (N, Parameter_List);
-
-            N := Make_Function_Specification
-              (Defining_Identifier => Def_Idt,
-               Parameters          => Parameter_List,
-               Return_Type         => New_Node (CTN.K_Void));
-
-            Map_C_Behavior_Variables (E, Declarations);
-            Map_C_Behavior_Actions (E, Declarations, Statements);
-
-            N := Make_Function_Implementation
-              (Specification => N,
-               Declarations  => Declarations,
-               Statements    => Statements);
-
-            Append_Node_To_List (N, CTN.Declarations (Current_File));
          end if;
 
       end Visit_Thread_Instance;
