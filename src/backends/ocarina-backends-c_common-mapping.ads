@@ -77,8 +77,9 @@ package Ocarina.Backends.C_Common.Mapping is
       Port_Type     : Boolean := False;
       Local_Port    : Boolean := False) return Name_Id;
    function Map_C_Define_Name
-     (E        : Node_Id;
-      Nb_Ports : Boolean := False) return Name_Id;
+     (E         : Node_Id;
+      Nb_Ports  : Boolean := False;
+      Nb_States : Boolean := False) return Name_Id;
    function Map_C_Full_Parameter_Name
      (Spg    : Node_Id;
       P      : Node_Id;
@@ -143,7 +144,17 @@ package Ocarina.Backends.C_Common.Mapping is
       Port_Destinations : Boolean := False;
       Port_Total_Fifo   : Boolean := False;
       Port_Request      : Boolean := False;
-      Request_Variable  : Boolean := False) return Name_Id;
+      Request_Variable  : Boolean := False;
+      State_Name_T      : Boolean := False;
+      State_T           : Boolean := False;
+      States_Array      : Boolean := False;
+      Current_State     : Boolean := False) return Name_Id;
+
+   function Map_C_BA_Related_Function_Name
+     (E                     : Node_Id;
+      BA_Body               : Boolean := False;
+      States_Initialization : Boolean := False;
+      BA_Initialization     : Boolean := False) return Name_Id;
 
    function Map_Port_Data_With_Virtual_Bus
      (E                    : Node_Id;
