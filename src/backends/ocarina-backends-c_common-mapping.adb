@@ -1032,8 +1032,9 @@ package body Ocarina.Backends.C_Common.Mapping is
    -----------------------
 
    function Map_C_Define_Name
-     (E        : Node_Id;
-      Nb_Ports : Boolean := False) return Name_Id
+     (E         : Node_Id;
+      Nb_Ports  : Boolean := False;
+      Nb_States : Boolean := False) return Name_Id
    is
       C_Name : Name_Id;
    begin
@@ -1048,6 +1049,8 @@ package body Ocarina.Backends.C_Common.Mapping is
          Get_Name_String_And_Append (C_Name);
          if Nb_Ports then
             Add_Str_To_Name_Buffer ("_NB_PORTS");
+         elsif Nb_States then
+            Add_Str_To_Name_Buffer ("_nb_states");
          end if;
       else
          raise Program_Error with "Wrong node kind for Map_C_Enumerator_Name";
@@ -1080,7 +1083,11 @@ package body Ocarina.Backends.C_Common.Mapping is
       Port_Destinations : Boolean := False;
       Port_Total_Fifo   : Boolean := False;
       Port_Request      : Boolean := False;
-      Request_Variable  : Boolean := False) return Name_Id
+      Request_Variable  : Boolean := False;
+      State_Name_T      : Boolean := False;
+      State_T           : Boolean := False;
+      States_Array      : Boolean := False;
+      Current_State     : Boolean := False) return Name_Id
    is
       C_Name : Name_Id;
    begin
@@ -1134,12 +1141,50 @@ package body Ocarina.Backends.C_Common.Mapping is
          Add_Str_To_Name_Buffer ("_request");
       elsif Request_Variable then
          Add_Str_To_Name_Buffer ("_request_var");
+      elsif State_Name_T then
+         Add_Str_To_Name_Buffer ("_state_name_t");
+      elsif State_T then
+         Add_Str_To_Name_Buffer ("_state_t");
+      elsif States_Array then
+         Add_Str_To_Name_Buffer ("_states_array");
+      elsif Current_State then
+         Add_Str_To_Name_Buffer ("_current_state");
       end if;
 
       C_Name := Name_Find;
 
       return C_Name;
    end Map_C_Variable_Name;
+
+   ------------------------------------
+   -- Map_C_BA_Related_Function_Name --
+   ------------------------------------
+
+   function Map_C_BA_Related_Function_Name
+     (E                     : Node_Id;
+      BA_Body               : Boolean := False;
+      States_Initialization : Boolean := False;
+      BA_Initialization     : Boolean := False) return Name_Id
+   is
+      C_Name : Name_Id;
+   begin
+
+      C_Name := To_C_Name (Display_Name (Identifier (E)));
+
+      Get_Name_String (C_Name);
+
+      if BA_Body then
+         Add_Str_To_Name_Buffer ("_ba_body");
+      elsif States_Initialization then
+         Add_Str_To_Name_Buffer ("_states_initialization");
+      elsif BA_Initialization then
+         Add_Str_To_Name_Buffer ("_ba_initialization");
+      end if;
+
+      C_Name := Name_Find;
+
+      return C_Name;
+   end Map_C_BA_Related_Function_Name;
 
    --------------------------
    -- Map_C_Operation_Name --
@@ -2930,10 +2975,9 @@ package body Ocarina.Backends.C_Common.Mapping is
             --  condition with a Behavior_Action_Block.
             --  Thus, we need to map the Behavior_Action_Block
             --  To C-statements in the generated C-subprogram
-            --  Map_C_Behavior_Variables (S,Declarations);
 
             CCBA.Map_C_Behavior_Variables (S, Declarations);
-            CCBA.Map_C_Behavior_Actions (S, Declarations, Statements);
+            CCBA.Map_C_Behavior_Transitions (S, Declarations, Statements);
 
             return CTU.Make_Function_Implementation
                 (Spec,
