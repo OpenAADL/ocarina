@@ -879,6 +879,17 @@ package body Ocarina.Analyzer.AADL_BA is
                DE ("Subprogram components must not contain" &
                      " a dispatch condition in any of its transitions");
                Success := False;
+            elsif Kind (Cond_Node) = K_Execute_Condition then
+               if Present (BATN.Value_Expression (Cond_Node)) then
+                  Success := Success and then
+                    Analyze_BA_Value_Expression
+                      (Node              => Value_Expression (Cond_Node),
+                       Root              => Root,
+                       BA_Root           => BA_Root,
+                       Parent_Component  => Parent_Component,
+                       Is_Parameter_Expr => False,
+                       Is_Out_Parameter  => False);
+               end if;
             end if;
          end if;
       end if;
