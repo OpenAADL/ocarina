@@ -260,7 +260,17 @@ package Ocarina.Backends.PO_HI_C.Runtime is
 
       RE_Local_Port,                     --  LOCAL_PORT
       RE_PORT_VARIABLE,                  --  PORT_VARIABLE
-      RE_REQUEST_PORT                    --  REQUEST_PORT
+      RE_REQUEST_PORT,                   --  REQUEST_PORT
+
+      RE_Initial,                        --  __po_hi_initial
+      RE_Initial_Complete,               --  __po_hi_initial_complete
+      RE_Initial_Complete_Final,         --  __po_hi_initial_complete_final
+      RE_Initial_Final,                  --  __po_hi_initial_final
+      RE_Complete,                       --  __po_hi_complete
+      RE_Complete_Final,                 --  __po_hi_complete_final
+      RE_Final,                          --  __po_hi_final
+      RE_Execution,                      --  __po_hi_execution
+      RE_State_Kind_T                    --  __po_hi_state_kind_t
       );
 
    --  Runtime types
@@ -270,6 +280,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
    subtype RF_Id is RE_Id range RE_Null .. RE_Wait_For_Tasks;
    subtype RV_Id is RE_Id range RE_Operation_Names .. RE_Port_Global_To_Local;
    subtype RM_Id is RE_Id range RE_Local_Port .. RE_REQUEST_PORT;
+   subtype RB_Id is RE_Id range RE_Initial .. RE_State_Kind_T;
 
    RE_Header_Table : constant array (RE_Id) of RH_Id :=
      (RE_Null => RH_Null,
@@ -479,7 +490,17 @@ package Ocarina.Backends.PO_HI_C.Runtime is
 
       RE_Local_Port                   => RH_AADL,
       RE_PORT_VARIABLE                => RH_AADL,
-      RE_REQUEST_PORT                 => RH_AADL
+      RE_REQUEST_PORT                 => RH_AADL,
+
+      RE_Initial                      => RH_Null,
+      RE_Initial_Complete             => RH_Null,
+      RE_Initial_Complete_Final       => RH_Null,
+      RE_Initial_Final                => RH_Null,
+      RE_Complete                     => RH_Null,
+      RE_Complete_Final               => RH_Null,
+      RE_Final                        => RH_Null,
+      RE_Execution                    => RH_Null,
+      RE_State_Kind_T                 => RH_Null
       );
    procedure Initialize;
    procedure Reset;
