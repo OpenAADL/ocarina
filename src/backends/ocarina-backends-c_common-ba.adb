@@ -892,6 +892,7 @@ package body Ocarina.Backends.C_Common.BA is
       E                          : constant Node_Id :=
         AIN.Parent_Subcomponent (S);
       WStatements : constant List_Id := New_List (CTN.K_Statement_List);
+      Initial_State_Index        : Unsigned_Long_Long;
    begin
 
       BA := Get_Behavior_Specification (S);
@@ -977,8 +978,18 @@ package body Ocarina.Backends.C_Common.BA is
                        (State_Kind (State))),
                   WStatements);
 
-               State_Identifier := State_Identifier + 1;
+               if Behavior_State_Kind'Val (State_Kind (State)) = BSK_Initial
+                 or else Behavior_State_Kind'Val (State_Kind (State)) =
+                   BSK_Initial_Complete
+                   or else Behavior_State_Kind'Val (State_Kind (State)) =
+                     BSK_Initial_Final
+                   or else Behavior_State_Kind'Val (State_Kind (State)) =
+                       BSK_Initial_Complete_Final
+               then
+                  Initial_State_Index := State_Identifier;
+               end if;
 
+               State_Identifier := State_Identifier + 1;
                List_Node := BATN.Next_Node (List_Node);
             end loop;
          end if;
@@ -1002,7 +1013,7 @@ package body Ocarina.Backends.C_Common.BA is
                    Make_Defining_Identifier
                  (Map_C_Variable_Name (E, States_Array => True)),
                Array_Size => Make_Literal
-                 (CV.New_Int_Value (0, 0, 10)))),
+                 (CV.New_Int_Value (Initial_State_Index, 0, 10)))),
          WStatements);
 
       N := Make_Function_Implementation
@@ -1557,6 +1568,10 @@ package body Ocarina.Backends.C_Common.BA is
 
          State := BATN.Next_Node (State);
       end loop;
+
+      Append_Node_To_List
+        (Make_Switch_Alternative (No_List, No_List),
+         Switch_Alternatives);
 
       Set_Str_To_Name_Buffer ("name");
       Q := Name_Find;
