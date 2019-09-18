@@ -364,7 +364,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          Impl_Kind : constant Supported_Thread_Implementation :=
            Get_Thread_Implementation_Kind (E);
          Call_Parameters : List_Id;
-         N               : Node_Id;
+         N, N1           : Node_Id;
 
          procedure Make_Wait_Event;
          procedure Make_Call_Sequence;
@@ -1231,6 +1231,39 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          end case;
 
          Check_Thread_Consistency (E);
+
+         --  Visit the data subcomponents of the thread
+
+         if not AAU.Is_Empty (Subcomponents (E)) then
+            N1 := First_Node (Subcomponents (E));
+
+            while Present (N1) loop
+               if AAU.Is_Data (Corresponding_Instance (N1)) then
+
+                  N :=
+                    Make_Variable_Declaration
+                      (Map_C_Defining_Identifier (N1),
+                       Map_C_Data_Type_Designator
+                         (Corresponding_Instance (N1)));
+
+                  Append_Node_To_List (N, Declarations);
+
+               end if;
+               N1 := Next_Node (N1);
+            end loop;
+         end if;
+
+         if not AAU.Is_Empty (Subcomponents (E)) then
+            N1 := First_Node (Subcomponents (E));
+
+            while Present (N1) loop
+
+               if not AAU.Is_Data (Corresponding_Instance (N1)) then
+                  Visit (Corresponding_Instance (N1));
+               end if;
+               N1 := Next_Node (N1);
+            end loop;
+         end if;
 
          if Has_Ports (E) then
             --  Make the __po_hi_gqueue_init call
