@@ -212,7 +212,21 @@ package body Ocarina.Analyzer.AADL_BA is
       Parent_Component  : Node_Id)
       return Boolean;
 
+   function Check_Spg_Params
+     (Node              : Node_Id;
+      Root              : Node_Id;
+      BA_Root           : Node_Id;
+      Parent_Component  : Node_Id)
+      return Boolean;
+
    function Link_Output_Or_Internal_Port
+     (Node              : Node_Id;
+      Root              : Node_Id;
+      BA_Root           : Node_Id;
+      Parent_Component  : Node_Id)
+      return Boolean;
+
+   function Check_Send_Output_Param
      (Node              : Node_Id;
       Root              : Node_Id;
       BA_Root           : Node_Id;
@@ -329,6 +343,12 @@ package body Ocarina.Analyzer.AADL_BA is
       return Node_Id;
 
    function Find_Output_Port_Of_Parent_Component
+     (Node              : Node_Id;
+      Root              : Node_Id;
+      Parent_Component  : Node_Id)
+      return Node_Id;
+
+   function Find_Input_Port_Of_Parent_Component
      (Node              : Node_Id;
       Root              : Node_Id;
       Parent_Component  : Node_Id)
@@ -1789,6 +1809,16 @@ package body Ocarina.Analyzer.AADL_BA is
                       (BATN.Idt (BATN.Identifier (Node)))))) & ")"
                 & " does not point to"
                 & " a valid subprogram name or a port name.");
+         else
+            if Link_Spg (Node, Root, BA_Root, Parent_Component) then
+               Success := Check_Spg_Params
+                 (Node, Root, BA_Root, Parent_Component);
+            elsif Link_Output_Or_Internal_Port
+              (Node, Root, BA_Root, Parent_Component)
+            then
+               Success := Check_Send_Output_Param
+                 (Node, Root, BA_Root, Parent_Component);
+            end if;
          end if;
 
       end if;
@@ -1925,6 +1955,68 @@ package body Ocarina.Analyzer.AADL_BA is
       return Success;
    end Link_Output_Or_Internal_Port;
 
+   -----------------------------
+   -- Check_Send_Output_Param --
+   -----------------------------
+
+   function Check_Send_Output_Param
+     (Node              : Node_Id;
+      Root              : Node_Id;
+      BA_Root           : Node_Id;
+      Parent_Component  : Node_Id)
+      return Boolean
+   is
+      use ATN;
+      pragma Assert (ATN.Kind (Root) = ATN.K_AADL_Specification);
+      pragma Assert (BATN.Kind (BA_Root) = BATN.K_Behavior_Annex);
+      pragma Assert (ATN.Kind (Parent_Component) = ATN.K_Component_Type
+                     or else Kind (Parent_Component) =
+                       ATN.K_Component_Implementation);
+      pragma Assert (Kind (BATN.Identifier (Node)) = BATN.K_Name);
+
+      Success : Boolean := False;
+      N       : Node_Id;
+   begin
+
+      if Length (Subprogram_Parameter_List (Node)) > 1 then
+         Success := False;
+         Error_Loc (1) := BATN.Loc (BATN.First_Node
+                                    (BATN.Idt (BATN.Identifier (Node))));
+         Error_Name (1) := BATN.Display_Name
+           (BATN.First_Node
+              (BATN.Idt (BATN.Identifier (Node))));
+         DE ("This communication action is INVALID : as"
+             & " (" & Get_Name_String (Remove_Prefix_From_Name
+               ("%ba%", BATN.Display_Name
+                  (BATN.First_Node
+                     (BATN.Idt (BATN.Identifier (Node)))))) & ")"
+             & " is an output port then the parameters number"
+             & " of this communication action must be zero or one at most.");
+
+      elsif Length (Subprogram_Parameter_List (Node)) <= 1 then
+         Success := True;
+         if Length (Subprogram_Parameter_List (Node)) = 1 then
+
+            --  Now we must verify the parameter given to put_value in
+            --  the output port is also a port
+            --  example : p!(p1)
+            --
+            N := BATN.First_Node (Subprogram_Parameter_List (Node));
+
+            Success := Analyze_BA_Value_Expression
+                    (Node              => Parameter (N),
+                     Root              => Root,
+                     BA_Root           => BA_Root,
+                     Parent_Component  => Parent_Component,
+                     Is_Parameter_Expr => False,
+                     Is_Out_Parameter  => False);
+
+         end if;
+      end if;
+
+      return Success;
+   end Check_Send_Output_Param;
+
    --------------
    -- Link_Spg --
    --------------
@@ -1945,9 +2037,8 @@ package body Ocarina.Analyzer.AADL_BA is
                        ATN.K_Component_Implementation);
 
       Success                  : Boolean := False;
-      N1, N2                   : Node_Id;
+      N1                   : Node_Id;
       L1                       : Node_List;
-      Spg_params               : List_Id;
       F                        : Node_Id;
       Type_Of_Parent_Component : Node_Id := No_Node;
    begin
@@ -2027,118 +2118,146 @@ package body Ocarina.Analyzer.AADL_BA is
          N1 := ATN.Next_Entity (N1);
       end loop;
 
-      if Success then
-         --  The identifier of the communication action
-         --  is a valid subprogram_name
-
-         --  Now we must verify the parameter list
-         --  2) we check the consistency of the number
-         --  of parameters
-         --
-         Spg_params := ATN.Features
-           (BATN.Corresponding_Entity
-              (BATN.First_Node
-                   (BATN.Idt (BATN.Identifier (Node)))));
-
-         if ANU.Length (Spg_params) /=
-           Length (Subprogram_Parameter_List (Node))
-         then
-
-            Success := False;
-            Error_Loc (1) := BATN.Loc (BATN.First_Node
-                                       (BATN.Idt (BATN.Identifier (Node))));
-            Error_Name (1) := BATN.Display_Name
-              (BATN.First_Node
-                 (BATN.Idt (BATN.Identifier (Node))));
-            DE ("The number of parameters in the Subprogram "
-                & "(" & Get_Name_String (Remove_Prefix_From_Name
-                  ("%ba%", BATN.Display_Name
-                     (BATN.First_Node
-                        (BATN.Idt (BATN.Identifier (Node)))))) & ")"
-                & " called in the BA is not consistent with"
-                & " the parameter number in its declaration"
-                & " in the AADL model at "
-                & Locations.Image (ATN.Loc (N1)) & ".");
-         end if;
-
-         --  The called Subprogram name and the number
-         --  of parameters are valid
-         --  3) Check the given parameters :
-         --
-         if Success and then
-           not Is_Empty (Subprogram_Parameter_List (Node))
-         then
-
-            N1 := BATN.First_Node (Subprogram_Parameter_List (Node));
-            N2 := ATN.First_Node (Spg_params);
-
-            while Success and then Present (N2)
-              and then Present (N1) loop
-
-               if ATN.Kind (N2) = ATN.K_Parameter then
-
-                  if ATN.Is_Out (N2) then
-
-                     --  i.e. N2 is OUT or INOUT parameter
-                     --  in this case the value_expression of N1
-                     --  should be either a variable of the current BA
-                     --  or an OUT/INOUT parameter of the subprogram
-                     --  Parent_Component.
-                     --  If the analyze of the expression value of N1
-                     --  gives that it is a BA variable or a OUT/INOUT
-                     --  parameter of the subprogram Parent_Component
-                     --  then we check the type of the parameter
-                     --  See function Analyze_Value
-                     --
-                     Success := Analyze_BA_Value_Expression
-                       (Node              => Parameter (N1),
-                        Root              => Root,
-                        BA_Root           => BA_Root,
-                        Parent_Component  => Parent_Component,
-                        Is_Parameter_Expr => True,
-                        Is_Out_Parameter  => True,
-                        Parameter_Type    => ATN.Full_Identifier
-                          (ATN.Entity_Ref (N2)));
-
-                     BATN.Set_Is_Out (N1, True);
-
-                     if ATN.Is_In (N2) then
-                        BATN.Set_Is_In (N1, True);
-                     else
-                        BATN.Set_Is_In (N1, False);
-                     end if;
-
-                  else
-
-                     --  In the case of a NON OUT parameter
-                     --  The parameter should be any valid expression
-                     --
-                     Success := Analyze_BA_Value_Expression
-                       (Node              => Parameter (N1),
-                        Root              => Root,
-                        BA_Root           => BA_Root,
-                        Parent_Component  => Parent_Component,
-                        Is_Parameter_Expr => True,
-                        Is_Out_Parameter  => False);
-
-                     BATN.Set_Is_Out (N1, False);
-                     BATN.Set_Is_In (N1, True);
-
-                  end if;
-               end if;
-
-               N1 := BATN.Next_Node (N1);
-               N2 := ATN.Next_Node (N2);
-            end loop;
-
-         end if;
-
-      end if;
-
       BATN.Set_Is_Subprogram_Call (Node, Success);
 
       return Success;
    end Link_Spg;
+
+   ----------------------
+   -- Check_Spg_Params --
+   ----------------------
+
+   function Check_Spg_Params
+     (Node              : Node_Id;
+      Root              : Node_Id;
+      BA_Root           : Node_Id;
+      Parent_Component  : Node_Id)
+      return Boolean
+   is
+
+      use ATN;
+      pragma Assert (ATN.Kind (Root) = ATN.K_AADL_Specification);
+      pragma Assert (BATN.Kind (BA_Root) = BATN.K_Behavior_Annex);
+      pragma Assert (ATN.Kind (Parent_Component) = ATN.K_Component_Type
+                     or else Kind (Parent_Component) =
+                       ATN.K_Component_Implementation);
+
+      Success                  : Boolean := True;
+      N1, N2                   : Node_Id;
+      Spg_params               : List_Id;
+   begin
+
+      N1 := BATN.Corresponding_Entity
+        (BATN.First_Node
+           (BATN.Idt (BATN.Identifier (Node))));
+
+      --  The identifier of the communication action
+      --  is a valid subprogram_name
+
+      --  Now we must verify the parameter list
+      --  2) we check the consistency of the number
+      --  of parameters
+      --
+      Spg_params := ATN.Features
+        (BATN.Corresponding_Entity
+           (BATN.First_Node
+                (BATN.Idt (BATN.Identifier (Node)))));
+
+      if ANU.Length (Spg_params) /=
+        Length (Subprogram_Parameter_List (Node))
+      then
+
+         Success := False;
+         Error_Loc (1) := BATN.Loc (BATN.First_Node
+                                    (BATN.Idt (BATN.Identifier (Node))));
+         Error_Name (1) := BATN.Display_Name
+           (BATN.First_Node
+              (BATN.Idt (BATN.Identifier (Node))));
+         DE ("The number of parameters in the Subprogram "
+             & "(" & Get_Name_String (Remove_Prefix_From_Name
+               ("%ba%", BATN.Display_Name
+                  (BATN.First_Node
+                     (BATN.Idt (BATN.Identifier (Node)))))) & ")"
+             & " called in the BA is not consistent with"
+             & " the parameter number in its declaration"
+             & " in the AADL model at "
+             & Locations.Image (ATN.Loc (N1)) & ".");
+      end if;
+
+      --  The called Subprogram name and the number
+      --  of parameters are valid
+      --  3) Check the given parameters :
+      --
+      if Success and then
+        not Is_Empty (Subprogram_Parameter_List (Node))
+      then
+
+         N1 := BATN.First_Node (Subprogram_Parameter_List (Node));
+         N2 := ATN.First_Node (Spg_params);
+
+         while Success and then Present (N2)
+           and then Present (N1) loop
+
+            if ATN.Kind (N2) = ATN.K_Parameter then
+
+               if ATN.Is_Out (N2) then
+
+                  --  i.e. N2 is OUT or INOUT parameter
+                  --  in this case the value_expression of N1
+                  --  should be either a variable of the current BA
+                  --  or an OUT/INOUT parameter of the subprogram
+                  --  Parent_Component.
+                  --  If the analyze of the expression value of N1
+                  --  gives that it is a BA variable or a OUT/INOUT
+                  --  parameter of the subprogram Parent_Component
+                  --  then we check the type of the parameter
+                  --  See function Analyze_Value
+                  --
+                  Success := Analyze_BA_Value_Expression
+                    (Node              => Parameter (N1),
+                     Root              => Root,
+                     BA_Root           => BA_Root,
+                     Parent_Component  => Parent_Component,
+                     Is_Parameter_Expr => True,
+                     Is_Out_Parameter  => True,
+                     Parameter_Type    => ATN.Full_Identifier
+                       (ATN.Entity_Ref (N2)));
+
+                  BATN.Set_Is_Out (N1, True);
+
+                  if ATN.Is_In (N2) then
+                     BATN.Set_Is_In (N1, True);
+                  else
+                     BATN.Set_Is_In (N1, False);
+                  end if;
+
+               else
+
+                  --  In the case of a NON OUT parameter
+                  --  The parameter should be any valid expression
+                  --
+                  Success := Analyze_BA_Value_Expression
+                    (Node              => Parameter (N1),
+                     Root              => Root,
+                     BA_Root           => BA_Root,
+                     Parent_Component  => Parent_Component,
+                     Is_Parameter_Expr => True,
+                     Is_Out_Parameter  => False);
+
+                  BATN.Set_Is_Out (N1, False);
+                  BATN.Set_Is_In (N1, True);
+
+               end if;
+            end if;
+
+            N1 := BATN.Next_Node (N1);
+            N2 := ATN.Next_Node (N2);
+         end loop;
+
+      end if;
+
+      return Success;
+   end Check_Spg_Params;
 
    ---------------------
    -- Link_Input_Port --
@@ -2753,7 +2872,11 @@ package body Ocarina.Analyzer.AADL_BA is
             then
                N := Find_Data_Port_Of_Parent_Component
                  (Ident, Root, Parent_Component);
-
+            elsif  Present (Find_Input_Port_Of_Parent_Component
+                            (Ident, Root, Parent_Component))
+            then
+               N := Find_Input_Port_Of_Parent_Component
+                 (Ident, Root, Parent_Component);
             end if;
 
             if Present (N) then
@@ -3162,6 +3285,64 @@ package body Ocarina.Analyzer.AADL_BA is
       return result;
 
    end Find_Output_Port_Of_Parent_Component;
+
+   -----------------------------------------
+   -- Find_Input_Port_Of_Parent_Component --
+   -----------------------------------------
+
+   function Find_Input_Port_Of_Parent_Component
+     (Node              : Node_Id;
+      Root              : Node_Id;
+      Parent_Component  : Node_Id)
+      return Node_Id
+   is
+      use ATN;
+      pragma Assert (ATN.Kind (Root) = ATN.K_AADL_Specification);
+      pragma Assert (ATN.Kind (Parent_Component) = ATN.K_Component_Type
+                     or else Kind (Parent_Component) =
+                       ATN.K_Component_Implementation);
+      pragma Assert (BATN.Kind (Node) = BATN.K_Identifier);
+
+      F                        : Node_Id;
+      Type_Of_Parent_Component : Node_Id := No_Node;
+      result                   : Node_Id := No_Node;
+
+   begin
+
+      if ATN.Kind (Parent_Component) = ATN.K_Component_Type then
+         Type_Of_Parent_Component := Parent_Component;
+      else
+         Type_Of_Parent_Component := Get_Component_Type_From_Impl
+           (Root, Parent_Component);
+      end if;
+
+      if not ANU.Is_Empty (ATN.Features (Type_Of_Parent_Component)) then
+
+         F := ATN.First_Node (ATN.Features (Type_Of_Parent_Component));
+
+         while Present (F) loop
+
+            if ATN.Kind (F) = K_Port_Spec
+              and then ATN.Is_In (F) and then
+              Get_Name_String
+                (Utils.To_Lower
+                   (Remove_Prefix_From_Name
+                      ("%ba%", BATN.Name (Node))))
+                = Get_Name_String
+              (Utils.To_Lower (ATN.Name (ATN.Identifier (F))))
+            then
+               result := F;
+            end if;
+
+            exit when result /= No_Node;
+
+            F := ATN.Next_Node (F);
+         end loop;
+      end if;
+
+      return result;
+
+   end Find_Input_Port_Of_Parent_Component;
 
    ----------------------------------------
    -- Find_and_Link_Event_Port_Of_Parent_Component --
