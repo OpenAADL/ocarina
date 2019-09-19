@@ -1300,11 +1300,25 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
               Value               => Nb_Entities_Node);
          Append_Node_To_List (N, CTN.Declarations (Current_File));
 
-         N :=
-           Make_Define_Statement
-             (Defining_Identifier => RE (RE_Nb_Ports),
-              Value               => Total_Ports_Node);
-         Append_Node_To_List (N, CTN.Declarations (Current_File));
+         --  If there are ports in the local process, we generate a
+         --  macro indicating the total number of ports in the
+         --  application, otherwise we generate a value of 0 to avoid
+         --  dragging the whole transport logic. This may happen in
+         --  corner cases when using external API for communication.
+
+         if Nb_Ports_In_Process > 0 then
+            N :=
+              Make_Define_Statement
+              (Defining_Identifier => RE (RE_Nb_Ports),
+               Value               => Total_Ports_Node);
+            Append_Node_To_List (N, CTN.Declarations (Current_File));
+         else
+            N :=
+              Make_Define_Statement
+              (Defining_Identifier => RE (RE_Nb_Ports),
+               Value               => Make_Literal (New_Int_Value (0, 1, 10)));
+            Append_Node_To_List (N, CTN.Declarations (Current_File));
+         end if;
 
          if not Is_Empty (Global_Port_List) then
             if not Invalid_Global_Port_Added then
