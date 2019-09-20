@@ -205,6 +205,13 @@ package body Ocarina.Analyzer.AADL_BA is
       Parent_Component  : Node_Id)
       return Boolean;
 
+   function Is_A_Required_Spg_Access_Of_the_Parent_Component
+     (Node              : Node_Id;
+      Root              : Node_Id;
+      BA_Root           : Node_Id;
+      Parent_Component  : Node_Id)
+      return Boolean;
+
    function Link_Spg
      (Node              : Node_Id;
       Root              : Node_Id;
@@ -1789,7 +1796,9 @@ package body Ocarina.Analyzer.AADL_BA is
 
       if Kind (BATN.Identifier (Node)) = BATN.K_Name then
 
-         Success := Link_Spg (Node, Root, BA_Root, Parent_Component)
+         Success := Is_A_Required_Spg_Access_Of_the_Parent_Component
+           (Node, Root, BA_Root, Parent_Component)
+           or else Link_Spg (Node, Root, BA_Root, Parent_Component)
            or else Link_Output_Or_Internal_Port
              (Node, Root, BA_Root, Parent_Component);
 
@@ -2017,11 +2026,11 @@ package body Ocarina.Analyzer.AADL_BA is
       return Success;
    end Check_Send_Output_Param;
 
-   --------------
-   -- Link_Spg --
-   --------------
+   ------------------------------------------------------
+   -- Is_A_Required_Spg_Access_Of_the_Parent_Component --
+   ------------------------------------------------------
 
-   function Link_Spg
+   function Is_A_Required_Spg_Access_Of_the_Parent_Component
      (Node              : Node_Id;
       Root              : Node_Id;
       BA_Root           : Node_Id;
@@ -2037,8 +2046,6 @@ package body Ocarina.Analyzer.AADL_BA is
                        ATN.K_Component_Implementation);
 
       Success                  : Boolean := False;
-      N1                   : Node_Id;
-      L1                       : Node_List;
       F                        : Node_Id;
       Type_Of_Parent_Component : Node_Id := No_Node;
    begin
@@ -2086,9 +2093,36 @@ package body Ocarina.Analyzer.AADL_BA is
          end loop;
       end if;
 
-      if Success then
-         return True;
-      end if;
+      return Success;
+
+   end Is_A_Required_Spg_Access_Of_the_Parent_Component;
+
+   --------------
+   -- Link_Spg --
+   --------------
+
+   function Link_Spg
+     (Node              : Node_Id;
+      Root              : Node_Id;
+      BA_Root           : Node_Id;
+      Parent_Component  : Node_Id)
+      return Boolean
+   is
+
+      use ATN;
+      pragma Assert (ATN.Kind (Root) = ATN.K_AADL_Specification);
+      pragma Assert (BATN.Kind (BA_Root) = BATN.K_Behavior_Annex);
+      pragma Assert (ATN.Kind (Parent_Component) = ATN.K_Component_Type
+                     or else Kind (Parent_Component) =
+                       ATN.K_Component_Implementation);
+
+      Success              : Boolean := False;
+      N1                   : Node_Id;
+      L1                   : Node_List;
+   begin
+      --  1) Check the called Subprogram Name : i.e.  It must refer to
+      --  a Subprogram declared in the AADL model or a required subprogram
+      --  subprogram access of the parent_component
 
       --  1.b) a Subprogram declared in the AADL model
 
@@ -2158,10 +2192,8 @@ package body Ocarina.Analyzer.AADL_BA is
       --  2) we check the consistency of the number
       --  of parameters
       --
-      Spg_params := ATN.Features
-        (BATN.Corresponding_Entity
-           (BATN.First_Node
-                (BATN.Idt (BATN.Identifier (Node)))));
+
+      Spg_params := ATN.Features (N1);
 
       if ANU.Length (Spg_params) /=
         Length (Subprogram_Parameter_List (Node))
