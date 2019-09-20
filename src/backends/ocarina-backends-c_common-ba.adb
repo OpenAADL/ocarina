@@ -594,14 +594,16 @@ package body Ocarina.Backends.C_Common.BA is
                   & "subprogram are not supported",
                   Fatal => True);
             elsif AINU.Is_Thread (S) then
-               if Get_Thread_Dispatch_Protocol (S) = Thread_Periodic then
+               if Get_Thread_Dispatch_Protocol (S) = Thread_Periodic or else
+                 Get_Thread_Dispatch_Protocol (S) = Thread_Sporadic
+               then
                   Map_C_Many_Transitions_Of_A_Thread
                     (S, Declarations, Statements);
                else
                   Display_Error
-                 ("The mapping of many transitions in the BA of a non-periodic"
-                  & "thread is not supported",
-                  Fatal => True);
+                    ("The mapping of many BA transitions is only "
+                     & " supported of periodic or sporadic threads",
+                     Fatal => True);
                end if;
             end if;
          end if;
@@ -1975,17 +1977,28 @@ package body Ocarina.Backends.C_Common.BA is
       Declarations : List_Id;
       Statements   : List_Id)
    is
+      N : Node_Id;
    begin
 
       Map_BA_States_To_C_Types (S);
 
       Make_States_Initialization_Function (S);
 
-      if Is_To_Make_Init_Sequence (S) then
-         Make_BA_Initialization_Function (S);
-      end if;
+      if Get_Thread_Dispatch_Protocol (S) = Thread_Periodic then
+         if Is_To_Make_Init_Sequence (S) then
+            Make_BA_Initialization_Function (S);
+         end if;
 
-      Make_BA_Body_Function (S, Declarations, Statements);
+         Make_BA_Body_Function (S, Declarations, Statements);
+
+      elsif Get_Thread_Dispatch_Protocol (S) = Thread_Sporadic then
+         N := Message_Comment
+           ("Mapping many transitions in BA of Sporadic thread.");
+
+         CTU.Append_Node_To_List (N, Statements);
+         Map_C_Implementation_of_BA_Body_Function
+           (S, Declarations, Statements);
+      end if;
 
    end Map_C_Many_Transitions_Of_A_Thread;
 
