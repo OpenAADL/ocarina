@@ -1144,7 +1144,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          ----------------------------------------
 
          procedure Make_Thread_Behavior_Specification is
-            N              : Node_Id;
+            N, N1          : Node_Id;
             Parameter_List : constant List_Id := New_List (CTN.K_List_Id);
             Def_Idt        : Node_Id;
          begin
@@ -1172,15 +1172,45 @@ package body Ocarina.Backends.PO_HI_C.Activity is
 
             if P = Thread_Sporadic then
 
-               Append_Node_To_List
-                 (Make_Defining_Identifier (VN (V_Port)),
-                  Call_Parameters);
+               N := Make_Variable_Address
+                 (Make_Defining_Identifier (VN (V_Port)));
+               Append_Node_To_List (N, Call_Parameters);
 
                N :=
                  Make_Parameter_Specification
                    (Make_Defining_Identifier (VN (V_Port)),
-                    Parameter_Type => RE (RE_Port_T));
+                    Parameter_Type => CTU.Make_Pointer_Type (RE (RE_Port_T)));
                Append_Node_To_List (N, Parameter_List);
+
+               --  add data subcomponents of the thread to the call_parameters
+               --  of the procedure <<thread_instance_name>>_ba_body
+
+               if not AAU.Is_Empty (Subcomponents (E)) then
+                  N1 := First_Node (Subcomponents (E));
+
+                  while Present (N1) loop
+                     if AAU.Is_Data (Corresponding_Instance (N1)) then
+
+                        N :=
+                          Make_Variable_Address
+                            (Map_C_Defining_Identifier (N1));
+
+                        Append_Node_To_List (N, Call_Parameters);
+
+                        N :=
+                          Make_Parameter_Specification
+                            (Map_C_Defining_Identifier (N1),
+                             Parameter_Type =>
+                               CTU.Make_Pointer_Type
+                                 (Map_C_Data_Type_Designator
+                                    (Corresponding_Instance (N1))));
+
+                        Append_Node_To_List (N, Parameter_List);
+
+                     end if;
+                     N1 := Next_Node (N1);
+                  end loop;
+               end if;
 
             end if;
 
@@ -1429,7 +1459,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                --   when the BA of the thread has more than one state **/
                --
                --  producer_th_states_initialization ();
-               if P = Thread_Periodic then
+               if P = Thread_Periodic or else P = Thread_Sporadic then
                   declare
                      BA : Node_Id;
                   begin
