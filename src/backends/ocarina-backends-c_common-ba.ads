@@ -46,4 +46,9 @@ package Ocarina.Backends.C_Common.BA is
 
    function Is_To_Make_Init_Sequence (S : Node_Id) return Boolean;
 
+   function Make_Specification_Of_BA_Related_Function
+     (S                  : Node_Id;
+      BA_Body            : Boolean := False;
+      BA_Initialization  : Boolean := False) return Node_Id;
+
 end Ocarina.Backends.C_Common.BA;

@@ -1701,9 +1701,14 @@ package body Ocarina.Analyzer.AADL_BA is
             then
                N := Find_Output_Port_Of_Parent_Component
                  (Target_Idt, Root, Parent_Component);
+            elsif Present (Find_Data_Subcomponent_Of_Parent_Component
+                           (Target_Idt, Root, Parent_Component))
+            then
+               N := Find_Data_Subcomponent_Of_Parent_Component
+                 (Target_Idt, Root, Parent_Component);
             end if;
 
-            if not No (N) then
+            if Present (N) then
                BATN.Set_Corresponding_Entity
                  (BATN.First_Node
                     (BATN.Idt (Node)), N);
@@ -2909,6 +2914,11 @@ package body Ocarina.Analyzer.AADL_BA is
             then
                N := Find_Input_Port_Of_Parent_Component
                  (Ident, Root, Parent_Component);
+            elsif Present (Find_Data_Subcomponent_Of_Parent_Component
+                           (Ident, Root, Parent_Component))
+            then
+               N := Find_Data_Subcomponent_Of_Parent_Component
+                 (Ident, Root, Parent_Component);
             end if;
 
             if Present (N) then
@@ -3634,6 +3644,11 @@ package body Ocarina.Analyzer.AADL_BA is
 
                         Success := False;
                      end if;
+                  end if;
+
+                  if Success then
+                     BATN.Set_Corresponding_Entity
+                       (Dispatch_Trigger_Event, Pointed_Node);
                   end if;
                else
                   Error_Loc (1) := BATN.Loc (Dispatch_Trigger_Event);

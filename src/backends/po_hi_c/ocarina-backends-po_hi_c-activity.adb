@@ -1145,8 +1145,6 @@ package body Ocarina.Backends.PO_HI_C.Activity is
 
          procedure Make_Thread_Behavior_Specification is
             N, N1          : Node_Id;
-            Parameter_List : constant List_Id := New_List (CTN.K_List_Id);
-            Def_Idt        : Node_Id;
          begin
 
             --  Add_Include (RH (RH_Subprograms));
@@ -1161,71 +1159,43 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             N := Make_Defining_Identifier (Map_C_Enumerator_Name (S));
             Append_Node_To_List (N, Call_Parameters);
 
-            N :=
-              Make_Parameter_Specification
-                (Make_Defining_Identifier (PN (P_Self)),
-                 Parameter_Type => RE (RE_Task_Id));
-            Append_Node_To_List (N, Parameter_List);
-
-            Def_Idt := Make_Defining_Identifier
-              (Map_C_BA_Related_Function_Name (S, BA_Body => True));
-
             if P = Thread_Sporadic then
 
                N := Make_Variable_Address
                  (Make_Defining_Identifier (VN (V_Port)));
                Append_Node_To_List (N, Call_Parameters);
 
-               N :=
-                 Make_Parameter_Specification
-                   (Make_Defining_Identifier (VN (V_Port)),
-                    Parameter_Type => CTU.Make_Pointer_Type (RE (RE_Port_T)));
-               Append_Node_To_List (N, Parameter_List);
+            end if;
+            --  add data subcomponents of the thread to the call_parameters
+            --  of the procedure <<thread_instance_name>>_ba_body
 
-               --  add data subcomponents of the thread to the call_parameters
-               --  of the procedure <<thread_instance_name>>_ba_body
+            if not AAU.Is_Empty (Subcomponents (E)) then
+               N1 := First_Node (Subcomponents (E));
 
-               if not AAU.Is_Empty (Subcomponents (E)) then
-                  N1 := First_Node (Subcomponents (E));
+               while Present (N1) loop
+                  if AAU.Is_Data (Corresponding_Instance (N1)) then
 
-                  while Present (N1) loop
-                     if AAU.Is_Data (Corresponding_Instance (N1)) then
+                     N :=
+                       Make_Variable_Address
+                         (Map_C_Defining_Identifier (N1));
 
-                        N :=
-                          Make_Variable_Address
-                            (Map_C_Defining_Identifier (N1));
+                     Append_Node_To_List (N, Call_Parameters);
 
-                        Append_Node_To_List (N, Call_Parameters);
-
-                        N :=
-                          Make_Parameter_Specification
-                            (Map_C_Defining_Identifier (N1),
-                             Parameter_Type =>
-                               CTU.Make_Pointer_Type
-                                 (Map_C_Data_Type_Designator
-                                    (Corresponding_Instance (N1))));
-
-                        Append_Node_To_List (N, Parameter_List);
-
-                     end if;
-                     N1 := Next_Node (N1);
-                  end loop;
-               end if;
-
+                  end if;
+                  N1 := Next_Node (N1);
+               end loop;
             end if;
 
-            N :=
-              Make_Extern_Entity_Declaration
-                (Make_Function_Specification
-                   (Defining_Identifier => Def_Idt,
-                    Parameters          => Parameter_List,
-                    Return_Type         => New_Node (CTN.K_Void)));
+            N := Make_Extern_Entity_Declaration
+              (Make_Specification_Of_BA_Related_Function
+                 (E, BA_Body => True));
 
             Append_Node_To_List (N, CTN.Declarations (Current_File));
 
             N :=
               Make_Call_Profile
-                (Defining_Identifier => Def_Idt,
+                (Defining_Identifier => Make_Defining_Identifier
+                   (Map_C_BA_Related_Function_Name (S, BA_Body => True)),
                  Parameters          => Call_Parameters);
 
             Append_Node_To_List (N, WStatements);
@@ -1565,7 +1535,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             Append_Node_To_List (N, Statements);
          end if;
 
-         if P = Thread_Periodic then
+         if P = Thread_Periodic or else P = Thread_Sporadic then
             --  For periodic threads, we force a first wait to ensure
             --  synchronized start after initialization. The runtime
             --  computes a specific epoch to ensure such start.
@@ -1595,9 +1565,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
 
             if Impl_Kind = Thread_With_Behavior_Specification then
                declare
-                  BA             : Node_Id;
-                  Parameter_List : constant List_Id :=
-                       New_List (CTN.K_List_Id);
+                  BA : Node_Id;
                begin
                   BA := Get_Behavior_Specification (E);
                   if BANu.Length (BATN.States (BA)) > 1 then
@@ -1624,19 +1592,9 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                         Append_Node_To_List (N, Statements);
 
                         N :=
-                          Make_Parameter_Specification
-                            (Make_Defining_Identifier (PN (P_Self)),
-                             Parameter_Type => RE (RE_Task_Id));
-                        Append_Node_To_List (N, Parameter_List);
-
-                        N :=
                           Make_Extern_Entity_Declaration
-                            (Make_Function_Specification
-                               (Defining_Identifier => Make_Defining_Identifier
-                             (Map_C_BA_Related_Function_Name
-                                  (S, BA_Initialization => True)),
-                                Parameters          => Parameter_List,
-                                Return_Type         => New_Node (CTN.K_Void)));
+                            (Make_Specification_Of_BA_Related_Function
+                               (E, BA_Initialization => True));
 
                         Append_Node_To_List (N,
                                              CTN.Declarations (Current_File));

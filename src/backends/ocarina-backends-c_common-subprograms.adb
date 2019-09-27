@@ -41,6 +41,8 @@ with Ocarina.Backends.C_Tree.Nodes;
 with Ocarina.Backends.C_Common.Mapping;
 with Ocarina.Backends.PO_HI_C.Runtime;
 with Ocarina.Backends.C_Common.BA;
+with Ocarina.ME_AADL_BA.BA_Tree.Nutils;
+with Ocarina.ME_AADL_BA.BA_Tree.Nodes;
 
 package body Ocarina.Backends.C_Common.Subprograms is
 
@@ -59,6 +61,8 @@ package body Ocarina.Backends.C_Common.Subprograms is
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package CTN renames Ocarina.Backends.C_Tree.Nodes;
+   package BANu renames Ocarina.ME_AADL_BA.BA_Tree.Nutils;
+   package BATN renames Ocarina.ME_AADL_BA.BA_Tree.Nodes;
 
    C_Root : Node_Id;
 
@@ -584,8 +588,6 @@ package body Ocarina.Backends.C_Common.Subprograms is
          Spg_Call : Node_Id;
          Feature  : Node_Id;
          N        : Node_Id;
-         Def_Idt  : Node_Id;
-         Parameter_List : constant List_Id := New_List (CTN.K_List_Id);
          S        : constant Node_Id := Parent_Subcomponent (E);
       begin
          if Has_In_Ports (E) then
@@ -630,21 +632,37 @@ package body Ocarina.Backends.C_Common.Subprograms is
 
          if Has_Behavior_Specification (E) then
 
-            Def_Idt := Make_Defining_Identifier
-              (Map_C_BA_Related_Function_Name (S, BA_Body => True));
-
-            N :=
-              Make_Parameter_Specification
-                (Make_Defining_Identifier (PN (P_Self)),
-                 Parameter_Type => RE (RE_Task_Id));
-            Append_Node_To_List (N, Parameter_List);
-
-            N := Make_Function_Specification
-              (Defining_Identifier => Def_Idt,
-               Parameters          => Parameter_List,
-               Return_Type         => New_Node (CTN.K_Void));
+            N := Make_Extern_Entity_Declaration
+              (Make_Specification_Of_BA_Related_Function (E, BA_Body => True));
 
             Append_Node_To_List (N, CTN.Declarations (Current_File));
+
+            declare
+               BA : Node_Id;
+            begin
+               BA := Get_Behavior_Specification (E);
+               if BANu.Length (BATN.States (BA)) > 1 then
+                  N :=
+                    Make_Extern_Entity_Declaration
+                      (Make_Function_Specification
+                         (Defining_Identifier => Make_Defining_Identifier
+                            (Map_C_BA_Related_Function_Name
+                                 (S, States_Initialization => True)),
+                          Parameters          => No_List,
+                          Return_Type         => New_Node (CTN.K_Void)));
+
+                  Append_Node_To_List (N,
+                                       CTN.Declarations (Current_File));
+
+                  if Is_To_Make_Init_Sequence (E) then
+                     N := Make_Extern_Entity_Declaration
+                       (Make_Specification_Of_BA_Related_Function
+                          (E, BA_Initialization => True));
+
+                     Append_Node_To_List (N, CTN.Declarations (Current_File));
+                  end if;
+               end if;
+            end;
 
          end if;
 

@@ -69,6 +69,7 @@ package body Ocarina.Backends.C_Common.BA is
    use Ocarina.Backends.C_Common.Mapping;
    use Ocarina.Backends.Utils;
    use Ocarina.Backends.PO_HI_C.Runtime;
+   use Ocarina.ME_AADL;
 
    package AAN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
@@ -119,10 +120,24 @@ package body Ocarina.Backends.C_Common.BA is
       Statements       : List_Id;
       Else_St          : List_Id) return List_Id;
 
+   function Map_C_On_Dispatch_Transition_Node
+     (Node             : Node_Id;
+      S                : Node_Id;
+      Declarations     : List_Id;
+      Statements       : List_Id;
+      Else_St          : List_Id) return List_Id;
+
    procedure Map_C_A_List_Of_Transitions
      (S                         : Node_Id;
       BA                        : Node_Id;
       Otherwise_Transition_Node : Node_Id;
+      Sub_Transition_List       : List_Id;
+      WDeclarations             : List_Id;
+      WStatements               : List_Id);
+
+   procedure Map_C_A_List_Of_On_Dispatch_Transitions
+     (S                         : Node_Id;
+      BA                        : Node_Id;
       Sub_Transition_List       : List_Id;
       WDeclarations             : List_Id;
       WStatements               : List_Id);
@@ -141,7 +156,12 @@ package body Ocarina.Backends.C_Common.BA is
       Declarations : List_Id;
       Statements   : List_Id);
 
-   procedure Make_BA_Body_Function
+   procedure Make_BA_Body_Function_For_Periodic_Thread
+     (S            : Node_Id;
+      Declarations : List_Id;
+      Statements   : List_Id);
+
+   procedure Make_BA_Body_Function_For_Sporadic_Thread
      (S            : Node_Id;
       Declarations : List_Id;
       Statements   : List_Id);
@@ -1262,6 +1282,363 @@ package body Ocarina.Backends.C_Common.BA is
 
    end Map_C_Transition_Node;
 
+   ---------------------------------------
+   -- Map_C_On_Dispatch_Transition_Node --
+   ---------------------------------------
+
+   function Map_C_On_Dispatch_Transition_Node
+     (Node             : Node_Id;
+      S                : Node_Id;
+      Declarations     : List_Id;
+      Statements       : List_Id;
+      Else_St          : List_Id) return List_Id
+   is
+      N, N1            : Node_Id;
+      Else_stats       : constant List_Id := New_List (CTN.K_Statement_List);
+      elsif_statements : constant List_Id := New_List (CTN.K_Statement_List);
+      E                : constant Node_Id := AIN.Parent_Subcomponent (S);
+      BA               : constant Node_Id := Get_Behavior_Specification (S);
+      Condition        : Node_Id := No_Node;
+      Dispatch_Conjunction_Node : Node_Id;
+      Dipatch_Trigger_Event     : Node_Id;
+   begin
+      N := BATN.Next_Node (Node);
+
+      if Present (BATN.Behavior_Condition (Node))
+        and then Present (BATN.Condition
+                          (BATN.Behavior_Condition (Node)))
+        and then
+          BATN.Kind (BATN.Condition (Behavior_Condition (Node)))
+        = BATN.K_Dispatch_Condition_Thread
+        and then Present
+          (BATN.Dispatch_Trigger_Condition
+             (BATN.Condition
+                (BATN.Behavior_Condition (Node))))
+        and then not BANu.Is_Empty
+          (BATN.Dispatch_Conjunction
+             (BATN.Dispatch_Trigger_Condition
+                (BATN.Condition
+                     (BATN.Behavior_Condition (Node)))))
+      then
+         Dispatch_Conjunction_Node :=
+           BATN.First_Node
+             (Dispatch_Conjunction
+                (Dispatch_Trigger_Condition (BATN.Condition
+                 (BATN.Behavior_Condition (Node)))));
+
+         if not BANu.Is_Empty
+           (Dispatch_Triggers (Dispatch_Conjunction_Node))
+         then
+            if BANu.Length
+              (Dispatch_Triggers (Dispatch_Conjunction_Node)) = 1
+            then
+               Dipatch_Trigger_Event := BATN.First_Node
+                 (Dispatch_Triggers (Dispatch_Conjunction_Node));
+
+               Condition := CTU.Make_Expression
+                 (Left_Expr  => Make_Defining_Identifier
+                    (Name             => VN (V_Port),
+                     Pointer          => True),
+                  Operator   => CTU.Op_Equal_Equal,
+                  Right_Expr => Make_Call_Profile
+                    (RE (RE_Local_Port),
+                     Make_List_Id
+                       (Make_Defining_Identifier
+                            (Map_Thread_Port_Variable_Name (S)),
+                        Make_Defining_Identifier
+                          (BATN.Display_Name (Dipatch_Trigger_Event)))));
+            end if;
+         end if;
+      else
+         Display_Error
+           ("Transitions out "
+            & "of complete states must have dispatch condition",
+            Fatal => True);
+      end if;
+
+      if Present (Condition) then
+         if Present (N) then
+            if Present (BATN.Behavior_Action_Block (Node)) and then
+              Present (BATN.Behav_Acts (BATN.Behavior_Action_Block (Node)))
+            then
+               N1 := Message_Comment (" Mapping of actions ");
+               CTU.Append_Node_To_List (N1, elsif_statements);
+
+               Map_C_Behavior_Action_Block
+                 (Node         => BATN.Behavior_Action_Block (Node),
+                  S            => S,
+                  Declarations => Declarations,
+                  Statements  => elsif_statements);
+            end if;
+
+            Update_Current_State (E, BA, Node, elsif_statements);
+
+            CTU.Append_Node_To_List
+              (CTU.Make_If_Statement
+                 (Condition       => Condition,
+                  Statements      => elsif_statements,
+                  Else_Statements =>
+                    Map_C_On_Dispatch_Transition_Node
+                      (Node         => N,
+                       S            => S,
+                       Declarations => Declarations,
+                       Statements   => Statements,
+                       Else_St      => Else_St)),
+               Else_stats);
+         else
+            if Present (BATN.Behavior_Action_Block (Node)) and then
+              Present (BATN.Behav_Acts (BATN.Behavior_Action_Block (Node)))
+            then
+               N1 := Message_Comment (" Mapping of actions ");
+               CTU.Append_Node_To_List (N1, elsif_statements);
+
+               Map_C_Behavior_Action_Block
+                 (Node         => BATN.Behavior_Action_Block (Node),
+                  S            => S,
+                  Declarations => Declarations,
+                  Statements  => elsif_statements);
+            end if;
+
+            Update_Current_State (E, BA, Node, elsif_statements);
+
+            CTU.Append_Node_To_List
+              (CTU.Make_If_Statement
+                 (Condition       => Condition,
+                  Statements      => elsif_statements,
+                  Else_Statements => Else_St),
+               Else_stats);
+
+         end if;
+      end if;
+
+      return Else_stats;
+
+   end Map_C_On_Dispatch_Transition_Node;
+
+   ---------------------------------------------
+   -- Map_C_A_List_Of_On_Dispatch_Transitions --
+   ---------------------------------------------
+
+   procedure Map_C_A_List_Of_On_Dispatch_Transitions
+     (S                         : Node_Id;
+      BA                        : Node_Id;
+      Sub_Transition_List       : List_Id;
+      WDeclarations             : List_Id;
+      WStatements               : List_Id)
+   is
+      N                : Node_Id;
+      Transition_Node  : Node_Id;
+      E                : constant Node_Id := AIN.Parent_Subcomponent (S);
+      Q                : Name_Id;
+      Condition     : Node_Id;
+      If_Statements : constant List_Id := New_List (CTN.K_Statement_List);
+      Else_Stats    : List_Id;
+      Dispatch_Conjunction_Node : Node_Id;
+      Dipatch_Trigger_Event     : Node_Id;
+   begin
+
+      --  else
+      --  {
+      --    *port = invalid_local_port_t;
+      --  }
+
+      Set_Str_To_Name_Buffer ("invalid_local_port_t");
+      Q := Name_Find;
+
+      Else_Stats := New_List (CTN.K_Statement_List);
+
+      CTU.Append_Node_To_List
+        (Make_Assignment_Statement
+           (Variable_Identifier => Make_Defining_Identifier
+                (Name             => VN (V_Port),
+                 Pointer          => True),
+            Expression          => Make_Defining_Identifier (Q)),
+         Else_Stats);
+
+      if (BANu.Length (Sub_Transition_List) = 1) then
+
+         Transition_Node := BATN.First_Node (Sub_Transition_List);
+
+         if Present (BATN.Behavior_Condition (Transition_Node))
+           and then Present (BATN.Condition
+                             (BATN.Behavior_Condition (Transition_Node)))
+           and then
+             BATN.Kind (BATN.Condition (Behavior_Condition (Transition_Node)))
+           = BATN.K_Dispatch_Condition_Thread
+           and then Present
+             (BATN.Dispatch_Trigger_Condition
+                (BATN.Condition
+                   (BATN.Behavior_Condition (Transition_Node))))
+           and then not BANu.Is_Empty
+             (BATN.Dispatch_Conjunction
+                (BATN.Dispatch_Trigger_Condition
+                   (BATN.Condition
+                        (BATN.Behavior_Condition (Transition_Node)))))
+         then
+            Dispatch_Conjunction_Node :=
+              BATN.First_Node
+                (Dispatch_Conjunction
+                   (Dispatch_Trigger_Condition (BATN.Condition
+                    (BATN.Behavior_Condition (Transition_Node)))));
+
+            if not BANu.Is_Empty
+              (Dispatch_Triggers (Dispatch_Conjunction_Node))
+            then
+               if BANu.Length
+                 (Dispatch_Triggers (Dispatch_Conjunction_Node)) = 1
+               then
+                  Dipatch_Trigger_Event := BATN.First_Node
+                    (Dispatch_Triggers (Dispatch_Conjunction_Node));
+
+                  --  BATN.Corresponding_Entity (Dipatch_Trigger_Event)
+
+                  --  i)
+                  --
+                  --  if (*port == LOCAL_PORT (consumer, cr_index1))
+                  --  {
+                  --    /* map actions if there exist */
+                  --    ...
+                  --    /* update current state */
+                  --    __po_hi_consumer_current_state =
+                  --       __po_hi_consumer_states_array[3];
+                  --  }
+                  --  else
+                  --  {
+                  --     *port = invalid_local_port_t;
+                  --  }
+                  --  break;
+
+                  Condition := CTU.Make_Expression
+                    (Left_Expr  => Make_Defining_Identifier
+                       (Name             => VN (V_Port),
+                        Pointer          => True),
+                     Operator   => CTU.Op_Equal_Equal,
+                     Right_Expr => Make_Call_Profile
+                       (RE (RE_Local_Port),
+                        Make_List_Id
+                          (Make_Defining_Identifier
+                               (Map_Thread_Port_Variable_Name (S)),
+                           Make_Defining_Identifier
+                             (BATN.Display_Name (Dipatch_Trigger_Event)))));
+
+                  if Present (BATN.Behavior_Action_Block (Transition_Node))
+                    and then Present
+                      (BATN.Behav_Acts
+                         (BATN.Behavior_Action_Block (Transition_Node)))
+                  then
+
+                     N := Message_Comment (" Mapping of actions ");
+                     CTU.Append_Node_To_List (N, If_Statements);
+
+                     Map_C_Behavior_Action_Block
+                       (BATN.Behavior_Action_Block (Transition_Node),
+                        S, WDeclarations, If_Statements);
+                  end if;
+
+                  --  ii) Update the current state
+                  Update_Current_State (E, BA, Transition_Node, If_Statements);
+
+                  CTU.Append_Node_To_List
+                    (CTU.Make_If_Statement
+                       (Condition       => Condition,
+                        Statements      => If_Statements,
+                        Else_Statements => Else_Stats),
+                     WStatements);
+               else
+                  Display_Error
+                    ("The mapping of many dispatch trigger events is not yet"
+                     & " supported",
+                     Fatal => True);
+               end if;
+            end if;
+         else
+            Display_Error
+              ("Transitions out "
+               & "of complete states must have dispatch condition",
+               Fatal => True);
+         end if;
+
+      elsif (BANu.Length (Sub_Transition_List) >= 2) then
+         Transition_Node := BATN.First_Node (Sub_Transition_List);
+
+         if Present (BATN.Behavior_Condition (Transition_Node))
+           and then Present (BATN.Condition
+                             (BATN.Behavior_Condition (Transition_Node)))
+           and then
+             BATN.Kind (BATN.Condition (Behavior_Condition (Transition_Node)))
+           = BATN.K_Dispatch_Condition_Thread
+           and then Present
+             (BATN.Dispatch_Trigger_Condition
+                (BATN.Condition
+                   (BATN.Behavior_Condition (Transition_Node))))
+           and then not BANu.Is_Empty
+             (BATN.Dispatch_Conjunction
+                (BATN.Dispatch_Trigger_Condition
+                   (BATN.Condition
+                        (BATN.Behavior_Condition (Transition_Node)))))
+         then
+            Dispatch_Conjunction_Node :=
+              BATN.First_Node
+                (Dispatch_Conjunction
+                   (Dispatch_Trigger_Condition (BATN.Condition
+                    (BATN.Behavior_Condition (Transition_Node)))));
+
+            if not BANu.Is_Empty
+              (Dispatch_Triggers (Dispatch_Conjunction_Node))
+              and then BANu.Length
+                (Dispatch_Triggers (Dispatch_Conjunction_Node)) = 1
+            then
+               Dipatch_Trigger_Event := BATN.First_Node
+                 (Dispatch_Triggers (Dispatch_Conjunction_Node));
+
+               Condition := CTU.Make_Expression
+                 (Left_Expr  => Make_Defining_Identifier
+                    (Name             => VN (V_Port),
+                     Pointer          => True),
+                  Operator   => CTU.Op_Equal_Equal,
+                  Right_Expr => Make_Call_Profile
+                    (RE (RE_Local_Port),
+                     Make_List_Id
+                       (Make_Defining_Identifier
+                            (Map_Thread_Port_Variable_Name (S)),
+                        Make_Defining_Identifier
+                          (BATN.Display_Name (Dipatch_Trigger_Event)))));
+
+               if Present (BATN.Behavior_Action_Block (Transition_Node))
+                 and then Present
+                   (BATN.Behav_Acts
+                      (BATN.Behavior_Action_Block
+                         (Transition_Node)))
+               then
+
+                  N := Message_Comment (" Mapping of actions ");
+                  CTU.Append_Node_To_List (N, If_Statements);
+
+                  Map_C_Behavior_Action_Block
+                    (BATN.Behavior_Action_Block (Transition_Node),
+                     S, WDeclarations, If_Statements);
+               end if;
+
+               Update_Current_State (E, BA, Transition_Node, If_Statements);
+            end if;
+
+            Transition_Node := BATN.Next_Node (Transition_Node);
+
+            Else_Stats := Map_C_On_Dispatch_Transition_Node
+              (Transition_Node, S, WDeclarations,
+               WStatements, Else_Stats);
+
+            CTU.Append_Node_To_List
+              (CTU.Make_If_Statement
+                 (Condition       => Condition,
+                  Statements      => if_Statements,
+                  Else_Statements => Else_Stats),
+               WStatements);
+         end if;
+      end if;
+
+   end Map_C_A_List_Of_On_Dispatch_Transitions;
+
    ---------------------------------
    -- Map_C_A_List_Of_Transitions --
    ---------------------------------
@@ -1424,7 +1801,7 @@ package body Ocarina.Backends.C_Common.BA is
                WStatements);
          else
             Display_Error
-              ("As there are an more than one transition that starts from"
+              ("As there are more than one transition that starts from"
                & " the same state called '"
                & Get_Name_String
                  (BATN.Display_Name (BATN.First_Node
@@ -1480,8 +1857,8 @@ package body Ocarina.Backends.C_Common.BA is
          Operator   => CTU.Op_Equal_Equal,
          Right_Expr => RE (RE_Execution));
 
-      --  Make a « switch case » statement on all the
-      --  « execution » states
+      --  Make a Â« switch case Â» statement on all the
+      --  Â« execution Â» states
 
       State := BATN.First_Node (BATN.States (BA));
 
@@ -1505,9 +1882,9 @@ package body Ocarina.Backends.C_Common.BA is
                     (BATN.Display_Name (List_Node)),
                   Switch_Labels);
 
-               --  /** go over all transitions that have « s1 »
+               --  /** go over all transitions that have Â« s1 Â»
                --  as source state. In the case of one transition
-               --  without condition, we don't make an « if » statement,
+               --  without condition, we don't make an Â« if Â» statement,
                --  instead we map the actions and then we update the
                --  current state with the destination state of
                --  the transition. **/
@@ -1604,17 +1981,14 @@ package body Ocarina.Backends.C_Common.BA is
      (S            : Node_Id)
    is
       BA                           : Node_Id;
-      N, N1                        : Node_Id;
+      N                            : Node_Id;
       Behav_Transition             : Node_Id;
       Transition_Node              : Node_Id;
       Otherwise_Transition_Node    : Node_Id := No_Node;
-      E                            : constant Node_Id :=
-        AIN.Parent_Subcomponent (S);
       Sub_Transition_List          : List_Id;
       Source                       : Node_Id;
       WStatements    : constant List_Id := New_List (CTN.K_Statement_List);
       WDeclarations  : constant List_Id := New_List (CTN.K_Declaration_List);
-      Parameter_List : constant List_Id := New_List (CTN.K_List_Id);
       At_Least_One_Dest_State_Is_Execution : Boolean := False;
 
    begin
@@ -1630,7 +2004,7 @@ package body Ocarina.Backends.C_Common.BA is
 --  /*
 --  /** 1) For all transitions that have the initial state as
 --  a source state. In the case of a single transition without condtition,
---  we don't make an « if » statement, instead we map the actions and then
+--  we don't make an Â« if Â» statement, instead we map the actions and then
 --  we update the __po_hi_producer_current_state with the destination
 --  state of the transition.
 --  **/
@@ -1653,28 +2027,16 @@ package body Ocarina.Backends.C_Common.BA is
 --
 --     /* update the current state */
 --    __po_hi_producer_current_state = __po_hi_producer_states_array[2];
---  }/** we add « else » statement if there is a transition with
---     « otherwise » condition **/
+--  }/** we add Â« else Â» statement if there is a transition with
+--     Â« otherwise Â» condition **/
 --
       BA := Get_Behavior_Specification (S);
-
-      N :=
-        Make_Parameter_Specification
-          (Make_Defining_Identifier (PN (P_Self)),
-           Parameter_Type => RE (RE_Task_Id));
-      Append_Node_To_List (N, Parameter_List);
-
-      N1 := Make_Function_Specification
-        (Defining_Identifier => Make_Defining_Identifier
-        (Map_C_BA_Related_Function_Name (E, BA_Initialization => True)),
-         Parameters          => Parameter_List,
-         Return_Type         => New_Node (CTN.K_Void));
 
       Map_C_Behavior_Variables (S, WDeclarations);
 
 --  1) For all transitions that have the initial state as a source state.
 --  In the case of a single transition without condition, we don't make an
---  « if » statement, instead we map the actions and then we update the
+--  Â« if Â» statement, instead we map the actions and then we update the
 --  current_state with the destination state of the transition.
 
       N := Message_Comment
@@ -1742,19 +2104,19 @@ package body Ocarina.Backends.C_Common.BA is
          WDeclarations, WStatements);
 
 --  /** 2) Now we examine __po_hi_producer_current_state if it is not a
---    « complete » state, i.e. it is an « execution » state, then we
---  should proceed transitions until reaching a « complete » state. **/
+--    Â« complete Â» state, i.e. it is an Â« execution Â» state, then we
+--  should proceed transitions until reaching a Â« complete Â» state. **/
 --
 --  while (__po_hi_producer_current_state.kind == __po_hi_execution)
 --  {
---  --  --  /** we make a « switch case » statement on all the
---  « execution » states **/
+--  --  --  /** we make a Â« switch case Â» statement on all the
+--  Â« execution Â» states **/
 --  switch (__po_hi_producer_current_state.name)
 --  {
 --  --  --  case s1:
---  /** go over all transitions that have « s1 » as source state.
+--  /** go over all transitions that have Â« s1 Â» as source state.
 --  In the case of one transition without condition, we don't make an
---  « if » statement, instead we map the actions and then we update the
+--  Â« if Â» statement, instead we map the actions and then we update the
 --  __po_hi_producer_current_state with the destination state of the
 --   transition. **/
 --
@@ -1770,8 +2132,8 @@ package body Ocarina.Backends.C_Common.BA is
 --  --  --    /* update the current state */
 --  __po_hi_producer_current_state = __po_hi_producer_states_array[1];
 --  }
---  /** There is a transition with « otherwise » condition, then we add
---     « else » statement **/
+--  /** There is a transition with Â« otherwise Â» condition, then we add
+--     Â« else Â» statement **/
 --  else
 --  { /* actions */
 --    ......
@@ -1783,11 +2145,11 @@ package body Ocarina.Backends.C_Common.BA is
 --
 --  case s2:
 --
---  /** go over all transitions that have « s2 » as source state.
+--  /** go over all transitions that have Â« s2 Â» as source state.
 --  In the case of one transition without condition, we don't make an
---  « if » statement, instead we map the actions and the we update the
+--  Â« if Â» statement, instead we map the actions and the we update the
 --  __po_hi_producer_current_state with the destination state of the
---   transition. Idem que « s1 » **/
+--   transition. Idem que Â« s1 Â» **/
 --
 --  /* actions */
 --   ....
@@ -1819,12 +2181,84 @@ package body Ocarina.Backends.C_Common.BA is
       end if;
 
       N := Make_Function_Implementation
-        (Specification => N1,
+        (Specification => Make_Specification_Of_BA_Related_Function
+           (S, BA_Initialization => True),
          Declarations  => WDeclarations,
          Statements    => WStatements);
 
       Append_Node_To_List (N, CTN.Declarations (Current_File));
    end Make_BA_Initialization_Function;
+
+   -----------------------------------------------
+   -- Make_Specification_Of_BA_Related_Function --
+   -----------------------------------------------
+
+   function Make_Specification_Of_BA_Related_Function
+     (S                  : Node_Id;
+      BA_Body            : Boolean := False;
+      BA_Initialization  : Boolean := False) return Node_Id
+   is
+      N, N1  : Node_Id;
+      E      : constant Node_Id := AIN.Parent_Subcomponent (S);
+      Parameter_List : constant List_Id := New_List (CTN.K_List_Id);
+      Idt    : Node_Id;
+   begin
+
+      N :=
+        Make_Parameter_Specification
+          (Make_Defining_Identifier (PN (P_Self)),
+           Parameter_Type => RE (RE_Task_Id));
+      Append_Node_To_List (N, Parameter_List);
+
+      if Get_Thread_Dispatch_Protocol (S) = Thread_Sporadic then
+
+         N :=
+           Make_Parameter_Specification
+             (Make_Defining_Identifier (VN (V_Port)),
+              Parameter_Type => CTU.Make_Pointer_Type (RE (RE_Local_Port_T)));
+         Append_Node_To_List (N, Parameter_List);
+
+      end if;
+      --  add data subcomponents of the thread to the call_parameters
+      --  of the procedure <<thread_instance_name>>_ba_body
+
+      if not AINU.Is_Empty (AIN.Subcomponents (S)) then
+         N1 := AIN.First_Node (AIN.Subcomponents (S));
+
+         while Present (N1) loop
+            if AINU.Is_Data (AIN.Corresponding_Instance (N1)) then
+
+               N :=
+                 Make_Parameter_Specification
+                   (Map_C_Defining_Identifier (N1),
+                    Parameter_Type =>
+                      CTU.Make_Pointer_Type
+                        (Map_C_Data_Type_Designator
+                           (AIN.Corresponding_Instance (N1))));
+
+               Append_Node_To_List (N, Parameter_List);
+
+            end if;
+            N1 := AIN.Next_Node (N1);
+         end loop;
+      end if;
+
+      if BA_Body then
+         Idt := Make_Defining_Identifier
+           (Map_C_BA_Related_Function_Name (E, BA_Body => True));
+      elsif BA_Initialization then
+         Idt := Make_Defining_Identifier
+           (Map_C_BA_Related_Function_Name (E, BA_Initialization => True));
+      end if;
+
+      N := Make_Function_Specification
+        (Defining_Identifier => Idt,
+         Parameters          => Parameter_List,
+         Return_Type         => New_Node (CTN.K_Void));
+
+      return N;
+
+   end Make_Specification_Of_BA_Related_Function;
 
    ----------------------------------------------
    -- Map_C_Implementation_of_BA_Body_Function --
@@ -1836,24 +2270,11 @@ package body Ocarina.Backends.C_Common.BA is
       Statements   : List_Id)
    is
       N  : Node_Id;
-      E  : constant Node_Id := AIN.Parent_Subcomponent (S);
-      Parameter_List : constant List_Id := New_List (CTN.K_List_Id);
    begin
 
-      N :=
-        Make_Parameter_Specification
-          (Make_Defining_Identifier (PN (P_Self)),
-           Parameter_Type => RE (RE_Task_Id));
-      Append_Node_To_List (N, Parameter_List);
-
-      N := Make_Function_Specification
-        (Defining_Identifier => Make_Defining_Identifier
-           (Map_C_BA_Related_Function_Name (E, BA_Body => True)),
-         Parameters          => Parameter_List,
-         Return_Type         => New_Node (CTN.K_Void));
-
       N := Make_Function_Implementation
-        (Specification => N,
+        (Specification => Make_Specification_Of_BA_Related_Function
+           (S, BA_Body => True),
          Declarations  => Declarations,
          Statements    => Statements);
 
@@ -1861,11 +2282,187 @@ package body Ocarina.Backends.C_Common.BA is
 
    end Map_C_Implementation_of_BA_Body_Function;
 
-   ---------------------------
-   -- Make_BA_Body_Function --
-   ---------------------------
+   -----------------------------------------------
+   -- Make_BA_Body_Function_For_Sporadic_Thread --
+   -----------------------------------------------
 
-   procedure Make_BA_Body_Function
+   procedure Make_BA_Body_Function_For_Sporadic_Thread
+     (S            : Node_Id;
+      Declarations : List_Id;
+      Statements   : List_Id)
+   is
+      BA                         : Node_Id;
+      --  Dispatch_Transition        : Node_Id := No_Node;
+
+      State, List_Node             : Node_Id;
+      Switch_Alternatives          : constant List_Id := New_List
+        (CTN.K_Alternatives_List);
+      Switch_Statements            : List_Id;
+      Switch_Labels                : List_Id;
+
+      N                            : Node_Id;
+      Behav_Transition             : Node_Id;
+      Transition_Node              : Node_Id;
+      E                            : constant Node_Id :=
+        AIN.Parent_Subcomponent (S);
+      Sub_Transition_List          : List_Id;
+      Source                       : Node_Id;
+      Q                            : Name_Id;
+   begin
+
+      --  /* 1) we make switch case statement on all complete states from
+      --  which on dispatch transitions are started */
+
+      BA := Get_Behavior_Specification (S);
+
+      Map_C_Behavior_Variables (S, Declarations);
+
+      Behav_Transition := BATN.First_Node (BATN.Transitions (BA));
+
+      N := Message_Comment
+        ("1) we make switch case statement on all complete states "
+         & " from which 'on dispatch' transitions are started.");
+      CTU.Append_Node_To_List (N, Statements);
+
+      --  Make a Â« switch case Â» statement on all the
+      --  Â« complete Â» states
+
+      State := BATN.First_Node (BATN.States (BA));
+
+      while Present (State) loop
+         if Behavior_State_Kind'Val (BATN.State_Kind (State))
+           = BSK_Initial_Complete
+           or else Behavior_State_Kind'Val (BATN.State_Kind (State))
+             = BSK_Initial_Complete_Final
+           or else Behavior_State_Kind'Val (BATN.State_Kind (State))
+             = BSK_Complete
+           or else Behavior_State_Kind'Val (BATN.State_Kind (State))
+             = BSK_Complete_Final
+         then
+            List_Node := BATN.First_Node (BATN.Identifiers (State));
+
+            while Present (List_Node) loop
+
+               Switch_Statements := New_List (CTN.K_Statement_List);
+               Switch_Labels := New_List (CTN.K_Label_List);
+
+               Sub_Transition_List := BANu.New_List
+                 (BATN.K_List_Id, No_Location);
+
+               CTU.Append_Node_To_List
+                 (Make_Defining_Identifier
+                    (BATN.Display_Name (List_Node)),
+                  Switch_Labels);
+
+               --  /** go over all Â« on dispatch Â» transitions that have
+               --  Â« BATN.Display_Name (List_Node) Â» as source state.
+               --  Then we make an "if" on the trigger port specified
+               --  in the Â« on dispatch Â» condition
+               --  if (*port == LOCAL_PORT (<<thread_instance_name>>,
+               --        <<trigger_port_name>>))
+               --  Actions are mapped in the if block statements
+               --  then we update the current state with the destination
+               --  state of the transition. **/
+               --
+
+               Behav_Transition := BATN.First_Node
+                 (BATN.Transitions (BA));
+               while Present (Behav_Transition) loop
+                  Transition_Node := BATN.Transition (Behav_Transition);
+
+                  if BATN.Kind (Transition_Node) =
+                    BATN.K_Execution_Behavior_Transition
+                  then
+                     if BANu.Length (BATN.Sources (Transition_Node)) = 1
+                     then
+                        Source := BATN.First_Node
+                          (BATN.Sources (Transition_Node));
+                        if  (Standard.Utils.To_Upper
+                             (BATN.Display_Name (List_Node)) =
+                               Standard.Utils.To_Upper
+                                 (BATN.Display_Name (Source)))
+                        then
+                           if Present (BATN.Behavior_Condition
+                                       (Transition_Node)) and then
+                             Present (BATN.Condition
+                                      (BATN.Behavior_Condition
+                                         (Transition_Node))) and then
+
+                             BATN.Kind
+                               (BATN.Condition
+                                  (Behavior_Condition (Transition_Node)))
+                               = BATN.K_Dispatch_Condition_Thread
+                           then
+                              BATN.Set_Next_Node (Transition_Node, No_Node);
+                              BANu.Append_Node_To_List
+                                (Transition_Node,
+                                 Sub_Transition_List);
+                           end if;
+                        end if;
+                     end if;
+                  end if;
+                  Behav_Transition := BATN.Next_Node (Behav_Transition);
+               end loop;
+
+               Map_C_A_List_Of_On_Dispatch_Transitions
+                 (S, BA, Sub_Transition_List,
+                  Declarations, Switch_Statements);
+
+               N :=
+                 Make_Switch_Alternative (Switch_Labels,
+                                          Switch_Statements);
+
+               CTU.Append_Node_To_List (N, Switch_Alternatives);
+
+               List_Node := BATN.Next_Node (List_Node);
+            end loop;
+         end if;
+
+         State := BATN.Next_Node (State);
+      end loop;
+
+      Append_Node_To_List
+        (Make_Switch_Alternative (No_List, No_List),
+         Switch_Alternatives);
+
+      Set_Str_To_Name_Buffer ("name");
+      Q := Name_Find;
+
+      N :=
+        Make_Switch_Statement
+          (Expression   => Make_Member_Designator
+             (Defining_Identifier => Make_Defining_Identifier (Q),
+              Aggregate_Name      => Make_Defining_Identifier
+                (Map_C_Variable_Name (E, Current_State => True))),
+           Alternatives => Switch_Alternatives);
+
+      CTU.Append_Node_To_List (N, Statements);
+
+      --  2) Now we examine __po_hi_producer_current_state if
+      --  it is not a Â« complete Â» state, i.e. it is an Â« execution Â»
+      --  state, then we should proceed transitions until reaching
+      --  a Â« complete Â» state.
+      --
+
+      N := Message_Comment
+        ("2) Now we examine current_state if "
+           & "it is not a 'complete' state, i.e. it is an 'execution' "
+         & " state, then we should proceed transitions until reaching"
+         & " a 'complete' state.");
+      CTU.Append_Node_To_List (N, Statements);
+
+      Examine_Current_State_Until_Reaching_Complete_State
+        (S, BA, Declarations, Statements);
+
+      Map_C_Implementation_of_BA_Body_Function (S, Declarations, Statements);
+
+   end Make_BA_Body_Function_For_Sporadic_Thread;
+
+   -----------------------------------------------
+   -- Make_BA_Body_Function_For_Periodic_Thread --
+   -----------------------------------------------
+
+   procedure Make_BA_Body_Function_For_Periodic_Thread
      (S            : Node_Id;
       Declarations : List_Id;
       Statements   : List_Id)
@@ -1884,7 +2481,7 @@ package body Ocarina.Backends.C_Common.BA is
       --    test__ba__backend__alpha_type tmp2;
       --
       --    /** 1) mapping actions of the transition having the
-      --    « on dispatch » condition **/
+      --    Â« on dispatch Â» condition **/
       --
       --    ...
       --
@@ -1892,9 +2489,9 @@ package body Ocarina.Backends.C_Common.BA is
       --    __po_hi_producer_current_state = __po_hi_producer_states_array[1];
       --
       --    /** 3) Now we examine __po_hi_producer_current_state if
-      --    it is not a « complete » state, i.e. it is an « execution » state,
+      --    it is not a Â« complete Â» state, i.e. it is an Â« execution Â» state,
       --    then we should proceed transitions until reaching
-      --    a « complete » state. **/
+      --    a Â« complete Â» state. **/
       --
 
       BA := Get_Behavior_Specification (S);
@@ -1928,7 +2525,7 @@ package body Ocarina.Backends.C_Common.BA is
                                 (Dispatch_Transition)))
          then
             --  1) mapping actions of the transition having
-            --  the « on dispatch » condition
+            --  the Â« on dispatch Â» condition
 
             N := Message_Comment
               ("1) Mapping actions of the transition having "
@@ -1945,9 +2542,9 @@ package body Ocarina.Backends.C_Common.BA is
          Update_Current_State (E, BA, Dispatch_Transition, Statements);
 
          --  3) Now we examine __po_hi_producer_current_state if
-         --  it is not a « complete » state, i.e. it is an « execution »
+         --  it is not a Â« complete Â» state, i.e. it is an Â« execution Â»
          --  state,then we should proceed transitions until reaching
-         --  a « complete » state.
+         --  a Â« complete Â» state.
          --
          if Behavior_State_Kind'Val
            (Search_State_Kind (BA, BATN.Destination (Dispatch_Transition)))
@@ -1966,7 +2563,7 @@ package body Ocarina.Backends.C_Common.BA is
 
       Map_C_Implementation_of_BA_Body_Function (S, Declarations, Statements);
 
-   end Make_BA_Body_Function;
+   end Make_BA_Body_Function_For_Periodic_Thread;
 
    ----------------------------------------
    -- Map_C_Many_Transitions_Of_A_Thread --
@@ -1991,12 +2588,14 @@ package body Ocarina.Backends.C_Common.BA is
 
          Make_BA_Body_Function (S, Declarations, Statements);
 
-      elsif Get_Thread_Dispatch_Protocol (S) = Thread_Sporadic then
-         N := Message_Comment
-           ("Mapping many transitions in BA of Sporadic thread.");
+      if Get_Thread_Dispatch_Protocol (S) = Thread_Periodic then
 
-         CTU.Append_Node_To_List (N, Statements);
-         Map_C_Implementation_of_BA_Body_Function
+         Make_BA_Body_Function_For_Periodic_Thread
+           (S, Declarations, Statements);
+
+      elsif Get_Thread_Dispatch_Protocol (S) = Thread_Sporadic then
+
+         Make_BA_Body_Function_For_Sporadic_Thread
            (S, Declarations, Statements);
       end if;
 
@@ -3137,8 +3736,13 @@ package body Ocarina.Backends.C_Common.BA is
 
                if present (Corresponding_Entity) then
 
-                  if AAN.Kind (Corresponding_Entity) = AAN.K_Parameter
-                    and then AAN.Is_Out (Corresponding_Entity)
+                  if (AAN.Kind (Corresponding_Entity) = AAN.K_Parameter
+                    and then AAN.Is_Out (Corresponding_Entity))
+                    or else
+                      (AAN.Kind (Corresponding_Entity) = AAN.K_Subcomponent
+                       and then
+                       Component_Category'Val (Category (Corresponding_Entity))
+                       = CC_Data)
                   then
                      Var_identifier :=
                        CTU.Make_Defining_Identifier
@@ -3181,7 +3785,6 @@ package body Ocarina.Backends.C_Common.BA is
                             (Make_Request_Variable_Name_From_Port_Name
                                  (BATN.Display_Name (BATN.First_Node
                                   (BATN.Idt (Node))))));
-
                   end if;
 
                else
@@ -3990,6 +4593,7 @@ package body Ocarina.Backends.C_Common.BA is
       result           : Node_Id;
    begin
 
+      N := BATN.Corresponding_Entity (Node);
       if Is_Out_Parameter then
          if Find_BA_Variable (Node,
                               Get_Behavior_Specification (Subprogram_Root))
@@ -4014,7 +4618,9 @@ package body Ocarina.Backends.C_Common.BA is
          --  the BA, then in the generated code C, in order
          --  to have the value of p1, it must be mapped to *p1
          --
-         if Subprogram_Root /= No_Node then
+         if Subprogram_Root /= No_Node and then
+           AINU.Is_Subprogram (Subprogram_Root)
+         then
             declare
                use type AIN.Node_Kind;
                Fs : constant Ocarina.ME_AADL.AADL_Instances.Nutils.Node_Array
@@ -4041,6 +4647,14 @@ package body Ocarina.Backends.C_Common.BA is
                end loop;
             end;
          end if;
+
+         if Present (N) then
+            if AAN.kind (N) = AAN.K_Subcomponent and then
+              Component_Category'Val (Category (N)) = CC_Data
+            then
+               Pointer := True;
+            end if;
+         end if;
       end if;
 
       result := CTU.Make_Defining_Identifier
@@ -4048,7 +4662,6 @@ package body Ocarina.Backends.C_Common.BA is
          Pointer          => Pointer,
          Variable_Address => Variable_Address);
 
-      N := BATN.Corresponding_Entity (Node);
       if Present (N) then
          if AAN.kind (N) = AAN.K_Port_Spec
            and then AAN.Is_Data (N)
@@ -4084,7 +4697,6 @@ package body Ocarina.Backends.C_Common.BA is
                            (BATN.Display_Name (Node))));
 
             end if;
-
          end if;
       end if;
 
