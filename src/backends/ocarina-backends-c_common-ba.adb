@@ -1857,8 +1857,8 @@ package body Ocarina.Backends.C_Common.BA is
          Operator   => CTU.Op_Equal_Equal,
          Right_Expr => RE (RE_Execution));
 
-      --  Make a « switch case » statement on all the
-      --  « execution » states
+      --  Make a Â« switch case Â» statement on all the
+      --  Â« execution Â» states
 
       State := BATN.First_Node (BATN.States (BA));
 
@@ -1882,9 +1882,9 @@ package body Ocarina.Backends.C_Common.BA is
                     (BATN.Display_Name (List_Node)),
                   Switch_Labels);
 
-               --  /** go over all transitions that have « s1 »
+               --  /** go over all transitions that have Â« s1 Â»
                --  as source state. In the case of one transition
-               --  without condition, we don't make an « if » statement,
+               --  without condition, we don't make an Â« if Â» statement,
                --  instead we map the actions and then we update the
                --  current state with the destination state of
                --  the transition. **/
@@ -2004,7 +2004,7 @@ package body Ocarina.Backends.C_Common.BA is
 --  /*
 --  /** 1) For all transitions that have the initial state as
 --  a source state. In the case of a single transition without condtition,
---  we don't make an « if » statement, instead we map the actions and then
+--  we don't make an Â« if Â» statement, instead we map the actions and then
 --  we update the __po_hi_producer_current_state with the destination
 --  state of the transition.
 --  **/
@@ -2027,8 +2027,8 @@ package body Ocarina.Backends.C_Common.BA is
 --
 --     /* update the current state */
 --    __po_hi_producer_current_state = __po_hi_producer_states_array[2];
---  }/** we add « else » statement if there is a transition with
---     « otherwise » condition **/
+--  }/** we add Â« else Â» statement if there is a transition with
+--     Â« otherwise Â» condition **/
 --
       BA := Get_Behavior_Specification (S);
 
@@ -2036,7 +2036,7 @@ package body Ocarina.Backends.C_Common.BA is
 
 --  1) For all transitions that have the initial state as a source state.
 --  In the case of a single transition without condition, we don't make an
---  « if » statement, instead we map the actions and then we update the
+--  Â« if Â» statement, instead we map the actions and then we update the
 --  current_state with the destination state of the transition.
 
       N := Message_Comment
@@ -2104,19 +2104,19 @@ package body Ocarina.Backends.C_Common.BA is
          WDeclarations, WStatements);
 
 --  /** 2) Now we examine __po_hi_producer_current_state if it is not a
---    « complete » state, i.e. it is an « execution » state, then we
---  should proceed transitions until reaching a « complete » state. **/
+--    Â« complete Â» state, i.e. it is an Â« execution Â» state, then we
+--  should proceed transitions until reaching a Â« complete Â» state. **/
 --
 --  while (__po_hi_producer_current_state.kind == __po_hi_execution)
 --  {
---  --  --  /** we make a « switch case » statement on all the
---  « execution » states **/
+--  --  --  /** we make a Â« switch case Â» statement on all the
+--  Â« execution Â» states **/
 --  switch (__po_hi_producer_current_state.name)
 --  {
 --  --  --  case s1:
---  /** go over all transitions that have « s1 » as source state.
+--  /** go over all transitions that have Â« s1 Â» as source state.
 --  In the case of one transition without condition, we don't make an
---  « if » statement, instead we map the actions and then we update the
+--  Â« if Â» statement, instead we map the actions and then we update the
 --  __po_hi_producer_current_state with the destination state of the
 --   transition. **/
 --
@@ -2132,8 +2132,8 @@ package body Ocarina.Backends.C_Common.BA is
 --  --  --    /* update the current state */
 --  __po_hi_producer_current_state = __po_hi_producer_states_array[1];
 --  }
---  /** There is a transition with « otherwise » condition, then we add
---     « else » statement **/
+--  /** There is a transition with Â« otherwise Â» condition, then we add
+--     Â« else Â» statement **/
 --  else
 --  { /* actions */
 --    ......
@@ -2145,11 +2145,11 @@ package body Ocarina.Backends.C_Common.BA is
 --
 --  case s2:
 --
---  /** go over all transitions that have « s2 » as source state.
+--  /** go over all transitions that have Â« s2 Â» as source state.
 --  In the case of one transition without condition, we don't make an
---  « if » statement, instead we map the actions and the we update the
+--  Â« if Â» statement, instead we map the actions and the we update the
 --  __po_hi_producer_current_state with the destination state of the
---   transition. Idem que « s1 » **/
+--   transition. Idem que Â« s1 Â» **/
 --
 --  /* actions */
 --   ....
@@ -2324,8 +2324,8 @@ package body Ocarina.Backends.C_Common.BA is
          & " from which 'on dispatch' transitions are started.");
       CTU.Append_Node_To_List (N, Statements);
 
-      --  Make a « switch case » statement on all the
-      --  « complete » states
+      --  Make a Â« switch case Â» statement on all the
+      --  Â« complete Â» states
 
       State := BATN.First_Node (BATN.States (BA));
 
@@ -2354,10 +2354,10 @@ package body Ocarina.Backends.C_Common.BA is
                     (BATN.Display_Name (List_Node)),
                   Switch_Labels);
 
-               --  /** go over all « on dispatch » transitions that have
-               --  « BATN.Display_Name (List_Node) » as source state.
+               --  /** go over all Â« on dispatch Â» transitions that have
+               --  Â« BATN.Display_Name (List_Node) Â» as source state.
                --  Then we make an "if" on the trigger port specified
-               --  in the « on dispatch » condition
+               --  in the Â« on dispatch Â» condition
                --  if (*port == LOCAL_PORT (<<thread_instance_name>>,
                --        <<trigger_port_name>>))
                --  Actions are mapped in the if block statements
@@ -2439,9 +2439,9 @@ package body Ocarina.Backends.C_Common.BA is
       CTU.Append_Node_To_List (N, Statements);
 
       --  2) Now we examine __po_hi_producer_current_state if
-      --  it is not a « complete » state, i.e. it is an « execution »
+      --  it is not a Â« complete Â» state, i.e. it is an Â« execution Â»
       --  state, then we should proceed transitions until reaching
-      --  a « complete » state.
+      --  a Â« complete Â» state.
       --
 
       N := Message_Comment
@@ -2481,7 +2481,7 @@ package body Ocarina.Backends.C_Common.BA is
       --    test__ba__backend__alpha_type tmp2;
       --
       --    /** 1) mapping actions of the transition having the
-      --    « on dispatch » condition **/
+      --    Â« on dispatch Â» condition **/
       --
       --    ...
       --
@@ -2489,9 +2489,9 @@ package body Ocarina.Backends.C_Common.BA is
       --    __po_hi_producer_current_state = __po_hi_producer_states_array[1];
       --
       --    /** 3) Now we examine __po_hi_producer_current_state if
-      --    it is not a « complete » state, i.e. it is an « execution » state,
+      --    it is not a Â« complete Â» state, i.e. it is an Â« execution Â» state,
       --    then we should proceed transitions until reaching
-      --    a « complete » state. **/
+      --    a Â« complete Â» state. **/
       --
 
       BA := Get_Behavior_Specification (S);
@@ -2525,7 +2525,7 @@ package body Ocarina.Backends.C_Common.BA is
                                 (Dispatch_Transition)))
          then
             --  1) mapping actions of the transition having
-            --  the « on dispatch » condition
+            --  the Â« on dispatch Â» condition
 
             N := Message_Comment
               ("1) Mapping actions of the transition having "
@@ -2542,9 +2542,9 @@ package body Ocarina.Backends.C_Common.BA is
          Update_Current_State (E, BA, Dispatch_Transition, Statements);
 
          --  3) Now we examine __po_hi_producer_current_state if
-         --  it is not a « complete » state, i.e. it is an « execution »
+         --  it is not a Â« complete Â» state, i.e. it is an Â« execution Â»
          --  state,then we should proceed transitions until reaching
-         --  a « complete » state.
+         --  a Â« complete Â» state.
          --
          if Behavior_State_Kind'Val
            (Search_State_Kind (BA, BATN.Destination (Dispatch_Transition)))
@@ -2574,15 +2574,19 @@ package body Ocarina.Backends.C_Common.BA is
       Declarations : List_Id;
       Statements   : List_Id)
    is
+      N : Node_Id;
    begin
 
       Map_BA_States_To_C_Types (S);
 
       Make_States_Initialization_Function (S);
 
-      if Is_To_Make_Init_Sequence (S) then
-         Make_BA_Initialization_Function (S);
-      end if;
+      if Get_Thread_Dispatch_Protocol (S) = Thread_Periodic then
+         if Is_To_Make_Init_Sequence (S) then
+            Make_BA_Initialization_Function (S);
+         end if;
+
+         Make_BA_Body_Function (S, Declarations, Statements);
 
       if Get_Thread_Dispatch_Protocol (S) = Thread_Periodic then
 
