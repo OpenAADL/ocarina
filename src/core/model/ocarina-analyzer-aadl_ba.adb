@@ -42,7 +42,6 @@ with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_AADL_BA.BA_Tree.Nutils;
 with Ocarina.ME_AADL.AADL_Tree.Nutils;
 with Ocarina.ME_AADL_BA.Tokens;
-with Ocarina.ME_AADL.AADL_Tree.Entities;
 
 package body Ocarina.Analyzer.AADL_BA is
 
@@ -374,6 +373,7 @@ package body Ocarina.Analyzer.AADL_BA is
 
    function Analyze_Dispatch_Condition
      (Condition         : Node_Id;
+      Root              : Node_Id;
       BA_Root           : Node_Id;
       Parent_Component  : Node_Id)
       return Boolean;
@@ -386,6 +386,7 @@ package body Ocarina.Analyzer.AADL_BA is
 
    function Test_With_Identifiers_In_Parent_Component
      (Id         : Node_Id;
+      Root       : Node_Id;
       Component  : Node_Id)
       return Boolean;
 
@@ -417,11 +418,13 @@ package body Ocarina.Analyzer.AADL_BA is
 
    function Link_Frozen_Port
      (Frozen_Port : Node_Id;
-      Component  : Node_Id)
+      Root        : Node_Id;
+      Component   : Node_Id)
       return Node_Id;
 
    function Link_Dispatch_Trigger_Event
      (Dispatch_Trigger_Event : Node_Id;
+      Root                   : Node_Id;
       Component              : Node_Id)
       return Node_Id;
 
@@ -461,41 +464,59 @@ package body Ocarina.Analyzer.AADL_BA is
       pragma Assert (ATN.Kind (Root) = ATN.K_AADL_Specification);
 
       Success : Boolean := True;
-      L1 : Node_List;
-      L2 : Node_List;
+      L2 : List_Id;
       N1 : Node_Id;
       N2 : Node_Id;
+      List_Node : Node_Id;
       BA_Root : Node_Id;
       Parent_Component : Node_Id;
 
    begin
-      L1 := Find_All_Declarations (Root,
-                                   (ATN.K_Component_Type,
-                                    ATN.K_Component_Implementation));
-      N1 := L1.First;
-      while Present (N1) loop
-         L2 := Find_All_Subclauses (N1, (1 => ATN.K_Annex_Subclause));
 
-         N2 := L2.First;
-         while Present (N2) loop
-            if Get_Name_String
-              (Utils.To_Lower
-                 (ATN.Name (ATN.Identifier (N2)))) =
-                BAT.Language and then
-                Present (ATN.Corresponding_Annex (N2))
-            then
-               BA_Root := ATN.Corresponding_Annex (N2);
-               Parent_Component := Container_Component (N2);
+      if not ANU.Is_Empty (ATN.Declarations (Root))
+      then
+         List_Node := ATN.First_Node
+           (ATN.Declarations (Root));
 
-               Success := Success and then
-                 Analyze_Behavior_Specification
-                   (Root, BA_Root, Parent_Component);
+         while Present (List_Node) loop
+            if ATN.Kind (List_Node) = ATN.K_Package_Specification then
+
+               N1 := ATN.First_Node (Declarations (List_Node));
+               while Present (N1) loop
+                  if ((ATN.Kind (N1) = ATN.K_Component_Type)
+                      or else
+                        (ATN.Kind (N1) = ATN.K_Component_Implementation))
+                  then
+
+                     L2 := ATN.Annexes (N1);
+                     if not ANU.Is_Empty (L2) then
+
+                        N2 := ATN.First_Node (L2);
+                        while Present (N2) loop
+                           if Get_Name_String
+                             (Utils.To_Lower
+                                (ATN.Name (ATN.Identifier (N2)))) =
+                               BAT.Language and then
+                               Present (ATN.Corresponding_Annex (N2))
+                           then
+                              BA_Root := ATN.Corresponding_Annex (N2);
+                              Parent_Component := Container_Component (N2);
+
+                              Success := Success and then
+                                Analyze_Behavior_Specification
+                                  (Root, BA_Root, Parent_Component);
+                           end if;
+                           N2 := ATN.Next_Node (N2);
+                        end loop;
+                     end if;
+                  end if;
+                  N1 := ATN.Next_Node (N1);
+               end loop;
             end if;
-            N2 := ATN.Next_Entity (N2);
-         end loop;
 
-         N1 := ATN.Next_Entity (N1);
-      end loop;
+            List_Node := ATN.Next_Node (List_Node);
+         end loop;
+      end if;
 
       return Success;
    end Analyze_Model;
@@ -612,7 +633,7 @@ package body Ocarina.Analyzer.AADL_BA is
             while Present (List_Node) loop
                Success := Success and then
                  Test_With_Identifiers_In_Parent_Component
-                   (List_Node, Parent_Component);
+                   (List_Node, Root, Parent_Component);
                List_Node := BATN.Next_Node (List_Node);
             end loop;
          end if;
@@ -671,7 +692,7 @@ package body Ocarina.Analyzer.AADL_BA is
                then
                   Success := Success and then
                     Test_With_Identifiers_In_Parent_Component
-                      (List_Node, Parent_Component);
+                      (List_Node, Root, Parent_Component);
                end if;
                List_Node := BATN.Next_Node (List_Node);
             end loop;
@@ -826,7 +847,7 @@ package body Ocarina.Analyzer.AADL_BA is
             Success := Success and then
               Test_With_Identifiers_In_Parent_Component
                 (Behavior_Transition_Idt
-                   (Transition (Behavior_Transition)), Parent_Component);
+                   (Transition (Behavior_Transition)), Root, Parent_Component);
          end if;
          Success := Success and then Analyze_Behavior_Transition
            (Transition (Behavior_Transition),
@@ -976,7 +997,7 @@ package body Ocarina.Analyzer.AADL_BA is
         = K_Dispatch_Condition_Thread
       then
          Success := Success and then Analyze_Dispatch_Condition
-           (Condition (Behavior_Condition (Transition)),
+           (Condition (Behavior_Condition (Transition)), Root,
             BA_Root, Parent_Component);
       end if;
 
@@ -2123,7 +2144,7 @@ package body Ocarina.Analyzer.AADL_BA is
 
       Success              : Boolean := False;
       N1                   : Node_Id;
-      L1                   : Node_List;
+      List_Node            : Node_Id;
    begin
       --  1) Check the called Subprogram Name : i.e.  It must refer to
       --  a Subprogram declared in the AADL model or a required subprogram
@@ -2131,31 +2152,46 @@ package body Ocarina.Analyzer.AADL_BA is
 
       --  1.b) a Subprogram declared in the AADL model
 
-      L1 := Find_All_Declarations (Root,
-                                   (ATN.K_Component_Type,
-                                    ATN.K_Component_Implementation));
-      N1 := L1.First;
-      while Present (N1) loop
-         if Component_Category'Val (Category (N1)) = CC_Subprogram
-           and then
-             Get_Name_String
-               (Utils.To_Lower (ATN.Name (ATN.Identifier (N1))))
-           = Get_Name_String
-           (Utils.To_Lower
-              (BATN.Display_Name
-                   (BATN.First_Node
-                        (BATN.Idt (BATN.Identifier (Node))))))
+      if not ANU.Is_Empty (ATN.Declarations (Root))
+      then
+         List_Node := ATN.First_Node
+           (ATN.Declarations (Root));
 
-         then
-            BATN.Set_Corresponding_Entity
-              (BATN.First_Node
-                 (BATN.Idt (BATN.Identifier (Node))), N1);
-            Success := True;
-         end if;
+         while Present (List_Node) loop
+            if ATN.Kind (List_Node) = ATN.K_Package_Specification then
 
-         exit when Success;
-         N1 := ATN.Next_Entity (N1);
-      end loop;
+               N1 := ATN.First_Node (Declarations (List_Node));
+               while Present (N1) loop
+                  if ((ATN.Kind (N1) = ATN.K_Component_Type)
+                      or else
+                        (ATN.Kind (N1) = ATN.K_Component_Implementation))
+                  then
+
+                     if Component_Category'Val (Category (N1)) = CC_Subprogram
+                       and then
+                         Get_Name_String
+                           (Utils.To_Lower (ATN.Name (ATN.Identifier (N1))))
+                       = Get_Name_String
+                       (Utils.To_Lower
+                          (BATN.Display_Name
+                               (BATN.First_Node
+                                    (BATN.Idt (BATN.Identifier (Node))))))
+
+                     then
+                        BATN.Set_Corresponding_Entity
+                          (BATN.First_Node
+                             (BATN.Idt (BATN.Identifier (Node))), N1);
+                        Success := True;
+                     end if;
+                  end if;
+                  exit when Success;
+                  N1 := ATN.Next_Node (N1);
+               end loop;
+            end if;
+
+            List_Node := ATN.Next_Node (List_Node);
+         end loop;
+      end if;
 
       BATN.Set_Is_Subprogram_Call (Node, Success);
 
@@ -3045,28 +3081,42 @@ package body Ocarina.Analyzer.AADL_BA is
       pragma Assert (ATN.Kind (Component_Impl) =
                        ATN.K_Component_Implementation);
 
-      L1                       : Node_List;
       N1                       : Node_Id;
       Component_Type_From_Impl : Node_Id := No_Node;
+      List_Node                : Node_Id;
    begin
 
-      L1 := Find_All_Declarations (Root, (1 => ATN.K_Component_Type));
-      N1 := L1.First;
-      while Present (N1) loop
+      if not ANU.Is_Empty (ATN.Declarations (Root))
+      then
+         List_Node := ATN.First_Node
+           (ATN.Declarations (Root));
 
-         if Get_Name_String
-           (Utils.To_Lower
-              (ATN.Name (ATN.Identifier (N1)))) =
-             Get_Name_String
-               (Utils.To_Lower
-                  (ATN.Name (ATN.Component_Type_Identifier (Component_Impl))))
-         then
-            Component_Type_From_Impl := N1;
-         end if;
-         exit when Component_Type_From_Impl /= No_Node;
+         while Present (List_Node) loop
+            if ATN.Kind (List_Node) = ATN.K_Package_Specification then
 
-         N1 := ATN.Next_Entity (N1);
-      end loop;
+               N1 := ATN.First_Node (Declarations (List_Node));
+               while Present (N1) loop
+                  if (ATN.Kind (N1) = ATN.K_Component_Type)
+                    and then
+                      Get_Name_String
+                        (Utils.To_Lower
+                           (ATN.Name (ATN.Identifier (N1)))) =
+                    Get_Name_String
+                      (Utils.To_Lower
+                         (ATN.Name (ATN.Component_Type_Identifier
+                          (Component_Impl))))
+                  then
+                     Component_Type_From_Impl := N1;
+
+                  end if;
+                  exit when Component_Type_From_Impl /= No_Node;
+                  N1 := ATN.Next_Node (N1);
+               end loop;
+            end if;
+
+            List_Node := ATN.Next_Node (List_Node);
+         end loop;
+      end if;
 
       return Component_Type_From_Impl;
 
@@ -3520,34 +3570,40 @@ package body Ocarina.Analyzer.AADL_BA is
       use ATN;
       pragma Assert (ATN.Kind (Root) = ATN.K_AADL_Specification);
       pragma Assert (ATN.Kind (Parent_Component) = ATN.K_Component_Type
-                     or else Kind (Parent_Component) =
+                     or else ATN.Kind (Parent_Component) =
                        ATN.K_Component_Implementation);
       pragma Assert (BATN.Kind (Node) = BATN.K_Identifier);
 
-      List_Of_Subcomponents : Node_List;
+      List_Of_Subcomponents : List_Id;
       N1                    : Node_Id;
       result                : Node_Id := No_Node;
    begin
-      List_Of_Subcomponents := Find_All_Subclauses
-        (Parent_Component, (1 => ATN.K_Subcomponent));
+      if ATN.Kind (Parent_Component) = ATN.K_Component_Implementation then
 
-      N1 := List_Of_Subcomponents.First;
-      while Present (N1) loop
-         if  (ATN.Kind (N1) = ATN.k_Subcomponent and then
-              Component_Category'Val (Category (N1)) = CC_Data)
-           and then
-             Get_Name_String
-               (Utils.To_Lower
-                  (Remove_Prefix_From_Name
-                     ("%ba%", BATN.Name (Node))))
-             = Get_Name_String
-           (Utils.To_Lower (ATN.Name (ATN.Identifier (N1))))
-         then
-            result := N1;
+         List_Of_Subcomponents := ATN.Subcomponents (Parent_Component);
+
+         if not ANU.Is_Empty (List_Of_Subcomponents) then
+
+            N1 := ATN.First_Node (List_Of_Subcomponents);
+            while Present (N1) loop
+               if  (ATN.Kind (N1) = ATN.k_Subcomponent and then
+                    Component_Category'Val (Category (N1)) = CC_Data)
+                 and then
+                   Get_Name_String
+                     (Utils.To_Lower
+                        (Remove_Prefix_From_Name
+                           ("%ba%", BATN.Name (Node))))
+                   = Get_Name_String
+                 (Utils.To_Lower (ATN.Name (ATN.Identifier (N1))))
+               then
+                  result := N1;
+               end if;
+               exit when result /= No_Node;
+               N1 := ATN.Next_Node (N1);
+            end loop;
          end if;
-         exit when result /= No_Node;
-         N1 := ATN.Next_Entity (N1);
-      end loop;
+      end if;
+
       return result;
    end Find_Data_Subcomponent_Of_Parent_Component;
 
@@ -3578,11 +3634,13 @@ package body Ocarina.Analyzer.AADL_BA is
 
    function Analyze_Dispatch_Condition
      (Condition         : Node_Id;
+      Root              : Node_Id;
       BA_Root           : Node_Id;
       Parent_Component  : Node_Id)
       return Boolean
    is
       use ATN;
+      pragma Assert (ATN.Kind (Root) = ATN.K_AADL_Specification);
       pragma Assert (BATN.Kind (BA_Root) = BATN.K_Behavior_Annex);
       pragma Assert (ATN.Kind (Parent_Component) = ATN.K_Component_Type
                      or else Kind (Parent_Component) =
@@ -3614,7 +3672,7 @@ package body Ocarina.Analyzer.AADL_BA is
                    (Dispatch_Conjunction_Node));
             while Present (Dispatch_Trigger_Event) loop
                Pointed_Node := Link_Dispatch_Trigger_Event
-                 (Dispatch_Trigger_Event, Parent_Component);
+                 (Dispatch_Trigger_Event, Root, Parent_Component);
                if Present (Pointed_Node) then
                   if ATN.Kind (Pointed_Node) = K_Port_Spec
                   then
@@ -3676,7 +3734,8 @@ package body Ocarina.Analyzer.AADL_BA is
       then
          Frozen_Port := BATN.First_Node (Frozen_Ports (Condition));
          while Present (Frozen_Port) loop
-            Pointed_Node := Link_Frozen_Port (Frozen_Port, Parent_Component);
+            Pointed_Node := Link_Frozen_Port
+              (Frozen_Port, Root, Parent_Component);
             if Present (Pointed_Node) then
                if not ATN.Is_In (Pointed_Node)
                then
@@ -3735,25 +3794,44 @@ package body Ocarina.Analyzer.AADL_BA is
 
    function Link_Frozen_Port
      (Frozen_Port : Node_Id;
-      Component  : Node_Id)
+      Root        : Node_Id;
+      Component   : Node_Id)
       return Node_Id
    is
-      List_Of_Port_Spec : Node_List;
-      N1 : Node_Id;
-      Node : Node_Id := No_Node;
+      use ATN;
+      List_Of_Features  : List_Id;
+      N1                : Node_Id;
+      Node              : Node_Id := No_Node;
+      Type_Of_Component : Node_Id;
    begin
-      List_Of_Port_Spec := Find_All_Subclauses
-        (Component, (1 => ATN.K_Port_Spec));
-      N1 := List_Of_Port_Spec.First;
-      while Present (N1) loop
-         if Get_Name_String (Remove_Prefix_From_Name
-                             ("%ba%", BATN.Name (Frozen_Port))) =
-           Get_Name_String (ATN.Name (ATN.Identifier (N1)))
-         then
-            Node := N1;
-         end if;
-         N1 := ATN.Next_Entity (N1);
-      end loop;
+
+      if ATN.Kind (Component) = ATN.K_Component_Type then
+         Type_Of_Component := Component;
+      else
+         Type_Of_Component := Get_Component_Type_From_Impl
+           (Root, Component);
+      end if;
+
+      List_Of_Features := ATN.Features (Type_Of_Component);
+
+      if not ANU.Is_Empty (List_Of_Features) then
+
+         N1 := ATN.First_Node (List_Of_Features);
+         while Present (N1) loop
+            if (ATN.Kind (N1) = ATN.K_Port_Spec) then
+               if Get_Name_String
+                 (Remove_Prefix_From_Name
+                    ("%ba%", BATN.Name (Frozen_Port))) =
+                   Get_Name_String (ATN.Name (ATN.Identifier (N1)))
+               then
+                  Node := N1;
+               end if;
+            end if;
+            exit when Node /= No_Node;
+            N1 := ATN.Next_Node (N1);
+         end loop;
+      end if;
+
       return Node;
 
    end Link_Frozen_Port;
@@ -3764,26 +3842,46 @@ package body Ocarina.Analyzer.AADL_BA is
 
    function Link_Dispatch_Trigger_Event
      (Dispatch_Trigger_Event : Node_Id;
+      Root                   : Node_Id;
       Component              : Node_Id)
       return Node_Id
    is
-      List_Of_Port_Spec_Or_Subcomp_Access : Node_List;
-      N1 : Node_Id;
-      Node : Node_Id := No_Node;
+      use ATN;
+      List_Of_Features  : List_Id;
+      N1                : Node_Id;
+      Node              : Node_Id := No_Node;
+      Type_Of_Component : Node_Id;
    begin
-      List_Of_Port_Spec_Or_Subcomp_Access := Find_All_Subclauses
-        (Component, (ATN.K_Port_Spec,
-         ATN.K_Subcomponent_Access));
-      N1 := List_Of_Port_Spec_Or_Subcomp_Access.First;
-      while Present (N1) loop
-         if Get_Name_String (Remove_Prefix_From_Name
-                             ("%ba%", BATN.Name (Dispatch_Trigger_Event))) =
-           Get_Name_String (ATN.Name (ATN.Identifier (N1)))
-         then
-            Node := N1;
-         end if;
-         N1 := ATN.Next_Entity (N1);
-      end loop;
+
+      if ATN.Kind (Component) = ATN.K_Component_Type then
+         Type_Of_Component := Component;
+      else
+         Type_Of_Component := Get_Component_Type_From_Impl
+           (Root, Component);
+      end if;
+
+      List_Of_Features := ATN.Features (Type_Of_Component);
+
+      if not ANU.Is_Empty (List_Of_Features) then
+
+         N1 := ATN.First_Node (List_Of_Features);
+         while Present (N1) loop
+            if (ATN.Kind (N1) = ATN.K_Port_Spec or else
+                 ATN.Kind (N1) = ATN.K_Subcomponent_Access)
+            then
+               if Get_Name_String
+                 (Remove_Prefix_From_Name
+                    ("%ba%", BATN.Name (Dispatch_Trigger_Event))) =
+                   Get_Name_String (ATN.Name (ATN.Identifier (N1)))
+               then
+                  Node := N1;
+               end if;
+            end if;
+            exit when Node /= No_Node;
+            N1 := ATN.Next_Node (N1);
+         end loop;
+      end if;
+
       return Node;
 
    end Link_Dispatch_Trigger_Event;
@@ -3875,36 +3973,67 @@ package body Ocarina.Analyzer.AADL_BA is
 
    function Test_With_Identifiers_In_Parent_Component
      (Id         : Node_Id;
+      Root       : Node_Id;
       Component  : Node_Id)
       return Boolean
    is
 
       use ATN;
 
-      List_Of_Identifiers_In_Component : Node_List;
-      N1 : Node_Id;
-      Success   : Boolean := True;
+      A_List            : List_Id;
+      N1                : Node_Id;
+      Success           : Boolean := True;
+      Type_Of_Component : Node_Id;
    begin
-      List_Of_Identifiers_In_Component := Find_All_Subclauses
-        (Component, (ATN.K_Port_Spec,
-         ATN.K_Parameter,
-         ATN.K_Feature_Group_Spec,
-         ATN.K_Subcomponent_Access,
-         ATN.K_Mode,
-         ATN.K_Subcomponent));
 
-      N1 := List_Of_Identifiers_In_Component.First;
-      while Present (N1) loop
-         if  (ATN.Kind (N1) = ATN.k_Subcomponent and then
-              Component_Category'Val (Category (N1)) = CC_Data)
-           or else ATN.Kind (N1) = ATN.k_Port_Spec
-           or else ATN.Kind (N1) = ATN.k_Parameter
-           or else ATN.Kind (N1) = ATN.k_Feature_Group_Spec
-           or else ATN.Kind (N1) = ATN.k_Subcomponent_Access
-           or else ATN.Kind (N1) = ATN.k_Mode
-         then
-            if Get_Name_String (Remove_Prefix_From_Name
-                                ("%ba%", BATN.Name (Id))) =
+      if ATN.Kind (Component) = ATN.K_Component_Type then
+         Type_Of_Component := Component;
+      else
+         Type_Of_Component := Get_Component_Type_From_Impl
+           (Root, Component);
+      end if;
+
+      if ATN.Kind (Component) = ATN.K_Component_Implementation then
+
+         A_List := ATN.Subcomponents (Component);
+
+         if not ANU.Is_Empty (A_List) then
+
+            N1 := ATN.First_Node (A_List);
+            while Present (N1) loop
+               if  (ATN.Kind (N1) = ATN.k_Subcomponent and then
+                    Component_Category'Val (Category (N1)) = CC_Data)
+                 and then
+                   Get_Name_String (Remove_Prefix_From_Name
+                                    ("%ba%", BATN.Name (Id))) =
+                 Get_Name_String (ATN.Name (ATN.Identifier (N1)))
+               then
+                  Error_Loc (1) := BATN.Loc (Id);
+                  Error_Loc (2) := ATN.Loc (N1);
+
+                  Error_Name (1) := BATN.Display_Name (Id);
+                  DE ("#conflicts with declaration!");
+                  Success := False;
+                  exit;
+               end if;
+               N1 := ATN.Next_Node (N1);
+            end loop;
+         end if;
+      end if;
+
+      A_List := ATN.Features (Type_Of_Component);
+
+      if not ANU.Is_Empty (A_List) then
+
+         N1 := ATN.First_Node (A_List);
+         while Present (N1) loop
+            if (ATN.Kind (N1) = ATN.k_Port_Spec
+                or else ATN.Kind (N1) = ATN.k_Parameter
+                or else ATN.Kind (N1) = ATN.k_Feature_Group_Spec
+                or else ATN.Kind (N1) = ATN.k_Subcomponent_Access)
+              and then
+                Get_Name_String (Remove_Prefix_From_Name
+                                 ("%ba%", BATN.Name (Id))) =
               Get_Name_String (ATN.Name (ATN.Identifier (N1)))
             then
                Error_Loc (1) := BATN.Loc (Id);
@@ -3915,9 +4044,34 @@ package body Ocarina.Analyzer.AADL_BA is
                Success := False;
                exit;
             end if;
-         end if;
-         N1 := ATN.Next_Entity (N1);
-      end loop;
+            N1 := ATN.Next_Node (N1);
+         end loop;
+      end if;
+
+      A_List := ATN.Modes (Component);
+
+      if not ANU.Is_Empty (A_List) then
+
+         N1 := ATN.First_Node (A_List);
+         while Present (N1) loop
+            if (ATN.Kind (N1) = ATN.K_Mode)
+              and then
+                Get_Name_String (Remove_Prefix_From_Name
+                                 ("%ba%", BATN.Name (Id))) =
+              Get_Name_String (ATN.Name (ATN.Identifier (N1)))
+            then
+               Error_Loc (1) := BATN.Loc (Id);
+               Error_Loc (2) := ATN.Loc (N1);
+
+               Error_Name (1) := BATN.Display_Name (Id);
+               DE ("#conflicts with declaration!");
+               Success := False;
+               exit;
+            end if;
+            N1 := ATN.Next_Node (N1);
+         end loop;
+      end if;
+
       return Success;
    end Test_With_Identifiers_In_Parent_Component;
 
@@ -4131,15 +4285,16 @@ package body Ocarina.Analyzer.AADL_BA is
       State     : Node_Id)
       return boolean
    is
-      List_Of_Modes : Node_List;
-      N1 : Node_Id;
-      Success   : Boolean := False;
+      List_Of_Modes : List_Id;
+      N1            : Node_Id;
+      Success       : Boolean := False;
    begin
 
-      if not ANU.Is_Empty (ATN.Modes (Component)) then
-         List_Of_Modes := Find_All_Subclauses
-           (Component, (1 => ATN.K_Mode));
-         N1 := List_Of_Modes.First;
+      List_Of_Modes := ATN.Modes (Component);
+
+      if not ANU.Is_Empty (List_Of_Modes) then
+
+         N1 := ATN.First_Node (List_Of_Modes);
          while Present (N1) loop
             if Get_Name_String (Remove_Prefix_From_Name
                                 ("%ba%", BATN.Name (State))) =
@@ -4148,9 +4303,10 @@ package body Ocarina.Analyzer.AADL_BA is
                Success := True;
             end if;
             exit when Success;
-            N1 := ATN.Next_Entity (N1);
+            N1 := ATN.Next_Node (N1);
          end loop;
       end if;
+
       return Success;
 
    end Exist_In_Modes;
@@ -4191,52 +4347,65 @@ package body Ocarina.Analyzer.AADL_BA is
       return Boolean
    is
       use ATN;
-      use Ocarina.ME_AADL.AADL_Tree.Entities;
       pragma Assert (ATN.Kind (Root) = ATN.K_AADL_Specification);
 
       Success                 : Boolean := False;
-      List_Of_Component_Types : Node_List;
-      List_Of_Component_Impls : Node_List;
-      List_Package_Spec_Decls : Node_List;
-      N1                      : Node_Id;
+      N1                      : Node_Id := No_Node;
       Full_Package_Name       : Name_Id;
       Corresponding_Package   : Node_Id;
       Corresponding_Component : Node_Id;
+      List_Node               : Node_Id;
    begin
+
       if not Is_Empty (Package_Name (BATN.Classifier_Ref (Node)))
       then
          Full_Package_Name := Build_Full_Package_Name
            (Package_Name (BATN.Classifier_Ref (Node)));
 
          Success := False;
-         List_Package_Spec_Decls := Find_All_Declarations
-           (Root, (1 => ATN.K_Package_Specification),
-            No_Node);
-         N1 := List_Package_Spec_Decls.First;
-         while Present (N1) loop
-            if Get_Name_String
-              (Utils.To_Lower (Full_Package_Name))
-                = Get_Name_String
-              (Utils.To_Lower (ATN.Name (ATN.Identifier (N1))))
+
+         if not ANU.Is_Empty (ATN.Declarations (Root))
+         then
+            List_Node := ATN.First_Node (ATN.Declarations (Root));
+
+            while Present (List_Node) loop
+               if ATN.Kind (List_Node) = ATN.K_Package_Specification then
+                  if Get_Name_String
+                    (Utils.To_Lower (Full_Package_Name))
+                      = Get_Name_String
+                    (Utils.To_Lower (ATN.Name (ATN.Identifier (List_Node))))
+                  then
+                     Success := True;
+                     Corresponding_Package := List_Node;
+                  end if;
+               end if;
+               exit when Success;
+               List_Node := ATN.Next_Node (List_Node);
+            end loop;
+
+            List_Node := ATN.First_Node (ATN.Declarations (Root));
+            if Present (List_Node) and then
+              ATN.Kind (List_Node) = ATN.K_Package_Specification
             then
-               Success := True;
-               Corresponding_Package := N1;
+               N1 := List_Node;
             end if;
-            exit when Success;
-            N1 := ATN.Next_Entity (N1);
-         end loop;
+
+         end if;
 
          if not Success then
-            N1 := List_Package_Spec_Decls.First;
 
             Error_Loc (1) := BATN.Loc (BATN.First_Node
                                        (BATN.Package_Name
                                           (BATN.Classifier_Ref (Node))));
-            DE ("(" &  Get_Name_String (Full_Package_Name) & ")"
+            if Present (N1) then
+               DE ("(" &  Get_Name_String (Full_Package_Name) & ")"
                 & " name not found in 'with' statements of "
-                & Get_Name_String
-                  (Get_Name_Of_Entity (N1, Get_Display_Name => True))
-                & " (package specification)");
+                & Get_Name_String (ATN.Display_Name (N1))
+                   & " (package specification)");
+            else
+               DE ("(" &  Get_Name_String (Full_Package_Name) & ")"
+                & " name not found in 'with' statements.");
+            end if;
          end if;
 
          if Present (BATN.Component_Type (BATN.Classifier_Ref (Node)))
@@ -4250,34 +4419,62 @@ package body Ocarina.Analyzer.AADL_BA is
 
             Set_Corresponding_Declaration
               (BATN.Classifier_Ref (Node), Corresponding_Component);
+         elsif Present (BATN.Component_Impl (BATN.Classifier_Ref (Node))) then
+
+            Corresponding_Component := Find_Component_Classifier_By_Name
+              (Root                 => Root,
+               Package_Identifier   => ATN.Identifier (Corresponding_Package),
+               Component_Name => Utils.To_Lower (BATN.Display_Name
+                 (BATN.Component_Impl (BATN.Classifier_Ref (Node)))));
+
+            Set_Corresponding_Declaration
+              (BATN.Classifier_Ref (Node), Corresponding_Component);
          end if;
       else
          if Present (BATN.Component_Impl (BATN.Classifier_Ref (Node)))
          then
-            List_Of_Component_Impls := Find_All_Declarations
-              (Root, (1 => ATN.K_Component_Implementation),
-               No_Node);
-            N1 := List_Of_Component_Impls.First;
-            while Present (N1) loop
-               if Component_Category'Val (Category (N1)) = CC_Data then
 
-                  if Get_Name_String (Remove_Prefix_From_Name
-                                      ("%ba%", BATN.Name (BATN.Component_Type
-                                         (BATN.Classifier_Ref (Node)))))
-                    & "."
-                    & Get_Name_String (Remove_Prefix_From_Name
-                                       ("%ba%", BATN.Name (BATN.Component_Impl
-                                          (BATN.Classifier_Ref (Node)))))
-                    = Get_Name_String (ATN.Name (ATN.Identifier (N1)))
-                  then
-                     Set_Corresponding_Declaration
-                       (BATN.Classifier_Ref (Node), N1);
-                     Success := True;
+            if not ANU.Is_Empty (ATN.Declarations (Root)) then
+               List_Node := ATN.First_Node (ATN.Declarations (Root));
+
+               while Present (List_Node) loop
+                  if ATN.Kind (List_Node) = ATN.K_Package_Specification then
+
+                     N1 := ATN.First_Node (Declarations (List_Node));
+                     while Present (N1) loop
+                        if (ATN.Kind (N1) = ATN.K_Component_Implementation)
+                        then
+
+                           if Component_Category'Val (Category (N1)) = CC_Data
+                           then
+
+                              if Get_Name_String
+                                (Remove_Prefix_From_Name
+                                   ("%ba%", BATN.Name (BATN.Component_Type
+                                    (BATN.Classifier_Ref (Node)))))
+                                & "."
+                                & Get_Name_String
+                                (Remove_Prefix_From_Name
+                                   ("%ba%", BATN.Name (BATN.Component_Impl
+                                    (BATN.Classifier_Ref (Node)))))
+                                = Get_Name_String
+                                (ATN.Name (ATN.Identifier (N1)))
+                              then
+                                 Set_Corresponding_Declaration
+                                   (BATN.Classifier_Ref (Node), N1);
+                                 Success := True;
+                              end if;
+                           end if;
+                        end if;
+                        exit when Success;
+                        N1 := ATN.Next_Node (N1);
+                     end loop;
                   end if;
-               end if;
-               exit when Success;
-               N1 := ATN.Next_Entity (N1);
-            end loop;
+
+                  List_Node := ATN.Next_Node (List_Node);
+               end loop;
+            end if;
+
             if not Success then
                Error_Loc (1) := BATN.Loc (BATN.Component_Type
                                           (BATN.Classifier_Ref (Node)));
@@ -4291,24 +4488,42 @@ package body Ocarina.Analyzer.AADL_BA is
                    & "anything or to something unreachable.");
             end if;
          else
-            List_Of_Component_Types := Find_All_Declarations
-              (Root, (1 => ATN.K_Component_Type), No_Node);
-            N1 := List_Of_Component_Types.First;
-            while Present (N1) loop
-               if Component_Category'Val (Category (N1)) = CC_Data then
-                  if Get_Name_String (Remove_Prefix_From_Name
-                                      ("%ba%", BATN.Name (BATN.Component_Type
-                                         (BATN.Classifier_Ref (Node)))))
-                    = Get_Name_String (ATN.Name (ATN.Identifier (N1)))
-                  then
-                     Set_Corresponding_Declaration
-                       (BATN.Classifier_Ref (Node), N1);
-                     Success := True;
+            if not ANU.Is_Empty (ATN.Declarations (Root)) then
+               List_Node := ATN.First_Node (ATN.Declarations (Root));
+
+               while Present (List_Node) loop
+                  if ATN.Kind (List_Node) = ATN.K_Package_Specification then
+
+                     N1 := ATN.First_Node (Declarations (List_Node));
+                     while Present (N1) loop
+                        if (ATN.Kind (N1) = ATN.K_Component_Type)
+                        then
+
+                           if Component_Category'Val (Category (N1)) = CC_Data
+                           then
+
+                              if Get_Name_String
+                                (Remove_Prefix_From_Name
+                                   ("%ba%", BATN.Name (BATN.Component_Type
+                                    (BATN.Classifier_Ref (Node)))))
+                                = Get_Name_String
+                                (ATN.Name (ATN.Identifier (N1)))
+                              then
+                                 Set_Corresponding_Declaration
+                                   (BATN.Classifier_Ref (Node), N1);
+                                 Success := True;
+                              end if;
+                           end if;
+                        end if;
+                        exit when Success;
+                        N1 := ATN.Next_Node (N1);
+                     end loop;
                   end if;
-               end if;
-               exit when Success;
-               N1 := ATN.Next_Entity (N1);
-            end loop;
+
+                  List_Node := ATN.Next_Node (List_Node);
+               end loop;
+            end if;
+
             if not Success then
                Error_Loc (1) := BATN.Loc (BATN.Component_Type
                                           (BATN.Classifier_Ref (Node)));
