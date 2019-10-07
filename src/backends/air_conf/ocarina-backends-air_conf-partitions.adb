@@ -299,6 +299,10 @@ package body Ocarina.Backends.AIR_Conf.Partitions is
                --  MaxMessageSize
 
                if Get_Data_Size (Corresponding_Instance (F)) /= Null_Size then
+                  --  If data size is specified, use this value, add
+                  --  40 to take into account PolyORB-HI/C header
+                  --  (conservative value).
+
                   Q :=
                     Make_Literal
                       (XV.New_Numeric_Value
@@ -309,12 +313,8 @@ package body Ocarina.Backends.AIR_Conf.Partitions is
                else
                   Display_Located_Error
                     (Loc (F),
-                     "No data size given for data size, " &
-                       "assume a value of 1 byte",
-                     Fatal => False,
-                     Warning => True);
-
-                  Q := Make_Literal (XV.New_Numeric_Value (1, 1, 10));
+                     "No data size given for data size",
+                     Fatal => True);
                end if;
 
                Set_Str_To_Name_Buffer ("MaxMessageSize");
