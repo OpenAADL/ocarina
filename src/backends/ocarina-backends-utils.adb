@@ -4134,7 +4134,11 @@ package body Ocarina.Backends.Utils is
          end if;
       end loop;
 
-      return Number_Of_Cores;
+      if Number_Of_Cores /= 0 then
+         return Number_Of_Cores;
+      else
+         return 1;
+      end if;
    end Get_Number_Of_Cores;
 
    ------------------------------
