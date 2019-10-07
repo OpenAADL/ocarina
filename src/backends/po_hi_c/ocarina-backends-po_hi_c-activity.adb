@@ -363,7 +363,8 @@ package body Ocarina.Backends.PO_HI_C.Activity is
            Get_Thread_Dispatch_Protocol (E);
          Impl_Kind : constant Supported_Thread_Implementation :=
            Get_Thread_Implementation_Kind (E);
-         Call_Parameters : List_Id;
+         Call_Parameters  : List_Id;
+         Call_Parameters1 : List_Id;
          N, N1           : Node_Id;
 
          procedure Make_Wait_Event;
@@ -1547,6 +1548,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
             Append_Node_To_List (N, Statements);
 
             Call_Parameters := New_List (CTN.K_Parameter_List);
+            Call_Parameters1 := New_List (CTN.K_Parameter_List);
             if Current_Device /= No_Node then
                N :=
                  Make_Defining_Identifier
@@ -1555,8 +1557,10 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                        Custom_Parent => Current_Device));
             else
                N := Make_Defining_Identifier (Map_C_Enumerator_Name (S));
+               N1 := Make_Defining_Identifier (Map_C_Enumerator_Name (S));
             end if;
             Append_Node_To_List (N, Call_Parameters);
+            Append_Node_To_List (N1, Call_Parameters1);
             N :=
               CTU.Make_Call_Profile
                 (RE (RE_Wait_For_Next_Period),
@@ -1567,6 +1571,23 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                declare
                   BA : Node_Id;
                begin
+                  if not AAU.Is_Empty (Subcomponents (E)) then
+                     N1 := First_Node (Subcomponents (E));
+
+                     while Present (N1) loop
+                        if AAU.Is_Data (Corresponding_Instance (N1)) then
+
+                           N :=
+                             Make_Variable_Address
+                               (Map_C_Defining_Identifier (N1));
+
+                           Append_Node_To_List (N, Call_Parameters1);
+
+                        end if;
+                        N1 := Next_Node (N1);
+                     end loop;
+                  end if;
+
                   BA := Get_Behavior_Specification (E);
                   if BANu.Length (BATN.States (BA)) > 1 then
 
@@ -1588,7 +1609,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                           (Defining_Identifier => Make_Defining_Identifier
                              (Map_C_BA_Related_Function_Name
                                   (S, BA_Initialization => True)),
-                           Parameters          =>  Call_Parameters);
+                           Parameters          =>  Call_Parameters1);
                         Append_Node_To_List (N, Statements);
 
                         N :=
