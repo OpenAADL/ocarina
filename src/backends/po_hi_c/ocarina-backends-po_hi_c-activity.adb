@@ -1556,6 +1556,11 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                    (Map_C_Enumerator_Name
                       (S,
                        Custom_Parent => Current_Device));
+               N1 :=
+                 Make_Defining_Identifier
+                   (Map_C_Enumerator_Name
+                      (S,
+                       Custom_Parent => Current_Device));
             else
                N := Make_Defining_Identifier (Map_C_Enumerator_Name (S));
                N1 := Make_Defining_Identifier (Map_C_Enumerator_Name (S));
