@@ -30,6 +30,7 @@ AC_CHECK_PROG(GNATCLEAN, gnatclean, gnatclean)
 AC_CHECK_PROG(GNATLS, gnatls, gnatls)
 AC_EXEEXT
 AM_PATH_PYTHON
+AM_GPRBUILD
 
 dnl we need a GNU flavoured sed
 AC_CHECK_PROG(HAVE_GNUSED,gnused,yes,no)
@@ -60,11 +61,11 @@ PATH_KIND=`$GNATLS -v 2>&1 \
 case ${PATH_KIND} in
      "WINDOWS" | "UNIX" )
          AC_MSG_RESULT($PATH_KIND)
-	 ;;
+         ;;
      * )
-	 AC_MSG_WARN([gnatls ("$GNATLS") uses an unknown path kind: "${PATH_KIND}. Assuming UNIX path"])
-	 PATH_KIND=UNIX
-	 ;;
+         AC_MSG_WARN([gnatls ("$GNATLS") uses an unknown path kind: "${PATH_KIND}. Assuming UNIX path"])
+         PATH_KIND=UNIX
+         ;;
 esac
 AC_SUBST(PATH_KIND)
 
@@ -212,26 +213,26 @@ AS_HELP_STRING([--with-ocarina-runtimes=x], [enumerate runtimes]),
   do
      case ${R} in
         all )
-	    for P in aadlib polyorb-hi-ada polyorb-hi-c
+            for P in aadlib polyorb-hi-ada polyorb-hi-c
             do
-	       if test -d ${root}/resources/runtime/${P}
-     	       then
-	          RUNTIME_LIST="${RUNTIME_LIST}${P} "
+               if test -d ${root}/resources/runtime/${P}
+               then
+                  RUNTIME_LIST="${RUNTIME_LIST}${P} "
                else
                   AC_MSG_ERROR([runtime ${P} not found])
-     	       fi
+               fi
             done
 
             AM_CONDITIONAL(AADLIB, true)
             AM_CONDITIONAL(PO_HI_ADA, true)
-	    AM_CONDITIONAL(PO_HI_C, true)
-	    ;;
+            AM_CONDITIONAL(PO_HI_C, true)
+            ;;
 
         none )
             AM_CONDITIONAL(AADLIB, false)
-	    AM_CONDITIONAL(PO_HI_ADA, false)
-	    AM_CONDITIONAL(PO_HI_C, false)
-	    ;;
+            AM_CONDITIONAL(PO_HI_ADA, false)
+            AM_CONDITIONAL(PO_HI_C, false)
+            ;;
 
          aadlib )
             if test -d ${root}/resources/runtime/${R}
@@ -240,43 +241,43 @@ AS_HELP_STRING([--with-ocarina-runtimes=x], [enumerate runtimes]),
             else
                AC_MSG_ERROR([runtime ${R} not found])
             fi
-	    AM_CONDITIONAL(AADLIB, true)
-	    ;;
+            AM_CONDITIONAL(AADLIB, true)
+            ;;
 
-	pok )
+        pok )
             if test -d ${root}/resources/runtime/${R}
             then
                RUNTIME_LIST="${RUNTIME_LIST}${R} "
             else
                AC_MSG_ERROR([runtime ${R} not found])
             fi
-	    AM_CONDITIONAL(POK, true)
-	    ;;
+            AM_CONDITIONAL(POK, true)
+            ;;
 
-	polyorb-hi-ada )
+        polyorb-hi-ada )
             if test -d ${root}/resources/runtime/${R}
             then
                RUNTIME_LIST="${RUNTIME_LIST}${R} "
             else
                AC_MSG_ERROR([runtime ${R} not found])
             fi
-	    AM_CONDITIONAL(PO_HI_ADA, true)
-	    ;;
+            AM_CONDITIONAL(PO_HI_ADA, true)
+            ;;
 
-	polyorb-hi-c )
+        polyorb-hi-c )
             if test -d ${root}/resources/runtime/${R}
             then
                RUNTIME_LIST="${RUNTIME_LIST}${R} "
             else
                AC_MSG_ERROR([runtime ${R} not found])
             fi
-	    AM_CONDITIONAL(PO_HI_C, true)
-	    ;;
+            AM_CONDITIONAL(PO_HI_C, true)
+            ;;
 
 
-	* )
-	    AC_MSG_ERROR([unknown runtime ${R}])
-	    ;;
+        * )
+            AC_MSG_ERROR([unknown runtime ${R}])
+            ;;
      esac
   done
   RUNTIME_LIST=`echo "$RUNTIME_LIST" | sed 's/ $//'`
@@ -287,7 +288,7 @@ AS_HELP_STRING([--with-ocarina-runtimes=x], [enumerate runtimes]),
   do
   if test -d ${root}/resources/runtime/${P}
   then
-	RUNTIME_LIST="${RUNTIME_LIST}${P} "
+        RUNTIME_LIST="${RUNTIME_LIST}${P} "
   fi
   done
 
@@ -406,42 +407,42 @@ dnl may, one day, be edited automatically to remove
 dnl some entries.
 
 AC_OUTPUT([
-	Makefile
-	doc/Makefile
-	doc/real/Makefile
-	examples/Makefile
-	examples/real/Makefile
-	examples/real/lib/Makefile
-	examples/real/resources/Makefile
-	examples/real/safety/Makefile
-	examples/real/security/Makefile
-	projects/Makefile
-	projects-distrib/Makefile
-	resources/Makefile
-	resources/behavioural_properties/Makefile
-	resources/runtime/Makefile
-	resources/runtime/aadl_xml/Makefile
-	resources/runtime/alloy/Makefile
-	resources/runtime/cheddar/Makefile
-	resources/runtime/lnt/Makefile
-	resources/runtime/python/Makefile
-	projects/ocarina.gpr
-	projects-distrib/ocarina/ocarina_core.gpr
-	src/main/Makefile
-	src/config/ocarina-configuration.adb
-	src/frontends/Makefile
-	src/config/Makefile
-	src/core/Makefile
-	src/transfo/Makefile
-	src/backends/Makefile
-	src/python/Makefile
-	src/Makefile
-	support/Makefile
-	support/strip_wrapper.sh
-	tools/Makefile
-	tools/gendoc.py
-	tools/compare.py
-	ocarina-config
+        Makefile
+        doc/Makefile
+        doc/real/Makefile
+        examples/Makefile
+        examples/real/Makefile
+        examples/real/lib/Makefile
+        examples/real/resources/Makefile
+        examples/real/safety/Makefile
+        examples/real/security/Makefile
+        projects/Makefile
+        projects-distrib/Makefile
+        resources/Makefile
+        resources/behavioural_properties/Makefile
+        resources/runtime/Makefile
+        resources/runtime/aadl_xml/Makefile
+        resources/runtime/alloy/Makefile
+        resources/runtime/cheddar/Makefile
+        resources/runtime/lnt/Makefile
+        resources/runtime/python/Makefile
+        projects/ocarina.gpr
+        projects-distrib/ocarina/ocarina_core.gpr
+        src/main/Makefile
+        src/config/ocarina-configuration.adb
+        src/frontends/Makefile
+        src/config/Makefile
+        src/core/Makefile
+        src/transfo/Makefile
+        src/backends/Makefile
+        src/python/Makefile
+        src/Makefile
+        support/Makefile
+        support/strip_wrapper.sh
+        tools/Makefile
+        tools/gendoc.py
+        tools/compare.py
+        ocarina-config
 ])
 
 AC_MSG_NOTICE(%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%)
