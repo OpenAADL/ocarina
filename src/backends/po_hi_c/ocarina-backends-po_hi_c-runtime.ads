@@ -129,6 +129,8 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Gqueue_Get_Value,               -- __po_hi_gqueue_get_value
       RE_Gqueue_Next_Value,              -- __po_hi_gqueue_next_value
       RE_Gqueue_Wait_For_Incoming_Event, -- __po_hi_gqueue_wait_for_incoming
+      RE_Gqueue_Wait_For_Specific_Incoming_Events,
+      --  __po_hi_gqueue_wait_for_specific_incoming_events
       RE_Compute_Next_Period,            -- __po_hi_compute_next_period
       RE_Sporadic_Wait,                  -- __po_hi_sporadic_wait
       RE_Compute_Miss,                   -- __po_hi_compute_miss
@@ -270,7 +272,8 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Complete_Final,                 --  __po_hi_complete_final
       RE_Final,                          --  __po_hi_final
       RE_Execution,                      --  __po_hi_execution
-      RE_State_Kind_T                    --  __po_hi_state_kind_t
+      RE_State_Kind_T,                   --  __po_hi_state_kind_t
+      RE_Ba_Automata_State_T             --  __po_hi_ba_automata_state_t
       );
 
    --  Runtime types
@@ -280,7 +283,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
    subtype RF_Id is RE_Id range RE_Null .. RE_Wait_For_Tasks;
    subtype RV_Id is RE_Id range RE_Operation_Names .. RE_Port_Global_To_Local;
    subtype RM_Id is RE_Id range RE_Local_Port .. RE_REQUEST_PORT;
-   subtype RB_Id is RE_Id range RE_Initial .. RE_State_Kind_T;
+   subtype RB_Id is RE_Id range RE_Initial .. RE_Ba_Automata_State_T;
 
    RE_Header_Table : constant array (RE_Id) of RH_Id :=
      (RE_Null => RH_Null,
@@ -363,6 +366,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Gqueue_Get_Value               => RH_PO_HI_Gqueue,
       RE_Gqueue_Next_Value              => RH_PO_HI_Gqueue,
       RE_Gqueue_Wait_For_Incoming_Event => RH_PO_HI_Gqueue,
+      RE_Gqueue_Wait_For_Specific_Incoming_Events => RH_PO_HI_Gqueue,
       RE_Sporadic_Wait                  => RH_PO_HI_Task,
       RE_Sporadic_Wait_Release          => RH_PO_HI_Task,
       RE_Simulink_Find_Var              => RH_PO_HI_Simulink,
@@ -500,7 +504,8 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Complete_Final               => RH_Null,
       RE_Final                        => RH_Null,
       RE_Execution                    => RH_Null,
-      RE_State_Kind_T                 => RH_Null
+      RE_State_Kind_T                 => RH_Null,
+      RE_Ba_Automata_State_T          => RH_Null
       );
    procedure Initialize;
    procedure Reset;
