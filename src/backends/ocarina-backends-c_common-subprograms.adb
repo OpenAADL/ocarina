@@ -639,16 +639,37 @@ package body Ocarina.Backends.C_Common.Subprograms is
 
             declare
                BA : Node_Id;
+               PL : List_Id;
+               P  : constant Supported_Thread_Dispatch_Protocol :=
+                 Get_Thread_Dispatch_Protocol (E);
             begin
                BA := Get_Behavior_Specification (E);
                if BANu.Length (BATN.States (BA)) > 1 then
+                  if P = Thread_Periodic
+                    or else (P = Thread_Sporadic and then
+                             Compute_Nb_On_Dispatch_Transitions (E) = 1)
+                  then
+                     PL := No_List;
+                  elsif P = Thread_Sporadic and then
+                    Compute_Nb_On_Dispatch_Transitions (E) > 1
+                  then
+                     PL := Make_List_Id
+                       (Make_Parameter_Specification
+                          (Defining_Identifier =>
+                               Make_Defining_Identifier
+                             (VN (V_Next_Complete_State)),
+                           Parameter_Type      =>
+                             Make_Pointer_Type
+                               (RE (RE_Ba_Automata_State_T))));
+                  end if;
+
                   N :=
                     Make_Extern_Entity_Declaration
                       (Make_Function_Specification
                          (Defining_Identifier => Make_Defining_Identifier
                             (Map_C_BA_Related_Function_Name
                                  (S, States_Initialization => True)),
-                          Parameters          => No_List,
+                          Parameters          => PL,
                           Return_Type         => New_Node (CTN.K_Void)));
 
                   Append_Node_To_List (N,
