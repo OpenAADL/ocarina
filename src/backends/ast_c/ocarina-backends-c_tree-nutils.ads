@@ -194,6 +194,11 @@ package Ocarina.Backends.C_Tree.Nutils is
       M_Deadline,
       M_Period,
       M_Flags,
+      M_Nb_Dispatch_Triggers_Of_Each_Transition,
+      M_Nb_Transitions,
+      M_Dispatch_Triggers_Of_All_Transitions,
+      M_Nb_Of_All_Dispatch_Events,
+      M_States_Attributes,
       M_Vars);
 
    MN : array (Member_Id) of Name_Id;
@@ -224,12 +229,15 @@ package Ocarina.Backends.C_Tree.Nutils is
       V_Error_Status,
       V_Out,
       V_In,
+      V_Next_Complete_State,
+      V_Index_Transition_To_Execute,
       V_Message);
 
    VN : array (Variable_Id) of Name_Id;
 
    type Function_Id is
-     (F_Process_Request, F_Register_Source, F_Init_Lane, F_Sizeof, F_Create);
+     (F_Process_Request, F_Register_Source, F_Init_Lane, F_Sizeof,
+      F_Malloc, F_Create);
 
    FN : array (Function_Id) of Name_Id;
 
