@@ -77,9 +77,12 @@ package Ocarina.Backends.C_Common.Mapping is
       Port_Type     : Boolean := False;
       Local_Port    : Boolean := False) return Name_Id;
    function Map_C_Define_Name
-     (E         : Node_Id;
-      Nb_Ports  : Boolean := False;
-      Nb_States : Boolean := False) return Name_Id;
+     (E                                             : Node_Id;
+      Nb_Ports                                      : Boolean := False;
+      Nb_States                                     : Boolean := False;
+      Max_Dispatch_Transitions_Per_Complete_State   : Boolean := False;
+      Max_Dispatch_Triggers_Per_Dispatch_Transition : Boolean := False)
+      return Name_Id;
    function Map_C_Full_Parameter_Name
      (Spg    : Node_Id;
       P      : Node_Id;
@@ -128,33 +131,34 @@ package Ocarina.Backends.C_Common.Mapping is
    function Map_C_Operation_Name (E : Node_Id) return Name_Id;
    function Map_C_Port_Data_Name (E : Node_Id; P : Node_Id) return Name_Id;
    function Map_C_Variable_Name
-     (E                 : Node_Id;
-      Port_Variable     : Boolean := False;
-      Port_History      : Boolean := False;
-      Port_Woffsets     : Boolean := False;
-      Port_Empties      : Boolean := False;
-      Port_First        : Boolean := False;
-      Port_Queue        : Boolean := False;
-      Port_Recent       : Boolean := False;
-      Port_Fifo_Size    : Boolean := False;
-      Port_Offsets      : Boolean := False;
-      Port_Used_Size    : Boolean := False;
-      Port_N_Dest       : Boolean := False;
-      Port_Local_Dest   : Boolean := False;
-      Port_Destinations : Boolean := False;
-      Port_Total_Fifo   : Boolean := False;
-      Port_Request      : Boolean := False;
-      Request_Variable  : Boolean := False;
-      State_Name_T      : Boolean := False;
-      State_T           : Boolean := False;
-      States_Array      : Boolean := False;
-      Current_State     : Boolean := False) return Name_Id;
+     (E                   : Node_Id;
+      Port_Variable       : Boolean := False;
+      Port_History        : Boolean := False;
+      Port_Woffsets       : Boolean := False;
+      Port_Empties        : Boolean := False;
+      Port_First          : Boolean := False;
+      Port_Queue          : Boolean := False;
+      Port_Recent         : Boolean := False;
+      Port_Fifo_Size      : Boolean := False;
+      Port_Offsets        : Boolean := False;
+      Port_Used_Size      : Boolean := False;
+      Port_N_Dest         : Boolean := False;
+      Port_Local_Dest     : Boolean := False;
+      Port_Destinations   : Boolean := False;
+      Port_Total_Fifo     : Boolean := False;
+      Port_Request        : Boolean := False;
+      Request_Variable    : Boolean := False;
+      State_Name_T        : Boolean := False;
+      State_T             : Boolean := False;
+      States_Array        : Boolean := False;
+      Current_State       : Boolean := False) return Name_Id;
 
    function Map_C_BA_Related_Function_Name
-     (E                     : Node_Id;
-      BA_Body               : Boolean := False;
-      States_Initialization : Boolean := False;
-      BA_Initialization     : Boolean := False) return Name_Id;
+     (E                          : Node_Id;
+      BA_Body                    : Boolean := False;
+      States_Initialization      : Boolean := False;
+      BA_Initialization          : Boolean := False;
+      Update_Next_Complete_State : Boolean := False) return Name_Id;
 
    function Map_Port_Data_With_Virtual_Bus
      (E                    : Node_Id;
