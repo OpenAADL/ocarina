@@ -90,13 +90,42 @@ package body Ocarina.Backends.C_Common.BA is
       Declarations : List_Id;
       Statements   : List_Id);
 
+   function Compute_Nb_States
+     (S            : Node_Id) return Unsigned_Long_Long;
+
    procedure Map_BA_States_To_C_Types
      (S            : Node_Id);
 
-   function Is_State_Kind_Type_Declaration_Exist
-     return Boolean;
+   function Compute_Nb_Trans_Stemmed_From_A_Specific_Complete_Stat
+     (BA             : Node_Id;
+      Complete_State : Node_Id) return Unsigned_Long_Long;
+
+   procedure Fill_Nb_Dispatch_Triggers_Of_Each_Transition_Array
+     (S               : Node_Id;
+      BA              : Node_Id;
+      Complete_State  : Node_Id;
+      Index_Comp_Stat : Unsigned_Long_Long;
+      WStatements     : List_Id);
+
+   procedure Fill_Dispatch_Triggers_Of_All_Transitions_Array
+     (S               : Node_Id;
+      BA              : Node_Id;
+      Complete_State  : Node_Id;
+      Index_Comp_Stat : Unsigned_Long_Long;
+      WStatements     : List_Id);
+
+   function Nb_All_Dispatch_Triggers_From_A_Specific_Complete_Stat
+     (BA             : Node_Id;
+      Complete_State : Node_Id) return Unsigned_Long_Long;
+
+   function Max_Dispatch_Triggers_Per_Trans_From_A_Specific_Complete_Stat
+     (BA             : Node_Id;
+      Complete_State : Node_Id) return Unsigned_Long_Long;
 
    procedure Make_States_Initialization_Function
+     (S            : Node_Id);
+
+   procedure Make_Update_Next_Complete_State_Function
      (S            : Node_Id);
 
    function Search_State_Kind
@@ -125,7 +154,7 @@ package body Ocarina.Backends.C_Common.BA is
       S                : Node_Id;
       Declarations     : List_Id;
       Statements       : List_Id;
-      Else_St          : List_Id) return List_Id;
+      Index_Transition : in out Unsigned_Long_Long) return List_Id;
 
    procedure Map_C_A_List_Of_Transitions
      (S                         : Node_Id;
@@ -136,11 +165,11 @@ package body Ocarina.Backends.C_Common.BA is
       WStatements               : List_Id);
 
    procedure Map_C_A_List_Of_On_Dispatch_Transitions
-     (S                         : Node_Id;
-      BA                        : Node_Id;
-      Sub_Transition_List       : List_Id;
-      WDeclarations             : List_Id;
-      WStatements               : List_Id);
+     (S                            : Node_Id;
+      BA                           : Node_Id;
+      Sub_Transition_List          : List_Id;
+      WDeclarations                : List_Id;
+      WStatements                  : List_Id);
 
    procedure Examine_Current_State_Until_Reaching_Complete_State
      (S                         : Node_Id;
@@ -632,52 +661,246 @@ package body Ocarina.Backends.C_Common.BA is
 
    end Map_C_Behavior_Transitions;
 
-   ------------------------------------------
-   -- Is_State_Kind_Type_Declaration_Exist --
-   ------------------------------------------
+   ----------------------------------------
+   -- Compute_Nb_On_Dispatch_Transitions --
+   -----------------------------------------
 
-   function Is_State_Kind_Type_Declaration_Exist
-     return Boolean
+   function Compute_Nb_On_Dispatch_Transitions
+     (S : Node_Id) return Unsigned_Long_Long
    is
-      Result : Boolean := False;
-      decl   : Node_Id;
+      BA                        : Node_Id;
+      behav_transition          : Node_Id;
+      Transition_Node           : Node_Id;
+      Nb_Dispatch_Transitions   : Unsigned_Long_Long;
    begin
 
-      decl := CTN.First_Node (CTN.Declarations (Current_File));
-      while Present (decl) loop
+      BA := Get_Behavior_Specification (S);
 
-         if Kind (decl) = CTN.K_Enumeration_Literals
-           and then
-             Standard.Utils.To_Lower
-               (CTN.Name (CTN.Defining_Identifier
-                (decl)))
-           = Standard.Utils.To_Lower
-           (Get_String_Name ("__po_hi_state_kind_t"))
+      Nb_Dispatch_Transitions := 0;
+
+      --  /** compute the number of all « on dispatch » transitions
+      --  that stems from the state "List_Node"
+      --  i.e. have « BATN.Display_Name (List_Node) » as source state.
+      --
+      if not BANu.Is_Empty (BATN.Transitions (BA)) then
+         Behav_Transition := BATN.First_Node (BATN.Transitions (BA));
+         while Present (Behav_Transition) loop
+            Transition_Node := BATN.Transition (Behav_Transition);
+
+            if BATN.Kind (Transition_Node) =
+              BATN.K_Execution_Behavior_Transition
+              and then
+                Present (BATN.Behavior_Condition (Transition_Node))
+                and then
+                  Present (BATN.Condition
+                           (BATN.Behavior_Condition
+                              (Transition_Node)))
+              and then
+                BATN.Kind
+                  (BATN.Condition
+                     (Behavior_Condition (Transition_Node)))
+                = BATN.K_Dispatch_Condition_Thread
+            then
+               Nb_Dispatch_Transitions := Nb_Dispatch_Transitions + 1;
+            end if;
+            Behav_Transition := BATN.Next_Node (Behav_Transition);
+         end loop;
+      end if;
+
+      return Nb_Dispatch_Transitions;
+
+   end Compute_Nb_On_Dispatch_Transitions;
+
+   ---------------------------------------------------------
+   -- Compute_Max_Dispatch_Transitions_Per_Complete_State --
+   ---------------------------------------------------------
+
+   function Compute_Max_Dispatch_Transitions_Per_Complete_State
+     (S : Node_Id) return Unsigned_Long_Long
+   is
+      BA                        : Node_Id;
+      State                     : Node_Id;
+      List_Node                 : Node_Id;
+      behav_transition          : Node_Id;
+      Transition_Node           : Node_Id;
+      Source                    : Node_Id;
+      Max_Dispatch_Transitions  : Unsigned_Long_Long := 0;
+      Nb_Dispatch_Transitions   : Unsigned_Long_Long;
+   begin
+
+      BA := Get_Behavior_Specification (S);
+
+      State := BATN.First_Node (BATN.States (BA));
+
+      while Present (State) loop
+         if Behavior_State_Kind'Val (BATN.State_Kind (State))
+           = BSK_Initial_Complete
+           or else Behavior_State_Kind'Val (BATN.State_Kind (State))
+             = BSK_Initial_Complete_Final
+           or else Behavior_State_Kind'Val (BATN.State_Kind (State))
+             = BSK_Complete
+           or else Behavior_State_Kind'Val (BATN.State_Kind (State))
+             = BSK_Complete_Final
          then
-            Result := True;
+            List_Node := BATN.First_Node (BATN.Identifiers (State));
+
+            while Present (List_Node) loop
+
+               Nb_Dispatch_Transitions := 0;
+
+               --  /** compute the number of all « on dispatch » transitions
+               --  that stems from the state "List_Node"
+               --  i.e. have « BATN.Display_Name (List_Node) » as source state.
+               --
+               if not BANu.Is_Empty (BATN.Transitions (BA)) then
+                  Behav_Transition := BATN.First_Node (BATN.Transitions (BA));
+                  while Present (Behav_Transition) loop
+                     Transition_Node := BATN.Transition (Behav_Transition);
+
+                     if BATN.Kind (Transition_Node) =
+                       BATN.K_Execution_Behavior_Transition
+                       and then
+                         Present (BATN.Behavior_Condition (Transition_Node))
+                         and then
+                           Present (BATN.Condition
+                                    (BATN.Behavior_Condition
+                                       (Transition_Node)))
+                       and then
+                         BATN.Kind
+                           (BATN.Condition
+                              (Behavior_Condition (Transition_Node)))
+                         = BATN.K_Dispatch_Condition_Thread
+                     then
+                        if BANu.Length (BATN.Sources (Transition_Node)) = 1
+                        then
+                           Source := BATN.First_Node
+                             (BATN.Sources (Transition_Node));
+                           if  (Standard.Utils.To_Upper
+                                (BATN.Display_Name (List_Node)) =
+                                  Standard.Utils.To_Upper
+                                    (BATN.Display_Name (Source)))
+                           then
+                              Nb_Dispatch_Transitions :=
+                                Nb_Dispatch_Transitions + 1;
+                           end if;
+                        end if;
+                     end if;
+                     Behav_Transition := BATN.Next_Node (Behav_Transition);
+                  end loop;
+               end if;
+
+               if Nb_Dispatch_Transitions > Max_Dispatch_Transitions then
+                  Max_Dispatch_Transitions := Nb_Dispatch_Transitions;
+               end if;
+
+               List_Node := BATN.Next_Node (List_Node);
+            end loop;
          end if;
-         exit when Result;
-         decl := CTN.Next_Node (decl);
+
+         State := BATN.Next_Node (State);
       end loop;
-      return Result;
-   end Is_State_Kind_Type_Declaration_Exist;
 
-   ------------------------------
-   -- Map_BA_States_To_C_Types --
-   ------------------------------
+      return Max_Dispatch_Transitions;
 
-   procedure Map_BA_States_To_C_Types
-     (S            : Node_Id)
+   end Compute_Max_Dispatch_Transitions_Per_Complete_State;
+
+   -----------------------------------------------------------
+   -- Compute_Max_Dispatch_Triggers_Per_Dispatch_Transition --
+   -----------------------------------------------------------
+
+   function Compute_Max_Dispatch_Triggers_Per_Dispatch_Transition
+     (S : Node_Id) return Unsigned_Long_Long
+   is
+      BA                        : Node_Id;
+      behav_transition          : Node_Id;
+      Node                      : Node_Id;
+      Dispatch_Conjunction_Node : Node_Id;
+      Dipatch_Trigger_Event     : Node_Id;
+      Max_Dispatch_Triggers     : Unsigned_Long_Long := 0;
+      Nb_Dispatch_Triggers      : Unsigned_Long_Long;
+   begin
+
+      BA := Get_Behavior_Specification (S);
+
+      if not BANu.Is_Empty (BATN.Transitions (BA)) then
+
+         behav_transition := BATN.First_Node (BATN.Transitions (BA));
+
+         while Present (Behav_Transition) loop
+
+            Node := BATN.Transition (Behav_Transition);
+
+            if BATN.Kind (Node) = BATN.K_Execution_Behavior_Transition
+              and then Present (BATN.Behavior_Condition (Node))
+              and then Present (BATN.Condition
+                                (BATN.Behavior_Condition (Node)))
+              and then
+                BATN.Kind (BATN.Condition (Behavior_Condition (Node)))
+              = BATN.K_Dispatch_Condition_Thread
+              and then Present
+                (BATN.Dispatch_Trigger_Condition
+                   (BATN.Condition
+                      (BATN.Behavior_Condition (Node))))
+              and then not BANu.Is_Empty
+                (BATN.Dispatch_Conjunction
+                   (BATN.Dispatch_Trigger_Condition
+                      (BATN.Condition
+                           (BATN.Behavior_Condition (Node)))))
+            then
+               Dispatch_Conjunction_Node :=
+                 BATN.First_Node
+                   (Dispatch_Conjunction
+                      (Dispatch_Trigger_Condition (BATN.Condition
+                       (BATN.Behavior_Condition (Node)))));
+
+               while Present (Dispatch_Conjunction_Node) loop
+
+                  if not BANu.Is_Empty
+                    (Dispatch_Triggers (Dispatch_Conjunction_Node))
+                  then
+                     Dipatch_Trigger_Event := BATN.First_Node
+                       (Dispatch_Triggers (Dispatch_Conjunction_Node));
+
+                     Nb_Dispatch_Triggers := 0;
+
+                     while Present (Dipatch_Trigger_Event) loop
+
+                        Nb_Dispatch_Triggers := Nb_Dispatch_Triggers + 1;
+
+                        Dipatch_Trigger_Event := BATN.Next_Node
+                          (Dipatch_Trigger_Event);
+                     end loop;
+
+                     if Nb_Dispatch_Triggers > Max_Dispatch_Triggers then
+                        Max_Dispatch_Triggers := Nb_Dispatch_Triggers;
+                     end if;
+
+                  end if;
+
+                  Dispatch_Conjunction_Node := BATN.Next_Node
+                    (Dispatch_Conjunction_Node);
+               end loop;
+
+            end if;
+            behav_transition := BATN.Next_Node (behav_transition);
+         end loop;
+      end if;
+
+      return Max_Dispatch_Triggers;
+
+   end Compute_Max_Dispatch_Triggers_Per_Dispatch_Transition;
+
+   --------------------------------------
+   -- Create_Enum_Type_Of_States_Names --
+   --------------------------------------
+
+   procedure Create_Enum_Type_Of_States_Names (S : Node_Id)
    is
       BA                         : Node_Id;
       State, List_Node           : Node_Id;
       N                          : Node_Id;
       State_Enumerator_List      : List_Id;
-      State_Kind_Enumerator_List : List_Id;
-      State_Struct               : List_Id;
       State_Identifier           : Unsigned_Long_Long;
-      Nb_States                  : Unsigned_Long_Long;
-      Q                          : Name_Id;
       Thread_Instance_Name       : Name_Id;
       E                          : constant Node_Id :=
         AIN.Parent_Subcomponent (S);
@@ -691,13 +914,12 @@ package body Ocarina.Backends.C_Common.BA is
       --  typedef enum
       --  {
       --     s0, s1, s2, s3
-      --  } __po_hi_producer_state_name_t;
+      --  } __po_hi__<<thread_instance_name>>__state_name_t;
 
       State_Enumerator_List := New_List (CTN.K_Enumeration_Literals);
 
       State := BATN.First_Node (BATN.States (BA));
       State_Identifier := 0;
-      Nb_States := 0;
 
       while Present (State) loop
 
@@ -718,7 +940,6 @@ package body Ocarina.Backends.C_Common.BA is
 
                Append_Node_To_List (N, State_Enumerator_List);
                State_Identifier := State_Identifier + 1;
-               Nb_States        := Nb_States + 1;
 
                List_Node := BATN.Next_Node (List_Node);
             end loop;
@@ -742,52 +963,19 @@ package body Ocarina.Backends.C_Common.BA is
            Type_Definition => Make_Enum_Aggregate (State_Enumerator_List));
       Append_Node_To_List (N, CTN.Declarations (Current_File));
 
-      --  2) Create an enumeration type declaration
-      --  called state_kind
-      --  that enumerates all possible kinds of state
-      --
-      --  typedef enum
-      --  {
-      --    __po_hi_initial,
-      --    __po_hi_initial_complete,
-      --    __po_hi_initial_complete_final,
-      --    __po_hi_initial_final,
-      --    __po_hi_complete,
-      --    __po_hi_complete_final,
-      --    __po_hi_final,
-      --    __po_hi_execution
-      --   } __po_hi_state_kind_t;
-      --
-      if not Is_State_Kind_Type_Declaration_Exist then
-         State_Kind_Enumerator_List := New_List (CTN.K_Enumeration_Literals);
+   end Create_Enum_Type_Of_States_Names;
 
-         Append_Node_To_List (RE (RE_Initial), State_Kind_Enumerator_List);
+   -----------------------
+   -- Create_State_Type --
+   -----------------------
 
-         Append_Node_To_List (RE (RE_Initial_Complete),
-                              State_Kind_Enumerator_List);
-
-         Append_Node_To_List (RE (RE_Initial_Complete_Final),
-                              State_Kind_Enumerator_List);
-
-         Append_Node_To_List (RE (RE_Initial_Final),
-                              State_Kind_Enumerator_List);
-
-         Append_Node_To_List (RE (RE_Complete), State_Kind_Enumerator_List);
-
-         Append_Node_To_List (RE (RE_Complete_Final),
-                              State_Kind_Enumerator_List);
-
-         Append_Node_To_List (RE (RE_Final), State_Kind_Enumerator_List);
-
-         Append_Node_To_List (RE (RE_Execution), State_Kind_Enumerator_List);
-
-         N :=
-           Make_Full_Type_Declaration
-             (Defining_Identifier => RE (RE_State_Kind_T),
-              Type_Definition => Make_Enum_Aggregate
-                (State_Kind_Enumerator_List));
-         Append_Node_To_List (N, CTN.Declarations (Current_File));
-      end if;
+   procedure Create_State_Type (S : Node_Id)
+   is
+      N                          : Node_Id;
+      State_Struct               : List_Id;
+      E                          : constant Node_Id :=
+        AIN.Parent_Subcomponent (S);
+   begin
 
       --  3)
       --  typedef struct
@@ -798,24 +986,31 @@ package body Ocarina.Backends.C_Common.BA is
 
       State_Struct := New_List (CTN.K_Enumeration_Literals);
 
-      Set_Str_To_Name_Buffer ("name");
-      Q := Name_Find;
-
       N :=
         Make_Member_Declaration
-          (Defining_Identifier => Make_Defining_Identifier (Q),
+          (Defining_Identifier => Make_Defining_Identifier
+             (MN (M_Name)),
            Used_Type           => Make_Defining_Identifier
              (Map_C_Variable_Name (E, State_Name_T => True)));
       Append_Node_To_List (N, State_Struct);
 
-      Set_Str_To_Name_Buffer ("kind");
-      Q := Name_Find;
-
       N :=
         Make_Member_Declaration
-          (Defining_Identifier => Make_Defining_Identifier (Q),
+          (Defining_Identifier => Make_Defining_Identifier
+             (MN (M_kind)),
            Used_Type           => RE (RE_State_Kind_T));
       Append_Node_To_List (N, State_Struct);
+
+      if Get_Thread_Dispatch_Protocol (S) = Thread_Sporadic
+        and then Compute_Nb_On_Dispatch_Transitions (S) > 1
+      then
+         N :=
+           Make_Member_Declaration
+             (Defining_Identifier => Make_Defining_Identifier
+                (MN (M_States_Attributes)),
+                  Used_Type           => RE (RE_Ba_Automata_State_T));
+         Append_Node_To_List (N, State_Struct);
+      end if;
 
       N :=
         Make_Full_Type_Declaration
@@ -824,6 +1019,58 @@ package body Ocarina.Backends.C_Common.BA is
            Type_Definition     =>
              Make_Struct_Aggregate (Members => State_Struct));
       Append_Node_To_List (N, CTN.Declarations (Current_File));
+
+   end Create_State_Type;
+
+   -----------------------
+   -- Compute_Nb_States --
+   -----------------------
+
+   function Compute_Nb_States
+     (S            : Node_Id) return Unsigned_Long_Long
+   is
+      BA                         : Node_Id;
+      State, List_Node           : Node_Id;
+      Nb_States                  : Unsigned_Long_Long;
+   begin
+
+      BA := Get_Behavior_Specification (S);
+
+      State := BATN.First_Node (BATN.States (BA));
+      Nb_States := 0;
+
+      while Present (State) loop
+
+         if not BANu.Is_Empty (BATN.Identifiers (State)) then
+            List_Node := BATN.First_Node (BATN.Identifiers (State));
+
+            while Present (List_Node) loop
+
+               Nb_States := Nb_States + 1;
+
+               List_Node := BATN.Next_Node (List_Node);
+            end loop;
+         end if;
+
+         State := BATN.Next_Node (State);
+      end loop;
+
+      return Nb_States;
+   end Compute_Nb_States;
+
+   ------------------------------
+   -- Map_BA_States_To_C_Types --
+   ------------------------------
+
+   procedure Map_BA_States_To_C_Types
+     (S            : Node_Id)
+   is
+      N                          : Node_Id;
+      Nb_States                  : constant Unsigned_Long_Long :=
+        Compute_Nb_States (S);
+      E                          : constant Node_Id :=
+        AIN.Parent_Subcomponent (S);
+   begin
 
       --  4)
       --  #define __po_hi_<<thread_instance_name>>_nb_states <<Nb_States>>
@@ -899,6 +1146,710 @@ package body Ocarina.Backends.C_Common.BA is
       return Result;
    end Map_C_State_Kind_Name;
 
+   -------------------------------------------------------------------
+   -- Max_Dispatch_Triggers_Per_Trans_From_A_Specific_Complete_Stat --
+   -------------------------------------------------------------------
+
+   function Max_Dispatch_Triggers_Per_Trans_From_A_Specific_Complete_Stat
+     (BA             : Node_Id;
+      Complete_State : Node_Id) return Unsigned_Long_Long
+   is
+      Nb_Dispatch_Triggers_Per_Trans  : Unsigned_Long_Long := 0;
+      Max_Dispatch_Triggers_Per_Trans : Unsigned_Long_Long := 0;
+      behav_transition                : Node_Id;
+      Node                            : Node_Id;
+      Source                          : Node_Id;
+      Dispatch_Conjunction_Node       : Node_Id;
+      Dispatch_Trigger_Event          : Node_Id;
+   begin
+
+      --  /** compute the number of all « dispatch triggers » of all
+      --  on dispatch transitions transitions that stem from the state
+      --  "Complete_State"
+      --  i.e. have « BATN.Display_Name (Complete_State) » as source state.
+      --
+      if not BANu.Is_Empty (BATN.Transitions (BA)) then
+         Behav_Transition := BATN.First_Node (BATN.Transitions (BA));
+         while Present (Behav_Transition) loop
+            Node := BATN.Transition (Behav_Transition);
+
+            if BATN.Kind (Node) =
+              BATN.K_Execution_Behavior_Transition
+              and then
+                Present (BATN.Behavior_Condition (Node))
+                and then
+                  Present (BATN.Condition
+                           (BATN.Behavior_Condition
+                              (Node)))
+              and then
+                BATN.Kind
+                  (BATN.Condition
+                     (Behavior_Condition (Node)))
+                = BATN.K_Dispatch_Condition_Thread
+            then
+               if BANu.Length (BATN.Sources (Node)) = 1
+               then
+                  Source := BATN.First_Node
+                    (BATN.Sources (Node));
+                  if  (Standard.Utils.To_Upper
+                       (BATN.Display_Name (Complete_State)) =
+                         Standard.Utils.To_Upper
+                           (BATN.Display_Name (Source)))
+                  then
+                     Nb_Dispatch_Triggers_Per_Trans := 0;
+                     if Present (BATN.Dispatch_Trigger_Condition
+                                 (BATN.Condition
+                                    (BATN.Behavior_Condition (Node))))
+                       and then not BANu.Is_Empty
+                         (BATN.Dispatch_Conjunction
+                            (BATN.Dispatch_Trigger_Condition
+                               (BATN.Condition
+                                    (BATN.Behavior_Condition (Node)))))
+                     then
+                        if BANu.Length
+                          (Dispatch_Conjunction
+                             (Dispatch_Trigger_Condition (BATN.Condition
+                              (BATN.Behavior_Condition (Node))))) = 1
+                        then
+
+                           Dispatch_Conjunction_Node :=
+                             BATN.First_Node
+                               (Dispatch_Conjunction
+                                  (Dispatch_Trigger_Condition (BATN.Condition
+                                   (BATN.Behavior_Condition (Node)))));
+
+                           if not BANu.Is_Empty
+                             (Dispatch_Triggers (Dispatch_Conjunction_Node))
+                           then
+                              Dispatch_Trigger_Event := BATN.First_Node
+                                (Dispatch_Triggers
+                                   (Dispatch_Conjunction_Node));
+
+                              while Present (Dispatch_Trigger_Event) loop
+                                 Nb_Dispatch_Triggers_Per_Trans :=
+                                   Nb_Dispatch_Triggers_Per_Trans + 1;
+                                 Dispatch_Trigger_Event :=
+                                   BATN.Next_Node (Dispatch_Trigger_Event);
+                              end loop;
+
+                              if Nb_Dispatch_Triggers_Per_Trans >
+                                Max_Dispatch_Triggers_Per_Trans
+                              then
+                                 Max_Dispatch_Triggers_Per_Trans :=
+                                   Nb_Dispatch_Triggers_Per_Trans;
+                              end if;
+                           end if;
+                        else
+                           Display_Error
+                             ("The code generation for many "
+                              & "Dispatch Conjunction is not yet supported.",
+                              Fatal => True);
+                        end if;
+                     end if;
+                  end if;
+               end if;
+            end if;
+            Behav_Transition := BATN.Next_Node (Behav_Transition);
+         end loop;
+      end if;
+      return Max_Dispatch_Triggers_Per_Trans;
+   end Max_Dispatch_Triggers_Per_Trans_From_A_Specific_Complete_Stat;
+
+   -----------------------------------------------------
+   -- Fill_Dispatch_Triggers_Of_All_Transitions_Array --
+   -----------------------------------------------------
+
+   procedure Fill_Dispatch_Triggers_Of_All_Transitions_Array
+     (S               : Node_Id;
+      BA              : Node_Id;
+      Complete_State  : Node_Id;
+      Index_Comp_Stat : Unsigned_Long_Long;
+      WStatements     : List_Id)
+   is
+      E                              : constant Node_Id :=
+        AIN.Parent_Subcomponent (S);
+      Index_Dispatch_Triggers        : Unsigned_Long_Long := -1;
+      behav_transition               : Node_Id;
+      Node                           : Node_Id;
+      Source                         : Node_Id;
+      Dispatch_Conjunction_Node      : Node_Id;
+      Dispatch_Trigger_Event         : Node_Id;
+      N                              : Node_Id;
+   begin
+      --  6) fill the array __po_hi_consumer_states_array[0].
+      --  state_attributes.dispatch_triggers_of_all_transitions[0]
+      --  = LOCAL_PORT (consumer, c1);
+      if not BANu.Is_Empty (BATN.Transitions (BA)) then
+         Behav_Transition := BATN.First_Node (BATN.Transitions (BA));
+         while Present (Behav_Transition) loop
+            Node := BATN.Transition (Behav_Transition);
+
+            if BATN.Kind (Node) =
+              BATN.K_Execution_Behavior_Transition
+              and then
+                Present (BATN.Behavior_Condition (Node))
+                and then
+                  Present (BATN.Condition
+                           (BATN.Behavior_Condition
+                              (Node)))
+              and then
+                BATN.Kind
+                  (BATN.Condition
+                     (Behavior_Condition (Node)))
+                = BATN.K_Dispatch_Condition_Thread
+            then
+               if BANu.Length (BATN.Sources (Node)) = 1
+               then
+                  Source := BATN.First_Node
+                    (BATN.Sources (Node));
+                  if  (Standard.Utils.To_Upper
+                       (BATN.Display_Name (Complete_State)) =
+                         Standard.Utils.To_Upper
+                           (BATN.Display_Name (Source)))
+                  then
+                     if Present (BATN.Dispatch_Trigger_Condition
+                                 (BATN.Condition
+                                    (BATN.Behavior_Condition (Node))))
+                       and then not BANu.Is_Empty
+                         (BATN.Dispatch_Conjunction
+                            (BATN.Dispatch_Trigger_Condition
+                               (BATN.Condition
+                                    (BATN.Behavior_Condition (Node)))))
+                     then
+                        if BANu.Length
+                          (Dispatch_Conjunction
+                             (Dispatch_Trigger_Condition (BATN.Condition
+                              (BATN.Behavior_Condition (Node))))) = 1
+                        then
+
+                           Dispatch_Conjunction_Node :=
+                             BATN.First_Node
+                               (Dispatch_Conjunction
+                                  (Dispatch_Trigger_Condition (BATN.Condition
+                                   (BATN.Behavior_Condition (Node)))));
+
+                           if not BANu.Is_Empty
+                             (Dispatch_Triggers (Dispatch_Conjunction_Node))
+                           then
+                              Dispatch_Trigger_Event := BATN.First_Node
+                                (Dispatch_Triggers
+                                   (Dispatch_Conjunction_Node));
+
+                              while Present (Dispatch_Trigger_Event) loop
+                                 Index_Dispatch_Triggers :=
+                                   Index_Dispatch_Triggers + 1;
+
+                                 N := Make_Assignment_Statement
+                                (Variable_Identifier => Make_Member_Designator
+                                 (Defining_Identifier =>
+                                   Make_Member_Designator
+                                    (Defining_Identifier =>
+                                     Make_Array_Declaration
+                                      (Defining_Identifier =>
+                                       Make_Defining_Identifier
+                                 (MN (M_Dispatch_Triggers_Of_All_Transitions)),
+                                       Array_Size => Make_Literal
+                                         (CV.New_Int_Value
+                                           (Index_Dispatch_Triggers, 0, 10))),
+                                   Aggregate_Name  => Make_Defining_Identifier
+                                      (MN (M_States_Attributes))),
+                                  Aggregate_Name      => Make_Array_Declaration
+                                   (Defining_Identifier =>
+                                     Make_Defining_Identifier
+                               (Map_C_Variable_Name (E, States_Array => True)),
+                                       Array_Size => Make_Literal
+                                      (CV.New_Int_Value
+                                              (Index_Comp_Stat, 0, 10)))),
+                                 Expression  =>
+                                   Make_Call_Profile
+                                    (RE (RE_Local_Port),
+                                      Make_List_Id
+                                      (Make_Defining_Identifier
+                                        (Map_Thread_Port_Variable_Name (S)),
+                                       Make_Defining_Identifier
+                                           (BATN.Display_Name
+                                                (Dispatch_Trigger_Event)))));
+
+                                 CTU.Append_Node_To_List (N, WStatements);
+
+                                 Dispatch_Trigger_Event :=
+                                   BATN.Next_Node (Dispatch_Trigger_Event);
+                              end loop;
+                           end if;
+                        else
+                           Display_Error
+                             ("The code generation for many "
+                              & "Dispatch Conjunction is not yet supported.",
+                              Fatal => True);
+                        end if;
+                     end if;
+                  end if;
+               end if;
+            end if;
+            Behav_Transition := BATN.Next_Node (Behav_Transition);
+         end loop;
+      end if;
+
+   end Fill_Dispatch_Triggers_Of_All_Transitions_Array;
+
+   --------------------------------------------------------
+   -- Fill_Nb_Dispatch_Triggers_Of_Each_Transition_Array --
+   --------------------------------------------------------
+
+   procedure Fill_Nb_Dispatch_Triggers_Of_Each_Transition_Array
+     (S               : Node_Id;
+      BA              : Node_Id;
+      Complete_State  : Node_Id;
+      Index_Comp_Stat : Unsigned_Long_Long;
+      WStatements     : List_Id)
+   is
+      E                              : constant Node_Id :=
+        AIN.Parent_Subcomponent (S);
+      Index_Transition               : Unsigned_Long_Long := -1;
+      Nb_Dispatch_Triggers_Per_Trans : Unsigned_Long_Long := 0;
+      behav_transition               : Node_Id;
+      Node                           : Node_Id;
+      Source                         : Node_Id;
+      Dispatch_Conjunction_Node      : Node_Id;
+      Dispatch_Trigger_Event         : Node_Id;
+      N                              : Node_Id;
+   begin
+
+      if not BANu.Is_Empty (BATN.Transitions (BA)) then
+         Behav_Transition := BATN.First_Node (BATN.Transitions (BA));
+         while Present (Behav_Transition) loop
+            Node := BATN.Transition (Behav_Transition);
+
+            if BATN.Kind (Node) =
+              BATN.K_Execution_Behavior_Transition
+              and then
+                Present (BATN.Behavior_Condition (Node))
+                and then
+                  Present (BATN.Condition
+                           (BATN.Behavior_Condition
+                              (Node)))
+              and then
+                BATN.Kind
+                  (BATN.Condition
+                     (Behavior_Condition (Node)))
+                = BATN.K_Dispatch_Condition_Thread
+            then
+               if BANu.Length (BATN.Sources (Node)) = 1
+               then
+                  Source := BATN.First_Node
+                    (BATN.Sources (Node));
+                  if  (Standard.Utils.To_Upper
+                       (BATN.Display_Name (Complete_State)) =
+                         Standard.Utils.To_Upper
+                           (BATN.Display_Name (Source)))
+                  then
+                     Nb_Dispatch_Triggers_Per_Trans := 0;
+                     Index_Transition := Index_Transition + 1;
+                     if Present (BATN.Dispatch_Trigger_Condition
+                                 (BATN.Condition
+                                    (BATN.Behavior_Condition (Node))))
+                       and then not BANu.Is_Empty
+                         (BATN.Dispatch_Conjunction
+                            (BATN.Dispatch_Trigger_Condition
+                               (BATN.Condition
+                                    (BATN.Behavior_Condition (Node)))))
+                     then
+                        if BANu.Length
+                          (Dispatch_Conjunction
+                             (Dispatch_Trigger_Condition (BATN.Condition
+                              (BATN.Behavior_Condition (Node))))) = 1
+                        then
+
+                           Dispatch_Conjunction_Node :=
+                             BATN.First_Node
+                               (Dispatch_Conjunction
+                                  (Dispatch_Trigger_Condition (BATN.Condition
+                                   (BATN.Behavior_Condition (Node)))));
+
+                           if not BANu.Is_Empty
+                             (Dispatch_Triggers (Dispatch_Conjunction_Node))
+                           then
+                              Dispatch_Trigger_Event := BATN.First_Node
+                                (Dispatch_Triggers
+                                   (Dispatch_Conjunction_Node));
+
+                              while Present (Dispatch_Trigger_Event) loop
+                                 Nb_Dispatch_Triggers_Per_Trans :=
+                                   Nb_Dispatch_Triggers_Per_Trans + 1;
+                                 Dispatch_Trigger_Event :=
+                                   BATN.Next_Node (Dispatch_Trigger_Event);
+                              end loop;
+
+                              N := Make_Assignment_Statement
+                                (Variable_Identifier => Make_Member_Designator
+                                 (Defining_Identifier =>
+                                   Make_Member_Designator
+                                    (Defining_Identifier =>
+                                     Make_Array_Declaration
+                                      (Defining_Identifier =>
+                                       Make_Defining_Identifier
+                              (MN (M_Nb_Dispatch_Triggers_Of_Each_Transition)),
+                                       Array_Size => Make_Literal
+                                         (CV.New_Int_Value
+                                              (Index_Transition, 0, 10))),
+                                   Aggregate_Name  => Make_Defining_Identifier
+                                      (MN (M_States_Attributes))),
+                                  Aggregate_Name      => Make_Array_Declaration
+                                   (Defining_Identifier =>
+                                     Make_Defining_Identifier
+                               (Map_C_Variable_Name (E, States_Array => True)),
+                                       Array_Size => Make_Literal
+                                      (CV.New_Int_Value
+                                              (Index_Comp_Stat, 0, 10)))),
+                                 Expression          =>
+                                   Make_Literal
+                                    (CV.New_Int_Value
+                                     (Nb_Dispatch_Triggers_Per_Trans, 0, 10)));
+
+                              CTU.Append_Node_To_List (N, WStatements);
+                           end if;
+                        else
+                           Display_Error
+                             ("The code generation for many "
+                              & "Dispatch Conjunction is not yet supported.",
+                              Fatal => True);
+                        end if;
+                     end if;
+                  end if;
+               end if;
+            end if;
+            Behav_Transition := BATN.Next_Node (Behav_Transition);
+         end loop;
+      end if;
+
+   end Fill_Nb_Dispatch_Triggers_Of_Each_Transition_Array;
+
+   ------------------------------------------------------------
+   -- Nb_All_Dispatch_Triggers_From_A_Specific_Complete_Stat --
+   ------------------------------------------------------------
+
+   function Nb_All_Dispatch_Triggers_From_A_Specific_Complete_Stat
+     (BA             : Node_Id;
+      Complete_State : Node_Id) return Unsigned_Long_Long
+   is
+      Nb_All_Dispatch_Triggers  : Unsigned_Long_Long := 0;
+      behav_transition          : Node_Id;
+      Node                      : Node_Id;
+      Source                    : Node_Id;
+      Dispatch_Conjunction_Node : Node_Id;
+      Dispatch_Trigger_Event    : Node_Id;
+   begin
+
+      --  /** compute the number of all « dispatch triggers » of all
+      --  on dispatch transitions transitions that stem from the state
+      --  "Complete_State"
+      --  i.e. have « BATN.Display_Name (Complete_State) » as source state.
+      --
+      if not BANu.Is_Empty (BATN.Transitions (BA)) then
+         Behav_Transition := BATN.First_Node (BATN.Transitions (BA));
+         while Present (Behav_Transition) loop
+            Node := BATN.Transition (Behav_Transition);
+
+            if BATN.Kind (Node) =
+              BATN.K_Execution_Behavior_Transition
+              and then
+                Present (BATN.Behavior_Condition (Node))
+                and then
+                  Present (BATN.Condition
+                           (BATN.Behavior_Condition
+                              (Node)))
+              and then
+                BATN.Kind
+                  (BATN.Condition
+                     (Behavior_Condition (Node)))
+                = BATN.K_Dispatch_Condition_Thread
+            then
+               if BANu.Length (BATN.Sources (Node)) = 1
+               then
+                  Source := BATN.First_Node
+                    (BATN.Sources (Node));
+                  if  (Standard.Utils.To_Upper
+                       (BATN.Display_Name (Complete_State)) =
+                         Standard.Utils.To_Upper
+                           (BATN.Display_Name (Source)))
+                  then
+                     if Present (BATN.Dispatch_Trigger_Condition
+                                 (BATN.Condition
+                                    (BATN.Behavior_Condition (Node))))
+                       and then not BANu.Is_Empty
+                         (BATN.Dispatch_Conjunction
+                            (BATN.Dispatch_Trigger_Condition
+                               (BATN.Condition
+                                    (BATN.Behavior_Condition (Node)))))
+                     then
+                        if BANu.Length
+                          (Dispatch_Conjunction
+                             (Dispatch_Trigger_Condition (BATN.Condition
+                              (BATN.Behavior_Condition (Node))))) = 1
+                        then
+
+                           Dispatch_Conjunction_Node :=
+                             BATN.First_Node
+                               (Dispatch_Conjunction
+                                  (Dispatch_Trigger_Condition (BATN.Condition
+                                   (BATN.Behavior_Condition (Node)))));
+
+                           if not BANu.Is_Empty
+                             (Dispatch_Triggers (Dispatch_Conjunction_Node))
+                           then
+                              Dispatch_Trigger_Event := BATN.First_Node
+                                (Dispatch_Triggers
+                                   (Dispatch_Conjunction_Node));
+
+                              while Present (Dispatch_Trigger_Event) loop
+                                 Nb_All_Dispatch_Triggers :=
+                                   Nb_All_Dispatch_Triggers + 1;
+                                 Dispatch_Trigger_Event :=
+                                   BATN.Next_Node (Dispatch_Trigger_Event);
+                              end loop;
+                           end if;
+                        else
+                           Display_Error
+                             ("The code generation for many "
+                              & "Dispatch Conjunction is not yet supported.",
+                              Fatal => True);
+                        end if;
+                     end if;
+                  end if;
+               end if;
+            end if;
+            Behav_Transition := BATN.Next_Node (Behav_Transition);
+         end loop;
+      end if;
+      return Nb_All_Dispatch_Triggers;
+   end Nb_All_Dispatch_Triggers_From_A_Specific_Complete_Stat;
+
+   ------------------------------------------------------------
+   -- Compute_Nb_Trans_Stemmed_From_A_Specific_Complete_Stat --
+   ------------------------------------------------------------
+
+   function Compute_Nb_Trans_Stemmed_From_A_Specific_Complete_Stat
+     (BA             : Node_Id;
+      Complete_State : Node_Id) return Unsigned_Long_Long
+   is
+      Nb_Dispatch_Transitions   : Unsigned_Long_Long := 0;
+      behav_transition          : Node_Id;
+      Transition_Node           : Node_Id;
+      Source                    : Node_Id;
+   begin
+
+      --  /** compute the number of all « on dispatch » transitions
+      --  that stems from the state "Complete_State"
+      --  i.e. have « BATN.Display_Name (Complete_State) » as source state.
+      --
+      if not BANu.Is_Empty (BATN.Transitions (BA)) then
+         Behav_Transition := BATN.First_Node (BATN.Transitions (BA));
+         while Present (Behav_Transition) loop
+            Transition_Node := BATN.Transition (Behav_Transition);
+
+            if BATN.Kind (Transition_Node) =
+              BATN.K_Execution_Behavior_Transition
+              and then
+                Present (BATN.Behavior_Condition (Transition_Node))
+                and then
+                  Present (BATN.Condition
+                           (BATN.Behavior_Condition
+                              (Transition_Node)))
+              and then
+                BATN.Kind
+                  (BATN.Condition
+                     (Behavior_Condition (Transition_Node)))
+                = BATN.K_Dispatch_Condition_Thread
+            then
+               if BANu.Length (BATN.Sources (Transition_Node)) = 1
+               then
+                  Source := BATN.First_Node
+                    (BATN.Sources (Transition_Node));
+                  if  (Standard.Utils.To_Upper
+                       (BATN.Display_Name (Complete_State)) =
+                         Standard.Utils.To_Upper
+                           (BATN.Display_Name (Source)))
+                  then
+                     Nb_Dispatch_Transitions :=
+                       Nb_Dispatch_Transitions + 1;
+                  end if;
+               end if;
+            end if;
+            Behav_Transition := BATN.Next_Node (Behav_Transition);
+         end loop;
+      end if;
+      return Nb_Dispatch_Transitions;
+   end Compute_Nb_Trans_Stemmed_From_A_Specific_Complete_Stat;
+
+   -----------------------------------------
+   -- Make_Update_Next_Complete_State_Function --
+   -----------------------------------------
+
+   procedure Make_Update_Next_Complete_State_Function
+     (S            : Node_Id)
+   is
+      N                          : Node_Id;
+      E                          : constant Node_Id :=
+        AIN.Parent_Subcomponent (S);
+      WStatements : constant List_Id := New_List (CTN.K_Statement_List);
+      Q : Name_Id;
+
+   begin
+
+      --  next_complete_state->nb_of_all_dispatch_events =
+      --  __po_hi_consumer_current_state.state_attributes.
+      --  nb_of_all_dispatch_events;
+      --  next_complete_state->nb_transitions =
+      --  __po_hi_consumer_current_state.state_attributes.nb_transitions;
+      --
+      --  for(int i=0;i<next_complete_state->nb_of_all_dispatch_events;i++)
+      --  {
+      --    next_complete_state->dispatch_triggers_of_all_transitions[i] =
+      --     __po_hi_consumer_current_state.state_attributes.
+      --       dispatch_triggers_of_all_transitions[i];
+      --  }
+      --  for(int i=0;i<next_complete_state->nb_transitions;i++)
+      --  {
+      --    next_complete_state->nb_dispatch_triggers_of_each_transition[i] =
+      --      __po_hi_consumer_current_state.state_attributes.
+      --        nb_dispatch_triggers_of_each_transition[i];
+      --  }
+
+      N := Make_Assignment_Statement
+        (Variable_Identifier => Make_Member_Designator
+           (Defining_Identifier => Make_Defining_Identifier
+                (MN (M_Nb_Of_All_Dispatch_Events)),
+            Aggregate_Name      => Make_Defining_Identifier
+              (VN (V_Next_Complete_State)),
+            Is_Pointer          => True),
+         Expression  => Make_Member_Designator
+           (Defining_Identifier => Make_Member_Designator
+                (Defining_Identifier => Make_Defining_Identifier
+                     (MN (M_Nb_Of_All_Dispatch_Events)),
+                 Aggregate_Name      => Make_Defining_Identifier
+                   (MN (M_States_Attributes))),
+            Aggregate_Name      => Make_Defining_Identifier
+              (Map_C_Variable_Name (E, Current_State => True))));
+
+      CTU.Append_Node_To_List (N, WStatements);
+
+      N := Make_Assignment_Statement
+        (Variable_Identifier => Make_Member_Designator
+           (Defining_Identifier => Make_Defining_Identifier
+                (MN (M_Nb_Transitions)),
+            Aggregate_Name      => Make_Defining_Identifier
+              (VN (V_Next_Complete_State)),
+            Is_Pointer          => True),
+         Expression  => Make_Member_Designator
+           (Defining_Identifier => Make_Member_Designator
+                (Defining_Identifier => Make_Defining_Identifier
+                     (MN (M_Nb_Transitions)),
+                 Aggregate_Name      => Make_Defining_Identifier
+                   (MN (M_States_Attributes))),
+            Aggregate_Name      => Make_Defining_Identifier
+              (Map_C_Variable_Name (E, Current_State => True))));
+
+      CTU.Append_Node_To_List (N, WStatements);
+
+      Set_Str_To_Name_Buffer ("i");
+      Q := Name_Find;
+
+      N := CTU.Make_For_Statement
+        (Pre_Cond   => Make_Variable_Declaration
+           (Defining_Identifier => Make_Defining_Identifier (Q),
+            Used_Type           => Make_Defining_Identifier (TN (T_Int)),
+            Value               => Make_Literal (CV.New_Int_Value (0, 0, 10))),
+         Condition  => CTU.Make_Expression
+           (Left_Expr  => Make_Defining_Identifier
+                (Q),
+            Operator   => CTU.Op_Less,
+            Right_Expr => Make_Member_Designator
+              (Defining_Identifier => Make_Defining_Identifier
+                   (MN (M_Nb_Of_All_Dispatch_Events)),
+               Aggregate_Name      => Make_Defining_Identifier
+                 (VN (V_Next_Complete_State)),
+               Is_Pointer          => True)),
+         Post_Cond  =>  CTU.Make_Expression
+           (Left_Expr  => Make_Defining_Identifier (Q),
+            Operator   => CTU.Op_Plus_Plus,
+            Right_Expr => No_Node),
+         Statements =>
+           Make_List_Id
+             (Make_Assignment_Statement
+                  (Variable_Identifier => Make_Member_Designator
+                     (Defining_Identifier => Make_Array_Declaration
+                        (Defining_Identifier => Make_Defining_Identifier
+                             (MN (M_Dispatch_Triggers_Of_All_Transitions)),
+                         Array_Size => Make_Defining_Identifier (Q)),
+                      Aggregate_Name      => Make_Defining_Identifier
+                        (VN (V_Next_Complete_State)),
+                      Is_Pointer          => True),
+                   Expression  => Make_Member_Designator
+                     (Defining_Identifier => Make_Member_Designator
+                        (Defining_Identifier => Make_Array_Declaration
+                             (Defining_Identifier => Make_Defining_Identifier
+                                (MN (M_Dispatch_Triggers_Of_All_Transitions)),
+                              Array_Size => Make_Defining_Identifier (Q)),
+                         Aggregate_Name      => Make_Defining_Identifier
+                           (MN (M_States_Attributes))),
+                      Aggregate_Name      => Make_Defining_Identifier
+                        (Map_C_Variable_Name (E, Current_State => True))))));
+
+      CTU.Append_Node_To_List (N, WStatements);
+
+      N := CTU.Make_For_Statement
+        (Pre_Cond   => Make_Variable_Declaration
+           (Defining_Identifier => Make_Defining_Identifier (Q),
+            Used_Type           => Make_Defining_Identifier (TN (T_Int)),
+            Value               => Make_Literal (CV.New_Int_Value (0, 0, 10))),
+         Condition  => CTU.Make_Expression
+           (Left_Expr  => Make_Defining_Identifier
+                (Q),
+            Operator   => CTU.Op_Less,
+            Right_Expr => Make_Member_Designator
+              (Defining_Identifier => Make_Defining_Identifier
+                   (MN (M_Nb_Transitions)),
+               Aggregate_Name      => Make_Defining_Identifier
+                 (VN (V_Next_Complete_State)),
+               Is_Pointer          => True)),
+         Post_Cond  =>  CTU.Make_Expression
+           (Left_Expr  => Make_Defining_Identifier (Q),
+            Operator   => CTU.Op_Plus_Plus,
+            Right_Expr => No_Node),
+         Statements =>
+           Make_List_Id
+             (Make_Assignment_Statement
+                  (Variable_Identifier => Make_Member_Designator
+                     (Defining_Identifier => Make_Array_Declaration
+                        (Defining_Identifier => Make_Defining_Identifier
+                             (MN (M_Nb_Dispatch_Triggers_Of_Each_Transition)),
+                         Array_Size => Make_Defining_Identifier (Q)),
+                      Aggregate_Name      => Make_Defining_Identifier
+                        (VN (V_Next_Complete_State)),
+                      Is_Pointer          => True),
+                   Expression  => Make_Member_Designator
+                     (Defining_Identifier => Make_Member_Designator
+                        (Defining_Identifier => Make_Array_Declaration
+                           (Defining_Identifier => Make_Defining_Identifier
+                             (MN (M_Nb_Dispatch_Triggers_Of_Each_Transition)),
+                              Array_Size => Make_Defining_Identifier (Q)),
+                         Aggregate_Name      => Make_Defining_Identifier
+                           (MN (M_States_Attributes))),
+                      Aggregate_Name      => Make_Defining_Identifier
+                        (Map_C_Variable_Name (E, Current_State => True))))));
+
+      CTU.Append_Node_To_List (N, WStatements);
+
+      N := Make_Function_Implementation
+        (Specification => Make_Specification_Of_BA_Related_Function
+           (S, Update_Next_Complete_State => True),
+         Declarations  => No_List,
+         Statements    => WStatements);
+
+      Append_Node_To_List (N, CTN.Declarations (Current_File));
+
+   end Make_Update_Next_Complete_State_Function;
+
    -----------------------------------------
    -- Make_States_Initialization_Function --
    -----------------------------------------
@@ -908,13 +1859,20 @@ package body Ocarina.Backends.C_Common.BA is
    is
       BA                         : Node_Id;
       State, List_Node           : Node_Id;
-      N, N1                      : Node_Id;
+      N                          : Node_Id;
       State_Identifier           : Unsigned_Long_Long;
-      Q                          : Name_Id;
       E                          : constant Node_Id :=
         AIN.Parent_Subcomponent (S);
+      P      : constant Supported_Thread_Dispatch_Protocol :=
+           Get_Thread_Dispatch_Protocol (S);
       WStatements : constant List_Id := New_List (CTN.K_Statement_List);
       Initial_State_Index        : Unsigned_Long_Long;
+      Nb_States : constant Unsigned_Long_Long := Compute_Nb_States (S);
+      Complete_States_Index : array (1 .. Nb_States) of Unsigned_Long_Long;
+      Nb_Complete_States    : Unsigned_Long_Long := 0;
+      i                     : Unsigned_Long_Long;
+      Nb_On_Dispatch_Transitions : constant Unsigned_Long_Long :=
+        Compute_Nb_On_Dispatch_Transitions (S);
    begin
 
       BA := Get_Behavior_Specification (S);
@@ -942,13 +1900,6 @@ package body Ocarina.Backends.C_Common.BA is
       --  __po_hi_producer_current_state = __po_hi_producer_states_array[0];
       --  }
 
-      N1 := Make_Function_Specification
-        (Defining_Identifier => Make_Defining_Identifier
-           (Map_C_BA_Related_Function_Name
-                (E, States_Initialization => True)),
-         Parameters          => No_List,
-         Return_Type         => New_Node (CTN.K_Void));
-
       N := Message_Comment ("fill the array "
                             & Get_Name_String
                               (Map_C_Variable_Name (E, States_Array => True))
@@ -966,13 +1917,11 @@ package body Ocarina.Backends.C_Common.BA is
 
             while Present (List_Node) loop
 
-               Set_Str_To_Name_Buffer ("name");
-               Q := Name_Find;
-
                CTU.Append_Node_To_List
                  (Make_Assignment_Statement
                     (Variable_Identifier => Make_Member_Designator
-                         (Defining_Identifier => Make_Defining_Identifier (Q),
+                         (Defining_Identifier => Make_Defining_Identifier
+                              (MN (M_Name)),
                           Aggregate_Name      => Make_Array_Declaration
                             (Defining_Identifier =>
                                    Make_Defining_Identifier
@@ -983,13 +1932,11 @@ package body Ocarina.Backends.C_Common.BA is
                        (BATN.Display_Name (List_Node))),
                   WStatements);
 
-               Set_Str_To_Name_Buffer ("kind");
-               Q := Name_Find;
-
                CTU.Append_Node_To_List
                  (Make_Assignment_Statement
                     (Variable_Identifier => Make_Member_Designator
-                         (Defining_Identifier => Make_Defining_Identifier (Q),
+                         (Defining_Identifier => Make_Defining_Identifier
+                              (MN (M_Kind)),
                           Aggregate_Name      => Make_Array_Declaration
                             (Defining_Identifier =>
                                    Make_Defining_Identifier
@@ -1011,6 +1958,20 @@ package body Ocarina.Backends.C_Common.BA is
                   Initial_State_Index := State_Identifier;
                end if;
 
+               if Behavior_State_Kind'Val (BATN.State_Kind (State))
+                 = BSK_Initial_Complete
+                 or else Behavior_State_Kind'Val (BATN.State_Kind (State))
+                   = BSK_Initial_Complete_Final
+                 or else Behavior_State_Kind'Val (BATN.State_Kind (State))
+                   = BSK_Complete
+                 or else Behavior_State_Kind'Val (BATN.State_Kind (State))
+                   = BSK_Complete_Final
+               then
+                  Nb_Complete_States := Nb_Complete_States + 1;
+                  Complete_States_Index (Nb_Complete_States) :=
+                    State_Identifier;
+               end if;
+
                State_Identifier := State_Identifier + 1;
                List_Node := BATN.Next_Node (List_Node);
             end loop;
@@ -1018,6 +1979,190 @@ package body Ocarina.Backends.C_Common.BA is
 
          State := BATN.Next_Node (State);
       end loop;
+
+      if P = Thread_Sporadic and then
+        Nb_On_Dispatch_Transitions > 1
+      then
+
+         i := 0;
+
+         N := Message_Comment
+           ("For each complete state initialize nb_transitions,"
+            & " nb_dispatch_triggers_of_each_transition,"
+            & " dispatch_triggers_of_all_transitions"
+            & " and nb_of_all_dispatch_events");
+
+         CTU.Append_Node_To_List (N, WStatements);
+
+         State := BATN.First_Node (BATN.States (BA));
+
+         while Present (State) loop
+
+            if Behavior_State_Kind'Val (BATN.State_Kind (State))
+              = BSK_Initial_Complete
+              or else Behavior_State_Kind'Val (BATN.State_Kind (State))
+                = BSK_Initial_Complete_Final
+              or else Behavior_State_Kind'Val (BATN.State_Kind (State))
+                = BSK_Complete
+              or else Behavior_State_Kind'Val (BATN.State_Kind (State))
+                = BSK_Complete_Final
+            then
+               List_Node := BATN.First_Node (BATN.Identifiers (State));
+
+               while Present (List_Node) loop
+                  i := i + 1;
+                  --  /* complete state S0 */
+                  N := Message_Comment
+                    ("Complete state "
+                     & Get_Name_String (BATN.Display_Name (List_Node)));
+                  CTU.Append_Node_To_List (N, WStatements);
+
+                  --  1)  __po_hi_consumer_states_array[0].
+                  --   state_attributes.nb_transitions = 1;
+
+                  N := Make_Assignment_Statement
+                   (Variable_Identifier => Make_Member_Designator
+                      (Defining_Identifier => Make_Member_Designator
+                           (Defining_Identifier => Make_Defining_Identifier
+                            (MN (M_Nb_Transitions)),
+                            Aggregate_Name      => Make_Defining_Identifier
+                            (MN (M_States_Attributes))),
+                        Aggregate_Name      => Make_Array_Declaration
+                          (Defining_Identifier =>
+                               Make_Defining_Identifier
+                             (Map_C_Variable_Name (E, States_Array => True)),
+                           Array_Size => Make_Literal
+                             (CV.New_Int_Value
+                                  (Complete_States_Index (i), 0, 10)))),
+                     Expression  => Make_Literal
+                       (CV.New_Int_Value
+                      (Compute_Nb_Trans_Stemmed_From_A_Specific_Complete_Stat
+                                    (BA, List_Node), 0, 10)));
+
+                  CTU.Append_Node_To_List (N, WStatements);
+
+                  --  2) __po_hi_consumer_states_array[0].
+                  --  state_attributes.nb_of_all_dispatch_events = 1;
+
+                  N := Make_Assignment_Statement
+                   (Variable_Identifier => Make_Member_Designator
+                      (Defining_Identifier => Make_Member_Designator
+                           (Defining_Identifier => Make_Defining_Identifier
+                            (MN (M_Nb_Of_All_Dispatch_Events)),
+                            Aggregate_Name      => Make_Defining_Identifier
+                            (MN (M_States_Attributes))),
+                        Aggregate_Name      => Make_Array_Declaration
+                          (Defining_Identifier =>
+                               Make_Defining_Identifier
+                             (Map_C_Variable_Name (E, States_Array => True)),
+                           Array_Size => Make_Literal
+                             (CV.New_Int_Value
+                                  (Complete_States_Index (i), 0, 10)))),
+                     Expression  => Make_Literal
+                       (CV.New_Int_Value
+                      (Nb_All_Dispatch_Triggers_From_A_Specific_Complete_Stat
+                                    (BA, List_Node), 0, 10)));
+
+                  CTU.Append_Node_To_List (N, WStatements);
+
+                  --  3) __po_hi_consumer_states_array[0].state_attributes.
+                  --  nb_dispatch_triggers_of_each_transition =
+                  --  (__po_hi_int32_t *)malloc( sizeof(__po_hi_int32_t) * 1);
+
+                  N := Make_Assignment_Statement
+                    (Variable_Identifier => Make_Member_Designator
+                      (Defining_Identifier => Make_Member_Designator
+                           (Defining_Identifier => Make_Defining_Identifier
+                            (MN (M_Nb_Dispatch_Triggers_Of_Each_Transition)),
+                            Aggregate_Name      => Make_Defining_Identifier
+                            (MN (M_States_Attributes))),
+                        Aggregate_Name      => Make_Array_Declaration
+                          (Defining_Identifier =>
+                               Make_Defining_Identifier
+                             (Map_C_Variable_Name (E, States_Array => True)),
+                           Array_Size => Make_Literal
+                             (CV.New_Int_Value
+                                  (Complete_States_Index (i), 0, 10)))),
+                     Expression          => Make_Type_Conversion
+                       (Subtype_Mark => Make_Pointer_Type
+                            (RE (RE_Int32_T)),
+                        Expression   => Make_Call_Profile
+                          (Make_Defining_Identifier (FN (F_Malloc)),
+                           Make_List_Id
+                             (Make_Expression
+                                  (Left_Expr  => Make_Call_Profile
+                                     (Make_Defining_Identifier (FN (F_Sizeof)),
+                                        Make_List_Id
+                                          (RE (RE_Int32_T))),
+                                   Operator   => Op_Asterisk,
+                                   Right_Expr =>
+                                     Make_Literal
+                                       (CV.New_Int_Value
+                 (Max_Dispatch_Triggers_Per_Trans_From_A_Specific_Complete_Stat
+                                    (BA, List_Node), 0, 10)))))));
+
+                  CTU.Append_Node_To_List (N, WStatements);
+
+                  --  4) __po_hi_consumer_states_array[0].state_attributes.
+                  --  dispatch_triggers_of_all_transitions =
+                  --   (__po_hi_local_port_t *)malloc
+                  --   ( sizeof(__po_hi_local_port_t) * 1);
+
+                  N := Make_Assignment_Statement
+                    (Variable_Identifier => Make_Member_Designator
+                      (Defining_Identifier => Make_Member_Designator
+                           (Defining_Identifier => Make_Defining_Identifier
+                            (MN (M_Dispatch_Triggers_Of_All_Transitions)),
+                            Aggregate_Name      => Make_Defining_Identifier
+                            (MN (M_States_Attributes))),
+                        Aggregate_Name      => Make_Array_Declaration
+                          (Defining_Identifier =>
+                               Make_Defining_Identifier
+                             (Map_C_Variable_Name (E, States_Array => True)),
+                           Array_Size => Make_Literal
+                             (CV.New_Int_Value
+                                  (Complete_States_Index (i), 0, 10)))),
+                     Expression          => Make_Type_Conversion
+                       (Subtype_Mark => Make_Pointer_Type
+                            (RE (RE_Local_Port_T)),
+                        Expression   => Make_Call_Profile
+                          (Make_Defining_Identifier (FN (F_Malloc)),
+                           Make_List_Id
+                             (Make_Expression
+                                  (Left_Expr  => Make_Call_Profile
+                                     (Make_Defining_Identifier (FN (F_Sizeof)),
+                                        Make_List_Id
+                                          (RE (RE_Local_Port_T))),
+                                   Operator   => Op_Asterisk,
+                                   Right_Expr =>
+                                     Make_Literal
+                                       (CV.New_Int_Value
+                        (Nb_All_Dispatch_Triggers_From_A_Specific_Complete_Stat
+                                    (BA, List_Node), 0, 10)))))));
+
+                  CTU.Append_Node_To_List (N, WStatements);
+
+                  --  5) fill the array __po_hi_consumer_states_array[0].
+                  --  state_attributes.nb_dispatch_triggers_of_each_transition
+
+                  Fill_Nb_Dispatch_Triggers_Of_Each_Transition_Array
+                    (S, BA, List_Node, Complete_States_Index (i), WStatements);
+
+                  --  6) fill the array __po_hi_consumer_states_array[0].
+                  --  state_attributes.dispatch_triggers_of_all_transitions[0]
+                  --  = LOCAL_PORT (consumer, c1);
+
+                  Fill_Dispatch_Triggers_Of_All_Transitions_Array
+                    (S, BA, List_Node, Complete_States_Index (i), WStatements);
+
+                  List_Node := BATN.Next_Node (List_Node);
+               end loop;
+            end if;
+
+            State := BATN.Next_Node (State);
+         end loop;
+
+      end if;
 
       N := Message_Comment ("Initialize the current state of the thread "
                             & Get_Name_String
@@ -1038,10 +2183,24 @@ package body Ocarina.Backends.C_Common.BA is
                  (CV.New_Int_Value (Initial_State_Index, 0, 10)))),
          WStatements);
 
+      if P = Thread_Sporadic and then
+        Nb_On_Dispatch_Transitions > 1
+      then
+         N := CTU.Make_Call_Profile
+           (Defining_Identifier => Make_Defining_Identifier
+              (Map_C_BA_Related_Function_Name
+                   (E, Update_Next_Complete_State => True)),
+            Parameters          =>  Make_List_Id
+              (Make_Defining_Identifier
+                   (VN (V_Next_Complete_State))));
+         Append_Node_To_List (N, WStatements);
+      end if;
+
       N := Make_Function_Implementation
-              (Specification => N1,
-               Declarations  => No_List,
-               Statements    => WStatements);
+        (Specification => Make_Specification_Of_BA_Related_Function
+           (S, States_Initialization => True),
+         Declarations  => No_List,
+         Statements    => WStatements);
 
       Append_Node_To_List (N, CTN.Declarations (Current_File));
 
@@ -1291,124 +2450,75 @@ package body Ocarina.Backends.C_Common.BA is
       S                : Node_Id;
       Declarations     : List_Id;
       Statements       : List_Id;
-      Else_St          : List_Id) return List_Id
+      Index_Transition : in out Unsigned_Long_Long) return List_Id
    is
       N, N1            : Node_Id;
       Else_stats       : constant List_Id := New_List (CTN.K_Statement_List);
       elsif_statements : constant List_Id := New_List (CTN.K_Statement_List);
       E                : constant Node_Id := AIN.Parent_Subcomponent (S);
       BA               : constant Node_Id := Get_Behavior_Specification (S);
-      Condition        : Node_Id := No_Node;
-      Dispatch_Conjunction_Node : Node_Id;
-      Dipatch_Trigger_Event     : Node_Id;
+      Condition        : Node_Id;
    begin
       N := BATN.Next_Node (Node);
+      Index_Transition := Index_Transition + 1;
 
-      if Present (BATN.Behavior_Condition (Node))
-        and then Present (BATN.Condition
-                          (BATN.Behavior_Condition (Node)))
-        and then
-          BATN.Kind (BATN.Condition (Behavior_Condition (Node)))
-        = BATN.K_Dispatch_Condition_Thread
-        and then Present
-          (BATN.Dispatch_Trigger_Condition
-             (BATN.Condition
-                (BATN.Behavior_Condition (Node))))
-        and then not BANu.Is_Empty
-          (BATN.Dispatch_Conjunction
-             (BATN.Dispatch_Trigger_Condition
-                (BATN.Condition
-                     (BATN.Behavior_Condition (Node)))))
-      then
-         Dispatch_Conjunction_Node :=
-           BATN.First_Node
-             (Dispatch_Conjunction
-                (Dispatch_Trigger_Condition (BATN.Condition
-                 (BATN.Behavior_Condition (Node)))));
+      Condition := CTU.Make_Expression
+        (Left_Expr  => Make_Defining_Identifier
+           (VN (V_Index_Transition_To_Execute)),
+         Operator   => CTU.Op_Equal_Equal,
+         Right_Expr => Make_Literal
+           (CV.New_Int_Value (Index_Transition, 1, 10)));
 
-         if not BANu.Is_Empty
-           (Dispatch_Triggers (Dispatch_Conjunction_Node))
+      if Present (N) then
+         if Present (BATN.Behavior_Action_Block (Node)) and then
+           Present (BATN.Behav_Acts (BATN.Behavior_Action_Block (Node)))
          then
-            if BANu.Length
-              (Dispatch_Triggers (Dispatch_Conjunction_Node)) = 1
-            then
-               Dipatch_Trigger_Event := BATN.First_Node
-                 (Dispatch_Triggers (Dispatch_Conjunction_Node));
+            N1 := Message_Comment (" Mapping of actions ");
+            CTU.Append_Node_To_List (N1, elsif_statements);
 
-               Condition := CTU.Make_Expression
-                 (Left_Expr  => Make_Defining_Identifier
-                    (Name             => VN (V_Port),
-                     Pointer          => True),
-                  Operator   => CTU.Op_Equal_Equal,
-                  Right_Expr => Make_Call_Profile
-                    (RE (RE_Local_Port),
-                     Make_List_Id
-                       (Make_Defining_Identifier
-                            (Map_Thread_Port_Variable_Name (S)),
-                        Make_Defining_Identifier
-                          (BATN.Display_Name (Dipatch_Trigger_Event)))));
-            end if;
+            Map_C_Behavior_Action_Block
+              (Node         => BATN.Behavior_Action_Block (Node),
+               S            => S,
+               Declarations => Declarations,
+               Statements  => elsif_statements);
          end if;
+
+         Update_Current_State (E, BA, Node, elsif_statements);
+
+         CTU.Append_Node_To_List
+           (CTU.Make_If_Statement
+              (Condition       => Condition,
+               Statements      => elsif_statements,
+               Else_Statements =>
+                 Map_C_On_Dispatch_Transition_Node
+                   (Node         => N,
+                    S            => S,
+                    Declarations => Declarations,
+                    Statements   => Statements,
+                    Index_Transition => Index_Transition)),
+            Else_stats);
       else
-         Display_Error
-           ("Transitions out "
-            & "of complete states must have dispatch condition",
-            Fatal => True);
-      end if;
+         if Present (BATN.Behavior_Action_Block (Node)) and then
+           Present (BATN.Behav_Acts (BATN.Behavior_Action_Block (Node)))
+         then
+            N1 := Message_Comment (" Mapping of actions ");
+            CTU.Append_Node_To_List (N1, elsif_statements);
 
-      if Present (Condition) then
-         if Present (N) then
-            if Present (BATN.Behavior_Action_Block (Node)) and then
-              Present (BATN.Behav_Acts (BATN.Behavior_Action_Block (Node)))
-            then
-               N1 := Message_Comment (" Mapping of actions ");
-               CTU.Append_Node_To_List (N1, elsif_statements);
-
-               Map_C_Behavior_Action_Block
-                 (Node         => BATN.Behavior_Action_Block (Node),
-                  S            => S,
-                  Declarations => Declarations,
-                  Statements  => elsif_statements);
-            end if;
-
-            Update_Current_State (E, BA, Node, elsif_statements);
-
-            CTU.Append_Node_To_List
-              (CTU.Make_If_Statement
-                 (Condition       => Condition,
-                  Statements      => elsif_statements,
-                  Else_Statements =>
-                    Map_C_On_Dispatch_Transition_Node
-                      (Node         => N,
-                       S            => S,
-                       Declarations => Declarations,
-                       Statements   => Statements,
-                       Else_St      => Else_St)),
-               Else_stats);
-         else
-            if Present (BATN.Behavior_Action_Block (Node)) and then
-              Present (BATN.Behav_Acts (BATN.Behavior_Action_Block (Node)))
-            then
-               N1 := Message_Comment (" Mapping of actions ");
-               CTU.Append_Node_To_List (N1, elsif_statements);
-
-               Map_C_Behavior_Action_Block
-                 (Node         => BATN.Behavior_Action_Block (Node),
-                  S            => S,
-                  Declarations => Declarations,
-                  Statements  => elsif_statements);
-            end if;
-
-            Update_Current_State (E, BA, Node, elsif_statements);
-
-            CTU.Append_Node_To_List
-              (CTU.Make_If_Statement
-                 (Condition       => Condition,
-                  Statements      => elsif_statements,
-                  Else_Statements => Else_St),
-               Else_stats);
-
+            Map_C_Behavior_Action_Block
+              (Node         => BATN.Behavior_Action_Block (Node),
+               S            => S,
+               Declarations => Declarations,
+               Statements  => elsif_statements);
          end if;
+
+         Update_Current_State (E, BA, Node, elsif_statements);
+
+         CTU.Append_Node_To_List
+           (CTU.Make_If_Statement
+              (Condition       => Condition,
+               Statements      => elsif_statements),
+            Else_stats);
+
       end if;
 
       return Else_stats;
@@ -1420,221 +2530,95 @@ package body Ocarina.Backends.C_Common.BA is
    ---------------------------------------------
 
    procedure Map_C_A_List_Of_On_Dispatch_Transitions
-     (S                         : Node_Id;
-      BA                        : Node_Id;
-      Sub_Transition_List       : List_Id;
-      WDeclarations             : List_Id;
-      WStatements               : List_Id)
+     (S                            : Node_Id;
+      BA                           : Node_Id;
+      Sub_Transition_List          : List_Id;
+      WDeclarations                : List_Id;
+      WStatements                  : List_Id)
    is
       N                : Node_Id;
       Transition_Node  : Node_Id;
       E                : constant Node_Id := AIN.Parent_Subcomponent (S);
-      Q                : Name_Id;
       Condition     : Node_Id;
       If_Statements : constant List_Id := New_List (CTN.K_Statement_List);
       Else_Stats    : List_Id;
-      Dispatch_Conjunction_Node : Node_Id;
-      Dipatch_Trigger_Event     : Node_Id;
+      Index_Transition          : Unsigned_Long_Long := 0;
    begin
-
-      --  else
-      --  {
-      --    *port = invalid_local_port_t;
-      --  }
-
-      Set_Str_To_Name_Buffer ("invalid_local_port_t");
-      Q := Name_Find;
-
-      Else_Stats := New_List (CTN.K_Statement_List);
-
-      CTU.Append_Node_To_List
-        (Make_Assignment_Statement
-           (Variable_Identifier => Make_Defining_Identifier
-                (Name             => VN (V_Port),
-                 Pointer          => True),
-            Expression          => Make_Defining_Identifier (Q)),
-         Else_Stats);
 
       if (BANu.Length (Sub_Transition_List) = 1) then
 
          Transition_Node := BATN.First_Node (Sub_Transition_List);
 
-         if Present (BATN.Behavior_Condition (Transition_Node))
-           and then Present (BATN.Condition
-                             (BATN.Behavior_Condition (Transition_Node)))
-           and then
-             BATN.Kind (BATN.Condition (Behavior_Condition (Transition_Node)))
-           = BATN.K_Dispatch_Condition_Thread
+         --  i)
+         --
+         --  {
+         --    /* map actions if there exist */
+         --    ...
+         --    /* update current state */
+         --    __po_hi_consumer_current_state =
+         --       __po_hi_consumer_states_array[3];
+         --  }
+         --
+         --  break;
+
+         if Present (BATN.Behavior_Action_Block (Transition_Node))
            and then Present
-             (BATN.Dispatch_Trigger_Condition
-                (BATN.Condition
-                   (BATN.Behavior_Condition (Transition_Node))))
-           and then not BANu.Is_Empty
-             (BATN.Dispatch_Conjunction
-                (BATN.Dispatch_Trigger_Condition
-                   (BATN.Condition
-                        (BATN.Behavior_Condition (Transition_Node)))))
+             (BATN.Behav_Acts
+                (BATN.Behavior_Action_Block (Transition_Node)))
          then
-            Dispatch_Conjunction_Node :=
-              BATN.First_Node
-                (Dispatch_Conjunction
-                   (Dispatch_Trigger_Condition (BATN.Condition
-                    (BATN.Behavior_Condition (Transition_Node)))));
 
-            if not BANu.Is_Empty
-              (Dispatch_Triggers (Dispatch_Conjunction_Node))
-            then
-               if BANu.Length
-                 (Dispatch_Triggers (Dispatch_Conjunction_Node)) = 1
-               then
-                  Dipatch_Trigger_Event := BATN.First_Node
-                    (Dispatch_Triggers (Dispatch_Conjunction_Node));
+            N := Message_Comment (" Mapping of actions ");
+            CTU.Append_Node_To_List (N, WStatements);
 
-                  --  BATN.Corresponding_Entity (Dipatch_Trigger_Event)
-
-                  --  i)
-                  --
-                  --  if (*port == LOCAL_PORT (consumer, cr_index1))
-                  --  {
-                  --    /* map actions if there exist */
-                  --    ...
-                  --    /* update current state */
-                  --    __po_hi_consumer_current_state =
-                  --       __po_hi_consumer_states_array[3];
-                  --  }
-                  --  else
-                  --  {
-                  --     *port = invalid_local_port_t;
-                  --  }
-                  --  break;
-
-                  Condition := CTU.Make_Expression
-                    (Left_Expr  => Make_Defining_Identifier
-                       (Name             => VN (V_Port),
-                        Pointer          => True),
-                     Operator   => CTU.Op_Equal_Equal,
-                     Right_Expr => Make_Call_Profile
-                       (RE (RE_Local_Port),
-                        Make_List_Id
-                          (Make_Defining_Identifier
-                               (Map_Thread_Port_Variable_Name (S)),
-                           Make_Defining_Identifier
-                             (BATN.Display_Name (Dipatch_Trigger_Event)))));
-
-                  if Present (BATN.Behavior_Action_Block (Transition_Node))
-                    and then Present
-                      (BATN.Behav_Acts
-                         (BATN.Behavior_Action_Block (Transition_Node)))
-                  then
-
-                     N := Message_Comment (" Mapping of actions ");
-                     CTU.Append_Node_To_List (N, If_Statements);
-
-                     Map_C_Behavior_Action_Block
-                       (BATN.Behavior_Action_Block (Transition_Node),
-                        S, WDeclarations, If_Statements);
-                  end if;
-
-                  --  ii) Update the current state
-                  Update_Current_State (E, BA, Transition_Node, If_Statements);
-
-                  CTU.Append_Node_To_List
-                    (CTU.Make_If_Statement
-                       (Condition       => Condition,
-                        Statements      => If_Statements,
-                        Else_Statements => Else_Stats),
-                     WStatements);
-               else
-                  Display_Error
-                    ("The mapping of many dispatch trigger events is not yet"
-                     & " supported",
-                     Fatal => True);
-               end if;
-            end if;
-         else
-            Display_Error
-              ("Transitions out "
-               & "of complete states must have dispatch condition",
-               Fatal => True);
+            Map_C_Behavior_Action_Block
+              (BATN.Behavior_Action_Block (Transition_Node),
+               S, WDeclarations, WStatements);
          end if;
+
+         --  ii) Update the current state
+         Update_Current_State (E, BA, Transition_Node, WStatements);
 
       elsif (BANu.Length (Sub_Transition_List) >= 2) then
          Transition_Node := BATN.First_Node (Sub_Transition_List);
+         Index_Transition := Index_Transition + 1;
 
-         if Present (BATN.Behavior_Condition (Transition_Node))
-           and then Present (BATN.Condition
-                             (BATN.Behavior_Condition (Transition_Node)))
-           and then
-             BATN.Kind (BATN.Condition (Behavior_Condition (Transition_Node)))
-           = BATN.K_Dispatch_Condition_Thread
+         Condition := CTU.Make_Expression
+           (Left_Expr  => Make_Defining_Identifier
+              (VN (V_Index_Transition_To_Execute)),
+            Operator   => CTU.Op_Equal_Equal,
+            Right_Expr => Make_Literal
+               (CV.New_Int_Value (Index_Transition, 1, 10)));
+
+         if Present (BATN.Behavior_Action_Block (Transition_Node))
            and then Present
-             (BATN.Dispatch_Trigger_Condition
-                (BATN.Condition
-                   (BATN.Behavior_Condition (Transition_Node))))
-           and then not BANu.Is_Empty
-             (BATN.Dispatch_Conjunction
-                (BATN.Dispatch_Trigger_Condition
-                   (BATN.Condition
-                        (BATN.Behavior_Condition (Transition_Node)))))
+             (BATN.Behav_Acts
+                (BATN.Behavior_Action_Block
+                   (Transition_Node)))
          then
-            Dispatch_Conjunction_Node :=
-              BATN.First_Node
-                (Dispatch_Conjunction
-                   (Dispatch_Trigger_Condition (BATN.Condition
-                    (BATN.Behavior_Condition (Transition_Node)))));
 
-            if not BANu.Is_Empty
-              (Dispatch_Triggers (Dispatch_Conjunction_Node))
-              and then BANu.Length
-                (Dispatch_Triggers (Dispatch_Conjunction_Node)) = 1
-            then
-               Dipatch_Trigger_Event := BATN.First_Node
-                 (Dispatch_Triggers (Dispatch_Conjunction_Node));
+            N := Message_Comment (" Mapping of actions ");
+            CTU.Append_Node_To_List (N, If_Statements);
 
-               Condition := CTU.Make_Expression
-                 (Left_Expr  => Make_Defining_Identifier
-                    (Name             => VN (V_Port),
-                     Pointer          => True),
-                  Operator   => CTU.Op_Equal_Equal,
-                  Right_Expr => Make_Call_Profile
-                    (RE (RE_Local_Port),
-                     Make_List_Id
-                       (Make_Defining_Identifier
-                            (Map_Thread_Port_Variable_Name (S)),
-                        Make_Defining_Identifier
-                          (BATN.Display_Name (Dipatch_Trigger_Event)))));
-
-               if Present (BATN.Behavior_Action_Block (Transition_Node))
-                 and then Present
-                   (BATN.Behav_Acts
-                      (BATN.Behavior_Action_Block
-                         (Transition_Node)))
-               then
-
-                  N := Message_Comment (" Mapping of actions ");
-                  CTU.Append_Node_To_List (N, If_Statements);
-
-                  Map_C_Behavior_Action_Block
-                    (BATN.Behavior_Action_Block (Transition_Node),
-                     S, WDeclarations, If_Statements);
-               end if;
-
-               Update_Current_State (E, BA, Transition_Node, If_Statements);
-            end if;
-
-            Transition_Node := BATN.Next_Node (Transition_Node);
-
-            Else_Stats := Map_C_On_Dispatch_Transition_Node
-              (Transition_Node, S, WDeclarations,
-               WStatements, Else_Stats);
-
-            CTU.Append_Node_To_List
-              (CTU.Make_If_Statement
-                 (Condition       => Condition,
-                  Statements      => if_Statements,
-                  Else_Statements => Else_Stats),
-               WStatements);
+            Map_C_Behavior_Action_Block
+              (BATN.Behavior_Action_Block (Transition_Node),
+               S, WDeclarations, If_Statements);
          end if;
+
+         Update_Current_State (E, BA, Transition_Node, If_Statements);
+
+         Transition_Node := BATN.Next_Node (Transition_Node);
+
+         Else_Stats := Map_C_On_Dispatch_Transition_Node
+           (Transition_Node, S, WDeclarations,
+            WStatements, Index_Transition);
+
+         CTU.Append_Node_To_List
+           (CTU.Make_If_Statement
+              (Condition       => Condition,
+               Statements      => If_Statements,
+               Else_Statements => Else_Stats),
+            WStatements);
+
       end if;
 
    end Map_C_A_List_Of_On_Dispatch_Transitions;
@@ -1839,19 +2823,15 @@ package body Ocarina.Backends.C_Common.BA is
         AIN.Parent_Subcomponent (S);
       Sub_Transition_List          : List_Id;
       Source                       : Node_Id;
-      Q : Name_Id;
-
       Condition     : Node_Id;
    begin
       --  Make while (__po_hi_producer_current_state.kind ==
       --  __po_hi_execution)
 
-      Set_Str_To_Name_Buffer ("kind");
-      Q := Name_Find;
-
       Condition := CTU.Make_Expression
         (Left_Expr  => Make_Member_Designator
-           (Defining_Identifier => Make_Defining_Identifier (Q),
+           (Defining_Identifier => Make_Defining_Identifier
+             (MN (M_kind)),
             Aggregate_Name      => Make_Defining_Identifier
               (Map_C_Variable_Name (E, Current_State => True))),
          Operator   => CTU.Op_Equal_Equal,
@@ -1952,13 +2932,11 @@ package body Ocarina.Backends.C_Common.BA is
         (Make_Switch_Alternative (No_List, No_List),
          Switch_Alternatives);
 
-      Set_Str_To_Name_Buffer ("name");
-      Q := Name_Find;
-
       N :=
         Make_Switch_Statement
           (Expression   => Make_Member_Designator
-             (Defining_Identifier => Make_Defining_Identifier (Q),
+             (Defining_Identifier => Make_Defining_Identifier
+                (MN (M_Name)),
               Aggregate_Name      => Make_Defining_Identifier
                 (Map_C_Variable_Name (E, Current_State => True))),
            Alternatives => Switch_Alternatives);
@@ -2194,70 +3172,132 @@ package body Ocarina.Backends.C_Common.BA is
    -----------------------------------------------
 
    function Make_Specification_Of_BA_Related_Function
-     (S                  : Node_Id;
-      BA_Body            : Boolean := False;
-      BA_Initialization  : Boolean := False) return Node_Id
+     (S                          : Node_Id;
+      BA_Body                    : Boolean := False;
+      BA_Initialization          : Boolean := False;
+      States_Initialization      : Boolean := False;
+      Update_Next_Complete_State : Boolean := False) return Node_Id
    is
       N, N1  : Node_Id;
       E      : constant Node_Id := AIN.Parent_Subcomponent (S);
-      Parameter_List : constant List_Id := New_List (CTN.K_List_Id);
-      Idt    : Node_Id;
+      P      : constant Supported_Thread_Dispatch_Protocol :=
+           Get_Thread_Dispatch_Protocol (S);
+      Parameter_List  : List_Id;
+      Nb_On_Dispatch_Transitions : constant Unsigned_Long_Long :=
+        Compute_Nb_On_Dispatch_Transitions (S);
    begin
 
-      N :=
-        Make_Parameter_Specification
-          (Make_Defining_Identifier (PN (P_Self)),
-           Parameter_Type => RE (RE_Task_Id));
-      Append_Node_To_List (N, Parameter_List);
-
-      if Get_Thread_Dispatch_Protocol (S) = Thread_Sporadic then
-
+      if BA_Body then
+         Parameter_List := New_List (CTN.K_List_Id);
          N :=
            Make_Parameter_Specification
-             (Make_Defining_Identifier (VN (V_Port)),
-              Parameter_Type => CTU.Make_Pointer_Type (RE (RE_Local_Port_T)));
+             (Make_Defining_Identifier (PN (P_Self)),
+              Parameter_Type => RE (RE_Task_Id));
          Append_Node_To_List (N, Parameter_List);
-
+      elsif BA_Initialization then
+         Parameter_List := New_List (CTN.K_List_Id);
+         N :=
+           Make_Parameter_Specification
+             (Make_Defining_Identifier (PN (P_Self)),
+              Parameter_Type => RE (RE_Task_Id));
+         Append_Node_To_List (N, Parameter_List);
       end if;
+
+      if P = Thread_Periodic
+        or else (P = Thread_Sporadic and then
+                 Nb_On_Dispatch_Transitions = 1)
+      then
+         if States_Initialization then
+            Parameter_List := No_List;
+         end if;
+      elsif P = Thread_Sporadic and then
+        Nb_On_Dispatch_Transitions > 1
+      then
+         if States_Initialization or else Update_Next_Complete_State then
+            Parameter_List := Make_List_Id
+              (Make_Parameter_Specification
+                 (Defining_Identifier =>
+                      Make_Defining_Identifier
+                    (VN (V_Next_Complete_State)),
+                  Parameter_Type      =>
+                    Make_Pointer_Type
+                      (RE (RE_Ba_Automata_State_T))));
+         elsif BA_Body then
+            N :=
+              Make_Parameter_Specification
+                (Make_Defining_Identifier (VN (V_Next_Complete_State)),
+                 Parameter_Type => CTU.Make_Pointer_Type
+                   (RE (RE_Ba_Automata_State_T)));
+            Append_Node_To_List (N, Parameter_List);
+
+            N :=
+              Make_Parameter_Specification
+                (Make_Defining_Identifier (VN (V_Index_Transition_To_Execute)),
+                 Parameter_Type => RE (RE_Int32_T));
+            Append_Node_To_List (N, Parameter_List);
+         elsif BA_Initialization then
+            N :=
+              Make_Parameter_Specification
+                (Make_Defining_Identifier (VN (V_Next_Complete_State)),
+                 Parameter_Type => CTU.Make_Pointer_Type
+                   (RE (RE_Ba_Automata_State_T)));
+            Append_Node_To_List (N, Parameter_List);
+         end if;
+      end if;
+
       --  add data subcomponents of the thread to the call_parameters
       --  of the procedure <<thread_instance_name>>_ba_body
+      if BA_Body or else BA_Initialization then
+         if not AINU.Is_Empty (AIN.Subcomponents (S)) then
+            N1 := AIN.First_Node (AIN.Subcomponents (S));
 
-      if not AINU.Is_Empty (AIN.Subcomponents (S)) then
-         N1 := AIN.First_Node (AIN.Subcomponents (S));
+            while Present (N1) loop
+               if AINU.Is_Data (AIN.Corresponding_Instance (N1)) then
 
-         while Present (N1) loop
-            if AINU.Is_Data (AIN.Corresponding_Instance (N1)) then
+                  N :=
+                    Make_Parameter_Specification
+                      (Map_C_Defining_Identifier (N1),
+                       Parameter_Type =>
+                         CTU.Make_Pointer_Type
+                           (Map_C_Data_Type_Designator
+                              (AIN.Corresponding_Instance (N1))));
 
-               N :=
-                 Make_Parameter_Specification
-                   (Map_C_Defining_Identifier (N1),
-                    Parameter_Type =>
-                      CTU.Make_Pointer_Type
-                        (Map_C_Data_Type_Designator
-                           (AIN.Corresponding_Instance (N1))));
+                  Append_Node_To_List (N, Parameter_List);
 
-               Append_Node_To_List (N, Parameter_List);
-
-            end if;
-            N1 := AIN.Next_Node (N1);
-         end loop;
+               end if;
+               N1 := AIN.Next_Node (N1);
+            end loop;
+         end if;
       end if;
 
       if BA_Body then
-         Idt := Make_Defining_Identifier
-           (Map_C_BA_Related_Function_Name (E, BA_Body => True));
+         N := Make_Function_Specification
+           (Defining_Identifier => Make_Defining_Identifier
+              (Map_C_BA_Related_Function_Name (E, BA_Body => True)),
+            Parameters          => Parameter_List,
+            Return_Type         => New_Node (CTN.K_Void));
       elsif BA_Initialization then
-         Idt := Make_Defining_Identifier
-           (Map_C_BA_Related_Function_Name (E, BA_Initialization => True));
+         N := Make_Function_Specification
+           (Defining_Identifier => Make_Defining_Identifier
+              (Map_C_BA_Related_Function_Name (E, BA_Initialization => True)),
+            Parameters          => Parameter_List,
+            Return_Type         => New_Node (CTN.K_Void));
+      elsif States_Initialization then
+         N := Make_Function_Specification
+           (Defining_Identifier => Make_Defining_Identifier
+              (Map_C_BA_Related_Function_Name
+                   (E, States_Initialization => True)),
+            Parameters          => Parameter_List,
+            Return_Type         => New_Node (CTN.K_Void));
+      elsif Update_Next_Complete_State then
+         N := Make_Function_Specification
+           (Defining_Identifier => Make_Defining_Identifier
+              (Map_C_BA_Related_Function_Name
+                   (E, Update_Next_Complete_State => True)),
+            Parameters          => Parameter_List,
+            Return_Type         => New_Node (CTN.K_Void));
       end if;
-
-      N := Make_Function_Specification
-        (Defining_Identifier => Idt,
-         Parameters          => Parameter_List,
-         Return_Type         => New_Node (CTN.K_Void));
-
       return N;
-
    end Make_Specification_Of_BA_Related_Function;
 
    ----------------------------------------------
@@ -2292,8 +3332,6 @@ package body Ocarina.Backends.C_Common.BA is
       Statements   : List_Id)
    is
       BA                         : Node_Id;
-      --  Dispatch_Transition        : Node_Id := No_Node;
-
       State, List_Node             : Node_Id;
       Switch_Alternatives          : constant List_Id := New_List
         (CTN.K_Alternatives_List);
@@ -2307,7 +3345,6 @@ package body Ocarina.Backends.C_Common.BA is
         AIN.Parent_Subcomponent (S);
       Sub_Transition_List          : List_Id;
       Source                       : Node_Id;
-      Q                            : Name_Id;
    begin
 
       --  /* 1) we make switch case statement on all complete states from
@@ -2339,10 +3376,10 @@ package body Ocarina.Backends.C_Common.BA is
            or else Behavior_State_Kind'Val (BATN.State_Kind (State))
              = BSK_Complete_Final
          then
+
             List_Node := BATN.First_Node (BATN.Identifiers (State));
 
             while Present (List_Node) loop
-
                Switch_Statements := New_List (CTN.K_Statement_List);
                Switch_Labels := New_List (CTN.K_Label_List);
 
@@ -2356,11 +3393,12 @@ package body Ocarina.Backends.C_Common.BA is
 
                --  /** go over all « on dispatch » transitions that have
                --  « BATN.Display_Name (List_Node) » as source state.
-               --  Then we make an "if" on the trigger port specified
-               --  in the « on dispatch » condition
-               --  if (*port == LOCAL_PORT (<<thread_instance_name>>,
-               --        <<trigger_port_name>>))
-               --  Actions are mapped in the if block statements
+               --  Then we make an "if" on the index of "on dispatch"
+               --  transition to execute (index_transition_to_execute)
+               --  received from activity.c
+               --  if (index_transition_to_execute == 1)
+               --  for each on dispatch transition, Actions are mapped
+               --  in the if block statements.
                --  then we update the current state with the destination
                --  state of the transition. **/
                --
@@ -2368,6 +3406,7 @@ package body Ocarina.Backends.C_Common.BA is
                Behav_Transition := BATN.First_Node
                  (BATN.Transitions (BA));
                while Present (Behav_Transition) loop
+
                   Transition_Node := BATN.Transition (Behav_Transition);
 
                   if BATN.Kind (Transition_Node) =
@@ -2425,13 +3464,11 @@ package body Ocarina.Backends.C_Common.BA is
         (Make_Switch_Alternative (No_List, No_List),
          Switch_Alternatives);
 
-      Set_Str_To_Name_Buffer ("name");
-      Q := Name_Find;
-
       N :=
         Make_Switch_Statement
           (Expression   => Make_Member_Designator
-             (Defining_Identifier => Make_Defining_Identifier (Q),
+             (Defining_Identifier => Make_Defining_Identifier
+                (MN (M_Name)),
               Aggregate_Name      => Make_Defining_Identifier
                 (Map_C_Variable_Name (E, Current_State => True))),
            Alternatives => Switch_Alternatives);
@@ -2574,9 +3611,19 @@ package body Ocarina.Backends.C_Common.BA is
       Declarations : List_Id;
       Statements   : List_Id)
    is
+      P  : constant Supported_Thread_Dispatch_Protocol :=
+        Get_Thread_Dispatch_Protocol (S);
+      Nb_On_Dispatch_Transitions : constant Unsigned_Long_Long :=
+        Compute_Nb_On_Dispatch_Transitions (S);
    begin
 
       Map_BA_States_To_C_Types (S);
+
+      if P = Thread_Sporadic and then
+        Nb_On_Dispatch_Transitions > 1
+      then
+         Make_Update_Next_Complete_State_Function (S);
+      end if;
 
       Make_States_Initialization_Function (S);
 
@@ -2584,12 +3631,12 @@ package body Ocarina.Backends.C_Common.BA is
          Make_BA_Initialization_Function (S);
       end if;
 
-      if Get_Thread_Dispatch_Protocol (S) = Thread_Periodic then
+      if P = Thread_Periodic then
 
          Make_BA_Body_Function_For_Periodic_Thread
            (S, Declarations, Statements);
 
-      elsif Get_Thread_Dispatch_Protocol (S) = Thread_Sporadic then
+      elsif P = Thread_Sporadic then
 
          Make_BA_Body_Function_For_Sporadic_Thread
            (S, Declarations, Statements);
