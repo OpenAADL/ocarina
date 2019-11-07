@@ -44,6 +44,9 @@ with Ocarina.Backends.C_Common.Mapping;
 with Ocarina.Backends.PO_HI_C.Runtime;
 with Ocarina.Backends.Properties;
 with Ocarina.Backends.Messages;
+with Ocarina.Backends.C_Common.BA;
+with Ocarina.ME_AADL_BA.BA_Tree.Nutils;
+with Ocarina.ME_AADL_BA.BA_Tree.Nodes;
 
 with Ocarina.Instances.Queries;
 
@@ -63,6 +66,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
    use Ocarina.Backends.Properties;
    use Ocarina.Backends.Messages;
    use Ocarina.Instances.Queries;
+   use Ocarina.Backends.C_Common.BA;
 
    use Locations;
 
@@ -71,6 +75,8 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
    package CV renames Ocarina.Backends.C_Values;
    package CTN renames Ocarina.Backends.C_Tree.Nodes;
    package CTU renames Ocarina.Backends.C_Tree.Nutils;
+   package BATN renames Ocarina.ME_AADL_BA.BA_Tree.Nodes;
+   package BANu renames Ocarina.ME_AADL_BA.BA_Tree.Nutils;
 
    Entity_Array           : Node_Id;
    Devices_Array          : Node_Id;
@@ -1527,6 +1533,11 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
          Spg_Call    : Node_Id;
          Used_Bus    : Node_Id;
          Used_Device : Node_Id;
+         Impl_Kind   : constant Supported_Thread_Implementation :=
+           Get_Thread_Implementation_Kind (E);
+         Dispatch_Protocol : constant Supported_Thread_Dispatch_Protocol :=
+           Get_Thread_Dispatch_Protocol (E);
+         BA          : Node_Id;
       begin
 
          Local_Port_Identifier := 0;
@@ -1574,6 +1585,48 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
             Task_Identifier := Task_Identifier + 1;
 
             Tasks_Stack := Tasks_Stack + To_Bytes (Get_Thread_Stack_Size (E));
+
+            if Impl_Kind = Thread_With_Behavior_Specification then
+               BA := Get_Behavior_Specification (E);
+               if BANu.Length (BATN.States (BA)) > 1 then
+                  Create_Enum_Type_Of_States_Names (E);
+                  Create_State_Type (E);
+                  if Dispatch_Protocol = Thread_Sporadic and then
+                    Compute_Nb_On_Dispatch_Transitions (E) > 1
+                  then
+                     N :=
+                      Make_Define_Statement
+                        (Defining_Identifier =>
+                          Make_Defining_Identifier
+                           (Map_C_Define_Name
+                              (S,
+                               Max_Dispatch_Transitions_Per_Complete_State =>
+                                 True)),
+                         Value =>
+                          Make_Literal
+                           (New_Int_Value
+                           (Compute_Max_Dispatch_Transitions_Per_Complete_State
+                              (E),
+                            1,
+                            10)));
+                     Append_Node_To_List (N, CTN.Declarations (Current_File));
+
+                     N := Make_Define_Statement
+                       (Defining_Identifier =>
+                          Make_Defining_Identifier
+                            (Map_C_Define_Name
+                                 (S,
+                                  Max_Dispatch_Triggers_Per_Dispatch_Transition
+                                  => True)),
+                        Value =>
+                          Make_Literal
+                            (New_Int_Value
+                         (Compute_Max_Dispatch_Triggers_Per_Dispatch_Transition
+                                    (E), 1, 10)));
+                     Append_Node_To_List (N, CTN.Declarations (Current_File));
+                  end if;
+               end if;
+            end if;
          end if;
 
          if Current_Device /= No_Node
@@ -1876,6 +1929,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                Call_Seq := Next_Node (Call_Seq);
             end loop;
          end if;
+
       end Visit_Thread_Instance;
 
       -------------------------------
