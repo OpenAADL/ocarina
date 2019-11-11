@@ -75,6 +75,8 @@ package body Ocarina.Backends.Utils is
    use Ocarina.Instances.Queries;
    use Ocarina.Backends.Helper;
 
+   type Browsing_Kind is (By_Source, By_Destination);
+
    --  The entered directories stack
 
    package Directories_Stack is new GNAT.Table (Name_Id, Int, 1, 5, 10);

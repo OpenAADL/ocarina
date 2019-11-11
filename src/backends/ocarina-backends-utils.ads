@@ -33,8 +33,6 @@ with Ocarina.Backends.Properties; use Ocarina.Backends.Properties;
 
 package Ocarina.Backends.Utils is
 
-   type Browsing_Kind is (By_Source, By_Destination, Default);
-
    -----------------
    -- AST visitor --
    -----------------
