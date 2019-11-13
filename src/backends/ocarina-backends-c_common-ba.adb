@@ -4244,7 +4244,8 @@ package body Ocarina.Backends.C_Common.BA is
                            Is_Out_Parameter => BATN.Is_Out (N),
                            Subprogram_Root  => S,
                            Declarations     => Declarations,
-                           Statements       => Statements);
+                           Statements       => Statements,
+                           Is_Put_Value_On_Port => True);
 
                         Append_Node_To_List
                           (K,
