@@ -5849,18 +5849,16 @@ package body Ocarina.Backends.C_Common.BA is
      (Node             : Node_Id;
       Parent_Component : Node_Id) return Node_Id
    is
-      use type AIN.Node_Kind;
       Fs : constant Ocarina.ME_AADL.AADL_Instances.Nutils.Node_Array
         := Subcomponents_Of (Parent_Component);
       result : Node_Id;
    begin
       for F of Fs loop
-         if Standard.Utils.To_Upper
-           (AIN.Display_Name (AIN.Identifier (F)))
+         if Present (AIN.Identifier (F))
+           and then Standard.Utils.To_Upper
+             (AIN.Display_Name (AIN.Identifier (F)))
            = Standard.Utils.To_Upper
            (AAN.Display_Name (AAN.Identifier (Node)))
-           and then
-             AIN.Kind (F) = AIN.K_Subcomponent_Instance
          then
             result := F;
          end if;
