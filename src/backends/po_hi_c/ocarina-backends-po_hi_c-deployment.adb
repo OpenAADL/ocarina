@@ -893,6 +893,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
          The_System  : constant Node_Id :=
            Parent_Component (Parent_Subcomponent (E));
          Device_Implementation : Node_Id;
+         Node_Name   : Name_Id;
 
       begin
          pragma Assert (AAU.Is_System (Root_Sys));
@@ -926,6 +927,22 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
               Value               =>
                 Make_Defining_Identifier
                   (Map_C_Enumerator_Name (Parent_Subcomponent (E))));
+         Append_Node_To_List (N, CTN.Declarations (Current_File));
+
+         Node_Name :=
+           Map_C_Enumerator_Name (Parent_Subcomponent (E));
+         Set_Str_To_Name_Buffer ("");
+         Get_Name_String (Token_Image (Tok_Quote));
+         Get_Name_String_And_Append (Node_Name);
+         Get_Name_String_And_Append (Token_Image (Tok_Quote));
+
+         Node_Name := Name_Find;
+
+         N :=
+           Make_Define_Statement
+             (Defining_Identifier => RE (RE_My_Node_Name),
+              Value               =>
+                Make_Defining_Identifier (Node_Name));
          Append_Node_To_List (N, CTN.Declarations (Current_File));
 
          --  Visit all devices attached to the parent system that
