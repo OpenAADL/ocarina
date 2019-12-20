@@ -1,3 +1,4 @@
 ignore:
   - "tools/mknodes"
   - "src/transfo"
+  - "doc"
