@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2020 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -114,7 +114,7 @@ package Ocarina.Backends.PO_HI_Ada.Mapping is
    --  declaration.
 
    function Map_Node_Name_Identifier (E : Node_Id) return Node_Id;
-   --  Map an identifier for the string variable that constains the
+   --  Map an identifier for the string variable that contains the
    --  node name.
 
    function Map_Bus_Name (E : Node_Id) return Node_Id;
