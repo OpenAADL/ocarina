@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2019 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2020 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -69,14 +69,16 @@ package body Ocarina.Backends.Build_Utils is
      (Filename  :     Name_Id;
       Directory :     Name_Id;
       Basename  : out Name_Id;
-      Dirname   : out Name_Id);
-   --  Dirname and Basename corresponds to Dir_Name and Base_Name of
-   --  an intermediate filename. If Filename is an absolute path, this
-   --  intermediate filename is Filename. If Filename is a relative
-   --  path, the intermediate filename is either relative to
-   --  Directory, if Directory is non-null, or to the current working
-   --  directory if Directory is null. Directory may be relative to
-   --  the current directory in which case it is also normalized.
+      Dirname   : out Name_Id;
+      Relative_Path : Boolean := False);
+   --  Split the path made of Filename and Directory into Basename and
+   --  Dirname (with regular shell interpretations)
+   --
+   --  * If Relative_Path is true, we disregard Directory and assume
+   --    the base directory to be "../.." relative to the generated code
+   --    directory.
+   --  * If Relative_Path is false, the full directory path is
+   --    resolved and is absolute to the user environment.
 
    function Resolve_Language (E : Node_Id) return Supported_Source_Language;
    --  Fetches the Source_Language property of E. If the property is
@@ -153,23 +155,40 @@ package body Ocarina.Backends.Build_Utils is
      (Filename  :     Name_Id;
       Directory :     Name_Id;
       Basename  : out Name_Id;
-      Dirname   : out Name_Id)
+      Dirname   : out Name_Id;
+      Relative_Path : Boolean := False)
    is
    begin
-      if Directory = No_Name then
+      if Relative_Path then
+         Set_Str_To_Name_Buffer ("../..");
+
+      elsif Directory = No_Name then
          Set_Str_To_Name_Buffer (".");
+
       else
          Get_Name_String (Directory);
       end if;
+
       declare
          Normalized_Dir : constant String :=
-           Normalize_Pathname (Name_Buffer (1 .. Name_Len));
+           (if Relative_Path then
+               Format_Pathname (Name_Buffer (1 .. Name_Len))
+           else
+               Normalize_Pathname (Name_Buffer (1 .. Name_Len)));
+
          Resolved_Filename : constant String :=
-           Normalize_Pathname (Get_Name_String (Filename), Normalized_Dir);
+             (if Relative_Path then
+                 Format_Pathname (Normalized_Dir & "/"
+                                  & Get_Name_String (Filename))
+             else
+                Normalize_Pathname (Get_Name_String (Filename),
+                                     Normalized_Dir));
+
       begin
          Dirname  := Get_String_Name (Dir_Name (Resolved_Filename));
          Basename := Get_String_Name (Base_Name (Resolved_Filename));
       end;
+
    end Split_Path;
 
    ------------------
@@ -560,7 +579,8 @@ package body Ocarina.Backends.Build_Utils is
               (Implem_Name,
                Loc (E).Dir_Name,
                Source_Basename,
-               Source_Dirname);
+               Source_Dirname,
+               Relative_Path => True);
 
             if Custom_Source_Dir /= No_Name then
                Source_Dirname := Custom_Source_Dir;
@@ -596,7 +616,8 @@ package body Ocarina.Backends.Build_Utils is
                     (Source_Files (J),
                      Loc (E).Dir_Name,
                      Source_Basename,
-                     Source_Dirname);
+                     Source_Dirname,
+                     Relative_Path => True);
 
                   --  If the directory points to the default AADL
                   --  property set directory (case of PolyORB-HI/C
@@ -740,7 +761,6 @@ package body Ocarina.Backends.Build_Utils is
                   Set_Name_Table_Info (S_Name, 1);
 
                   Get_Name_String (Source_Files (J));
-
                   Split_Path
                     (Source_Files (J),
                      Loc (E).Dir_Name,
@@ -1729,11 +1749,9 @@ package body Ocarina.Backends.Build_Utils is
             Write_Line ("###################################################");
             Write_Eol;
 
-            --  The following syntax esapces whitespace in the path
-            Write_Line ("RUNTIME_PATH=$(shell echo """
-                          & Get_Runtime_Path ("polyorb-hi-c")
-                          & """ | sed 's/ /\\ /g')");
+            --  The following syntax escapes whitespace in the path
 
+            Write_Line ("RUNTIME_PATH=../polyorb-hi-c");
             Write_Eol;
 
             Write_Str ("all: build-partitions resident_sw");
