@@ -290,48 +290,54 @@ package body Ocarina.Backends.C_Common.BA is
       Statements   : List_Id);
 
    function Evaluate_BA_Value_Expression
-     (Node             : Node_Id;
-      Is_Out_parameter : Boolean := False;
-      Subprogram_Root  : Node_Id := No_Node;
-      Declarations     : List_Id;
-      Statements       : List_Id) return Node_Id;
+     (Node                 : Node_Id;
+      Is_Out_parameter     : Boolean := False;
+      Subprogram_Root      : Node_Id := No_Node;
+      Declarations         : List_Id;
+      Statements           : List_Id;
+      Is_Put_Value_On_Port : Boolean := False) return Node_Id;
 
    function Evaluate_BA_Relation
-     (Node             : Node_Id;
-      Is_Out_parameter : Boolean := False;
-      Subprogram_Root  : Node_Id := No_Node;
-      Declarations     : List_Id;
-      Statements       : List_Id) return Node_Id;
+     (Node                 : Node_Id;
+      Is_Out_Parameter     : Boolean := False;
+      Subprogram_Root      : Node_Id := No_Node;
+      Declarations         : List_Id;
+      Statements           : List_Id;
+      Is_Put_Value_On_Port : Boolean := False) return Node_Id;
 
    function Evaluate_BA_Operator (Node : Node_Id) return Operator_Type;
 
-      function Evaluate_BA_Simple_Expression
-     (Node             : Node_Id;
-      Is_Out_parameter : Boolean := False;
-      Subprogram_Root  : Node_Id := No_Node;
-      Declarations     : List_Id;
-      Statements       : List_Id) return Node_Id;
+   function Evaluate_BA_Simple_Expression
+     (Node                 : Node_Id;
+      Is_Out_Parameter     : Boolean := False;
+      Subprogram_Root      : Node_Id := No_Node;
+      Declarations         : List_Id;
+      Statements           : List_Id;
+      Is_Put_Value_On_Port : Boolean := False) return Node_Id;
 
    function Evaluate_BA_Term
-     (Node             : Node_Id;
-      Is_Out_parameter : Boolean := False;
-      Subprogram_Root  : Node_Id := No_Node;
-      Declarations     : List_Id;
-      Statements       : List_Id) return Node_Id;
+     (Node                 : Node_Id;
+      Is_Out_Parameter     : Boolean := False;
+      Subprogram_Root      : Node_Id := No_Node;
+      Declarations         : List_Id;
+      Statements           : List_Id;
+      Is_Put_Value_On_Port : Boolean := False) return Node_Id;
 
    function Evaluate_BA_Factor
-     (Node             : Node_Id;
-      Is_Out_parameter : Boolean := False;
-      Subprogram_Root  : Node_Id := No_Node;
-      Declarations     : List_Id;
-      Statements       : List_Id) return Node_Id;
+     (Node                 : Node_Id;
+      Is_Out_Parameter     : Boolean := False;
+      Subprogram_Root      : Node_Id := No_Node;
+      Declarations         : List_Id;
+      Statements           : List_Id;
+      Is_Put_Value_On_Port : Boolean := False) return Node_Id;
 
    function Evaluate_BA_Value
-     (Node             : Node_Id;
-      Is_Out_parameter : Boolean := False;
-      Subprogram_Root  : Node_Id := No_Node;
-      Declarations     : List_Id;
-      Statements       : List_Id) return Node_Id;
+     (Node                 : Node_Id;
+      Is_Out_Parameter     : Boolean := False;
+      Subprogram_Root      : Node_Id := No_Node;
+      Declarations         : List_Id;
+      Statements           : List_Id;
+      Is_Put_Value_On_Port : Boolean := False) return Node_Id;
 
    function Evaluate_BA_Integer_Value
      (Node         : Node_Id;
@@ -350,6 +356,10 @@ package body Ocarina.Backends.C_Common.BA is
      (Node             : Node_Id;
       Parent_Component : Node_Id) return Node_Id;
 
+   function Get_Subcomponent_Data_Instance
+     (Node             : Node_Id;
+      Parent_Component : Node_Id) return Node_Id;
+
    function Evaluate_BA_Value_Variable
      (Node             : Node_Id;
       S                : Node_Id;
@@ -357,11 +367,12 @@ package body Ocarina.Backends.C_Common.BA is
       Statements       : List_Id) return Node_Id;
 
    function Evaluate_BA_Property_Constant
-     (Node             : Node_Id;
-      Is_Out_parameter : Boolean := False;
-      Subprogram_Root  : Node_Id;
-      Declarations     : List_Id;
-      Statements       : List_Id) return Node_Id;
+     (Node                 : Node_Id;
+      Is_Out_parameter     : Boolean := False;
+      Subprogram_Root      : Node_Id;
+      Declarations         : List_Id;
+      Statements           : List_Id;
+      Is_Put_Value_On_Port : Boolean := False) return Node_Id;
 
    function Make_Call_Parameter_For_Get_Count_and_Next_Value
      (Node : Node_Id;
@@ -390,11 +401,12 @@ package body Ocarina.Backends.C_Common.BA is
       Statements       : List_Id) return Node_Id;
 
    function Evaluate_BA_Identifier
-     (Node             : Node_Id;
-      Is_Out_parameter : Boolean := False;
-      Subprogram_Root  : Node_Id := No_Node;
-      Declarations     : List_Id;
-      Statements       : List_Id) return Node_Id;
+     (Node                 : Node_Id;
+      Is_Out_Parameter     : Boolean := False;
+      Subprogram_Root      : Node_Id := No_Node;
+      Declarations         : List_Id;
+      Statements           : List_Id;
+      Is_Put_Value_On_Port : Boolean := False) return Node_Id;
 
    function Evaluate_BA_Boolean_Literal (Node : Node_Id) return Node_Id;
 
@@ -4232,7 +4244,8 @@ package body Ocarina.Backends.C_Common.BA is
                            Is_Out_Parameter => BATN.Is_Out (N),
                            Subprogram_Root  => S,
                            Declarations     => Declarations,
-                           Statements       => Statements);
+                           Statements       => Statements,
+                           Is_Put_Value_On_Port => True);
 
                         Append_Node_To_List
                           (K,
@@ -4473,7 +4486,8 @@ package body Ocarina.Backends.C_Common.BA is
                         (Subprogram_Parameter_List (Node))),
                Subprogram_Root  => S,
                Declarations     => Declarations,
-               Statements       => Statements)),
+               Statements       => Statements,
+               Is_Put_Value_On_Port => True)),
          Statements);
 
    end Make_Put_Value_On_port;
@@ -4676,6 +4690,24 @@ package body Ocarina.Backends.C_Common.BA is
                       (Make_Request_Variable_Name_From_Port_Name
                            (BATN.Display_Name (N))));
 
+            elsif AAN.Kind (Corresponding_Entity) = AAN.K_Subcomponent
+              and then
+                AINU.Is_Data (AIN.Corresponding_Instance
+                              (Get_Subcomponent_Data_Instance
+                                 (Corresponding_Entity, S)))
+              and then Get_Data_Representation
+                (AIN.Corresponding_Instance
+                   (Get_Subcomponent_Data_Instance
+                      (Corresponding_Entity, S))) = Data_Struct
+
+            then
+               Var_identifier := Evaluate_BA_Identifier
+                 (Node             => N,
+                  Is_Out_Parameter => Is_Out_Parameter,
+                  Subprogram_Root  => S,
+                  Declarations     => Declarations,
+                  Statements       => Statements);
+               Is_Pointer := True;
             end if;
 
          else
@@ -4900,11 +4932,12 @@ package body Ocarina.Backends.C_Common.BA is
    ----------------------------------
 
    function Evaluate_BA_Value_Expression
-     (Node             : Node_Id;
-      Is_Out_Parameter : Boolean := False;
-      Subprogram_Root  : Node_Id := No_Node;
-      Declarations     : List_Id;
-      Statements       : List_Id) return Node_Id
+     (Node                 : Node_Id;
+      Is_Out_Parameter     : Boolean := False;
+      Subprogram_Root      : Node_Id := No_Node;
+      Declarations         : List_Id;
+      Statements           : List_Id;
+      Is_Put_Value_On_Port : Boolean := False) return Node_Id
    is
       pragma Assert (BATN.Kind (Node) = BATN.K_Value_Expression);
       pragma Assert (not BANu.Is_Empty (BATN.Relations (Node)));
@@ -4920,7 +4953,7 @@ package body Ocarina.Backends.C_Common.BA is
 
       Left_Expr := Evaluate_BA_Relation
         (N, Is_Out_Parameter, Subprogram_Root,
-         Declarations, Statements);
+         Declarations, Statements, Is_Put_Value_On_Port);
 
       N := BATN.Next_Node (N);
 
@@ -4966,11 +4999,12 @@ package body Ocarina.Backends.C_Common.BA is
    --------------------------
 
    function Evaluate_BA_Relation
-     (Node             : Node_Id;
-      Is_Out_Parameter : Boolean := False;
-      Subprogram_Root  : Node_Id := No_Node;
-      Declarations     : List_Id;
-      Statements       : List_Id) return Node_Id
+     (Node                 : Node_Id;
+      Is_Out_Parameter     : Boolean := False;
+      Subprogram_Root      : Node_Id := No_Node;
+      Declarations         : List_Id;
+      Statements           : List_Id;
+      Is_Put_Value_On_Port : Boolean := False) return Node_Id
    is
       pragma Assert (BATN.Kind (Node) = BATN.K_Relation);
 
@@ -4987,7 +5021,7 @@ package body Ocarina.Backends.C_Common.BA is
 
          Left_Expr := Evaluate_BA_Simple_Expression
            (N, Is_Out_Parameter, Subprogram_Root,
-            Declarations, Statements);
+            Declarations, Statements, Is_Put_Value_On_Port);
 
          N := BATN.Next_Node (N);
 
@@ -5094,11 +5128,12 @@ package body Ocarina.Backends.C_Common.BA is
    -----------------------------------
 
    function Evaluate_BA_Simple_Expression
-     (Node             : Node_Id;
-      Is_Out_Parameter : Boolean := False;
-      Subprogram_Root  : Node_Id := No_Node;
-      Declarations     : List_Id;
-      Statements       : List_Id) return Node_Id
+     (Node                 : Node_Id;
+      Is_Out_Parameter     : Boolean := False;
+      Subprogram_Root      : Node_Id := No_Node;
+      Declarations         : List_Id;
+      Statements           : List_Id;
+      Is_Put_Value_On_Port : Boolean := False) return Node_Id
    is
       pragma Assert (BATN.Kind (Node) = BATN.K_Simple_Expression);
       pragma Assert (not BANu.Is_Empty (BATN.Term_And_Operator (Node)));
@@ -5114,7 +5149,7 @@ package body Ocarina.Backends.C_Common.BA is
 
       Left_Expr := Evaluate_BA_Term
         (N, Is_Out_Parameter, Subprogram_Root,
-         Declarations, Statements);
+         Declarations, Statements, Is_Put_Value_On_Port);
 
       N := BATN.Next_Node (N);
 
@@ -5158,11 +5193,12 @@ package body Ocarina.Backends.C_Common.BA is
    ----------------------
 
    function Evaluate_BA_Term
-     (Node             : Node_Id;
-      Is_Out_Parameter : Boolean := False;
-      Subprogram_Root  : Node_Id := No_Node;
-      Declarations     : List_Id;
-      Statements       : List_Id) return Node_Id
+     (Node                 : Node_Id;
+      Is_Out_Parameter     : Boolean := False;
+      Subprogram_Root      : Node_Id := No_Node;
+      Declarations         : List_Id;
+      Statements           : List_Id;
+      Is_Put_Value_On_Port : Boolean := False) return Node_Id
    is
       pragma Assert (BATN.Kind (Node) = BATN.K_Term);
       pragma Assert (not BANu.Is_Empty (BATN.Factors (Node)));
@@ -5178,7 +5214,8 @@ package body Ocarina.Backends.C_Common.BA is
 
       Left_Expr := Evaluate_BA_Factor (N, Is_Out_Parameter,
                                        Subprogram_Root,
-                                       Declarations, Statements);
+                                       Declarations, Statements,
+                                       Is_Put_Value_On_Port);
 
       N := BATN.Next_Node (N);
 
@@ -5223,11 +5260,12 @@ package body Ocarina.Backends.C_Common.BA is
    ------------------------
 
    function Evaluate_BA_Factor
-     (Node             : Node_Id;
-      Is_Out_Parameter : Boolean := False;
-      Subprogram_Root  : Node_Id := No_Node;
-      Declarations     : List_Id;
-      Statements       : List_Id) return Node_Id
+     (Node                 : Node_Id;
+      Is_Out_Parameter     : Boolean := False;
+      Subprogram_Root      : Node_Id := No_Node;
+      Declarations         : List_Id;
+      Statements           : List_Id;
+      Is_Put_Value_On_Port : Boolean := False) return Node_Id
    is
       pragma Assert (BATN.Kind (Node) = BATN.K_Factor);
    begin
@@ -5250,7 +5288,7 @@ package body Ocarina.Backends.C_Common.BA is
       else
          return Evaluate_BA_Value
            (BATN.Lower_Value (Node), Is_Out_Parameter,
-            Subprogram_Root, Declarations, Statements);
+            Subprogram_Root, Declarations, Statements, Is_Put_Value_On_Port);
       end if;
 
       --  if Present (BATN.Upper_Value (Node)) then
@@ -5264,11 +5302,12 @@ package body Ocarina.Backends.C_Common.BA is
    -----------------------
 
    function Evaluate_BA_Value
-     (Node             : Node_Id;
-      Is_Out_Parameter : Boolean := False;
-      Subprogram_Root  : Node_Id := No_Node;
-      Declarations     : List_Id;
-      Statements       : List_Id) return Node_Id
+     (Node                 : Node_Id;
+      Is_Out_Parameter     : Boolean := False;
+      Subprogram_Root      : Node_Id := No_Node;
+      Declarations         : List_Id;
+      Statements           : List_Id;
+      Is_Put_Value_On_Port : Boolean := False) return Node_Id
    is
       pragma Assert (BATN.Kind (Node) = BATN.K_Value_Variable
                      or else Kind (Node) = BATN.K_Value_Expression
@@ -5298,7 +5337,7 @@ package body Ocarina.Backends.C_Common.BA is
          when BATN.K_Property_Constant  =>
             result := Evaluate_BA_Property_Constant
               (Node, Is_Out_Parameter, Subprogram_Root,
-               Declarations, Statements);
+               Declarations, Statements, Is_Put_Value_On_Port);
 
             --  when BATN.K_Property_Reference =>
             --    Evaluate_BA_Property_Reference (Node);
@@ -5622,17 +5661,18 @@ package body Ocarina.Backends.C_Common.BA is
    ----------------------------
 
    function Evaluate_BA_Identifier
-     (Node             : Node_Id;
-      Is_Out_Parameter : Boolean := False;
-      Subprogram_Root  : Node_Id := No_Node;
-      Declarations     : List_Id;
-      Statements       : List_Id) return Node_Id
+     (Node                 : Node_Id;
+      Is_Out_Parameter     : Boolean := False;
+      Subprogram_Root      : Node_Id := No_Node;
+      Declarations         : List_Id;
+      Statements           : List_Id;
+      Is_Put_Value_On_Port : Boolean := False) return Node_Id
    is
       use AAN;
       pragma Assert (BATN.Kind (Node) = BATN.K_Identifier);
       Pointer          : Boolean := False;
       Variable_Address : Boolean := False;
-      N                : Node_Id;
+      N, N1            : Node_Id;
       result           : Node_Id;
    begin
 
@@ -5692,10 +5732,22 @@ package body Ocarina.Backends.C_Common.BA is
          end if;
 
          if Present (N) then
-            if AAN.kind (N) = AAN.K_Subcomponent and then
-              Component_Category'Val (Category (N)) = CC_Data
-            then
-               Pointer := True;
+            if AAN.kind (N) = AAN.K_Subcomponent then
+               N1 := AIN.Corresponding_Instance
+                 (Get_Subcomponent_Data_Instance
+                    (N, Subprogram_Root));
+               if AINU.Is_Data (N1) then
+                  if Get_Data_Representation (N1) = Data_Struct then
+                     if not Is_Put_Value_On_Port then
+                        return CTU.Make_Defining_Identifier
+                          (Name  => BATN.Display_Name (Node));
+                     else
+                        Pointer := True;
+                     end if;
+                  else
+                     Pointer := True;
+                  end if;
+               end if;
             end if;
          end if;
       end if;
@@ -5789,6 +5841,31 @@ package body Ocarina.Backends.C_Common.BA is
       end if;
 
    end Make_Intermediate_Variable_Declaration;
+
+   ------------------------------------
+   -- Get_Subcomponent_Data_Instance --
+   ------------------------------------
+
+   function Get_Subcomponent_Data_Instance
+     (Node             : Node_Id;
+      Parent_Component : Node_Id) return Node_Id
+   is
+      Fs : constant Ocarina.ME_AADL.AADL_Instances.Nutils.Node_Array
+        := Subcomponents_Of (Parent_Component);
+      result : Node_Id;
+   begin
+      for F of Fs loop
+         if Present (AIN.Identifier (F))
+           and then Standard.Utils.To_Upper
+             (AIN.Display_Name (AIN.Identifier (F)))
+           = Standard.Utils.To_Upper
+           (AAN.Display_Name (AAN.Identifier (Node)))
+         then
+            result := F;
+         end if;
+      end loop;
+      return result;
+   end Get_Subcomponent_Data_Instance;
 
    ----------------------------
    -- Get_Port_Spec_Instance --
@@ -5935,11 +6012,12 @@ package body Ocarina.Backends.C_Common.BA is
    -----------------------------------
 
    function Evaluate_BA_Property_Constant
-     (Node             : Node_Id;
-      Is_Out_Parameter : Boolean := False;
-      Subprogram_Root  : Node_Id;
-      Declarations     : List_Id;
-      Statements       : List_Id) return Node_Id
+     (Node                 : Node_Id;
+      Is_Out_parameter     : Boolean := False;
+      Subprogram_Root      : Node_Id;
+      Declarations         : List_Id;
+      Statements           : List_Id;
+      Is_Put_Value_On_Port : Boolean := False) return Node_Id
    is
       pragma Assert (BATN.Kind (Node) = BATN.K_Property_Constant);
 
@@ -5952,7 +6030,7 @@ package body Ocarina.Backends.C_Common.BA is
 
       return Evaluate_BA_Identifier
         (BATN.Identifier (Node), Is_Out_Parameter,
-         Subprogram_Root, Declarations, Statements);
+         Subprogram_Root, Declarations, Statements, Is_Put_Value_On_Port);
 
    end Evaluate_BA_Property_Constant;
 

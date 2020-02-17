@@ -96,4 +96,8 @@ package Ocarina.Property_Sets is
 
    function Ocarina_Property_Sets return Ocarina_Property_Set_Array_Type;
 
+   procedure Activate_Taste_Properties;
+   --  Special case to activate TASTE property sets as additional
+   --  Ocarina property set
+
 end Ocarina.Property_Sets;
