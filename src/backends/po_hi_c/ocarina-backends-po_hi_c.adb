@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2020 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -277,10 +277,13 @@ package body Ocarina.Backends.PO_HI_C is
          Write_Eol;
       end if;
 
-      --  The following syntax esapces whitespace in the path
-      Write_Line ("RUNTIME_PATH=$(shell echo """
-                    & Get_Runtime_Path ("polyorb-hi-c")
-                    & """ | sed 's/ /\\ /g')");
+      --  The following syntax escapes whitespace in the path
+
+      --      Write_Line ("RUNTIME_PATH=$(shell echo """
+      --      & Get_Runtime_Path ("polyorb-hi-c")
+      --                    & """ | sed 's/ /\\ /g')");
+
+      Write_Line ("RUNTIME_PATH=../polyorb-hi-c");
 
       Write_Str ("USER_SOURCES_DIRS=");
       if Length (User_Source_Dirs) > 0 then
