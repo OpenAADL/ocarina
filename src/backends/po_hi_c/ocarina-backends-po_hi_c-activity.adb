@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2019 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2020 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -2128,6 +2128,14 @@ package body Ocarina.Backends.PO_HI_C.Activity is
          Nb_Dest              : Unsigned_Long_Long := 0;
          Has_Local_Deliver    : Boolean            := False;
       begin
+         if Get_Thread_Dispatch_Protocol (E) = Thread_Sporadic and then
+           not Has_In_Event_Ports (E)
+         then
+            Display_Located_Error
+              (Loc (E),
+               "None of the IN ports of this sporadic thread is an event port",
+               Fatal => True);
+         end if;
 
          if Has_Ports (E) then
             F := First_Node (Features (E));
