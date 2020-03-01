@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2019 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2020 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -1381,25 +1381,23 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                Global_Port_Model_Names);
          end if;
 
-         if not Is_Empty (Local_Port_List) then
-            if not Invalid_Local_Port_Added then
-               Set_Str_To_Name_Buffer ("invalid_local_port_t");
-               N :=
-                 Make_Expression
-                   (Make_Defining_Identifier (Name_Find),
-                    Op_Equal,
-                    (Make_Literal (CV.New_Int_Value (1, -1, 10))));
-               Append_Node_To_List (N, Local_Port_List);
-
-               Invalid_Local_Port_Added := True;
-            end if;
-
+         if not Invalid_Local_Port_Added then
+            Set_Str_To_Name_Buffer ("invalid_local_port_t");
             N :=
-              Make_Full_Type_Declaration
-                (Defining_Identifier => RE (RE_Local_Port_T),
-                 Type_Definition     => Make_Enum_Aggregate (Local_Port_List));
-            Append_Node_To_List (N, CTN.Declarations (Current_File));
+              Make_Expression
+              (Make_Defining_Identifier (Name_Find),
+               Op_Equal,
+               (Make_Literal (CV.New_Int_Value (1, -1, 10))));
+            Append_Node_To_List (N, Local_Port_List);
+
+            Invalid_Local_Port_Added := True;
          end if;
+
+         N :=
+           Make_Full_Type_Declaration
+           (Defining_Identifier => RE (RE_Local_Port_T),
+            Type_Definition     => Make_Enum_Aggregate (Local_Port_List));
+         Append_Node_To_List (N, CTN.Declarations (Current_File));
 
          N :=
            Make_Define_Statement
