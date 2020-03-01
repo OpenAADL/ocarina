@@ -283,7 +283,10 @@ package body Ocarina.Backends.PO_HI_C is
       --      & Get_Runtime_Path ("polyorb-hi-c")
       --                    & """ | sed 's/ /\\ /g')");
 
-      Write_Line ("RUNTIME_PATH=../polyorb-hi-c");
+      Write_Line
+        ("BUILD_DIR:=$(shell dirname " &
+           "$(abspath $(lastword $(MAKEFILE_LIST))))");
+      Write_Line ("RUNTIME_PATH=$(BUILD_DIR)/../polyorb-hi-c");
 
       Write_Str ("USER_SOURCES_DIRS=");
       if Length (User_Source_Dirs) > 0 then
