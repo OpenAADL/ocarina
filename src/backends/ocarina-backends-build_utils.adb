@@ -74,9 +74,11 @@ package body Ocarina.Backends.Build_Utils is
    --  Split the path made of Filename and Directory into Basename and
    --  Dirname (with regular shell interpretations)
    --
-   --  * If Relative_Path is true, we disregard Directory and assume
-   --    the base directory to be "../.." relative to the generated code
-   --    directory.
+   --  * If Relative_Path is true, and if Directory is not Ocarina
+   --    install directory (case of runtime library elements), then we
+   --    disregard Directory and assume the base directory to be "../.."
+   --    relative to the generated code directory.
+   --
    --  * If Relative_Path is false, the full directory path is
    --    resolved and is absolute to the user environment.
 
@@ -158,8 +160,20 @@ package body Ocarina.Backends.Build_Utils is
       Dirname   : out Name_Id;
       Relative_Path : Boolean := False)
    is
+      Temp_Dirname : Name_Id := No_Name;
+      AADL_Library_File : Boolean := False;
    begin
       if Relative_Path then
+         Temp_Dirname := Get_String_Name
+           (Normalize_Pathname (Get_Name_String (Directory)) & "/");
+         if Temp_Dirname = Default_Library_Path then
+            AADL_Library_File := True;
+         end if;
+      end if;
+
+      if Relative_Path and then not
+        AADL_Library_File
+      then
          Set_Str_To_Name_Buffer ("../..");
 
       elsif Directory = No_Name then
