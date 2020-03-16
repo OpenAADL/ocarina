@@ -1790,7 +1790,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                           Make_Literal
                           (CV.New_Pointed_Char_Value
                              (Map_C_Enumerator_Name
-                                (Item (Foo_N),
+                                (Item (F_N),
                                  Fully_Qualify_Parent => True)));
                         Append_Node_To_List
                           (N, CTN.Values (Global_Port_Names));
