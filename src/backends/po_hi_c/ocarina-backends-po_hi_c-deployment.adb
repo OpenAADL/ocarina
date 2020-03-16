@@ -1772,11 +1772,29 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                        (N,
                         CTN.Values (Global_Port_To_Entity));
 
-                     N :=
-                       Make_Literal
-                         (CV.New_Pointed_Char_Value
-                            (Map_C_Enumerator_Name (F)));
-                     Append_Node_To_List (N, CTN.Values (Global_Port_Names));
+                     --  For each feature of a thread, we define a
+                     --  global port name as the name of the process
+                     --  port.
+                     --
+                     --  Note: these names are also used by some other
+                     --  backend, e.g. as part of TSP configuration.
+
+                     declare
+                        F_L : constant List_Id :=
+                          (if Is_In (F) then
+                             AAN.Sources (F) else
+                             AAN.Destinations (F));
+                        F_N : constant Node_Id := AAN.First_Node (F_L);
+                     begin
+                        N :=
+                          Make_Literal
+                          (CV.New_Pointed_Char_Value
+                             (Map_C_Enumerator_Name
+                                (Item (Foo_N),
+                                 Fully_Qualify_Parent => True)));
+                        Append_Node_To_List
+                          (N, CTN.Values (Global_Port_Names));
+                     end;
 
                      N :=
                        Make_Literal

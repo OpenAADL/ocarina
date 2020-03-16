@@ -40,6 +40,7 @@ with Ocarina.ME_AADL.AADL_Instances.Nutils;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
 with Ocarina.ME_AADL.AADL_Tree.Entities;
 
+with Ocarina.Backends.C_Common.Mapping;
 with Ocarina.Backends.Utils;
 with Ocarina.Instances.Queries;
 
@@ -58,6 +59,7 @@ package body Ocarina.Backends.AIR_Conf.Partitions is
    use Ocarina.ME_AADL.AADL_Instances.Entities;
 
    use Ocarina.Instances.Queries;
+   use Ocarina.Backends.C_Common.Mapping;
 
    use Ocarina.Backends.Utils;
    use Ocarina.Backends.Messages;
@@ -269,12 +271,15 @@ package body Ocarina.Backends.AIR_Conf.Partitions is
                   Port_Node := Make_XML_Node ("Queuing_Port");
                end if;
 
-               --  Port name
+               --  Port name: partition + port name
 
                Set_Str_To_Name_Buffer ("Name");
                P := Make_Defining_Identifier (Name_Find);
 
-               Get_Name_String (Display_Name (Identifier (F)));
+               Get_Name_String
+                 (Map_C_Enumerator_Name (F,
+                                         Fully_Qualify_Parent => True));
+
                Q := Make_Defining_Identifier (To_Lower (Name_Find));
                Append_Node_To_List
                  (Make_Assignement (P, Q),

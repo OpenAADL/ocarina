@@ -45,6 +45,7 @@ with Ocarina.Backends.Utils;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
 with Ocarina.Backends.XML_Values;
+with Ocarina.Backends.C_Common.Mapping;
 
 package body Ocarina.Backends.AIR_Conf.AIR_Configuration is
 
@@ -56,6 +57,7 @@ package body Ocarina.Backends.AIR_Conf.AIR_Configuration is
    use Ocarina.Backends.Properties.ARINC653;
    use Ocarina.Backends.Utils;
    use Ocarina.Backends.XML_Tree.Nutils;
+   use Ocarina.Backends.C_Common.Mapping;
 
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
@@ -150,21 +152,20 @@ package body Ocarina.Backends.AIR_Conf.AIR_Configuration is
          while Present (C) loop
 
             if Kind (C) = K_Connection_Instance then
-
                Source_Port_Name :=
-                 AIN.Name
-                   (AIN.Identifier
-                      (AIN.Item
-                         (AIN.Next_Node
-                            (AIN.First_Node (AIN.Path (AIN.Source (C)))))));
+                 Map_C_Enumerator_Name
+                 (AIN.Item
+                    (AIN.Next_Node
+                       (AIN.First_Node (AIN.Path (AIN.Source (C))))),
+                  Fully_Qualify_Parent => True);
 
                Destination_Port_Name :=
-                 AIN.Name
-                   (AIN.Identifier
-                      (AIN.Item
-                         (AIN.Next_Node
-                            (AIN.First_Node
-                               (AIN.Path (AIN.Destination (C)))))));
+                 Map_C_Enumerator_Name
+                 (AIN.Item
+                    (AIN.Next_Node
+                       (AIN.First_Node
+                          (AIN.Path (AIN.Destination (C))))),
+                  Fully_Qualify_Parent => True);
 
                Source_Partition :=
                  AIN.Corresponding_Instance
