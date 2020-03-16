@@ -70,19 +70,22 @@ package Ocarina.Backends.C_Common.Mapping is
       Variable : Name_Id := No_Name) return Node_Id;
    function Map_C_Enum_Name (E : Node_Id; Enumerator : Name_Id) return Name_Id;
    function Map_C_Enumerator_Name
-     (E             : Node_Id;
-      Custom_Parent : Node_Id := No_Node;
-      Entity        : Boolean := False;
-      Server        : Boolean := False;
-      Port_Type     : Boolean := False;
-      Local_Port    : Boolean := False) return Name_Id;
+     (E                    : Node_Id;
+      Custom_Parent        : Node_Id := No_Node;
+      Fully_Qualify_Parent : Boolean := False;
+      Entity               : Boolean := False;
+      Server               : Boolean := False;
+      Port_Type            : Boolean := False;
+      Local_Port           : Boolean := False) return Name_Id;
+
    function Map_C_Define_Name
      (E                                             : Node_Id;
       Nb_Ports                                      : Boolean := False;
       Nb_States                                     : Boolean := False;
       Max_Dispatch_Transitions_Per_Complete_State   : Boolean := False;
       Max_Dispatch_Triggers_Per_Dispatch_Transition : Boolean := False)
-      return Name_Id;
+     return Name_Id;
+
    function Map_C_Full_Parameter_Name
      (Spg    : Node_Id;
       P      : Node_Id;
