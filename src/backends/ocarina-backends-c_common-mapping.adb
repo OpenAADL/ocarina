@@ -926,12 +926,13 @@ package body Ocarina.Backends.C_Common.Mapping is
    ---------------------------
 
    function Map_C_Enumerator_Name
-     (E             : Node_Id;
-      Custom_Parent : Node_Id := No_Node;
-      Entity        : Boolean := False;
-      Server        : Boolean := False;
-      Port_Type     : Boolean := False;
-      Local_Port    : Boolean := False) return Name_Id
+     (E                    : Node_Id;
+      Custom_Parent        : Node_Id := No_Node;
+      Fully_Qualify_Parent : Boolean := False;
+      Entity               : Boolean := False;
+      Server               : Boolean := False;
+      Port_Type            : Boolean := False;
+      Local_Port           : Boolean := False) return Name_Id
    is
       C_Name_1 : Name_Id;
       C_Name_2 : Name_Id;
@@ -939,10 +940,19 @@ package body Ocarina.Backends.C_Common.Mapping is
       if Kind (E) = K_Port_Spec_Instance then
          C_Name_1 := CTU.To_C_Name (Display_Name (Identifier (E)));
 
-         Get_Name_String
-           (CTU.To_C_Name
-              (Display_Name
-                 (Identifier (Parent_Subcomponent (Parent_Component (E))))));
+         if Fully_Qualify_Parent then
+            Get_Name_String
+              (CTU.To_C_Name
+                 (Fully_Qualified_Instance_Name
+                    (Parent_Component ((E)))));
+         else
+            Get_Name_String
+              (CTU.To_C_Name
+                 (Display_Name
+                    (Identifier (Parent_Subcomponent
+                                   (Parent_Component (E))))));
+         end if;
+
          if Local_Port then
             Add_Str_To_Name_Buffer ("_local_");
             Get_Name_String_And_Append (C_Name_1);
