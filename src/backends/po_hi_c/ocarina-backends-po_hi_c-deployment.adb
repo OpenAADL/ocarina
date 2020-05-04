@@ -1786,12 +1786,24 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                              AAN.Destinations (F));
                         F_N : constant Node_Id := AAN.First_Node (F_L);
                      begin
-                        N :=
-                          Make_Literal
-                          (CV.New_Pointed_Char_Value
-                             (Map_C_Enumerator_Name
-                                (Item (F_N),
-                                 Fully_Qualify_Parent => True)));
+                        if Present (F_N) then
+                           N :=
+                             Make_Literal
+                             (CV.New_Pointed_Char_Value
+                                (Map_C_Enumerator_Name
+                                   (Item (F_N),
+                                    Fully_Qualify_Parent => True)));
+                        else
+                           --  There is no process port (e.g. thread
+                           --  to thread connection), then we just use
+                           --  the feature name.
+                           N :=
+                             Make_Literal
+                             (CV.New_Pointed_Char_Value
+                                (Map_C_Enumerator_Name
+                                   (F,
+                                    Fully_Qualify_Parent => True)));
+                        end if;
                         Append_Node_To_List
                           (N, CTN.Values (Global_Port_Names));
                      end;
