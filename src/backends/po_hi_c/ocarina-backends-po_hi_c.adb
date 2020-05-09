@@ -289,6 +289,12 @@ package body Ocarina.Backends.PO_HI_C is
       Write_Line ("RUNTIME_PATH=$(BUILD_DIR)/../polyorb-hi-c");
 
       Write_Str ("USER_SOURCES_DIRS=");
+
+      if Scenario_Dir /= null then
+         Write_Space;
+         Write_Str ("""-I" & Scenario_Dir.all & """");
+      end if;
+
       if Length (User_Source_Dirs) > 0 then
          for J in Name_Tables.First .. Name_Tables.Last (User_Source_Dirs) loop
             Write_Space;

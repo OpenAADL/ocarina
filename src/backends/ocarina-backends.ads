@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2020 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -111,6 +111,9 @@ package Ocarina.Backends is
 
    Generated_Sources_Directory : Name_Id := No_Name;
    --  Generated code will be in this directory
+
+   Scenario_Dir : String_Ptr;
+   --  Path to scenario directory, required to get source path to user code
 
    Compile_Generated_Sources : aliased Boolean := False;
    Remove_Generated_Sources  : aliased Boolean := False;
