@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2020 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -40,7 +40,6 @@ with Ocarina.ME_AADL.AADL_Tree.Nodes;   use Ocarina.ME_AADL.AADL_Tree.Nodes;
 
 with Ocarina.Files;                    use Ocarina.Files;
 with Ocarina.ME_AADL.AADL_Tree.Nutils; use Ocarina.ME_AADL.AADL_Tree.Nutils;
-with Ocarina.Options;                  use Ocarina.Options;
 with Ocarina.Parser;                   use Ocarina.Parser;
 with Ocarina.Property_Sets;            use Ocarina.Property_Sets;
 
@@ -74,8 +73,6 @@ package body Ocarina.FE_AADL.Parser is
    procedure Init is
    begin
       First_Parsing     := True;
-
-      Add_Library_Path (Get_Name_String (Default_Library_Path));
       Ocarina.Parser.Register_Parser (Language, Process'Access);
    end Init;
 
