@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2004-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
+--    Copyright (C) 2004-2009 Telecom ParisTech, 2010-2020 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -290,10 +290,8 @@ procedure Ocarina_Cmd is
                File_Name : constant String :=
                  Image (Value (N), Quoted => False);
             begin
-               Get_Name_String (Current_Scenario_Dirname);
-               Add_Str_To_Name_Buffer (File_Name);
                Ocarina.Files.Add_File_To_Parse_List
-                 (Name_Find, Add_Suffix => True);
+                 (Get_String_Name (File_Name), Add_Suffix => True);
                N := Next_Node (N);
             end;
          end loop;
@@ -314,7 +312,6 @@ procedure Ocarina_Cmd is
       end if;
 
       F := Sources.First;
-
       loop
          Dirname :=
            Get_String_Name
@@ -559,9 +556,10 @@ procedure Ocarina_Cmd is
 
          Ocarina.Configuration.Reset_Modules;
          Ocarina.Reset;
-         --         Ocarina.Files.Sources.Init;
-
          Ocarina.Initialize;
+         Reset_Current_Action;
+         Ocarina.Cmd_Line.Process;
+
          Language             := Get_String_Name ("aadl");
          Ocarina.AADL_Version := Temp_AADL_Version;
          Set_Current_Backend_Name (The_Backend_Name);
@@ -584,6 +582,10 @@ procedure Ocarina_Cmd is
             Ocarina.Files.Add_File_To_Parse_List
               (Name_Find, Add_Suffix => True);
          end loop;
+
+         --  Add scenario directory to the list of search path
+
+         Add_Library_Path (Scenario_Dir.all);
 
          --  Avoid memory leaks
 
