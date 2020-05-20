@@ -1886,18 +1886,52 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                            CTN.Values (Global_Port_Data_Size));
                      end if;
 
-                     if Is_Event (F) and then Get_Queue_Size (F) /= -1 then
-                        Append_Node_To_List
-                          (Make_Literal
-                             (CV.New_Int_Value
-                                (Unsigned_Long_Long (Get_Queue_Size (F)),
-                                 0,
-                                 10)),
-                           CTN.Values (Global_Port_Queue_Size));
+                     --  Map port queue size in Global_Port_Size We
+                     --  consider process ports, and then thread port
+                     --  when computing queue size. This is to be
+                     --  consistent with process (or TSP partitions)
+                     --  defining a queue size for inter-partition
+                     --  communications.
+
+                     if Is_Event (F) then
+                        declare
+                           F_L : constant List_Id :=
+                             (if Is_In (F) then
+                             AAN.Sources (F) else
+                             AAN.Destinations (F));
+                           F_N : constant Node_Id := AAN.First_Node (F_L);
+                        begin
+                           if Present (F_N)  and then
+                             Get_Queue_Size (Item (F_N)) /= -1
+                           then
+                              Append_Node_To_List
+                                (Make_Literal
+                                   (CV.New_Int_Value
+                                      (Unsigned_Long_Long
+                                         (Get_Queue_Size (Item (F_N))),
+                                       0,
+                                       10)),
+                                 CTN.Values (Global_Port_Queue_Size));
+                           else
+                              Append_Node_To_List
+                                (Make_Literal (CV.New_Int_Value (1, 0, 10)),
+                                 CTN.Values (Global_Port_Queue_Size));
+                           end if;
+                        end;
                      else
-                        Append_Node_To_List
-                          (Make_Literal (CV.New_Int_Value (1, 0, 10)),
-                           CTN.Values (Global_Port_Queue_Size));
+                        if Is_Event (F) and then Get_Queue_Size (F) /= -1 then
+                           Append_Node_To_List
+                             (Make_Literal
+                                (CV.New_Int_Value
+                                   (Unsigned_Long_Long (Get_Queue_Size (F)),
+                                    0,
+                                    10)),
+                              CTN.Values (Global_Port_Queue_Size));
+                        else
+                           Append_Node_To_List
+                             (Make_Literal (CV.New_Int_Value (1, 0, 10)),
+                              CTN.Values (Global_Port_Queue_Size));
+                        end if;
                      end if;
 
                      --  We associate a unique identifier to the port
