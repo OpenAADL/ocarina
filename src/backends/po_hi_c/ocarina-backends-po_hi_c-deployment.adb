@@ -1902,6 +1902,7 @@ package body Ocarina.Backends.PO_HI_C.Deployment is
                            F_N : constant Node_Id := AAN.First_Node (F_L);
                         begin
                            if Present (F_N)  and then
+                             Is_Event (Item (F_N)) and then
                              Get_Queue_Size (Item (F_N)) /= -1
                            then
                               Append_Node_To_List

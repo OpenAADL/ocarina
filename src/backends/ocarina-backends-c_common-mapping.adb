@@ -3541,7 +3541,7 @@ package body Ocarina.Backends.C_Common.Mapping is
    function Map_Queue_Size (Port : Node_Id) return Node_Id is
       Queue_Size : Unsigned_Long_Long := 1;
    begin
-      if Get_Queue_Size (Port) /= -1 then
+      if Is_Event (Port) and then Get_Queue_Size (Port) /= -1 then
          Queue_Size := Unsigned_Long_Long (Get_Queue_Size (Port));
       end if;
 
