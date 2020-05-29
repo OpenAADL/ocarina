@@ -2021,6 +2021,8 @@ package body Ocarina.Backends.Build_Utils is
                exit when J = Name_Tables.Last (C_Sources);
             end loop;
          end if;
+         Write_Eol;
+         Write_Eol;
 
          --  Generic rule for compiling C files
 
