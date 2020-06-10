@@ -1281,6 +1281,13 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                       Get_Name_String (Display_Name (Identifier (S))));
                Append_Node_To_List (N, CTN.Declarations (Current_File));
 
+            when Thread_Aperiodic =>
+               N :=
+                 Message_Comment
+                   ("Sporadic task : " &
+                      Get_Name_String (Display_Name (Identifier (S))));
+               Append_Node_To_List (N, CTN.Declarations (Current_File));
+
             when Thread_Background =>
                N :=
                  Message_Comment
