@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2019 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2020 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -1321,8 +1321,9 @@ package body Ocarina.Backends.C_Common.Mapping is
 
       if AINU.Is_Subprogram (E)
         and then Get_Source_Language (E) /= Language_C
+        and then Get_Source_Language (E) /= Language_CPP
       then
-         Display_Error ("This is not a C function", Fatal => True);
+         Display_Error ("This is not a C-like function", Fatal => True);
       end if;
 
       --  Get the subprogram name
