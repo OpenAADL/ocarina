@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2019 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2020 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -2996,15 +2996,25 @@ package body Ocarina.Analyzer.AADL.Links is
 
             --  If we did not find anything, we look for an enumeration in
             --  properties
+
             if Present (Property_Type)
               and then (Kind (Property_Type) = K_Property_Type
                           or else Kind (Property_Type)
-                          = K_Unique_Property_Type_Identifier)
+                          = K_Unique_Property_Type_Identifier
+                          or else Kind (Property_Type)
+                          = K_Constant_Property_Declaration)
             then
                if Kind (Property_Type) = K_Property_Type
                  and then Present (Property_Type_Designator (Property_Type))
                then
                   Type_Designator := Property_Type_Designator (Property_Type);
+
+               elsif Kind (Property_Type)
+                 = K_Constant_Property_Declaration
+               then
+                  Type_Designator :=
+                    Constant_Type (Property_Type);
+
                else
                   Type_Designator := Property_Type_Designator
                     (Entity (Property_Type));
