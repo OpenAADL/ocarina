@@ -81,11 +81,10 @@ package body Ocarina.Backends.PO_HI_Ada.Job is
      (S : Name_Id) return Node_Id
    is
       P : constant Node_Id :=
-        --  Make_Defining_Identifier (Map_Interrogators_Name (E));
         RU (RU_PolyORB_HI_Generated_Activity);
       N : constant Node_Id := Make_Defining_Identifier (S);
    begin
-            Set_Homogeneous_Parent_Unit_Name (N, P);
+      Set_Homogeneous_Parent_Unit_Name (N, P);
 
       return N;
    end Get_Fully_Qualified_Subprogram;
@@ -585,7 +584,8 @@ package body Ocarina.Backends.PO_HI_Ada.Job is
              (Selector_Name =>
                 Make_Defining_Identifier (SN (S_Wait_For_Incoming_Events)),
               Actual_Parameter =>
-                Make_Defining_Identifier (SN (S_Wait_For_Incoming_Events)));
+                Get_Fully_Qualified_Subprogram
+                  (SN (S_Wait_For_Incoming_Events)));
          Append_Node_To_List (N, Parameter_List);
 
          --  Build the package instantiation
