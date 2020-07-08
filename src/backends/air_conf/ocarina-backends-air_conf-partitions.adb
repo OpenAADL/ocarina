@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                   Copyright (C) 2018-2019 ESA & ISAE.                    --
+--                   Copyright (C) 2018-2020 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -160,11 +160,13 @@ package body Ocarina.Backends.AIR_Conf.Partitions is
       P                    : Node_Id;
       Q                    : Node_Id;
       F                    : Node_Id;
+      Personnality         : Supported_Execution_Platform;
    begin
       Associated_Processor := Get_Bound_Processor (E);
       Associated_Memory    := Get_Bound_Memory (E);
       Associated_Module    :=
         Parent_Component (Parent_Subcomponent (Associated_Processor));
+      Personnality := Get_Execution_Platform (Associated_Processor);
 
       --  Some checks on the model in order to make sure that
       --  everything is correctly defined.
@@ -368,8 +370,16 @@ package body Ocarina.Backends.AIR_Conf.Partitions is
 
       PartitionConfiguration := Make_XML_Node ("PartitionConfiguration");
 
-      XTU.Add_Attribute ("Personality", "RTEMS5",
-                         PartitionConfiguration); -- XXX hardcoded
+      if Personnality = Platform_AIR then
+         XTU.Add_Attribute ("Personality", "RTEMS5",
+                            PartitionConfiguration);
+      elsif Personnality = Platform_AIR_IOP then
+         XTU.Add_Attribute ("Personality", "Bare",
+                            PartitionConfiguration);
+      else
+         raise Program_Error with "Unsupported platform " & Personnality'Img;
+      end if;
+
       XTU.Add_Attribute ("Cores", "1",
                          PartitionConfiguration); -- XXX hardcoded
 
@@ -381,10 +391,17 @@ package body Ocarina.Backends.AIR_Conf.Partitions is
       Libs_Node := Make_XML_Node ("Libs");
       Append_Node_To_List (Libs_Node, XTN.Subitems (Partitionconfiguration));
 
-      Append_Node_To_List
-        (Make_Defining_Identifier
-           (Get_String_Name ("LIBAIR; IMASPEX; LIBPRINTF")),
-         XTN.Subitems (Libs_Node));
+      if Personnality = Platform_AIR then
+         Append_Node_To_List
+           (Make_Defining_Identifier
+              (Get_String_Name ("LIBAIR; IMASPEX; LIBPRINTF")),
+            XTN.Subitems (Libs_Node));
+      elsif Personnality = Platform_AIR_IOP then
+         Append_Node_To_List
+           (Make_Defining_Identifier
+              (Get_String_Name ("LIBIOP")),
+            XTN.Subitems (Libs_Node));
+      end if;
 
       --  Devices node, child of PartitionConfiguration
 
@@ -423,12 +440,18 @@ package body Ocarina.Backends.AIR_Conf.Partitions is
 
       Permissions_Node := Make_XML_Node ("Permissions");
 
-      Append_Node_To_List
-        (Make_Defining_Identifier
-           (Get_String_Name
-              ("FPU_CONTROL; GLOBAL_TIME; CACHE_CONTROL;"
-                 & "SET_TOD; SET_PARTITION_MODE;")), --  XXX hardcoded
-         XTN.Subitems (Permissions_Node));
+      if Personnality = Platform_AIR then
+         Append_Node_To_List
+           (Make_Defining_Identifier
+              (Get_String_Name
+                 ("FPU_CONTROL; GLOBAL_TIME; CACHE_CONTROL;"
+                    & "SET_TOD; SET_PARTITION_MODE;")), --  XXX hardcoded
+            XTN.Subitems (Permissions_Node));
+      elsif Personnality = Platform_AIR_IOP then
+         Append_Node_To_List
+           (Make_Defining_Identifier (Get_String_Name ("SUPERVISOR;")),
+            XTN.Subitems (Permissions_Node));
+      end if;
 
       Append_Node_To_List (Permissions_Node,
                            XTN.Subitems (Partitionconfiguration));
