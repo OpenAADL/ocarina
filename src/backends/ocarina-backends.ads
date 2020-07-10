@@ -115,6 +115,8 @@ package Ocarina.Backends is
    Scenario_Dir : String_Ptr;
    --  Path to scenario directory, required to get source path to user code
 
+   SCM_Version : String_Ptr;
+
    Compile_Generated_Sources : aliased Boolean := False;
    Remove_Generated_Sources  : aliased Boolean := False;
    Do_Coverage_Test          : aliased Boolean := False;

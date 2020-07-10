@@ -601,7 +601,7 @@ begin
    Language             := Get_String_Name ("aadl");
    Default_AADL_Version := Get_Default_AADL_Version;
    AADL_Version         := Default_AADL_Version;
-
+   SCM_Version          := new String'(Ocarina_Revision);
    --  Process the command line
 
    Ocarina.Cmd_Line.Process;
