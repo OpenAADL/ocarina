@@ -42,7 +42,8 @@ property set Deployment is
     WIN32,                    -- WIN32
     VXWORKS,                  -- VXWORKS
     FREERTOS,                 -- FREERTOS
-    AIR                       -- AIR Hypervisor, by GMV
+    AIR,                      -- AIR Hypervisor, by GMV
+    AIR_IOP                   -- AIR IOP partition
     );
   --  Supported platforms
 
