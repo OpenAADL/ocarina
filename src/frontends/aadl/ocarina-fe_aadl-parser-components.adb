@@ -409,7 +409,6 @@ package body Ocarina.FE_AADL.Parser.Components is
       Impl_Identifier : Node_Id;    --  implementation_identifier
       Parent          : Node_Id;
       Refinable       : Boolean;    --  Is Component_Implementation_Extension ?
-
       Code          : Parsing_Code := PC_Component_Implementation;
       Current_Annex : Node_Id;
 
@@ -650,14 +649,16 @@ package body Ocarina.FE_AADL.Parser.Components is
 
       --
       --  Modes
+      --  S. Rubini requires modes only valid in component type?
       --
 
-      if Token = T_Modes or else Token = T_Requires then
+      if Token = T_Modes then
          Nb_Items :=
            P_Items_List
              (Func         => P_Mode_Or_Mode_Transition'Access,
               Container    => Impl,
               Refinable    => Refinable,
+              Requires     => False, --  S. Rubini
               Code         => PC_Mode_Or_Mode_Transition,
               At_Least_One => True);
          if Nb_Items < 0 then
@@ -778,7 +779,7 @@ package body Ocarina.FE_AADL.Parser.Components is
    --     [ properties ( { component_type_property_association
    --                      | contained_property_association }+
    --                    | none_statement ) ]
-   --    { annex_subclause }*
+   --    { annex_su{bclause }*
    --  end defining_component_type_identifier ;
 
    --  component_type_extension ::=
@@ -788,7 +789,8 @@ package body Ocarina.FE_AADL.Parser.Components is
    --                    | none_statement ) ]
    --     [ features ( { feature | feature_refinement }+ | none_statement ) ]
    --     [ flows ( { flow_spec | flow_spec_refinement }+ | none_statement ) ]
-   --     [ modes ( { mode | mode_transition }+ | none_statement ) ]
+   --     [ {modes | requires modes}
+   --        ( { mode | mode_transition }+ | none_statement ) ]
    --     [ properties ( { component_type_property_association
    --                      | contained_property_association
    --                    | none_statement ) ]
@@ -820,6 +822,8 @@ package body Ocarina.FE_AADL.Parser.Components is
       Identifier : Node_Id;     --  component identifier
       Parent     : Node_Id;
       Refinable  : Boolean;     --  Is Component_Type_Extension ?
+      --  append S. Rubini
+      Requires   : Boolean := False;
 
       Current_Annex : Node_Id;
       Code          : Parsing_Code := PC_Component_Type;
@@ -972,12 +976,20 @@ package body Ocarina.FE_AADL.Parser.Components is
       --  Modes, only in AADL_V2
       --
 
+      --  append S. Rubini
+      if Token = T_Requires then
+         Requires := True;
+         Scan_Token;
+      end if;
+      --
       if Token = T_Modes then
+      --
          Nb_Items :=
            P_Items_List
              (Func         => P_Mode_Or_Mode_Transition'Access,
               Container    => Component,
               Refinable    => Refinable,
+              Requires     => Requires,
               Code         => PC_Mode_Or_Mode_Transition,
               At_Least_One => True);
          if Nb_Items < 0 then
@@ -985,7 +997,13 @@ package body Ocarina.FE_AADL.Parser.Components is
             return No_Node;
          end if;
       else
-         Restore_Lexer (Loc);
+         if Requires then
+            DPE (PC_requires_modes_subclause, T_Mode);
+            Skip_Tokens ((T_End, T_Semicolon));
+            return No_Node;
+         else
+            Restore_Lexer (Loc);
+         end if;
       end if;
 
       Save_Lexer (Loc);

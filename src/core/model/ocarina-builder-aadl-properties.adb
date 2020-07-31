@@ -366,6 +366,9 @@ package body Ocarina.Builder.AADL.Properties is
          or else Kind (Container) = K_Component_Implementation
          or else Kind (Container) = K_Subcomponent
          or else Kind (Container) = K_Mode
+         --  SR append
+         or else Kind (Container) = K_Mode_Transition
+         --  end append
          or else Kind (Container) = K_Flow_Spec
          or else Kind (Container) = K_Flow_Implementation
          or else Kind (Container) = K_Flow_Implementation_Refinement
@@ -441,6 +444,11 @@ package body Ocarina.Builder.AADL.Properties is
                    (Container,
                     Node);
             when K_Mode =>
+               Success :=
+                 Ocarina.Builder.AADL.Components.Modes.Add_Property_Association
+                   (Container,
+                    Node);
+            when K_Mode_Transition => --  S. Rubini append
                Success :=
                  Ocarina.Builder.AADL.Components.Modes.Add_Property_Association
                    (Container,

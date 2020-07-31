@@ -608,13 +608,14 @@ module Ocarina::ME_AADL::AADL_Tree::Nodes {
   //       -[ unique_port_identifier { , unique_port_identifier }* ]->
   //       destination_mode_identifier ;
 
-  interface Mode_Transition : Node_Id {
+  // change S. Rubini to store transition identifier 
+  // interface Mode_Transition : Node_Id { 
+  interface Mode_Transition : Refinable_Feature {
     List_Id  Source_Modes;
     List_Id  Triggers;
-    List_Id  Properties;   // AADL_V2 only
     Node_Id  Destination_Mode;
-    Node_Id  Container_Component;
   };
+
   // Triggers is Unique_Ports in AADL_V1 and
   // Mode_Transition_Triggers in AADL_V2
 

@@ -57,6 +57,9 @@ package Ocarina.Builder.AADL.Components.Modes is
 
    function Add_New_Mode_Transition
      (Loc       : Location;
+      --  append S. Rubini
+      Identifier : Node_Id;
+      --
       Component : Node_Id) return Node_Id;
    --  Add a new empty mode transition into a component
    --  implementation. Source, Destination, etc. of the mode

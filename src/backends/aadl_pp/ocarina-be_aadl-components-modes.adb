@@ -162,7 +162,14 @@ package body Ocarina.BE_AADL.Components.Modes is
 
    begin
       Write_Indentation;
-
+      --  append S. Rubini
+      if Identifier (Node) /= No_Node then
+         Print_Identifier (Identifier (Node));
+         Write_Space;
+         Print_Token (T_Colon);
+         Write_Space;
+      end if;
+      --
       if not Is_Empty (Source_Modes (Node)) then
          List_Node := First_Node (Source_Modes (Node));
 

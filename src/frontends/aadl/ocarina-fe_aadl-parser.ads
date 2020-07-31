@@ -69,6 +69,12 @@ package Ocarina.FE_AADL.Parser is
    type P_Refinable_Item_Function_Ptr is access function
      (Container : Node_Id;
       Refinable : Boolean) return Node_Id;
+
+   type P_Refinable_Requires_Item_Function_Ptr is access function
+     (Container : Node_Id;
+      Refinable : Boolean;
+      Requires  : Boolean) return Node_Id;
+      --  append S. Rubini
    --  Pointer to a function which parses an item
 
 private
@@ -88,6 +94,15 @@ private
      (Func         : P_Refinable_Item_Function_Ptr;
       Container    : Node_Id;
       Refinable    : Boolean;
+      Code         : Parsing_Code;
+      At_Least_One : Boolean := True) return Integer;
+
+   --  S. Rubini Append  parameter "requires"
+   function P_Items_List
+     (Func         : P_Refinable_Requires_Item_Function_Ptr;
+      Container    : Node_Id;
+      Refinable    : Boolean;
+      Requires     : Boolean;
       Code         : Parsing_Code;
       At_Least_One : Boolean := True) return Integer;
 
