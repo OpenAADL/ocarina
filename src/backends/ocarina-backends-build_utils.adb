@@ -675,7 +675,9 @@ package body Ocarina.Backends.Build_Utils is
 
                      Name_Tables.Append (M.C_Libraries, Name_Find);
 
-                  elsif Name_Buffer (Name_Len - 1 .. Name_Len) = ".c" then
+                  elsif (Name_Buffer (Name_Len - 1 .. Name_Len) = ".c" or else
+                           Name_Buffer (Name_Len - 3 .. Name_Len) = ".cpp")
+                  then
                      if Source_Dirname /= Get_String_Name ("./") then
                         Get_Name_String (Source_Dirname);
                         Get_Name_String_And_Append (Source_Basename);
@@ -791,7 +793,8 @@ package body Ocarina.Backends.Build_Utils is
 
                   Get_Name_String (Source_Basename);
 
-                  if Name_Buffer (Name_Len - 2 .. Name_Len) = ".cc"
+                  if Name_Buffer (Name_Len - 1 .. Name_Len) = ".c"
+                    or else Name_Buffer (Name_Len - 2 .. Name_Len) = ".cc"
                     or else Name_Buffer (Name_Len - 3 .. Name_Len) = ".cpp"
                   then
                      Get_Name_String (Source_Dirname);
@@ -1928,7 +1931,11 @@ package body Ocarina.Backends.Build_Utils is
                Set_Str_To_Name_Buffer
                  (Base_Name (Name_Buffer (1 .. Name_Len)));
 
-               Name_Buffer (Name_Len) := 'o';
+               if Name_Buffer (Name_Len - 2 .. Name_Len) = "cpp" then
+                  Name_Buffer (Name_Len - 2 .. Name_Len) := "o  ";
+               else
+                  Name_Buffer (Name_Len) := 'o';
+               end if;
                Write_Name (Name_Find);
 
                exit when J = Name_Tables.Last (C_Sources);
@@ -1950,6 +1957,8 @@ package body Ocarina.Backends.Build_Utils is
                   Name_Buffer (Name_Len - 2 .. Name_Len) := "o  ";
                elsif Name_Buffer (Name_Len - 1 .. Name_Len) = "cc" then
                   Name_Buffer (Name_Len - 1 .. Name_Len) := "o ";
+               elsif Name_Buffer (Name_Len - 1 .. Name_Len) = ".c" then
+                  Name_Buffer (Name_Len - 1 .. Name_Len) := ".o ";
                end if;
 
                Write_Name (Name_Find);
@@ -2039,7 +2048,7 @@ package body Ocarina.Backends.Build_Utils is
          Write_Line (" $< -o $@");
          Write_Eol;
 
-         --  compile-c-files rule, simply biuld $(USER_OBJS)
+         --  compile-c-files rule, simply build $(USER_OBJS)
 
          Write_Line ("compile-c-files: $(USER_OBJS) $(C_OBJECTS)");
 
@@ -2052,6 +2061,8 @@ package body Ocarina.Backends.Build_Utils is
       procedure Compile_CPP_Files (CPP_Sources : Name_Tables.Instance) is
       begin
          if Length (CPP_Sources) > 0 then
+            Write_Line ("USE_CPP_LINKER = 1");
+            Write_Str ("VPATH += ");
             for J in Name_Tables.First .. Name_Tables.Last (CPP_Sources) loop
                Write_Str (":");
                Write_Str
