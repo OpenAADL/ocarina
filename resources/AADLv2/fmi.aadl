@@ -4,6 +4,7 @@ package FMI
 
 public
   with Base_Types;
+  with Deployment;
 
   --  fmi2Real    : double precision floating-point data type
 
@@ -36,5 +37,11 @@ public
 
   data fmi2Byte extends Base_Types::Unsigned_8
   end fmi2Byte;
+
+  processor FMU_processor
+  properties
+    Deployment::USER_LDFLAGS => "-ldl `xml2-config --libs` -L../../fmusdk2.0.3";
+    Deployment::USER_CFLAGS => "-DFMI_COSIMULATION -DSTANDALONE_XML_PARSER -DLIBXML_STATIC -I../../fmusdk2.0.3/include -I../../fmusdk2.0.3 -I/usr/include/libxml2";
+  end FMU_processor;
 
 end FMI;
