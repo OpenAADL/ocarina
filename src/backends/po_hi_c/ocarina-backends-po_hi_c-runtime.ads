@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2020 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -137,6 +137,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Deployment_Endiannesses,        -- __po_hi_deployment_endiannesses
       RE_Sporadic_Wait_Release,          -- __po_hi_sporadic_wait_release
       RE_Transport_Send_Default,         -- __po_hi_transport_send_default
+      RE_Main_Initialize,                -- __po_hi_main_initialize
       RE_Main_Deliver,                   -- __po_hi_main_deliver
       RE_Msg_Reallocate,                 -- __po_hi_msg_reallocate
       RE_Copy_Array,                     -- __po_hi_copy_array
@@ -344,6 +345,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Marshall_Asn1_Request          => RH_Marshallers,
       RE_Unmarshall_Asn1_Request        => RH_Marshallers,
       RE_Create_Periodic_Task           => RH_PO_HI_Task,
+      RE_Main_Initialize                => RH_Activity,
       RE_Main_Deliver                   => RH_Activity,
       RE_Create_Sporadic_Task           => RH_PO_HI_Task,
       RE_Compute_Miss                   => RH_PO_HI_Utils,
