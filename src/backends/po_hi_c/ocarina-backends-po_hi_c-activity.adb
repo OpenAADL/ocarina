@@ -982,6 +982,13 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                                      RE (RE_SUCCESS)),
                                 Statements => Then_Statements);
                            Append_Node_To_List (N, WStats);
+                        else
+                           N := Make_Type_Conversion
+                                 (Subtype_Mark =>
+                                    Make_Defining_Identifier (TN (T_Void)),
+                                  Expression   =>
+                                    Make_Defining_Identifier (VN (V_Error)));
+                           Append_Node_To_List (N, WStats);
                         end if;
                      end;
 
