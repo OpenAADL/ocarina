@@ -38,8 +38,32 @@ package Ocarina.Backends.C_Common.BA is
    --  having the same identifiers. It returns the declarations list of
    --  the generated C-subprogram.
 
-   procedure Map_C_Behavior_Actions (S            : Node_Id;
-                                     Declarations : List_Id;
-                                     Statements   : List_Id);
+   procedure Map_C_Behavior_Transitions (S            : Node_Id;
+                                         Declarations : List_Id;
+                                         Statements   : List_Id);
+
+   function Get_Behavior_Specification (S : Node_Id) return Node_Id;
+
+   function Is_To_Make_Init_Sequence (S : Node_Id) return Boolean;
+
+   function Make_Specification_Of_BA_Related_Function
+     (S                          : Node_Id;
+      BA_Body                    : Boolean := False;
+      BA_Initialization          : Boolean := False;
+      States_Initialization      : Boolean := False;
+      Update_Next_Complete_State : Boolean := False) return Node_Id;
+
+   function Compute_Max_Dispatch_Transitions_Per_Complete_State
+     (S : Node_Id) return Unsigned_Long_Long;
+
+   function Compute_Max_Dispatch_Triggers_Per_Dispatch_Transition
+     (S : Node_Id) return Unsigned_Long_Long;
+
+   procedure Create_Enum_Type_Of_States_Names (S : Node_Id);
+
+   function Compute_Nb_On_Dispatch_Transitions
+     (S : Node_Id) return Unsigned_Long_Long;
+
+   procedure Create_State_Type (S : Node_Id);
 
 end Ocarina.Backends.C_Common.BA;

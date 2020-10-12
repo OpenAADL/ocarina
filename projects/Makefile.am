@@ -95,7 +95,7 @@ PARALLEL_GNATMAKE_FLAGS = -j4
 all-local: $(BUILD_DIRS) maybe-generate-tree-files $(PYTHON_TARGET) $(BUILD_STAMPS)
 
 $(BUILD_STAMPS): %-build:
-	$(INIT_ADA_PROJECT_PATH) $(GNATMAKE_FOR_TARGET) \
+	$(INIT_ADA_PROJECT_PATH) $(GPRBUILD) \
 	  $(PARALLEL_GNATMAKE_FLAGS) -P $* $(GNATFLAGS) $(GNAT_LIB_FLAGS) \
 	  -XABS_SRC_DIR="$(PL_DEP_ABS_SRC_DIR)" \
 	  -XABS_BUILD_DIR="$(PL_DEP_ABS_BUILD_DIR)" \
@@ -148,7 +148,7 @@ build-mknodes:
 	if [ -f $(MKNODES_SRC_DIR)/mknodes.gpr ]; then \
 	   mkdir -p $(MKNODES_BUILD_DIR)/objects; \
 	   $(INIT_ADA_PROJECT_PATH) \
-	     $(GNATMAKE) -P $(MKNODES_SRC_DIR)/mknodes.gpr \
+	     $(GPRBUILD) -P $(MKNODES_SRC_DIR)/mknodes.gpr \
 	     -XABS_SRC_DIR="$(PL_DEP_ABS_SRC_DIR)" \
 	     -XABS_BUILD_DIR="$(PL_DEP_ABS_BUILD_DIR)" \
 	     $(AP_FLAGS) \

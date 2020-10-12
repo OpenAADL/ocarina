@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2019 ESA & ISAE.      --
+--    Copyright (C) 2005-2009 Telecom ParisTech, 2010-2020 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -74,6 +74,8 @@ package body Ocarina.Backends.Utils is
    use Ocarina.Backends.Ada_Tree.Nutils;
    use Ocarina.Instances.Queries;
    use Ocarina.Backends.Helper;
+
+   type Browsing_Kind is (By_Source, By_Destination);
 
    --  The entered directories stack
 
@@ -239,7 +241,10 @@ package body Ocarina.Backends.Utils is
                             & Simple_Name (Simple_Name (Directory_Entry)));
 
             when Directory =>
-               if  Simple_Name (Simple_Name (Directory_Entry)) /= "" then
+               if  Simple_Name (Simple_Name (Directory_Entry)) /= "" and then
+                 Simple_Name (Simple_Name (Directory_Entry)) /= ".." and then
+                 Simple_Name (Simple_Name (Directory_Entry)) /= "."
+               then
                   Copy_Directory
                     (Full_Name (Directory_Entry),
                      Compose (Dest, Simple_Name (Directory_Entry)));
@@ -4134,7 +4139,11 @@ package body Ocarina.Backends.Utils is
          end if;
       end loop;
 
-      return Number_Of_Cores;
+      if Number_Of_Cores /= 0 then
+         return Number_Of_Cores;
+      else
+         return 1;
+      end if;
    end Get_Number_Of_Cores;
 
    ------------------------------

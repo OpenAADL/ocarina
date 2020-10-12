@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2019 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -59,9 +59,7 @@ package body Ocarina.Property_Sets is
       O_Deployment,
       O_Cheddar_Properties,
       O_Ocarina_Config,
-      O_Base_Types,
-      O_ASSERT_Types,
-      O_ASSERT_Properties);
+      O_Base_Types);
 
    AADLv2_Ocarina_Property_Sets : aliased Ocarina_Property_Set_Array_Type :=
      (O_Data_Model,
@@ -71,9 +69,6 @@ package body Ocarina.Property_Sets is
       O_Transformations,
       O_POK_Properties,
       O_Base_Types,
-      O_Taste_Properties,
-      O_ARINC653,
-      O_ASSERT_Properties,
       O_Replication_Properties);
 
    Ocarina_Property_Sets_Table : constant array
@@ -85,6 +80,8 @@ package body Ocarina.Property_Sets is
 
    Standard_Property_Set_Mask : constant Byte := 2**2;
    Ocarina_Property_Set_Mask  : constant Byte := 2**3;
+
+   Use_Taste_Properties : Boolean := False;
 
    function Internal_Name (N : Name_Id) return Name_Id;
    function Internal_Name (S : String) return Name_Id;
@@ -235,7 +232,12 @@ package body Ocarina.Property_Sets is
 
    function Ocarina_Property_Sets return Ocarina_Property_Set_Array_Type is
    begin
-      return Ocarina_Property_Sets_Table (AADL_Version).all;
+      if Use_Taste_Properties then
+         return Ocarina_Property_Sets_Table (AADL_Version).all
+           & O_Taste_Properties;
+      else
+         return Ocarina_Property_Sets_Table (AADL_Version).all;
+      end if;
    end Ocarina_Property_Sets;
 
    -------------------------
@@ -250,5 +252,14 @@ package body Ocarina.Property_Sets is
    begin
       Set_Name_Table_Byte (N, B or User_Defined_Mask);
    end Set_As_User_Defined;
+
+   -------------------------------
+   -- Activate_Taste_Properties --
+   -------------------------------
+
+   procedure Activate_Taste_Properties is
+   begin
+      Use_Taste_Properties := True;
+   end Activate_Taste_Properties;
 
 end Ocarina.Property_Sets;

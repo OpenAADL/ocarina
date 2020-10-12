@@ -146,7 +146,10 @@ package body Ocarina.Instances is
    -- Instantiate_Model --
    -----------------------
 
-   function Instantiate_Model (Root : Node_Id) return Node_Id is
+   function Instantiate_Model (Root : Node_Id;
+                               Exit_If_Error : Boolean := True)
+                              return Node_Id
+   is
       pragma Assert (Kind (Root) = K_AADL_Specification);
 
       Root_Systems  : Node_List;
@@ -222,7 +225,8 @@ package body Ocarina.Instances is
 
          if No (Root_System) then
             Error_Loc (1) := No_Location;
-            DE ("Cannot find a root system");
+            Exit_On_Error (Exit_If_Error, "Cannot find a root system");
+            return No_Node;
          end if;
 
          if Root_System_Name /= No_Name
@@ -238,7 +242,7 @@ package body Ocarina.Instances is
               (Root_System, False, True);
             DE ("system % is not a root system, use %");
             Root_System := No_Node;
-            Exit_On_Error (True, "Cannot instantiate AADL model");
+            Exit_On_Error (Exit_If_Error, "Cannot instantiate AADL model");
          end if;
       end if;
 
@@ -248,7 +252,9 @@ package body Ocarina.Instances is
 
       if No (Root_System) then
          Instance_Root := No_Node;
-         Exit_On_Error (True, "Cannot instantiate full model, exit now");
+         Exit_On_Error (Exit_If_Error,
+                        "Cannot instantiate full model, exit now");
+         return No_Node;
       else
          --  The first step of the instantiation consist of propagate the
          --  properties declared in the AADL packages to the AADL

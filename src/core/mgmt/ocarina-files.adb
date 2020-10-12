@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2020 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -224,6 +224,17 @@ package body Ocarina.Files is
                return Name_Find;
             end if;
          end loop;
+
+         --  Check in default library path last in case the user wants
+         --  to override some packages.
+
+            Get_Name_String (Default_Library_Path);
+            Add_Char_To_Name_Buffer (Directory_Separator);
+            Get_Name_String_And_Append (Base_File_Name_N);
+
+            if Is_Regular_File (Name_Buffer (1 .. Name_Len)) then
+               return Name_Find;
+            end if;
       end;
 
       return No_Name;

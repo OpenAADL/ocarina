@@ -41,7 +41,8 @@ with Ocarina.Backends.C_Tree.Nodes;
 with Ocarina.Backends.C_Common.Mapping;
 with Ocarina.Backends.PO_HI_C.Runtime;
 with Ocarina.Backends.C_Common.BA;
-with Ocarina.Namet;
+with Ocarina.ME_AADL_BA.BA_Tree.Nutils;
+with Ocarina.ME_AADL_BA.BA_Tree.Nodes;
 
 package body Ocarina.Backends.C_Common.Subprograms is
 
@@ -53,7 +54,6 @@ package body Ocarina.Backends.C_Common.Subprograms is
    use Ocarina.Backends.C_Tree.Nutils;
    use Ocarina.Backends.C_Common.Mapping;
    use Ocarina.Backends.C_Common.BA;
-   use Ocarina.Namet;
    use Ocarina.Backends.PO_HI_C.Runtime;
 
    package PHCR renames Ocarina.Backends.PO_HI_C.Runtime;
@@ -61,6 +61,8 @@ package body Ocarina.Backends.C_Common.Subprograms is
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package AINU renames Ocarina.ME_AADL.AADL_Instances.Nutils;
    package CTN renames Ocarina.Backends.C_Tree.Nodes;
+   package BANu renames Ocarina.ME_AADL_BA.BA_Tree.Nutils;
+   package BATN renames Ocarina.ME_AADL_BA.BA_Tree.Nodes;
 
    C_Root : Node_Id;
 
@@ -586,8 +588,7 @@ package body Ocarina.Backends.C_Common.Subprograms is
          Spg_Call : Node_Id;
          Feature  : Node_Id;
          N        : Node_Id;
-         Def_Idt  : Node_Id;
-         Parameter_List : constant List_Id := New_List (CTN.K_List_Id);
+         S        : constant Node_Id := Parent_Subcomponent (E);
       begin
          if Has_In_Ports (E) then
             Feature := First_Node (Features (E));
@@ -631,24 +632,58 @@ package body Ocarina.Backends.C_Common.Subprograms is
 
          if Has_Behavior_Specification (E) then
 
-            Set_Str_To_Name_Buffer ("");
-
-            Get_Name_String (Name (Identifier (E)));
-            Add_Str_To_Name_Buffer ("_ba_body");
-            Def_Idt := Make_Defining_Identifier (Name_Find);
-
-            N :=
-              Make_Parameter_Specification
-                (Make_Defining_Identifier (PN (P_Self)),
-                 Parameter_Type => RE (RE_Task_Id));
-            Append_Node_To_List (N, Parameter_List);
-
-            N := Make_Function_Specification
-              (Defining_Identifier => Def_Idt,
-               Parameters          => Parameter_List,
-               Return_Type         => New_Node (CTN.K_Void));
+            N := Make_Extern_Entity_Declaration
+              (Make_Specification_Of_BA_Related_Function (E, BA_Body => True));
 
             Append_Node_To_List (N, CTN.Declarations (Current_File));
+
+            declare
+               BA : Node_Id;
+               PL : List_Id;
+               P  : constant Supported_Thread_Dispatch_Protocol :=
+                 Get_Thread_Dispatch_Protocol (E);
+            begin
+               BA := Get_Behavior_Specification (E);
+               if BANu.Length (BATN.States (BA)) > 1 then
+                  if P = Thread_Periodic
+                    or else (P = Thread_Sporadic and then
+                             Compute_Nb_On_Dispatch_Transitions (E) = 1)
+                  then
+                     PL := No_List;
+                  elsif P = Thread_Sporadic and then
+                    Compute_Nb_On_Dispatch_Transitions (E) > 1
+                  then
+                     PL := Make_List_Id
+                       (Make_Parameter_Specification
+                          (Defining_Identifier =>
+                               Make_Defining_Identifier
+                             (VN (V_Next_Complete_State)),
+                           Parameter_Type      =>
+                             Make_Pointer_Type
+                               (RE (RE_Ba_Automata_State_T))));
+                  end if;
+
+                  N :=
+                    Make_Extern_Entity_Declaration
+                      (Make_Function_Specification
+                         (Defining_Identifier => Make_Defining_Identifier
+                            (Map_C_BA_Related_Function_Name
+                                 (S, States_Initialization => True)),
+                          Parameters          => PL,
+                          Return_Type         => New_Node (CTN.K_Void)));
+
+                  Append_Node_To_List (N,
+                                       CTN.Declarations (Current_File));
+
+                  if Is_To_Make_Init_Sequence (E) then
+                     N := Make_Extern_Entity_Declaration
+                       (Make_Specification_Of_BA_Related_Function
+                          (E, BA_Initialization => True));
+
+                     Append_Node_To_List (N, CTN.Declarations (Current_File));
+                  end if;
+               end if;
+            end;
 
          end if;
 
@@ -1192,9 +1227,6 @@ package body Ocarina.Backends.C_Common.Subprograms is
          Call_Seq : Node_Id;
          Spg_Call : Node_Id;
          Feature  : Node_Id;
-         N        : Node_Id;
-         Def_Idt  : Node_Id;
-         Parameter_List : constant List_Id := New_List (CTN.K_List_Id);
          Declarations   : constant List_Id :=
            New_List (CTN.K_Declaration_List);
          Statements : constant List_Id := New_List (CTN.K_Statement_List);
@@ -1241,32 +1273,8 @@ package body Ocarina.Backends.C_Common.Subprograms is
 
          if Has_Behavior_Specification (E) then
 
-            Set_Str_To_Name_Buffer ("");
+            Map_C_Behavior_Transitions (E, Declarations, Statements);
 
-            Get_Name_String (Name (Identifier (E)));
-            Add_Str_To_Name_Buffer ("_ba_body");
-            Def_Idt := Make_Defining_Identifier (Name_Find);
-
-            N :=
-              Make_Parameter_Specification
-                (Make_Defining_Identifier (PN (P_Self)),
-                 Parameter_Type => RE (RE_Task_Id));
-            Append_Node_To_List (N, Parameter_List);
-
-            N := Make_Function_Specification
-              (Defining_Identifier => Def_Idt,
-               Parameters          => Parameter_List,
-               Return_Type         => New_Node (CTN.K_Void));
-
-            Map_C_Behavior_Variables (E, Declarations);
-            Map_C_Behavior_Actions (E, Declarations, Statements);
-
-            N := Make_Function_Implementation
-              (Specification => N,
-               Declarations  => Declarations,
-               Statements    => Statements);
-
-            Append_Node_To_List (N, CTN.Declarations (Current_File));
          end if;
 
       end Visit_Thread_Instance;

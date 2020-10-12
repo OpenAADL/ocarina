@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2019 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2020 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -331,6 +331,7 @@ package body Ocarina.Backends.Properties is
    Platform_Vxworks_Name                : Name_Id;
    Platform_GNAT_Runtime_Name           : Name_Id;
    Platform_AIR_Name                    : Name_Id;
+   Platform_Air_IOP_Name                : Name_Id;
 
    Transport_BSD_Sockets_Name : Name_Id;
    Transport_SpaceWire_Name   : Name_Id;
@@ -2502,6 +2503,8 @@ package body Ocarina.Backends.Properties is
             return Platform_GNAT_Runtime;
          elsif P_Name = Platform_AIR_Name then
             return Platform_AIR;
+         elsif P_Name = Platform_AIR_IOP_Name then
+            return Platform_AIR_IOP;
          else
             return Platform_None;
          end if;
@@ -3066,6 +3069,7 @@ package body Ocarina.Backends.Properties is
       Platform_Vxworks_Name          := Get_String_Name ("vxworks");
       Platform_GNAT_Runtime_Name     := Get_String_Name ("gnat_runtime");
       Platform_AIR_Name              := Get_String_Name ("air");
+      Platform_AIR_IOP_Name          := Get_String_Name ("air_iop");
 
       Transport_BSD_Sockets_Name := Get_String_Name ("bsd_sockets");
       Transport_SpaceWire_Name   := Get_String_Name ("spacewire");

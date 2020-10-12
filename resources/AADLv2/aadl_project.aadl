@@ -31,8 +31,9 @@ property set AADL_Project is
 
   Supported_Connection_QoS: type enumeration (GuaranteedDelivery, OrderedDelivery, SecureDelivery);
 
-  Supported_Scheduling_Protocols: type enumeration -- Updated for Cheddar
+  Supported_Scheduling_Protocols: type enumeration
   (SporadicServer, RMS, FixedTimeline,
+  -- for Cheddar
   PARAMETRIC_PROTOCOL,
   EDF,
   EARLIEST_DEADLINE_FIRST_PROTOCOL,
@@ -50,7 +51,10 @@ property set AADL_Project is
   HIERARCHICAL_CYCLIC_PROTOCOL,
   HIERARCHICAL_ROUND_ROBIN_PROTOCOL,
   HIERARCHICAL_FIXED_PRIORITY_PROTOCOL,
-  HIERARCHICAL_PARAMETRIC_PROTOCOL);
+  HIERARCHICAL_PARAMETRIC_PROTOCOL,
+  --  for AADL Inspector
+  RM, DM, HPF, ARINC653, static, cyclic
+);
 
   Supported_Source_Languages: type enumeration -- Updated for TASTE/Ocarina
     (Ada95,

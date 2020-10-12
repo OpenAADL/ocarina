@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---       Copyright (C) 2009 Telecom ParisTech, 2010-2015 ESA & ISAE.        --
+--       Copyright (C) 2009 Telecom ParisTech, 2010-2020 ESA & ISAE.        --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -167,9 +167,6 @@ package Ocarina.Backends.Execution_Tests is
 
    Command_Name_Path : String_Ptr;
    --  The command name path
-
-   Scenario_Dir : String_Ptr;
-   --  Path to scenario directory
 
    Create_Referencial : Boolean := False;
    --  Decides if we make a regression test or if we write a referencial

@@ -197,7 +197,22 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
 
    function Get_Value_Spec (E : Node_Id) return Node_Id is
       N : Node_Id;
+      Aspect_Node : Node_Id := No_Node;
    begin
+      if Add_SPARK2014_Annotations then
+         Aspect_Node := Make_Aspect_Specification
+           (Make_List_Id
+              (Make_Aspect
+                 (ASN (A_Global),
+                  Make_Global_Specification
+                    (Make_List_Id
+                       (Make_Moded_Global_List
+                          (Mode_In,
+                           Make_Defining_Identifier
+                             (PN (P_Elaborated_Variables))))))));
+
+      end if;
+
       N :=
         Make_Subprogram_Specification
           (Defining_Identifier => Make_Defining_Identifier (SN (S_Get_Value)),
@@ -214,24 +229,14 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                    Subtype_Mark =>
                      Make_Defining_Identifier (Map_Port_Enumeration_Name (E)),
                    Parameter_Mode => Mode_In),
-                Make_Parameter_Specification
-                  (Defining_Identifier =>
-                     Make_Defining_Identifier (PN (P_Result)),
-                   Subtype_Mark =>
-                     Make_Defining_Identifier (Map_Port_Interface_Name (E)),
-                   Parameter_Mode => Mode_Inout)
+                   Make_Parameter_Specification
+                     (Defining_Identifier =>
+                        Make_Defining_Identifier (PN (P_Result)),
+                      Subtype_Mark =>
+                        Make_Defining_Identifier (Map_Port_Interface_Name (E)),
+                      Parameter_Mode => Mode_Inout)
                ),
-           Aspect_Specification =>
-             Make_Aspect_Specification
-             (Make_List_Id
-                (Make_Aspect
-                   (ASN (A_Global),
-                    Make_Global_Specification
-                      (Make_List_Id
-                         (Make_Moded_Global_List
-                            (Mode_In,
-                             Make_Defining_Identifier
-                             (PN (P_Elaborated_Variables)))))))));
+           Aspect_Specification => Aspect_Node);
 
       return N;
    end Get_Value_Spec;

@@ -1,0 +1,11 @@
+property set Code_Generation_Properties is
+
+  Convention: enumeration (AADL, Legacy) => Legacy applies to (subprogram);
+
+ Parameter_Usage: enumeration (By_Value, By_Reference)
+     applies to (data access, parameter);
+
+ Return_Parameter: aadlboolean => false applies to (parameter);
+  -- if true, out parameter is actually a return parameter
+
+end Code_Generation_Properties;

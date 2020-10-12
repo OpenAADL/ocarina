@@ -4,34 +4,39 @@ property set EMV2
   is
 
 OccurrenceDistribution : EMV2::DistributionSpecification
-  applies to ({emv2}**error propagation, {emv2}**error flow, {emv2}**error behavior event
-    ,{emv2}**error behavior state,{emv2}**error type,{emv2}**type set);
+          applies to ({emv2}**error propagation, {emv2}**error flow, {emv2}**error behavior event
+          ,{emv2}**error behavior state,{emv2}**error type,{emv2}**type set);
+
 
 --needed to separate the property "Occurrence" from its type declaration
 --so other properties may have that type
 DistributionSpecification : type record (
-ProbabilityValue : aadlreal;
-OccurrenceRate : aadlreal;
-MeanValue : aadlreal;
-StandardDeviation : aadlreal;
-ShapeParameter : aadlreal;
-ScaleParameter : aadlreal;
-SuccessCount : aadlreal;
-SampleCount : aadlreal;
-Probability : aadlreal;
-Distribution : EMV2::DistributionFunction;);
+        ProbabilityValue : aadlreal;
+        OccurrenceRate : aadlreal;
+        MeanValue : aadlreal;
+        StandardDeviation : aadlreal;
+        ShapeParameter : aadlreal;
+        ScaleParameter : aadlreal;
+        SuccessCount : aadlreal;
+        SampleCount : aadlreal;
+        Probability : aadlreal;
+        Distribution : EMV2::DistributionFunction;);
 
---Fixed represents a fixed distribution and takes a single parameter OccurrenceRate or ProbabilityValue.
---Poisson aka. Exponential represents an exponential distribution and takes a single parameter OccurrenceRate or ProbabilityValue.
---Normal aka. Gauss represents a distribution with an explicitly specified MeanValue and StandardDeviation.
---Weibull represents a shaped distribution with a ShapeParameter and a ScaleParameter.
---Binominal represents represents a discrete distribution with a SuccessCount, a SampleCount, and a Probability parameter.
+--	Fixed represents a fixed distribution and takes a single parameter OccurrenceRate or ProbabilityValue.
+--	Poisson aka. Exponential represents an exponential distribution and takes a single parameter OccurrenceRate or ProbabilityValue.
+--	Normal aka. Gauss represents a distribution with an explicitly specified MeanValue and StandardDeviation.
+--	Weibull represents a shaped distribution with a ShapeParameter and a ScaleParameter.
+--	Binominal represents represents a discrete distribution with a SuccessCount, a SampleCount, and a Probability parameter.
 
 DistributionFunction : type enumeration (Fixed, Poisson, Exponential, Normal, Gauss, Weibull, Binominal);
 
+ExposurePeriod : aadlreal
+applies to ({emv2}**error propagation, {emv2}**error flow, {emv2}**error behavior event
+          ,{emv2}**error behavior state,{emv2}**error type,{emv2}**type set);
+
 DurationDistributionSpecification : type record (
-Duration : Time_Range;
-Distribution : EMV2::DistributionFunction;);
+        Duration : Time_Range;
+        Distribution : EMV2::DistributionFunction;);
 
 DurationDistribution : EMV2::DurationDistributionSpecification applies to ({emv2}**Repair Event, {emv2}**Recover Event,
     {emv2}**Error Behavior Transition);
@@ -42,14 +47,18 @@ DurationDistribution : EMV2::DurationDistributionSpecification applies to ({emv2
 PropagationTimeDelay: EMV2::DurationDistributionSpecification
     applies to (connection, {emv2}**propagation path);
 
+-- property used to paramterize the transition branches in predeclared Error Behavior State Machines
+        TransientFailureRatio: aadlreal applies to ({EMV2}** Error Behavior Transition);
+        RecoveryFailureRatio: aadlreal applies to ({EMV2}** Error Behavior Transition);
+
 StateKind : EMV2::StateKindEnum
-  applies to ({emv2}**error behavior state);
+          applies to ({emv2}**error behavior state);
 
 StateKindEnum: type enumeration (Working, NonWorking);
 
 -- Indicates whether an error type is detectable
 DetectionMechanism : aadlstring
-  applies to ({emv2}**error detection);
+          applies to ({emv2}**error detection);
 
 
 -- The FaultKind property allows the user to specify whether an error source,
@@ -57,7 +66,7 @@ DetectionMechanism : aadlstring
 -- Design faults are faults that could be eliminated at design time, but if present result in an error.
 -- Operational faults are faults that inherently occur during operation and should be detected and managed during operation.
 FaultKind : EMV2::FaultKindEnum
-  applies to ( {emv2}**error event, {emv2}**error propagation, {emv2}**error source, {emv2}**error type, {emv2}**type set);
+          applies to ( {emv2}**error event, {emv2}**error propagation, {emv2}**error source, {emv2}**error type, {emv2}**type set);
 
 FaultKindEnum: type enumeration (Design, Operational);
 
@@ -68,8 +77,8 @@ FaultKindEnum: type enumeration (Design, Operational);
 -- In a discrete event system a transient error may last over several discrete events, e.g., a corrupted message may be sent over multiple periods.
 -- A singleton error occurs in the context of a single discrete event. For example, a divide by zero error may be specific to a computation on a particular input.
 Persistence : EMV2::PersistenceEnum
-  applies to ({emv2}**error type, {emv2}**type set, {emv2}**error behavior state,
-    {emv2}**error behavior event, {emv2}**error propagation);
+          applies to ({emv2}**error type, {emv2}**type set, {emv2}**error behavior state,
+          {emv2}**error behavior event, {emv2}**error propagation);
 
 PersistenceEnum: type enumeration (Permanent, Transient, Singleton);
 
@@ -81,24 +90,24 @@ PersistenceEnum: type enumeration (Permanent, Transient, Singleton);
 -- (Catastrophic, Hazardous, Major, Minor, NoEffect) (qualify with ARP4761::).
 
 Severity : inherit EMV2::SeverityRange applies to ({emv2}**error type, {emv2}**type set, {emv2}**error behavior state,
-  {emv2}**error source, {emv2}**error propagation, {emv2}**error event);
+          {emv2}**error propagation, {emv2}**error event, {emv2}**error flow);
 
 SeverityRange: type aadlinteger 1 .. 5;
 
 ProbabilityRange: type aadlreal 0.0 .. 1.0;
 
--- The likelihood property value indicates the likelihood of the hazard ranging from A (high) to E (low).
--- MIL-STD 882D uses descriptive labels (Frequent, Probable, Occasional, Remote, Improbable) (See property set MILSTD882).
+-- The likelihood property value indicates the likelihood of the hazard ranging from A (high) to F (low).
+-- MIL-STD 882E uses descriptive labels (Frequent, Probable, Occasional, Remote, Improbable, Eliminated) (See property set MILSTD882).
 -- ARP 4761 uses descriptive labels (Frequent, Probable, Remote, ExtremelyRemote, ExtremelyImprobable) (See property set ARP4761).
 
 Likelihood : inherit EMV2::LikelihoodLabels applies to ({emv2}**error type, {emv2}**type set, {emv2}**error behavior state,
-  {emv2}**error source, {emv2}**error propagation, {emv2}**error event);
+          {emv2}**error propagation, {emv2}**error event, {emv2}**error flow);
 
-LikelihoodLabels: type enumeration (A, B, C, D, E);
+LikelihoodLabels: type enumeration (A, B, C, D, E, F);
 
--- ARP4761-style labels for likelihood: qualify with ARP4761::
--- Frequent, Probable, Occasional, Remote, Improbable
 -- MILSTD882-style labels for likelihood: qualify with MILSTD882::
+-- Frequent, Probable, Occasional, Remote, Improbable
+-- ARP4761-style labels for likelihood: qualify with ARP4761::
 -- Frequent, Probable, Remote, ExtremelyRemote, ExtremelyImprobable
 
 DALLabels: type enumeration (A,B,C,D,E);
@@ -130,14 +139,14 @@ Hazards: list of record
    Comment : aadlstring;
    )
      applies to ({emv2}**error type, {emv2}**type set, {emv2}**error behavior state,
-                 {emv2}**error source, {emv2}**error propagation, {emv2}**error event);
+                 {emv2}**error propagation, {emv2}**error event, {emv2}**error flow);
 
 Description : aadlstring applies to (all);
 
 HazardAllocation: record (
-AssumedProbability : aadlreal;
-ExposureTime : Time;
-Notes : aadlstring;
+        AssumedProbability : aadlreal;
+        ExposureTime : Time;
+        Notes : aadlstring;
 ) applies to (all);
 
 

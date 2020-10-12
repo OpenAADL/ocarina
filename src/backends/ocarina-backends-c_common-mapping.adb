@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2019 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2020 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -926,12 +926,13 @@ package body Ocarina.Backends.C_Common.Mapping is
    ---------------------------
 
    function Map_C_Enumerator_Name
-     (E             : Node_Id;
-      Custom_Parent : Node_Id := No_Node;
-      Entity        : Boolean := False;
-      Server        : Boolean := False;
-      Port_Type     : Boolean := False;
-      Local_Port    : Boolean := False) return Name_Id
+     (E                    : Node_Id;
+      Custom_Parent        : Node_Id := No_Node;
+      Fully_Qualify_Parent : Boolean := False;
+      Entity               : Boolean := False;
+      Server               : Boolean := False;
+      Port_Type            : Boolean := False;
+      Local_Port           : Boolean := False) return Name_Id
    is
       C_Name_1 : Name_Id;
       C_Name_2 : Name_Id;
@@ -939,10 +940,19 @@ package body Ocarina.Backends.C_Common.Mapping is
       if Kind (E) = K_Port_Spec_Instance then
          C_Name_1 := CTU.To_C_Name (Display_Name (Identifier (E)));
 
-         Get_Name_String
-           (CTU.To_C_Name
-              (Display_Name
-                 (Identifier (Parent_Subcomponent (Parent_Component (E))))));
+         if Fully_Qualify_Parent then
+            Get_Name_String
+              (CTU.To_C_Name
+                 (Fully_Qualified_Instance_Name
+                    (Parent_Component ((E)))));
+         else
+            Get_Name_String
+              (CTU.To_C_Name
+                 (Display_Name
+                    (Identifier (Parent_Subcomponent
+                                   (Parent_Component (E))))));
+         end if;
+
          if Local_Port then
             Add_Str_To_Name_Buffer ("_local_");
             Get_Name_String_And_Append (C_Name_1);
@@ -1032,8 +1042,12 @@ package body Ocarina.Backends.C_Common.Mapping is
    -----------------------
 
    function Map_C_Define_Name
-     (E        : Node_Id;
-      Nb_Ports : Boolean := False) return Name_Id
+     (E                                             : Node_Id;
+      Nb_Ports                                      : Boolean := False;
+      Nb_States                                     : Boolean := False;
+      Max_Dispatch_Transitions_Per_Complete_State   : Boolean := False;
+      Max_Dispatch_Triggers_Per_Dispatch_Transition : Boolean := False)
+      return Name_Id
    is
       C_Name : Name_Id;
    begin
@@ -1048,6 +1062,14 @@ package body Ocarina.Backends.C_Common.Mapping is
          Get_Name_String_And_Append (C_Name);
          if Nb_Ports then
             Add_Str_To_Name_Buffer ("_NB_PORTS");
+         elsif Nb_States then
+            Add_Str_To_Name_Buffer ("_nb_states");
+         elsif Max_Dispatch_Transitions_Per_Complete_State then
+            Add_Str_To_Name_Buffer
+              ("_max_dispatch_transitions_per_complete_state");
+         elsif Max_Dispatch_Triggers_Per_Dispatch_Transition then
+            Add_Str_To_Name_Buffer
+              ("_max_dispatch_triggers_per_dispatch_transition");
          end if;
       else
          raise Program_Error with "Wrong node kind for Map_C_Enumerator_Name";
@@ -1064,23 +1086,27 @@ package body Ocarina.Backends.C_Common.Mapping is
    -------------------------
 
    function Map_C_Variable_Name
-     (E                 : Node_Id;
-      Port_Variable     : Boolean := False;
-      Port_History      : Boolean := False;
-      Port_Woffsets     : Boolean := False;
-      Port_Empties      : Boolean := False;
-      Port_First        : Boolean := False;
-      Port_Queue        : Boolean := False;
-      Port_Recent       : Boolean := False;
-      Port_Fifo_Size    : Boolean := False;
-      Port_Offsets      : Boolean := False;
-      Port_Used_Size    : Boolean := False;
-      Port_N_Dest       : Boolean := False;
-      Port_Local_Dest   : Boolean := False;
-      Port_Destinations : Boolean := False;
-      Port_Total_Fifo   : Boolean := False;
-      Port_Request      : Boolean := False;
-      Request_Variable  : Boolean := False) return Name_Id
+     (E                   : Node_Id;
+      Port_Variable       : Boolean := False;
+      Port_History        : Boolean := False;
+      Port_Woffsets       : Boolean := False;
+      Port_Empties        : Boolean := False;
+      Port_First          : Boolean := False;
+      Port_Queue          : Boolean := False;
+      Port_Recent         : Boolean := False;
+      Port_Fifo_Size      : Boolean := False;
+      Port_Offsets        : Boolean := False;
+      Port_Used_Size      : Boolean := False;
+      Port_N_Dest         : Boolean := False;
+      Port_Local_Dest     : Boolean := False;
+      Port_Destinations   : Boolean := False;
+      Port_Total_Fifo     : Boolean := False;
+      Port_Request        : Boolean := False;
+      Request_Variable    : Boolean := False;
+      State_Name_T        : Boolean := False;
+      State_T             : Boolean := False;
+      States_Array        : Boolean := False;
+      Current_State       : Boolean := False) return Name_Id
    is
       C_Name : Name_Id;
    begin
@@ -1134,12 +1160,53 @@ package body Ocarina.Backends.C_Common.Mapping is
          Add_Str_To_Name_Buffer ("_request");
       elsif Request_Variable then
          Add_Str_To_Name_Buffer ("_request_var");
+      elsif State_Name_T then
+         Add_Str_To_Name_Buffer ("_state_name_t");
+      elsif State_T then
+         Add_Str_To_Name_Buffer ("_state_t");
+      elsif States_Array then
+         Add_Str_To_Name_Buffer ("_states_array");
+      elsif Current_State then
+         Add_Str_To_Name_Buffer ("_current_state");
       end if;
 
       C_Name := Name_Find;
 
       return C_Name;
    end Map_C_Variable_Name;
+
+   ------------------------------------
+   -- Map_C_BA_Related_Function_Name --
+   ------------------------------------
+
+   function Map_C_BA_Related_Function_Name
+     (E                          : Node_Id;
+      BA_Body                    : Boolean := False;
+      States_Initialization      : Boolean := False;
+      BA_Initialization          : Boolean := False;
+      Update_Next_Complete_State : Boolean := False) return Name_Id
+   is
+      C_Name : Name_Id;
+   begin
+
+      C_Name := To_C_Name (Display_Name (Identifier (E)));
+
+      Get_Name_String (C_Name);
+
+      if BA_Body then
+         Add_Str_To_Name_Buffer ("_ba_body");
+      elsif States_Initialization then
+         Add_Str_To_Name_Buffer ("_states_and_current_state_initialization");
+      elsif BA_Initialization then
+         Add_Str_To_Name_Buffer ("_ba_initialization");
+      elsif Update_Next_Complete_State then
+         Add_Str_To_Name_Buffer ("_update_next_complete_state");
+      end if;
+
+      C_Name := Name_Find;
+
+      return C_Name;
+   end Map_C_BA_Related_Function_Name;
 
    --------------------------
    -- Map_C_Operation_Name --
@@ -1254,8 +1321,9 @@ package body Ocarina.Backends.C_Common.Mapping is
 
       if AINU.Is_Subprogram (E)
         and then Get_Source_Language (E) /= Language_C
+        and then Get_Source_Language (E) /= Language_CPP
       then
-         Display_Error ("This is not a C function", Fatal => True);
+         Display_Error ("This is not a C-like function", Fatal => True);
       end if;
 
       --  Get the subprogram name
@@ -2930,10 +2998,9 @@ package body Ocarina.Backends.C_Common.Mapping is
             --  condition with a Behavior_Action_Block.
             --  Thus, we need to map the Behavior_Action_Block
             --  To C-statements in the generated C-subprogram
-            --  Map_C_Behavior_Variables (S,Declarations);
 
             CCBA.Map_C_Behavior_Variables (S, Declarations);
-            CCBA.Map_C_Behavior_Actions (S, Declarations, Statements);
+            CCBA.Map_C_Behavior_Transitions (S, Declarations, Statements);
 
             return CTU.Make_Function_Implementation
                 (Spec,
@@ -3475,7 +3542,7 @@ package body Ocarina.Backends.C_Common.Mapping is
    function Map_Queue_Size (Port : Node_Id) return Node_Id is
       Queue_Size : Unsigned_Long_Long := 1;
    begin
-      if Get_Queue_Size (Port) /= -1 then
+      if Is_Event (Port) and then Get_Queue_Size (Port) /= -1 then
          Queue_Size := Unsigned_Long_Long (Get_Queue_Size (Port));
       end if;
 
