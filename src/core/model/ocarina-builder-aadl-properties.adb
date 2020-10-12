@@ -448,7 +448,7 @@ package body Ocarina.Builder.AADL.Properties is
                  Ocarina.Builder.AADL.Components.Modes.Add_Property_Association
                    (Container,
                     Node);
-            when K_Mode_Transition => --  S. Rubini append
+            when K_Mode_Transition =>
                Success :=
                  Ocarina.Builder.AADL.Components.Modes.Add_Property_Association
                    (Container,

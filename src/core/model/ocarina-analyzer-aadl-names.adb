@@ -371,9 +371,7 @@ package body Ocarina.Analyzer.AADL.Names is
             if Kind (List_Node) = K_Mode
                or else (
                    Kind (List_Node) = K_Mode_Transition
-                   --  apend S. Rubini
                    and then Identifier (List_Node) /= No_Node
-                   --
                )
             then
                Success :=
@@ -457,7 +455,6 @@ package body Ocarina.Analyzer.AADL.Names is
       end if;
 
       --  Modes
-      --  append S. Rubini
       if not Is_Empty (Modes (Node)) then
          List_Node := First_Node (Modes (Node));
 
@@ -472,8 +469,7 @@ package body Ocarina.Analyzer.AADL.Names is
             List_Node := Next_Node (List_Node);
          end loop;
       end if;
-      --
-
+     
       Pop_Scope;
       return Success;
    end Check_Declaration_Names_In_Component_Type;
@@ -817,9 +813,7 @@ package body Ocarina.Analyzer.AADL.Names is
          or else Kind (Node) = K_Subcomponent_Access
          or else Kind (Node) = K_Flow_Spec
          or else Kind (Node) = K_Mode
-         --  append S. Rubini
          or else Kind (Node) = K_Mode_Transition
-         --
          or else Kind (Node) = K_Flow_Implementation
          or else Kind (Node) = K_End_To_End_Flow_Spec
          or else Kind (Node) = K_Flow_Implementation_Refinement

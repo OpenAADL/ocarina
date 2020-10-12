@@ -649,7 +649,7 @@ package body Ocarina.FE_AADL.Parser.Components is
 
       --
       --  Modes
-      --  S. Rubini requires modes only valid in component type?
+      --  Requires modes only valid in component type?
       --
 
       if Token = T_Modes then
@@ -658,7 +658,7 @@ package body Ocarina.FE_AADL.Parser.Components is
              (Func         => P_Mode_Or_Mode_Transition'Access,
               Container    => Impl,
               Refinable    => Refinable,
-              Requires     => False, --  S. Rubini
+              Requires     => False,
               Code         => PC_Mode_Or_Mode_Transition,
               At_Least_One => True);
          if Nb_Items < 0 then
@@ -822,7 +822,6 @@ package body Ocarina.FE_AADL.Parser.Components is
       Identifier : Node_Id;     --  component identifier
       Parent     : Node_Id;
       Refinable  : Boolean;     --  Is Component_Type_Extension ?
-      --  append S. Rubini
       Requires   : Boolean := False;
 
       Current_Annex : Node_Id;
@@ -976,7 +975,6 @@ package body Ocarina.FE_AADL.Parser.Components is
       --  Modes, only in AADL_V2
       --
 
-      --  append S. Rubini
       if Token = T_Requires then
          Requires := True;
          Scan_Token;

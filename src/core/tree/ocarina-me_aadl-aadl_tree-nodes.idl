@@ -608,7 +608,7 @@ module Ocarina::ME_AADL::AADL_Tree::Nodes {
   //       -[ unique_port_identifier { , unique_port_identifier }* ]->
   //       destination_mode_identifier ;
 
-  // change S. Rubini to store transition identifier 
+  // Store transition identifier 
   // interface Mode_Transition : Node_Id { 
   interface Mode_Transition : Refinable_Feature {
     List_Id  Source_Modes;

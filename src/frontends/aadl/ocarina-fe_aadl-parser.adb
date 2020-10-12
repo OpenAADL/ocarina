@@ -210,8 +210,6 @@ package body Ocarina.FE_AADL.Parser is
       return Items;
    end P_Items_List;
 
-   --  append S. Rubini parameter "requires"
-
    function P_Items_List
      (Func         : P_Refinable_Requires_Item_Function_Ptr;
       Container    : Node_Id;
@@ -236,7 +234,6 @@ package body Ocarina.FE_AADL.Parser is
          Restore_Lexer (Loc);
          loop
             Save_Lexer (Loc);
-            --  S. Rubini append "requires"
             Item := Func.all (Container, Refinable, Requires);
             if Present (Item) then
                Items := Items + 1;

@@ -1550,10 +1550,8 @@ package body Ocarina.Analyzer.AADL.Links is
          if No (Pointed_Node)
              or else (
                  Kind (Pointed_Node) /= K_Mode
-                 -- append S. Rubini
                  and then
                  Kind (Pointed_Node) /= K_Mode_Transition
-                 --
             )
          then
             DLTWN (Mode_Reference, Pointed_Node);

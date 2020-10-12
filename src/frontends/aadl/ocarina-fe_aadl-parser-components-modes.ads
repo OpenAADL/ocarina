@@ -41,11 +41,10 @@ package Ocarina.FE_AADL.Parser.Components.Modes is
    function P_Mode_Or_Mode_Transition
      (Container : Types.Node_Id;
       Refinable : Boolean;
-      --  append S. Rubini
       Requires  : Boolean) return Node_Id;
    --  Parse Mode, Mode_Refinement and Mode_Transition
    --  If Refinable = FALSE, Mode_Refinement is not allowed
-   --  S. Rubini If Requires, parse requires modes subclause
+   --  If Requires, parse requires modes subclause
 
    function P_Mode_Or_Transition (Container : Types.Node_Id) return Node_Id;
    pragma Inline (P_Mode_Or_Transition);

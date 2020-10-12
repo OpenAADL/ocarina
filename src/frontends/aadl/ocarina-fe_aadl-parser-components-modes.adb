@@ -45,9 +45,7 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
      (Mode          : Node_Id;
       Is_Refinement : Boolean;
       Is_Initial    : Boolean;
-      --  append S. Rubini
       Is_requires   : Boolean;
-      --
       Refinable     : Boolean) return Node_Id;
    --  Parse Mode and Mode_Refinement
    --  NOTE: The parameter Refinable is only useful for determining output
@@ -202,9 +200,7 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
      (Mode          : Node_Id;
       Is_Refinement : Boolean;
       Is_Initial    : Boolean;
-      --  append S. Rubini
       Is_requires   : Boolean;
-      --
       Refinable     : Boolean) return Node_Id
    is
       use Locations;
@@ -256,9 +252,7 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
 
       Set_Is_Refinement (Mode, Is_Refinement);
       Set_Is_Initial (Mode, Is_Initial);
-      --  append S. Rubini
       Set_Is_Requires (Mode, Is_Requires);
-      --
       return Mode;
    end P_Mode;
 
@@ -299,7 +293,6 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
    function P_Mode_Or_Mode_Transition
      (Container : Node_Id;
       Refinable : Boolean;
-      --  append s. Rubini
       Requires  : Boolean) return Node_Id
    is
       use Locations;
@@ -315,20 +308,16 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
       Source_Modes     : List_Id;
       Is_Refinement    : Boolean := False;
       Is_Initial       : Boolean := False;
-      --  change S. Rubini
       --  Is_Requires      : Boolean := False;
       Is_Requires      : Boolean := False;
       Loc              : Location;
       Node             : Node_Id;
-      --  append S. Rubini
       Transition_Identifier : Node_Id := No_Node;
    begin
 
       --  requires modes, only in AADLv2
       case AADL_Version is
          when AADL_V1 =>
-            --  remove S. Rubini if Token = T_Requires then
-            --  change S. Rubini
             if Requires then
                DPE (PC_Mode, EMC_Not_Allowed_In_AADL_V2);
                Skip_Tokens ((T_End, T_Semicolon));
@@ -336,14 +325,7 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
             end if;
 
          when AADL_V2 =>
-            --  change S. Rubini
-            --  if Token = T_Requires then
             Is_Requires := Requires;
-            --  else
-            --  DPE (PC_Requires_Modes_Subclause, T_Modes);
-            --  Skip_Tokens ((T_End, T_Semicolon));
-            --  return No_Node;
-            --  end if;
       end case;
 
       Identifier := P_Identifier (No_Node);
@@ -352,7 +334,7 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
          return No_Node;
       end if;
 
-      --  append S. Rubini for transition identifier AADL v2
+      --  transition identifier AADL v2
       Save_Lexer (Loc);
       Scan_Token;
       if AADL_Version = AADL_V2 and then Token = T_Colon then
@@ -404,7 +386,7 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
                  Identifier => Identifier,
                  Component  => Container);
 
-            --  change S. Rubini (Is_Requires)
+            --  (Is_Requires)
             return P_Mode (Node, Is_Refinement, Is_Initial, Is_Requires,
                 Refinable);
 
@@ -450,7 +432,6 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
                end if;
             end if;
 
-            --  S. Rubini
             declare
                Transition_Loc : Location;
             begin
@@ -464,9 +445,6 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
 
                Node :=
                   Add_New_Mode_Transition
-                  --  S. Rubini
-                  --  (Loc       => Ocarina.ME_AADL.AADL_Tree.Nodes.Loc
-                  --   (Identifier),
                      (Loc       => Transition_Loc,
                      Identifier => Transition_Identifier,
                      Component => Container);
