@@ -1272,6 +1272,7 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
 
             while Present (C) loop
                if Kind (C) = K_Port_Spec_Instance
+                 and then Is_In (C)
                  and then not AAU.Is_Empty (Destinations (C))
                then
                   D := First_Node (Destinations (C));
