@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2017 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2020 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -302,6 +302,7 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
          S : Node_Id;
       begin
          Add_Include (RH (RH_Types));
+         Add_Include (RH (RH_Marshallers));
 
          if No (Get_Handling (E, By_Name, H_C_Marshall_Spec)) then
             N := Marshall_Type_Spec (E);
@@ -1199,8 +1200,8 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
          N : Node_Id;
          S : Node_Id;
       begin
-
          Add_Include (RH (RH_Types));
+         Add_Include (RH (RH_Marshallers));
          Add_Include (RH (RH_PO_HI_Types));
 
          if No (Get_Handling (E, By_Name, H_C_Marshall_Body))
