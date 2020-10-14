@@ -207,11 +207,15 @@ package body Ocarina.BE_AADL.Components is
       end if;
 
       if not Is_Empty (ATN.Modes (Node)) then
+         List_Node := First_Node (ATN.Modes (Node));
          Write_Indentation;
+         if Kind (List_Node) = K_Mode and then Is_Requires (List_Node) then
+            Print_Token (T_Requires);
+            Write_Space;
+         end if;
          Print_Token (T_Modes);
          Write_Eol;
          Increment_Indentation;
-         List_Node := First_Node (ATN.Modes (Node));
 
          while Present (List_Node) loop
             case Kind (List_Node) is

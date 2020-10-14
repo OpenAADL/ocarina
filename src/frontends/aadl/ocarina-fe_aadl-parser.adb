@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2020 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2016 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -40,6 +40,7 @@ with Ocarina.ME_AADL.AADL_Tree.Nodes;   use Ocarina.ME_AADL.AADL_Tree.Nodes;
 
 with Ocarina.Files;                    use Ocarina.Files;
 with Ocarina.ME_AADL.AADL_Tree.Nutils; use Ocarina.ME_AADL.AADL_Tree.Nutils;
+with Ocarina.Options;                  use Ocarina.Options;
 with Ocarina.Parser;                   use Ocarina.Parser;
 with Ocarina.Property_Sets;            use Ocarina.Property_Sets;
 
@@ -73,6 +74,8 @@ package body Ocarina.FE_AADL.Parser is
    procedure Init is
    begin
       First_Parsing     := True;
+
+      Add_Library_Path (Get_Name_String (Default_Library_Path));
       Ocarina.Parser.Register_Parser (Language, Process'Access);
    end Init;
 
@@ -187,6 +190,51 @@ package body Ocarina.FE_AADL.Parser is
          loop
             Save_Lexer (Loc);
             Item := Func.all (Container, Refinable);
+            if Present (Item) then
+               Items := Items + 1;
+            else
+               --  Error when parsing item, restore lexer
+
+               Restore_Lexer (Loc);
+               if At_Least_One and then Items = 0 then
+                  --  list must contain at least one element, {Item}+
+
+                  DPE (Code, EMC_List_Is_Empty);
+                  Items := -1;
+               end if;
+               exit;
+            end if;
+         end loop;
+      end if;
+
+      return Items;
+   end P_Items_List;
+
+   function P_Items_List
+     (Func         : P_Refinable_Requires_Item_Function_Ptr;
+      Container    : Node_Id;
+      Refinable    : Boolean;
+      Requires     : Boolean;
+      Code         : Parsing_Code;
+      At_Least_One : Boolean := True) return Integer
+   is
+      Loc   : Location;
+      Item  : Node_Id;
+      Items : Integer := 0;
+
+   begin
+      Save_Lexer (Loc);
+      Scan_Token;
+      if Token = T_None then
+         if not P_None_Statement then
+            return -1;
+         end if;
+
+      else
+         Restore_Lexer (Loc);
+         loop
+            Save_Lexer (Loc);
+            Item := Func.all (Container, Refinable, Requires);
             if Present (Item) then
                Items := Items + 1;
             else

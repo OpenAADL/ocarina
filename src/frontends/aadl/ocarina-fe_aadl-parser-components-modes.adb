@@ -45,6 +45,7 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
      (Mode          : Node_Id;
       Is_Refinement : Boolean;
       Is_Initial    : Boolean;
+      Is_requires   : Boolean;
       Refinable     : Boolean) return Node_Id;
    --  Parse Mode and Mode_Refinement
    --  NOTE: The parameter Refinable is only useful for determining output
@@ -199,6 +200,7 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
      (Mode          : Node_Id;
       Is_Refinement : Boolean;
       Is_Initial    : Boolean;
+      Is_requires   : Boolean;
       Refinable     : Boolean) return Node_Id
    is
       use Locations;
@@ -250,6 +252,7 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
 
       Set_Is_Refinement (Mode, Is_Refinement);
       Set_Is_Initial (Mode, Is_Initial);
+      Set_Is_Requires (Mode, Is_Requires);
       return Mode;
    end P_Mode;
 
@@ -289,7 +292,8 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
 
    function P_Mode_Or_Mode_Transition
      (Container : Node_Id;
-      Refinable : Boolean) return Node_Id
+      Refinable : Boolean;
+      Requires  : Boolean) return Node_Id
    is
       use Locations;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -304,32 +308,24 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
       Source_Modes     : List_Id;
       Is_Refinement    : Boolean := False;
       Is_Initial       : Boolean := False;
+      --  Is_Requires      : Boolean := False;
       Is_Requires      : Boolean := False;
       Loc              : Location;
       Node             : Node_Id;
+      Transition_Identifier : Node_Id := No_Node;
    begin
 
       --  requires modes, only in AADLv2
       case AADL_Version is
          when AADL_V1 =>
-            if Token = T_Requires then
+            if Requires then
                DPE (PC_Mode, EMC_Not_Allowed_In_AADL_V2);
                Skip_Tokens ((T_End, T_Semicolon));
                return No_Node;
             end if;
 
          when AADL_V2 =>
-            if Token = T_Requires then
-               Scan_Token;
-
-               if Token = T_Modes then
-                  Is_Requires := True;
-               else
-                  DPE (PC_Requires_Modes_Subclause, T_Modes);
-                  Skip_Tokens ((T_End, T_Semicolon));
-                  return No_Node;
-               end if;
-            end if;
+            Is_Requires := Requires;
       end case;
 
       Identifier := P_Identifier (No_Node);
@@ -338,7 +334,20 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
          return No_Node;
       end if;
 
+      --  transition identifier AADL v2
+      Save_Lexer (Loc);
       Scan_Token;
+      if AADL_Version = AADL_V2 and then Token = T_Colon then
+         Scan_Token;
+         if Token = T_Identifier then
+            Transition_Identifier := Identifier;
+            Identifier := Make_Current_Identifier (No_Node);
+         else
+            Restore_Lexer (Loc);
+         end if;
+         Scan_Token;
+      end if;
+
       case Token is
          when T_Colon =>       --  parsing Mode or Mode_Refinement
             Save_Lexer (Loc);
@@ -377,7 +386,9 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
                  Identifier => Identifier,
                  Component  => Container);
 
-            return P_Mode (Node, Is_Refinement, Is_Initial, Refinable);
+            --  (Is_Requires)
+            return P_Mode (Node, Is_Refinement, Is_Initial, Is_Requires,
+                Refinable);
 
          when T_Left_Step_Bracket | T_Comma =>   --  parse Mode_Transition
 
@@ -421,10 +432,23 @@ package body Ocarina.FE_AADL.Parser.Components.Modes is
                end if;
             end if;
 
-            Node :=
-              Add_New_Mode_Transition
-                (Loc       => Ocarina.ME_AADL.AADL_Tree.Nodes.Loc (Identifier),
-                 Component => Container);
+            declare
+               Transition_Loc : Location;
+            begin
+               if Transition_Identifier = No_Node then
+                  Transition_Loc := Ocarina.ME_AADL.AADL_Tree.Nodes.Loc
+                    (Identifier);
+               else
+                  Transition_Loc := Ocarina.ME_AADL.AADL_Tree.Nodes.Loc
+                    (Transition_Identifier);
+               end if;
+
+               Node :=
+                  Add_New_Mode_Transition
+                     (Loc       => Transition_Loc,
+                     Identifier => Transition_Identifier,
+                     Component => Container);
+            end;
             return P_Mode_Transition (Node, Source_Modes);
 
          when others =>
