@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2018 ESA & ISAE.      --
+--    Copyright (C) 2008-2009 Telecom ParisTech, 2010-2020 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -421,7 +421,11 @@ package body Ocarina.Backends.PO_HI_C.Naming is
 
                            if ((Get_Execution_Platform
                                   (Get_Bound_Processor (Parent)) =
-                                  Platform_Air)
+                                  Platform_AIR)
+                                 or else
+                                 (Get_Execution_Platform
+                                  (Get_Bound_Processor (Parent)) =
+                                  Platform_AIR_IOP)
                                  or else
                                  (Get_Execution_Platform
                                     (Get_Bound_Processor (E)) =

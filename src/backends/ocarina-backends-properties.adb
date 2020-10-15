@@ -282,9 +282,11 @@ package body Ocarina.Backends.Properties is
    Language_Simulink_Name        : Name_Id;
    Language_System_C_Name        : Name_Id;
    Language_VHDL_Name            : Name_Id;
+   Language_VHDL_BRAVE_Name      : Name_Id;
    Language_VDM_Name             : Name_Id;
    Language_QGenAda_Name         : Name_Id;
    Language_QGenC_Name           : Name_Id;
+   Language_MicroPython_Name     : Name_Id;
 
    Thread_Periodic_Name   : Name_Id;
    Thread_Aperiodic_Name  : Name_Id;
@@ -331,7 +333,8 @@ package body Ocarina.Backends.Properties is
    Platform_Vxworks_Name                : Name_Id;
    Platform_GNAT_Runtime_Name           : Name_Id;
    Platform_AIR_Name                    : Name_Id;
-   Platform_Air_IOP_Name                : Name_Id;
+   Platform_MSP430_FREERTOS_Name        : Name_Id;
+   Platform_AIR_IOP_Name                : Name_Id;
 
    Transport_BSD_Sockets_Name : Name_Id;
    Transport_SpaceWire_Name   : Name_Id;
@@ -1179,6 +1182,7 @@ package body Ocarina.Backends.Properties is
 
       elsif Source_L = Language_SDL_Name
         or else Source_L = Language_SDL_ObjectGeode_Name
+        or else Source_L = Language_SDL_OpenGEODE_Name
       then
          return Language_SDL;
 
@@ -1192,9 +1196,6 @@ package body Ocarina.Backends.Properties is
 
       elsif Source_L = Language_CPP_Name then
          return Language_CPP;
-
-      elsif Source_L = Language_SDL_OpenGEODE_Name then
-         return Language_SDL_OpenGEODE;
 
       elsif Source_L = Language_RTSJ_Name then
          return Language_RTSJ;
@@ -1214,6 +1215,9 @@ package body Ocarina.Backends.Properties is
       elsif Source_L = Language_VHDL_Name then
          return Language_VHDL;
 
+      elsif Source_L = Language_VHDL_BRAVE_Name then
+         return Language_VHDL_BRAVE;
+
       elsif Source_L = Language_VDM_Name then
          return Language_VDM;
 
@@ -1228,6 +1232,9 @@ package body Ocarina.Backends.Properties is
 
       elsif Source_L = Language_QGenC_Name then
          return Language_QGenC;
+
+      elsif Source_L = Language_MicroPython_Name then
+         return Language_MicroPython;
 
       else
          Display_Located_Error
@@ -1328,7 +1335,8 @@ package body Ocarina.Backends.Properties is
            Language_System_C      |
            Language_SDL_OpenGEODE |
            Language_VDM           |
-           Language_VHDL          =>
+           Language_VHDL          |
+           Language_VHDL_BRAVE    =>
             --  A subprogram having this language as implementation
             --  language is not supported.
 
@@ -1414,6 +1422,9 @@ package body Ocarina.Backends.Properties is
 
          when Language_Simulink | Language_QGenC | Language_QGenAda =>
             return Subprogram_Simulink;
+
+         when Language_MicroPython =>
+            return Subprogram_Unknown;
 
          when Language_Scade =>
             return Subprogram_Scade;
@@ -2378,19 +2389,42 @@ package body Ocarina.Backends.Properties is
                  (Parent_Component (Get_Referenced_Entity (AIN.Source (C))))) =
               Platform_AIR
               and then
+              (Get_Execution_Platform
+                (Get_Bound_Processor
+                   (Parent_Component
+                      (Get_Referenced_Entity (AIN.Destination (C))))) =
+              Platform_AIR
+              or else
               Get_Execution_Platform
                 (Get_Bound_Processor
                    (Parent_Component
                       (Get_Referenced_Entity (AIN.Destination (C))))) =
-              Platform_AIR))
+              Platform_AIR_IOP))
+            or else
+           (Get_Execution_Platform
+              (Get_Bound_Processor
+                 (Parent_Component (Get_Referenced_Entity (AIN.Source (C))))) =
+              Platform_AIR_IOP
+              and then
+              (Get_Execution_Platform
+                (Get_Bound_Processor
+                   (Parent_Component
+                      (Get_Referenced_Entity (AIN.Destination (C))))) =
+              Platform_AIR
+              or else
+              Get_Execution_Platform
+                (Get_Bound_Processor
+                   (Parent_Component
+                      (Get_Referenced_Entity (AIN.Destination (C))))) =
+              Platform_AIR_IOP)))
         and then
         Parent_Component
           (Parent_Subcomponent
              (Parent_Component
                 (Get_Referenced_Entity (AIN.Destination (C))))) =
         Parent_Component
-        (Parent_Subcomponent
-           (Parent_Component (Get_Referenced_Entity (AIN.Source (C)))))
+          (Parent_Subcomponent
+             (Parent_Component (Get_Referenced_Entity (AIN.Source (C)))))
       then
          return No_Node;
 
@@ -2503,6 +2537,8 @@ package body Ocarina.Backends.Properties is
             return Platform_GNAT_Runtime;
          elsif P_Name = Platform_AIR_Name then
             return Platform_AIR;
+         elsif P_Name = Platform_MSP430_FREERTOS_Name then
+            return Platform_MSP430_FREERTOS;
          elsif P_Name = Platform_AIR_IOP_Name then
             return Platform_AIR_IOP;
          else
@@ -3024,10 +3060,12 @@ package body Ocarina.Backends.Properties is
       Language_RTDS_Name            := Get_String_Name ("rtds");
       Language_SDL_RTDS_Name        := Get_String_Name ("sdl_rtds");
       Language_VHDL_Name            := Get_String_Name ("vhdl");
+      Language_VHDL_BRAVE_Name      := Get_String_Name ("vhdl_brave");
       Language_VDM_Name             := Get_String_Name ("vdm");
       Language_System_C_Name        := Get_String_Name ("system_c");
       Language_QGenAda_Name         := Get_String_Name ("qgenada");
       Language_QGenC_Name           := Get_String_Name ("qgenc");
+      Language_MicroPython_Name     := Get_String_Name ("micropython");
 
       Thread_Periodic_Name   := Get_String_Name ("periodic");
       Thread_Aperiodic_Name  := Get_String_Name ("aperiodic");
@@ -3069,6 +3107,7 @@ package body Ocarina.Backends.Properties is
       Platform_Vxworks_Name          := Get_String_Name ("vxworks");
       Platform_GNAT_Runtime_Name     := Get_String_Name ("gnat_runtime");
       Platform_AIR_Name              := Get_String_Name ("air");
+      Platform_MSP430_FREERTOS_Name  := Get_String_Name ("msp430_freertos");
       Platform_AIR_IOP_Name          := Get_String_Name ("air_iop");
 
       Transport_BSD_Sockets_Name := Get_String_Name ("bsd_sockets");
