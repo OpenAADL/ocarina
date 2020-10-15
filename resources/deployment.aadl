@@ -42,6 +42,7 @@ property set Deployment is
     WIN32,                    -- WIN32
     VXWORKS,                  -- VXWORKS
     FREERTOS,                 -- FREERTOS
+    MSP430_FREERTOS,          -- MSP430 board with FreeRTOS
     AIR,                      -- AIR Hypervisor, by GMV
     AIR_IOP                   -- AIR IOP partition
     );
