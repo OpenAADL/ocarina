@@ -74,7 +74,7 @@ property set Deployment is
   Protocol : Deployment::Protocol_Type
     applies to (system);
 
-  Allowed_Execution_Platform : type enumeration (Native, Native_Compcert, bench, GNAT_Runtime, LEON_ORK, LEON_RTEMS, LEON_RTEMS_POSIX, LEON3_SCOC3, LEON3_XTRATUM, LEON3_XM3, LEON_GNAT, LINUX32, LINUX_DLL, LINUX32_XENOMAI_NATIVE, LINUX32_XENOMAI_POSIX, LINUX64, ERC32_ORK, X86_RTEMS_POSIX, X86_LINUXTASTE, MARTE_OS, WIN32, VXWORKS, FREERTOS, MSP430_FREERTOS, AIR, AIR_IOP);
+  Allowed_Execution_Platform : type enumeration (Native, Native_Compcert, bench, GNAT_Runtime, LEON_ORK, LEON_RTEMS, LEON_RTEMS_POSIX, LEON3_SCOC3, LEON3_XTRATUM, LEON3_XM3, LEON_GNAT, LINUX32, LINUX_DLL, LINUX32_XENOMAI_NATIVE, LINUX32_XENOMAI_POSIX, LINUX64, ERC32_ORK, X86_RTEMS_POSIX, X86_LINUXTASTE, MARTE_OS, WIN32, VXWORKS, FREERTOS, AIR, AIR_IOP);
 
   Execution_Platform : Deployment::Allowed_Execution_Platform
     applies to ( all);
