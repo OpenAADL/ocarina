@@ -80,6 +80,8 @@ package Ocarina.Backends.Properties is
       Language_System_C,
       Language_VDM,
       Language_VHDL,
+      Language_VHDL_BRAVE,
+      Language_MicroPython,
       Language_None);
 
    type Supported_Scheduling_Protocol is
@@ -565,6 +567,7 @@ package Ocarina.Backends.Properties is
       Platform_VxWorks,
       Platform_GNAT_Runtime,
       Platform_AIR,
+      Platform_MSP430_FREERTOS,
       Platform_AIR_IOP,
       Platform_None); --  Unspecified
 

@@ -1294,6 +1294,9 @@ case $os in
 	-sysvr4)
 		os=-sysv4
 		;;
+	-msys)
+		os=-sysv4
+		;;
 	# This must come after -sysvr4.
 	-sysv*)
 		;;
