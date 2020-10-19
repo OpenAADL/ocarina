@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 S p e c                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2019 ESA & ISAE.      --
+--    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2020 ESA & ISAE.      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -171,6 +171,8 @@ package Ocarina.Backends.PO_HI_Ada.Runtime is
       RE_To_HI_String,               --  PolyORB_HI.Utils.To_HI_String
       RE_Naming_Table_Type,          --  PolyORB_HI.Utils.Naming_Table_Type
       RE_Corresponding_Port,         --  Po..HI.Port_Types.Corresponding_Port
+      RE_Destinations_Array,         --  Po..HI.Port_Types.Destinations_Array
+      RE_Empty_Destination,          --  Po..HI.Port_Types.Empty_Destination
       RE_Non_Blocking_Receive,       --  Po..HI.Protocols.Non_Blocking_Receive
       RE_Send_1,                     --  Po..HI.Protocols.Send
       RE_Initialize,                 --  Po..HI.Transport_Low_Level.Initialize
@@ -271,6 +273,8 @@ package Ocarina.Backends.PO_HI_Ada.Runtime is
       RE_To_HI_String               => RU_PolyORB_HI_Utils,
       RE_Naming_Table_Type          => RU_PolyORB_HI_Utils,
       RE_Corresponding_Port         => RU_PolyORB_HI_Port_Types,
+      RE_Destinations_Array         => RU_PolyORB_HI_Port_Types,
+      RE_Empty_Destination          => RU_PolyORB_HI_Port_Types,
       RE_Non_Blocking_Receive       => RU_PolyORB_HI_Protocols,
       RE_Send_1                     => RU_PolyORB_HI_Protocols,
       RE_Stream_Element_Array       => RU_PolyORB_HI_Streams,

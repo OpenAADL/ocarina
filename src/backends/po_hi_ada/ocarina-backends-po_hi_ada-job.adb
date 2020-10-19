@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---                     Copyright (C) 2019 ESA & ISAE.                       --
+--                   Copyright (C) 2019-2020 ESA & ISAE.                    --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -1203,9 +1203,9 @@ package body Ocarina.Backends.PO_HI_Ada.Job is
             N := Make_Subprogram_Call
               (Get_Fully_Qualified_Subprogram (SN (S_Get_Value)),
                Make_List_Id
-               (RE (RE_Get_Task_Id),
-               Map_Ada_Defining_Identifier (F),
-               Map_Ada_Defining_Identifier (F, "I")));
+                 (Make_Defining_Identifier (VN (V_Id)),
+                  Map_Ada_Defining_Identifier (F),
+                  Map_Ada_Defining_Identifier (F, "I")));
 
             Append_Node_To_List (N, Then_Statements);
 
@@ -1529,7 +1529,7 @@ package body Ocarina.Backends.PO_HI_Ada.Job is
                          Make_Subprogram_Call
                            (Get_Fully_Qualified_Subprogram (SN (S_Get_Count)),
                             Make_List_Id
-                              (RE (RE_Get_Task_Id),
+                              (Make_Defining_Identifier (VN (V_Id)),
                                Make_Qualified_Expression
                                  (Make_Defining_Identifier
                                     (Map_Port_Enumeration_Name (E)),
@@ -1617,7 +1617,9 @@ package body Ocarina.Backends.PO_HI_Ada.Job is
                   N :=
                     Make_Subprogram_Call
                       (Get_Fully_Qualified_Subprogram (SN (S_Next_Value)),
-                       Make_List_Id (RE (RE_Get_Task_Id), N));
+                       Make_List_Id
+                         (Make_Defining_Identifier (VN (V_Id)),
+                          N));
 
                   Append_Node_To_List (N, Statements);
                end if;
@@ -2079,7 +2081,7 @@ package body Ocarina.Backends.PO_HI_Ada.Job is
                                     (Get_Fully_Qualified_Subprogram
                                        (SN (S_Get_Count)),
                                      Make_List_Id
-                                       (RE (RE_Get_Task_Id),
+                                       (Make_Defining_Identifier (VN (V_Id)),
                                         Make_Qualified_Expression
                                           (Make_Defining_Identifier
                                              (Map_Port_Enumeration_Name (E)),
@@ -2127,7 +2129,8 @@ package body Ocarina.Backends.PO_HI_Ada.Job is
                           Make_Subprogram_Call
                             (Get_Fully_Qualified_Subprogram
                                (SN (S_Next_Value)),
-                             Make_List_Id (RE (RE_Get_Task_Id), N));
+                             Make_List_Id
+                               (Make_Defining_Identifier (VN (V_Id)), N));
                         Append_Node_To_List (N, St);
 
                         --  Call the port compute entrypoint with the
@@ -2291,7 +2294,8 @@ package body Ocarina.Backends.PO_HI_Ada.Job is
                         N :=
                           Make_Subprogram_Call
                             (Get_Fully_Qualified_Subprogram (SN (S_Put_Value)),
-                             Make_List_Id (RE (RE_Get_Task_Id), N));
+                             Make_List_Id
+                               (Make_Defining_Identifier (VN (V_Id)), N));
 
                         Append_Node_To_List (N, Statements);
                      end if;
@@ -2351,20 +2355,16 @@ package body Ocarina.Backends.PO_HI_Ada.Job is
                           Make_Subprogram_Call
                             (Get_Fully_Qualified_Subprogram
                                (SN (S_Send_Output)),
-                             Make_List_Id (RE (RE_Get_Task_Id),
-                                           Make_Qualified_Expression
-                                          (Make_Defining_Identifier
-                                             (Map_Port_Enumeration_Name (E)),
-                                           Make_Record_Aggregate
-                                             (Make_List_Id
-                                                (Map_Ada_Defining_Identifier
-                                                   (F))))));
-
-                        N :=
-                          Make_Assignment_Statement
-                            (Variable_Identifier =>
-                               Make_Defining_Identifier (VN (V_Error)),
-                             Expression => N);
+                             Make_List_Id
+                               (Make_Defining_Identifier (VN (V_Id)),
+                                Make_Qualified_Expression
+                                  (Make_Defining_Identifier
+                                     (Map_Port_Enumeration_Name (E)),
+                                   Make_Record_Aggregate
+                                     (Make_List_Id
+                                        (Map_Ada_Defining_Identifier
+                                           (F)))),
+                                Make_Defining_Identifier (VN (V_Error))));
                         Append_Node_To_List (N, Statements);
                         Need_Error_Initialization := False;
                      end if;
@@ -2477,13 +2477,9 @@ package body Ocarina.Backends.PO_HI_Ada.Job is
                                         Make_Record_Aggregate
                                           (Make_List_Id
                                              (Map_Ada_Defining_Identifier
-                                                (F))))));
+                                                (F)))),
+                                     Make_Defining_Identifier (VN (V_Error))));
 
-                  N :=
-                    Make_Assignment_Statement
-                      (Variable_Identifier =>
-                         Make_Defining_Identifier (VN (V_Error)),
-                       Expression => N);
                   Append_Node_To_List (N, Statements);
                   Need_Error_Initialization := False;
                end if;
@@ -2500,6 +2496,15 @@ package body Ocarina.Backends.PO_HI_Ada.Job is
             Add_With_Package
               (E    => RU (Ru_PolyORB_HI_Generated_Activity),
                Used => True);
+
+            N :=
+              Make_Object_Declaration
+              (Defining_Identifier =>
+                 Make_Defining_Identifier (VN (V_Id)),
+               Constant_Present  => True,
+               Object_Definition => RE (RE_Entity_Type),
+               Expression        => RE (RE_Get_Task_Id));
+            Append_Node_To_List (N, Declarations);
          end if;
 
          --  If the thread contains operational modes. we update the
@@ -2622,6 +2627,7 @@ package body Ocarina.Backends.PO_HI_Ada.Job is
                  Object_Definition => RE (RE_Error_Kind),
                  Expression        => RE (RE_Error_None));
             Append_Node_To_List (N, Declarations);
+
          else
             N :=
               Make_Object_Declaration
@@ -2630,9 +2636,6 @@ package body Ocarina.Backends.PO_HI_Ada.Job is
                  Object_Definition => RE (RE_Error_Kind));
             Append_Node_To_List (N, Declarations);
          end if;
-
-         N := Make_Used_Type (RE (RE_Error_Kind));
-         Append_Node_To_List (N, Declarations);
 
          --  Return default error code: at this point, everything
          --  has been properly handled.
