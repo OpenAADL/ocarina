@@ -931,24 +931,40 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                        H_Ada_Activity_Interr_Spec);
                   BE : constant Node_Id := Backend_Node (Identifier (Found));
                begin
-                  Bind_AADL_To_Port_Enumeration
-                    (Identifier (E),
-                     ADN.Port_Enumeration_Node (BE));
-                  Bind_AADL_To_Port_Interface
-                    (Identifier (E),
-                     ADN.Port_Interface_Node (BE));
-                  Bind_AADL_To_Put_Value
-                    (Identifier (E),
-                     ADN.Put_Value_Node (BE));
-                  Bind_AADL_To_Get_Value
-                    (Identifier (E),
-                     ADN.Get_Value_Node (BE));
-                  Bind_AADL_To_Get_Count
-                    (Identifier (E),
-                     ADN.Get_Count_Node (BE));
-                  Bind_AADL_To_Store_Received_Message
-                    (Identifier (E),
-                     ADN.Store_Received_Message_Node (BE));
+                  --  XXX
+                  if Present (ADN.Port_Enumeration_Node (BE)) then
+                     Bind_AADL_To_Port_Enumeration
+                       (Identifier (E),
+                        ADN.Port_Enumeration_Node (BE));
+                  end if;
+
+                  if Present (ADN.Port_Interface_Node (BE)) then
+                     Bind_AADL_To_Port_Interface
+                       (Identifier (E),
+                        ADN.Port_Interface_Node (BE));
+                  end if;
+
+                  if Present (ADN.Put_Value_Node (BE)) then
+                     Bind_AADL_To_Put_Value
+                       (Identifier (E),
+                        ADN.Put_Value_Node (BE));
+                  end if;
+
+                  if Present (ADN.Get_Value_Node (Be)) then
+                     Bind_AADL_To_Get_Value
+                       (Identifier (E),
+                        ADN.Get_Value_Node (BE));
+                  end if;
+                  if Present (ADN.Get_Count_Node (BE)) then
+                     Bind_AADL_To_Get_Count
+                       (Identifier (E),
+                        ADN.Get_Count_Node (BE));
+                  end if;
+                  if Present (ADN.Store_Received_Message_Node (BE)) then
+                     Bind_AADL_To_Store_Received_Message
+                       (Identifier (E),
+                        ADN.Store_Received_Message_Node (BE));
+                  end if;
                end;
             end if;
          end if;
@@ -1071,10 +1087,6 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
 
       function Make_Mode_Updater_body (E : Node_Id) return Node_Id;
       --  Create the procedure which will update the current mode
-
-      Has_Hybrid_Threads       : Boolean            := False;
-      Hybrid_Thread_Elements   : List_Id            := No_List;
-      Last_Hybrid_Thread_Index : Unsigned_Long_Long := 0;
 
       Current_Mode_Identifier : Node_Id;
 
@@ -2174,21 +2186,26 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                --  Complete the case alternatives corresponding to the
                --  current instance.
 
-               Add_Alternative (Send_Output_Spec (E), RR_Send_Output);
-               Add_Alternative (Put_Value_Spec (E), RR_Put_Value);
-               Add_Alternative (Receive_Input_Spec (E), RR_Receive_Input);
-               Add_Alternative (Get_Value_Spec (E), RR_Get_Value);
-               Add_Alternative (Get_Value_Spec_2 (E), RR_Get_Value);
-               Add_Alternative (Get_Sender_Spec (E), RR_Get_Sender);
-               Add_Alternative (Get_Count_Spec (E), RR_Get_Count);
-               Add_Alternative (Get_Time_Stamp_Spec (E), RR_Get_Time_Stamp);
-               Add_Alternative (Next_Value_Spec (E), RR_Next_Value);
-               Add_Alternative
-                 (Store_Received_Message_Spec (E),
-                  RR_Store_Received_Message);
-               Add_Alternative
-                 (Wait_For_Incoming_Events_Spec (E),
-                  RR_Wait_For_Incoming_Events);
+               if Has_Out_Ports (E) then
+                  Add_Alternative (Send_Output_Spec (E), RR_Send_Output);
+                  Add_Alternative (Put_Value_Spec (E), RR_Put_Value);
+               end if;
+
+               if Has_In_Ports (E) then
+                  Add_Alternative (Receive_Input_Spec (E), RR_Receive_Input);
+                  Add_Alternative (Get_Value_Spec (E), RR_Get_Value);
+                  Add_Alternative (Get_Value_Spec_2 (E), RR_Get_Value);
+                  Add_Alternative (Get_Sender_Spec (E), RR_Get_Sender);
+                  Add_Alternative (Get_Count_Spec (E), RR_Get_Count);
+                  Add_Alternative (Get_Time_Stamp_Spec (E), RR_Get_Time_Stamp);
+                  Add_Alternative (Next_Value_Spec (E), RR_Next_Value);
+                  Add_Alternative
+                    (Store_Received_Message_Spec (E),
+                     RR_Store_Received_Message);
+                  Add_Alternative
+                    (Wait_For_Incoming_Events_Spec (E),
+                     RR_Wait_For_Incoming_Events);
+               end if;
             end if;
          end;
       end Runtime_Routine_Bodies;
@@ -2394,12 +2411,6 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
 
          Start_Recording_Handlings;
 
-         --  Reset hybrid thread related global variables
-
-         Has_Hybrid_Threads       := False;
-         Hybrid_Thread_Elements   := No_List;
-         Last_Hybrid_Thread_Index := 0;
-
          --  Initialize the runtime routine list
 
          Interrogation_Routine_List := New_List (ADN.K_Statement_List);
@@ -2445,61 +2456,6 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
          Append_Node_To_List
            (ADN.First_Node (Interrogation_Routine_List),
             ADN.Statements (Current_Package));
-
-         if Has_Hybrid_Threads then
-            declare
-               Profile : constant List_Id := New_List (ADN.K_List_Id);
-            begin
-               pragma Assert (not Is_Empty (Hybrid_Thread_Elements));
-
-               N :=
-                 Message_Comment
-                   ("In order for them to work correctly," &
-                    " hybrid task need the presence of" &
-                    " a driver task to trigger them at" &
-                    " their period");
-               Append_Node_To_List (N, ADN.Statements (Current_Package));
-
-               --  Declare the hybrid task set
-
-               N :=
-                 Make_Object_Declaration
-                   (Defining_Identifier =>
-                      Make_Defining_Identifier (PN (P_Hybrid_Task_Set)),
-                    Object_Definition => RE (RE_Hybrid_Task_Info_Array),
-                    Expression        =>
-                      Make_Array_Aggregate (Hybrid_Thread_Elements));
-               Append_Node_To_List (N, ADN.Statements (Current_Package));
-
-               --  Instantiate the hybrid task driver
-
-               N := Make_Defining_Identifier (PN (P_Hybrid_Task_Set));
-               Append_Node_To_List (N, Profile);
-
-               N := Make_Attribute_Designator (RE (RE_Priority), A_Last);
-               Append_Node_To_List (N, Profile);
-
-               N := Make_Literal (New_Integer_Value (128_000, 1, 10));
-               Append_Node_To_List (N, Profile);
-
-               N := RE (RE_Deliver);
-               Append_Node_To_List (N, Profile);
-
-               N :=
-                 Make_Package_Instantiation
-                   (Make_Defining_Identifier (PN (P_Hybrid_Task_Driver)),
-                    RU (RU_PolyORB_HI_Hybrid_Task_Driver_Driver),
-                    Profile);
-               Append_Node_To_List (N, ADN.Statements (Current_Package));
-
-               N :=
-                 Make_Pragma_Statement
-                   (Pragma_Unreferenced,
-                    Make_List_Id
-                      (Make_Defining_Identifier (PN (P_Hybrid_Task_Driver))));
-               Append_Node_To_List (N, ADN.Statements (Current_Package));
-            end;
-         end if;
 
          --  Visit all devices attached to the parent system that
          --  share the same processor as process E.
@@ -2601,60 +2557,6 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                       ("Hybrid task : " &
                          Get_Name_String (Display_Name (Identifier (S))));
                   Append_Node_To_List (N, ADN.Statements (Current_Package));
-
-                  --  Hybrid threads requires an extra driver thread to be
-                  --  created.
-
-                  declare
-                     Aggr : constant List_Id :=
-                       New_List (ADN.K_Component_List);
-                  begin
-                     Has_Hybrid_Threads := True;
-
-                     if Hybrid_Thread_Elements = No_List then
-                        Hybrid_Thread_Elements :=
-                          New_List (ADN.K_Element_List);
-                     end if;
-
-                     --  Append the element association corresponding to
-                     --  E to the hybrid task set.
-
-                     N := Extract_Enumerator (E);
-                     Append_Node_To_List (N, Aggr);
-
-                     --  We know that the last node added to the feature
-                     --  list of E is the one appended at exapnsion time
-                     --  and corresponding to the fake event part that
-                     --  will receive the dispatch messages from the
-                     --  driver.
-
-                     N := Extract_Enumerator (Last_Node (Features (E)));
-                     Append_Node_To_List (N, Aggr);
-
-                     N := Map_Ada_Time (Get_Thread_Period (E));
-                     Append_Node_To_List (N, Aggr);
-
-                     N := RE (RE_System_Startup_Time);
-                     Append_Node_To_List (N, Aggr);
-
-                     N := RE (RE_True);
-                     Append_Node_To_List (N, Aggr);
-
-                     N :=
-                       Make_Qualified_Expression
-                         (RE (RE_Hybrid_Task_Info),
-                          Make_Record_Aggregate (Aggr));
-
-                     Last_Hybrid_Thread_Index := Last_Hybrid_Thread_Index + 1;
-
-                     N :=
-                       Make_Element_Association
-                         (Make_Literal
-                            (New_Integer_Value
-                               (Last_Hybrid_Thread_Index, 1, 10)),
-                          N);
-                     Append_Node_To_List (N, Hybrid_Thread_Elements);
-                  end;
 
                when others =>
                   raise Program_Error;
