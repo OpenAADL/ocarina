@@ -1402,7 +1402,8 @@ package body Ocarina.Backends.PO_HI_Ada.Job is
                           Make_Subprogram_Call
                             (Get_Fully_Qualified_Subprogram
                                (SN (S_Next_Value)),
-                             Make_List_Id (N));
+                             Make_List_Id
+                               (Make_Defining_Identifier (VN (V_Id)), N));
                         Append_Node_To_List (N, Inner_Statements);
 
                         N :=
