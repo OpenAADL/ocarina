@@ -3359,6 +3359,12 @@ package body Ocarina.Backends.Utils is
             end if;
             S := Next_Node (S);
          end loop;
+
+         Display_Located_Error
+           (Loc (Process),
+            "This process is not connected to a device through bus at " &
+              Image (Loc (Bus)),
+            Fatal => True);
       end if;
 
       return No_Node;
