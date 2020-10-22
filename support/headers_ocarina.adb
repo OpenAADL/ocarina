@@ -6,7 +6,8 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---    Copyright (C) 2006-2009 Telecom ParisTech, 2010-2015 ESA & ISAE.      --
+--               Copyright (C) 2006-2009 Telecom ParisTech,                 --
+--                 2010-2019 ESA & ISAE, 2019-2020 OpenAADL                 --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -24,8 +25,8 @@
 -- see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see    --
 -- <http://www.gnu.org/licenses/>.                                          --
 --                                                                          --
---                 Ocarina is maintained by the TASTE project               --
---                      (taste-users@lists.tuxfamily.org)                   --
+--                    Ocarina is maintained by OpenAADL team                --
+--                              (info@openaadl.org)                         --
 --                                                                          --
 ------------------------------------------------------------------------------
 
@@ -73,8 +74,8 @@ procedure Headers_Ocarina is
    "-- see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see    --" & ASCII.LF &
    "-- <http://www.gnu.org/licenses/>.                                          --" & ASCII.LF &
    "--                                                                          --" & ASCII.LF &
-   "--                 Ocarina is maintained by the TASTE project               --" & ASCII.LF &
-   "--                      (taste-users@lists.tuxfamily.org)                   --" & ASCII.LF &
+   "--                    Ocarina is maintained by OpenAADL team                --" & ASCII.LF &
+   "--                              (info@openaadl.org)                         --" & ASCII.LF &
    "--                                                                          --" & ASCII.LF &
      "------------------------------------------------------------------------------" & ASCII.LF;
 
@@ -108,8 +109,18 @@ procedure Headers_Ocarina is
    function Center_Ada (S : String) return String is
       Line  : String (1 .. 78) := (others => ' ');
       Width : constant := Line'Length;
-      Pos   : constant Positive := (Line'Length - (S'Length - 1)) / 2;
+      Pos   : Positive;
    begin
+      if S'Length > 76 then
+         for J in S'Range loop
+            if S (J) = ',' then
+               return Center_Ada (S (S'First .. J))
+                 & ASCII.LF & Center_Ada (S (J + 1 .. S'Last));
+               end if;
+         end loop;
+      end if;
+
+      Pos := (Line'Length - (S'Length - 1)) / 2;
       Line (1 .. 2) := "--";
       Line (Line'Last - 1 .. Line'Last) := "--";
       Line (Pos .. Pos + S'Length - 1) := S;
@@ -134,15 +145,18 @@ procedure Headers_Ocarina is
       if First_Year < 2009 then
          return "Copyright (C) " &
            Image (First_Year) & "-2009 Telecom ParisTech, "
-           & "2010-" & Image (last_year) & " ESA & ISAE.";
+           & "2010-2019 ESA & ISAE, "
+           & "2019-" & Image (Last_Year) & " OpenAADL";
+
       elsif First_Year = 2009 then
          return "Copyright (C) " &
            Image (First_Year) & " Telecom ParisTech, "
-           & "2010-" & Image (last_year) & " ESA & ISAE.";
+           & "2010-2019 ESA & ISAE, "
+           & "2019-" & Image (Last_Year) & " OpenAADL";
 
       else
          return "Copyright (C) " & Range_Image (Range_Image'First .. Last)
-           & " ESA & ISAE.";
+           & " OpenAADL";
       end if;
    end Copyright_Line;
 
