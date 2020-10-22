@@ -153,6 +153,10 @@ procedure Headers_Ocarina is
            Image (First_Year) & " Telecom ParisTech, "
            & "2010-2019 ESA & ISAE, "
            & "2019-" & Image (Last_Year) & " OpenAADL";
+      elsif First_Year < 2019 then
+         return "Copyright (C) " &
+           Image (First_Year) & "-2019 ESA & ISAE, "
+           & "2019-" & Image (Last_Year) & " OpenAADL";
 
       else
          return "Copyright (C) " & Range_Image (Range_Image'First .. Last)
