@@ -37,6 +37,8 @@ Q&A:
 +----------------------------------+---------------+
 | Build status for Linux and OS X  ||build-status| |
 +----------------------------------+---------------+
+| Build status GitHub actions      ||github|       |
++----------------------------------+---------------+
 | Build status for Windows         ||appveyor|     |
 +----------------------------------+---------------+
 | Code coverage                    | |coverage|    |
@@ -44,6 +46,9 @@ Q&A:
 | CII Best practice                | |cii|         |
 +----------------------------------+---------------+
 
+.. |github| image:: https://github.com/OpenAADL/ocarina/workflows/Ocarina/badge.svg
+  :target: https://github.com/OpenAADL/ocarina/actions?query=workflow%3AOcarina
+  
 .. |build-status| image:: https://travis-ci.org/OpenAADL/ocarina.svg?branch=master 
   :target: https://travis-ci.org/OpenAADL/ocarina
 
