@@ -58,6 +58,7 @@ package Ocarina.Backends.PO_HI_Ada.Runtime is
       RU_PolyORB_HI_Generated_Transport,
       RU_PolyORB_HI_Generated_Types,
       RU_PolyORB_HI,
+      RU_POlyORB_HI_Epoch,
       RU_PolyORB_HI_Errors,
       RU_PolyORB_HI_Hybrid_Task_Driver,
       RU_PolyORB_HI_Hybrid_Task_Driver_Driver,
@@ -118,6 +119,7 @@ package Ocarina.Backends.PO_HI_Ada.Runtime is
       RE_Seconds,                    --  Ada.Real_Time.Seconds
       RE_Minutes,                    --  Ada.Real_Time.Minutes
       RE_Time,                       --  Ada.Real_Time.Time
+      RE_Time_First,                 --  Ada.Real_Time.Time_First
       RE_Time_Span,                  --  Ada.Real_Time.Time_Span
       RE_Set_True,                   --  Ada.Synchronous_Task_Control.Set_True
       RE_Integer_8,                  --  Interfaces.Integer_8
@@ -192,7 +194,7 @@ package Ocarina.Backends.PO_HI_Ada.Runtime is
       RE_Wide_Character,             --  Standard.Wide_Character
       RE_Suspend_Forever,            --  Suspenders.Suspend_Forever
       RE_Unblock_All_Tasks,          --  Suspenders.Unblock_All_Tasks
-      RE_System_Startup_Time,        --  Suspenders.System_Startup_Time
+      RE_System_Startup_Time,        --  Epoch.System_Startup_Time
       RE_Address,                    --  System.Address
       RE_Null_Address,               --  System.Null_Address
       RE_Default_Priority,           --  System.Default_Priority
@@ -227,6 +229,7 @@ package Ocarina.Backends.PO_HI_Ada.Runtime is
       RE_Seconds                    => RU_Ada_Real_Time,
       RE_Minutes                    => RU_Ada_Real_Time,
       RE_Time                       => RU_Ada_Real_Time,
+      RE_Time_First                 => RU_Ada_Real_Time,
       RE_Time_Span                  => RU_Ada_Real_Time,
       RE_Set_True                   => RU_Ada_Synchronous_Task_Control,
       RE_Integer_8                  => RU_Interfaces,
@@ -296,7 +299,7 @@ package Ocarina.Backends.PO_HI_Ada.Runtime is
       RE_Wide_Character             => RU_Standard,
       RE_Suspend_Forever            => RU_PolyORB_HI_Suspenders,
       RE_Unblock_All_Tasks          => RU_PolyORB_HI_Suspenders,
-      RE_System_Startup_Time        => RU_PolyORB_HI_Suspenders,
+      RE_System_Startup_Time        => RU_PolyORB_HI_Epoch,
       RE_Address                    => RU_System,
       RE_Null_Address               => RU_System,
       RE_Default_Priority           => RU_System,

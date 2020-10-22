@@ -2988,8 +2988,8 @@ package body Ocarina.Backends.PO_HI_Ada.Job is
                   Append_Node_To_List (N, Aggr);
 
                   --  We know that the last node added to the feature
-                  --  list of E is the one appended at exapnsion time
-                  --  and corresponding to the fake event part that
+                  --  list of E is the one appended at expansion time
+                  --  and corresponding to the fake event port that
                   --  will receive the dispatch messages from the
                   --  driver.
 
@@ -2999,7 +2999,7 @@ package body Ocarina.Backends.PO_HI_Ada.Job is
                   N := Map_Ada_Time (Get_Thread_Period (E));
                   Append_Node_To_List (N, Aggr);
 
-                  N := RE (RE_System_Startup_Time);
+                  N := RE (RE_Time_First);
                   Append_Node_To_List (N, Aggr);
 
                   N := RE (RE_True);
