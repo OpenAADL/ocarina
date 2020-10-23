@@ -24,12 +24,18 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v2
 
+      - uses: actions/cache@v2
+        with:
+          path: ./cached_gnat
+          key: ${{ runner.os }}-gnat-ce-2020
+
       - name: Install toolchain
         uses: ada-actions/toolchain@ce2020
         with:
           distrib: ${{ matrix.tag }}
           target: native
           community_year: ${{ matrix.year }}
+          install_dir: ./cached_gnat
 
       - name: Set up ocarina-builder
         run: >
@@ -38,10 +44,11 @@ jobs:
       - name: Build
         run: ( cd ocarina-build ; ./build_ocarina.sh --scenario=travis-ci )
 
-      - uses: actions/upload-artifact@v2
+      - name: Upload archive
+        uses: actions/upload-artifact@v2
         with:
           name: ocarina-linux
-          path: ocarina/**/*linux*.tgz
+          path: ocarina/*linux*.tgz
 
   macos:
     name: ${{ matrix.os }} / ${{ matrix.tag }} ${{ matrix.year }}
@@ -82,4 +89,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ocarina-linux
-          path: ocarina/**/*darwin*.tgz
+          path: ocarina/*darwin*.tgz
