@@ -7,13 +7,13 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  linux:
     name: ${{ matrix.os }} / ${{ matrix.tag }} ${{ matrix.year }}
     runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest]
+        os: ubuntu-latest
         tag:
           - community
         year:
@@ -29,6 +29,40 @@ jobs:
           distrib: ${{ matrix.tag }}
           target: native
           community_year: ${{ matrix.year }}
+
+      - name: Set up ocarina-builder
+        run: >
+          git clone https://github.com/OpenAADL/ocarina-build.git
+
+      - name: Build
+        run: ( cd ocarina-build ; ./build_ocarina.sh --scenario=travis-ci )
+
+  macos:
+    name: ${{ matrix.os }} / ${{ matrix.tag }} ${{ matrix.year }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: macos-latest
+        tag:
+          - community
+        year:
+          - 2020
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Install toolchain
+        uses: ada-actions/toolchain@ce2020
+        with:
+          distrib: ${{ matrix.tag }}
+          target: native
+          community_year: ${{ matrix.year }}
+
+      -name : Install autotools
+       run: >
+         brew install automake autoconf
 
       - name: Set up ocarina-builder
         run: >
