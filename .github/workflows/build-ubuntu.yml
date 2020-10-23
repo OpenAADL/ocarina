@@ -1,4 +1,4 @@
-name: Ocarina / Ubuntu latest
+name: Ocarina / Ubuntu (default GNAT)
 
 on:
   push:
