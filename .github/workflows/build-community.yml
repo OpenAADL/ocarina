@@ -82,4 +82,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ocarina-linux
-          path: **/*darwin*.tgz
+          path: ocarina/**/*darwin*.tgz
