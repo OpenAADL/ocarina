@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: Proof on ${{ matrix.tag }} ${{ matrix.year }}
+    name: Build on ${{ matrix.tag }} ${{ matrix.year }}
     runs-on: ubuntu-latest
 
     strategy:
