@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: {{ matrix.os }} / ${{ matrix.tag }} ${{ matrix.year }}
+    name: {{ matrix.os }} with ${{ matrix.tag }} ${{ matrix.year }}
     runs-on: ${{ matrix.os }}
 
     strategy:
