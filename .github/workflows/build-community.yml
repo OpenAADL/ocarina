@@ -1,4 +1,4 @@
-name: "Ocarina / GNAT CE 2020"
+name: Ocarina / GNAT CE 2020
 
 on:
   push:
@@ -22,16 +22,16 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v2
 
-        - name: Install toolchain
+      - name: Install toolchain
         uses: ada-actions/toolchain@ce2020
         with:
           distrib: ${{ matrix.tag }}
           target: native
           community_year: ${{ matrix.year }}
 
-    - name: Set up ocarina-builder
-      run: >
-       git clone https://github.com/OpenAADL/ocarina-build.git
+      - name: Set up ocarina-builder
+        run: >
+          git clone https://github.com/OpenAADL/ocarina-build.git
 
-    - name: Build
-      run: ( cd ocarina-build ; ./build_ocarina.sh --scenario=travis-ci )
+      - name: Build
+        run: ( cd ocarina-build ; ./build_ocarina.sh --scenario=travis-ci )
