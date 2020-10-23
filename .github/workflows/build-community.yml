@@ -62,9 +62,9 @@ jobs:
           target: native
           community_year: ${{ matrix.year }}
 
-      - name: Install autotools
+      - name: Install GNU tools
         run: >
-         brew install automake autoconf
+         brew install automake autoconf coreutils
 
       - name: Set up ocarina-builder
         run: >
