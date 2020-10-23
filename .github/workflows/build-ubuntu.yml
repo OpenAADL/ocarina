@@ -1,4 +1,4 @@
-name: Ocarina
+name: Ocarina / Ubuntu latest
 
 on:
   push:
@@ -14,9 +14,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Set up GNAT toolchain
+    - name: Set up GNAT toolchain (Ubuntu default distribution)
       run: >
-        sudo apt-get update && 
+        sudo apt-get update &&
         sudo apt-get install gnat gprbuild
 
     - name: Set up ocarina-builder
