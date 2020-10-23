@@ -60,7 +60,7 @@ jobs:
           target: native
           community_year: ${{ matrix.year }}
 
-      -name : Install autotools
+      - name : Install autotools
        run: >
          brew install automake autoconf
 
