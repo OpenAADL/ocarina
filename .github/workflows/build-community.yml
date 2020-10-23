@@ -61,7 +61,7 @@ jobs:
           community_year: ${{ matrix.year }}
 
       - name: Install autotools
-       run: >
+        run: >
          brew install automake autoconf
 
       - name: Set up ocarina-builder
