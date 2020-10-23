@@ -38,6 +38,12 @@ jobs:
       - name: Build
         run: ( cd ocarina-build ; ./build_ocarina.sh --scenario=travis-ci )
 
+      - name: Upload archive
+        uses: actions/upload-artifact@v2
+        with:
+          name: ocarina-linux
+          path: **/*linux*.tgz
+
   macos:
     name: ${{ matrix.os }} / ${{ matrix.tag }} ${{ matrix.year }}
     runs-on: ${{ matrix.os }}
@@ -72,3 +78,9 @@ jobs:
 
       - name: Build
         run: ( cd ocarina-build ; ./build_ocarina.sh --scenario=travis-ci )
+
+      - name: Upload archive
+        uses: actions/upload-artifact@v2
+        with:
+          name: ocarina-linux
+          path: **/*darwin*.tgz
