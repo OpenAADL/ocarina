@@ -8,12 +8,12 @@ on:
 
 jobs:
   build:
-    name: Build on ${{ matrix.tag }} ${{ matrix.year }}
+    name: {{ matrix.os }} / ${{ matrix.tag }} ${{ matrix.year }}
     runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
+        os: [windows-latest, ubuntu-latest]
         tag:
           - community
         year:
