@@ -93,5 +93,5 @@ jobs:
       - name: Upload archive
         uses: actions/upload-artifact@v2
         with:
-          name: ocarina-linux
+          name: ocarina-macos
           path:  /Users/runner/work/ocarina/ocarina/ocarina-build/ocarina/ocarina*darwin*.tgz
