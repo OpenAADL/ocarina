@@ -135,7 +135,7 @@ jobs:
           git clone https://github.com/OpenAADL/ocarina-build.git
 
       - name: Build
-        shell: bash
+        shell: msys2 {0}
         run: ( cd ocarina-build ; ./build_ocarina.sh --scenario=github )
 
       - name: Upload archive
