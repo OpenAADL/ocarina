@@ -78,6 +78,7 @@ jobs:
           distrib: ${{ matrix.tag }}
           target: native
           community_year: ${{ matrix.year }}
+          install_dir: ./cached_gnat
 
       - name: Install GNU tools
         run: >
@@ -124,6 +125,7 @@ jobs:
           distrib: ${{ matrix.tag }}
           target: native
           community_year: ${{ matrix.year }}
+          install_dir: ./cached_gnat
 
       - name: Install GNU tools
         uses: msys2/setup-msys2@v2
