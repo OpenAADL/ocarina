@@ -21,9 +21,6 @@ jobs:
           - 2020
 
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v2
-
       - uses: actions/cache@v2
         with:
           path: ./cached_gnat
@@ -37,6 +34,9 @@ jobs:
           community_year: ${{ matrix.year }}
           install_dir: ./cached_gnat
 
+      - name: Check out repository
+        uses: actions/checkout@v2
+
       - name: Set up ocarina-builder
         run: >
           git clone https://github.com/OpenAADL/ocarina-build.git
@@ -48,7 +48,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ocarina-linux
-          path: ocarina/*linux*.tgz
+          path: **/*linux*.tgz
 
   macos:
     name: ${{ matrix.os }} / ${{ matrix.tag }} ${{ matrix.year }}
@@ -64,8 +64,10 @@ jobs:
           - 2020
 
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: ./cached_gnat
+          key: ${{ runner.os }}-gnat-ce-2020
 
       - name: Install toolchain
         uses: ada-actions/toolchain@ce2020
@@ -78,6 +80,9 @@ jobs:
         run: >
          brew install automake autoconf coreutils
 
+      - name: Check out repository
+        uses: actions/checkout@v2
+
       - name: Set up ocarina-builder
         run: >
           git clone https://github.com/OpenAADL/ocarina-build.git
@@ -89,4 +94,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ocarina-linux
-          path: ocarina/*darwin*.tgz
+          path: **/*darwin*.tgz
