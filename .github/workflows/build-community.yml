@@ -144,7 +144,7 @@ jobs:
 
       - name: Build
         shell: msys2 {0}
-        run: ( cd ocarina-build ; ./build_ocarina.sh --scenario=github )
+        run: ( export PATH=/d/a/ocarina/ocarina/cached_gnat/gnat-2020-20200818-x86_64-windows-bin/bin:$PATH ; echo $PATH ; cd ocarina-build ; ./build_ocarina.sh --scenario=github )
 
       - name: Upload archive
         uses: actions/upload-artifact@v2
