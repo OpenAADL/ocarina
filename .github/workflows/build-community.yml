@@ -128,7 +128,8 @@ jobs:
       - name: Install GNU tools
         uses: msys2/setup-msys2@v2
         with:
-          install: autoconf automake
+          msystem: MSYS
+          install: autoconf automake git
 
       - name: Set up ocarina-builder
         run: >
