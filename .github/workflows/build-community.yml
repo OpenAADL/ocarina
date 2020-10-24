@@ -21,6 +21,9 @@ jobs:
           - 2020
 
     steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
       - uses: actions/cache@v2
         with:
           path: ./cached_gnat
@@ -33,9 +36,6 @@ jobs:
           target: native
           community_year: ${{ matrix.year }}
           install_dir: ./cached_gnat
-
-      - name: Check out repository
-        uses: actions/checkout@v2
 
       - name: Set up ocarina-builder
         run: >
@@ -64,6 +64,9 @@ jobs:
           - 2020
 
     steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
       - uses: actions/cache@v2
         with:
           path: ./cached_gnat
@@ -79,9 +82,6 @@ jobs:
       - name: Install GNU tools
         run: >
          brew install automake autoconf coreutils
-
-      - name: Check out repository
-        uses: actions/checkout@v2
 
       - name: Set up ocarina-builder
         run: >
