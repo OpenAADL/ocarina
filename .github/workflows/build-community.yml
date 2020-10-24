@@ -125,10 +125,6 @@ jobs:
           target: native
           community_year: ${{ matrix.year }}
 
-      - name: Install GNU tools
-        run: >
-         brew install automake autoconf coreutils
-
       - name: Set up ocarina-builder
         run: >
           git clone https://github.com/OpenAADL/ocarina-build.git
