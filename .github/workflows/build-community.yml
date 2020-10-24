@@ -42,7 +42,7 @@ jobs:
           git clone https://github.com/OpenAADL/ocarina-build.git
 
       - name: Build
-        run: ( cd ocarina-build ; ./build_ocarina.sh --scenario=travis-ci )
+        run: ( cd ocarina-build ; ./build_ocarina.sh --scenario=github )
 
       - name: Upload archive
         uses: actions/upload-artifact@v2
@@ -88,7 +88,7 @@ jobs:
           git clone https://github.com/OpenAADL/ocarina-build.git
 
       - name: Build
-        run: ( cd ocarina-build ; ./build_ocarina.sh --scenario=travis-ci )
+        run: ( cd ocarina-build ; ./build_ocarina.sh --scenario=github )
 
       - name: Upload archive
         uses: actions/upload-artifact@v2
