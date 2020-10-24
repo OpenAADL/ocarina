@@ -48,7 +48,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ocarina-linux
-          path: ocarina*linux*.tgz
+          path: /home/runner/work/ocarina/ocarina/ocarina-build/ocarina/ocarina*linux*.tgz
 
   macos:
     name: ${{ matrix.os }} / ${{ matrix.tag }} ${{ matrix.year }}
@@ -94,4 +94,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ocarina-linux
-          path: ocarina*darwin*.tgz
+          path:  /Users/runner/work/ocarina/ocarina/ocarina-build/ocarina/ocarina*darwin*.tgz
