@@ -126,8 +126,9 @@ jobs:
           community_year: ${{ matrix.year }}
 
       - name: Install GNU tools
-        run: >
-          pacman -S autoconf automake
+        uses: msys2/setup-msys2@v2
+        with:
+          install: autoconf automake base-devel
 
       - name: Set up ocarina-builder
         run: >
