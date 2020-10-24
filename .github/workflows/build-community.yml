@@ -135,6 +135,11 @@ jobs:
         run: >
           git clone https://github.com/OpenAADL/ocarina-build.git
 
+      - name: Debug
+        shell: bash
+        run: >
+          echo $PATH
+
       - name: Build
         shell: msys2 {0}
         run: ( cd ocarina-build ; ./build_ocarina.sh --scenario=github )
