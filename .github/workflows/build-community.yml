@@ -1,4 +1,4 @@
-name: Ocarina / GNAT CE 2020
+name: Ocarina / GNAT Community Edition
 
 on:
   push:
@@ -94,7 +94,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ocarina-macos
-          path:  /Users/runner/work/ocarina/ocarina/ocarina-build/ocarina/ocarina*darwin*.tgz
+          path: /Users/runner/work/ocarina/ocarina/ocarina-build/ocarina/ocarina*darwin*.tgz
 
   windows:
     name: ${{ matrix.os }} / ${{ matrix.tag }} ${{ matrix.year }}
@@ -124,6 +124,10 @@ jobs:
           distrib: ${{ matrix.tag }}
           target: native
           community_year: ${{ matrix.year }}
+
+      - name: Install GNU tools
+        run: >
+          pacman -S autoconf automake
 
       - name: Set up ocarina-builder
         run: >
