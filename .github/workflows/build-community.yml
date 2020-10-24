@@ -95,3 +95,50 @@ jobs:
         with:
           name: ocarina-macos
           path:  /Users/runner/work/ocarina/ocarina/ocarina-build/ocarina/ocarina*darwin*.tgz
+
+  windows:
+    name: ${{ matrix.os }} / ${{ matrix.tag }} ${{ matrix.year }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os:
+          - windows-latest
+        tag:
+          - community
+        year:
+          - 2020
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        with:
+          path: ./cached_gnat
+          key: ${{ runner.os }}-gnat-ce-2020
+
+      - name: Install toolchain
+        uses: ada-actions/toolchain@ce2020
+        with:
+          distrib: ${{ matrix.tag }}
+          target: native
+          community_year: ${{ matrix.year }}
+
+      - name: Install GNU tools
+        run: >
+         brew install automake autoconf coreutils
+
+      - name: Set up ocarina-builder
+        run: >
+          git clone https://github.com/OpenAADL/ocarina-build.git
+
+      - name: Build
+        shell: bash
+        run: ( cd ocarina-build ; ./build_ocarina.sh --scenario=github )
+
+      - name: Upload archive
+        uses: actions/upload-artifact@v2
+        with:
+          name: ocarina-windows
+          path:  /Users/runner/work/ocarina/ocarina/ocarina-build/ocarina/ocarina*darwin*.tgz
