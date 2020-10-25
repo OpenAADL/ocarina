@@ -33,6 +33,7 @@ with Ocarina.Namet;
 with Ocarina.Output;
 with Outfiles;
 
+with Ocarina.Backends.Utils;
 with Ocarina.Backends.LNT.Nodes;
 with Ocarina.Backends.LNT.Nutils;
 with Ocarina.Options;
@@ -49,6 +50,8 @@ use Ocarina.Backends.LNT.Nutils;
 use GNAT.OS_Lib;
 
 package body Ocarina.Backends.LNT.Printer is
+
+   use Ocarina.Backends.Utils;
 
    procedure Write (T : Token_Type; Need_Space : boolean := true);
    procedure Write_Line (T : Token_Type);
@@ -121,7 +124,7 @@ package body Ocarina.Backends.LNT.Printer is
    begin
       Get_Name_String (Name (Identifier (N)));
       Add_Str_To_Name_Buffer (Module_Suffix);
-      return Name_Find;
+      return Normalize_Name (Name_Find);
    end Get_File_Name;
 
    --------------------------
