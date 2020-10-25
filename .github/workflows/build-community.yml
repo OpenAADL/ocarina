@@ -150,4 +150,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ocarina-windows
-          path: /d/a/ocarina/ocarina/ocarina-build/ocarina/ocarina*windows*.zip
+          path: D:\a\ocarina\ocarina\ocarina-build\ocarina\ocarina*windows*.zip
