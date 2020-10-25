@@ -53,7 +53,8 @@ package body Outfiles is
             Fd := Create_File (Name_Buffer (1 .. Name_Len), Text);
 
             if Fd = Invalid_FD then
-               raise Program_Error;
+               raise Program_Error with "Invalid file name "
+                 & Name_Buffer (1 .. Name_Len);
             end if;
 
             --  Setting the output
