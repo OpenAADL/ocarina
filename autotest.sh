@@ -114,10 +114,6 @@ case "$(uname -s)" in
     CYGWIN*)
         path_conv="cygpath -w"
         ;;
-    MINGW32*|MSYS*)
-        echo "Unsupported build configuration"
-        exit -1
-        ;;
 esac
 
 # The default value of the path separator is ':'. By default we use
