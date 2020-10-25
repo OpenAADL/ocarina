@@ -131,7 +131,7 @@ jobs:
         uses: msys2/setup-msys2@v2
         with:
           msystem: MSYS
-          install: autoconf automake git make
+          install: autoconf automake git make zip
 
       - name: Set up ocarina-builder
         run: >
