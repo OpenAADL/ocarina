@@ -1,16 +1,16 @@
-Ocarina AADL toolset  |docs| 
+Ocarina AADL toolset  |docs|
 ====================
 
 Latest release: |release|
 
-About: 
+About:
 ------
 
 Ocarina is an AADL model processor, it acts as a "compiler" for AADL models.
 
 As a front-end, it supports
 
-* AADLv2 language from `AS5506C standard <http://standards.sae.org/as5506c/>`_, 
+* AADLv2 language from `AS5506C standard <http://standards.sae.org/as5506c/>`_,
 * the Behavioral annex from `AS5506/1 standard <http://standards.sae.org/as5506/a/>`_
 * the ARINC653 and the EMV2 annexes from `AS5506/1A standard <http://standards.sae.org/as5506/1a/>`_
 
@@ -35,11 +35,7 @@ Q&A:
 ----
 
 +----------------------------------+---------------+
-| Build status for Linux and OS X  ||build-status| |
-+----------------------------------+---------------+
 | Build status GitHub actions      ||github|       |
-+----------------------------------+---------------+
-| Build status for Windows         ||appveyor|     |
 +----------------------------------+---------------+
 | Code coverage                    | |coverage|    |
 +----------------------------------+---------------+
@@ -48,13 +44,7 @@ Q&A:
 
 .. |github| image:: https://github.com/OpenAADL/ocarina/workflows/Ocarina/badge.svg
   :target: https://github.com/OpenAADL/ocarina/actions?query=workflow%3AOcarina
-  
-.. |build-status| image:: https://travis-ci.org/OpenAADL/ocarina.svg?branch=master 
-  :target: https://travis-ci.org/OpenAADL/ocarina
 
-.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/openaadl/ocarina
-  :target: https://ci.appveyor.com/project/yoogx/ocarina
-  
 .. |docs| image:: https://readthedocs.org/projects/docs/badge/?version=latest
     :alt: Documentation Status
     :scale: 100%
@@ -67,7 +57,7 @@ Q&A:
 .. |release| image:: https://img.shields.io/github/release/OpenAADL/ocarina.svg
   :target: https://github.com/OpenAADL/ocarina/releases
   :alt: GitHub Releases
-  
+
 .. |cii| image:: https://bestpractices.coreinfrastructure.org/projects/1019/badge
   :target: https://bestpractices.coreinfrastructure.org/projects/1019
   :alt: CII Best practice
