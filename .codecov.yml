@@ -1,4 +1,6 @@
 ignore:
   - "tools/mknodes"
+  - "src/frontends/aadl_ema"
+  - "src/frontends/ao4aadl"
   - "src/transfo"
   - "doc"
