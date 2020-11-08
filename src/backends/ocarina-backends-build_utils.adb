@@ -2044,7 +2044,8 @@ package body Ocarina.Backends.Build_Utils is
          Write_Str ("$(CC) -c $(INCLUDE) $(CFLAGS) " &
                       "-I""$(RUNTIME_PATH)/include"" ");
          if Scenario_Dir /= null then
-            Write_Str ("-I""" & Scenario_Dir.all & """ ");
+            Write_Str ("-I""" & Remove_Directory_Separator (Scenario_Dir.all)
+                         & """ ");
          end if;
          Write_Line (" $< -o $@");
          Write_Eol;
@@ -2081,7 +2082,8 @@ package body Ocarina.Backends.Build_Utils is
          Write_Str ("$(CXX) -c $(INCLUDE) $(CFLAGS) " &
                       "-I""$(RUNTIME_PATH)/include"" ");
          if Scenario_Dir /= null then
-            Write_Str ("-I""" & Scenario_Dir.all & """ ");
+            Write_Str ("-I""" & Remove_Directory_Separator (Scenario_Dir.all)
+                         & """ ");
          end if;
          Write_Line (" $< -o $@");
          Write_Eol;

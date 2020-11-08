@@ -299,7 +299,8 @@ package body Ocarina.Backends.PO_HI_C is
 
       if Scenario_Dir /= null then
          Write_Space;
-         Write_Str ("""-I" & Scenario_Dir.all & """");
+         Write_Str ("""-I" & Remove_Directory_Separator (Scenario_Dir.all)
+                      & """");
       end if;
 
       if Length (User_Source_Dirs) > 0 then
