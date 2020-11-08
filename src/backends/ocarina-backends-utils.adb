@@ -227,6 +227,16 @@ package body Ocarina.Backends.Utils is
       return Name_Find;
    end Remove_Directory_Separator;
 
+   function Remove_Directory_Separator (Path : String) return String is
+   begin
+      if Path'Length >= 1 and then
+        Path (Path'Last) = Directory_Separator
+      then
+         return Path (Path'First .. Path'Last - 1);
+      end if;
+      return Path;
+   end Remove_Directory_Separator;
+
    --------------------
    -- Copy_Directory --
    --------------------

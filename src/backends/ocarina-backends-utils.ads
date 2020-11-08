@@ -64,6 +64,7 @@ package Ocarina.Backends.Utils is
    --  string.
 
    function Remove_Directory_Separator (Path : Name_Id) return Name_Id;
+   function Remove_Directory_Separator (Path : String) return String;
    --  If there is a directory separator at the end of the path, then
    --  remove it and return the result. Else, return the same string.
 
