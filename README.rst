@@ -24,7 +24,7 @@ As a back-end, it supports
 
 It can be integrated with the `AADLib <https://github.com/OpenAADL/AADLib>`_ library of AADL components.
 
-It can also be embedded in AADL editors: in `OSATE <http://osate.org>`_ using the `OSATE2 plugin <https://github.com/OpenAADL/osate2-ocarina>`_, and `AADL Inspector <http://www.ellidiss.fr/public/wiki/wiki/inspector>`_
+It can also be embedded in AADL editors: in `OSATE <http://osate.org>`_ using the `OSATE2 plugin <https://github.com/OpenAADL/osate2-ocarina>`_, and `AADL Inspector <http://www.ellidiss.fr/public/wiki/wiki/inspector>`_ or advanced system processing suite like `TASTE by the European Space Agency <https://www.taste.tools>`_
 
 Installation:
 -------------
