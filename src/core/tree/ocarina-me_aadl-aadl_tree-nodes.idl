@@ -97,7 +97,7 @@ module Ocarina::ME_AADL::AADL_Tree::Nodes {
 
   interface AADL_Entity : Node_Id {
     Node_Id  Next_Entity;	// Used by the Ocarina core to build
-				// list of elements
+                                // list of elements
   };
 
   interface Named_AADL_Entity : AADL_Entity {
@@ -109,7 +109,7 @@ module Ocarina::ME_AADL::AADL_Tree::Nodes {
     Node_Id  Property_Scope;
     boolean  Is_Private;	 // for packages
     Node_Id  First_Visited_Node; // When we travel accross the tree, this field
-				 // contains the first visited node
+                                 // contains the first visited node
     Node_Id  Namespace;
     Node_Id  Default_Instance;
   };
@@ -405,7 +405,7 @@ module Ocarina::ME_AADL::AADL_Tree::Nodes {
   interface Feature : Subclause {
     boolean  Is_Implicit_Inverse; // used in port group types
     Node_Id  Inversed_Entity;	  // if a feature can be inversed in a
-				  // port group, points to its inverse
+                                  // port group, points to its inverse
   };
 
   interface Refinable_Feature : Feature {
@@ -608,8 +608,8 @@ module Ocarina::ME_AADL::AADL_Tree::Nodes {
   //       -[ unique_port_identifier { , unique_port_identifier }* ]->
   //       destination_mode_identifier ;
 
-  // Store transition identifier 
-  // interface Mode_Transition : Node_Id { 
+  // Store transition identifier
+  // interface Mode_Transition : Node_Id {
   interface Mode_Transition : Refinable_Feature {
     List_Id  Source_Modes;
     List_Id  Triggers;
@@ -1208,7 +1208,7 @@ module Ocarina::ME_AADL::AADL_Tree::Nodes {
 
   interface Property_Value : Node_Id {
     Node_Id  Value_Container; // the parent node, in which the value
-			      // is declared
+                              // is declared
     Node_Id  Single_Value;
     List_Id  Multi_Value;
     Node_Id  Expanded_Single_Value; // without property terms

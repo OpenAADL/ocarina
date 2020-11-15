@@ -1,0 +1,17 @@
+package foo
+public
+
+  system t end t;
+
+  system s
+  modes
+    m1 : mode;
+    m2 : mode;
+  end s;
+
+  system implementation s.impl
+  subcomponents
+    t : system t in modes (m1);
+  end s.impl;
+
+end foo;

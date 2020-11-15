@@ -1781,7 +1781,7 @@ package body Ocarina.Backends.PO_HI_Ada.Job is
 
                         if Present (AIN.In_Modes (Call_Seq))
                           and then not AINU.Is_Empty
-                            (ATN.Modes (AIN.In_Modes (Call_Seq)))
+                            (AIN.Modes (AIN.In_Modes (Call_Seq)))
                         then
                            --  Generate a case statement alternative that
                            --  handles this sequence.
@@ -1789,7 +1789,7 @@ package body Ocarina.Backends.PO_HI_Ada.Job is
                            N :=
                              Make_Case_Statement_Alternative
                                (In_Modes_To_Choices
-                                  (ATN.Modes (In_Modes (Call_Seq))),
+                                  (AIN.Modes (In_Modes (Call_Seq))),
                                 Alt_Sts);
                            Append_Node_To_List (N, Alternatives);
                            CS_Cnt := CS_Cnt + 1;

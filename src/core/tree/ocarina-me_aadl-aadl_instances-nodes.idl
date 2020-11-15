@@ -87,14 +87,14 @@ module Ocarina::ME_AADL::AADL_Instances::Nodes {
 
 /**********************************************************************
  ** These following interfaces file describe the AADL instance tree.  **
- ** The instance tree describes how the nodes of the AADL syntax      ** 
+ ** The instance tree describes how the nodes of the AADL syntax      **
  ** tree have been linked toghether to form a particular model        **
  ** (an instance).                                                    **
  **********************************************************************/
 
   //   Node_Container:
   //
-  //      
+  //
 
   interface Node_Container : Node_Id {
     Node_Id  Item;
@@ -139,11 +139,11 @@ module Ocarina::ME_AADL::AADL_Instances::Nodes {
   /* A component instance corresponds to a root system, a data
    * component declaration, a subprogram call or to a subclause
    * (subcomponent process, subcomponent thread, subcomponent data,
-   * subcomponent bus, port, parameter). 
+   * subcomponent bus, port, parameter).
    *
    * Note: two subcomponents having the same component type leads to
    * the creation of two different instances because they may have
-   * different properties. 
+   * different properties.
    */
 
   interface Component_Instance : Declaration_Instance {
@@ -181,6 +181,8 @@ module Ocarina::ME_AADL::AADL_Instances::Nodes {
 
     Node_Id  In_Modes;
     // The modes this subcomponent instance is valid on
+    // Note: this node points to a declara
+
   };
 
   interface Namespace_Instance : Entity_Instance {
@@ -278,7 +280,7 @@ module Ocarina::ME_AADL::AADL_Instances::Nodes {
     Node_Id  Destination_Mode;
     //  Reference instance to the mode that
   };
- 
+
   interface Connection_Instance : Declaration_Instance {
     Node_Id  Source;
     // Entity_reference_instance
@@ -311,10 +313,15 @@ module Ocarina::ME_AADL::AADL_Instances::Nodes {
 
   interface Annex_Instance : Named_AADL_Entity {
     Node_Id  In_Modes;
-    
+
     Node_Id  Corresponding_Annex;
     // Root of the tree of the parsed annex. This node is not an AADL
     // tree node.
   };
-  
+
+  interface In_Modes : Node_Id {
+     List_Id  Modes;
+  };
+
+
 };

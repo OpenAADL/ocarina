@@ -117,12 +117,12 @@ package body Ocarina.ME_AADL.AADL_Instances.Entities.Properties is
                --      element of the list.
 
                if No (AIN.In_Modes (List_Node))
-                 or else AINU.Is_Empty (ATN.Modes (AIN.In_Modes (List_Node)))
+                 or else AINU.Is_Empty (AIN.Modes (AIN.In_Modes (List_Node)))
                  or else In_Mode = No_Name
                then
                   return List_Node;
                else
-                  M := AIN.First_Node (ATN.Modes (AIN.In_Modes (List_Node)));
+                  M := AIN.First_Node (AIN.Modes (AIN.In_Modes (List_Node)));
 
                   while Present (M) loop
                      --  Depending on the nature of the traversed tree

@@ -1,0 +1,94 @@
+test_modes.aadl:14:05: warning: t references a component type
+ocarina: Total: 0 error and 1 warning
+1 architecture instance 
+Root_System Node_Id 6
+6 component instance test_modes.aadl:12:03
+ Identifier Node_Id 8
+ 8 identifier test_modes.aadl:12:27
+  Display_Name Name_Id "s.impl"
+  Corresponding_Entity Node_Id 6
+  Scope_Entity Node_Id 0
+  Backend_Node Node_Id 0
+ Corresponding_Declaration Node_Id 1509
+ Properties List_Id 0
+ Is_Private Boolean FALSE
+ Features List_Id 0
+ Subcomponents List_Id 16
+ 17 subcomponent instance test_modes.aadl:14:05
+  Identifier Node_Id 18
+  18 identifier test_modes.aadl:14:05
+   Display_Name Name_Id "t"
+   Corresponding_Entity Node_Id 1518
+   Scope_Entity Node_Id 0
+   Backend_Node Node_Id 0
+  Corresponding_Declaration Node_Id 1518
+  Parent_Component Node_Id 6
+  Corresponding_Instance Node_Id 20
+  20 component instance test_modes.aadl:4:03
+   Identifier Node_Id 22
+   22 identifier test_modes.aadl:4:10
+    Display_Name Name_Id "t"
+    Corresponding_Entity Node_Id 20
+    Scope_Entity Node_Id 0
+    Backend_Node Node_Id 0
+   Corresponding_Declaration Node_Id 1490
+   Properties List_Id 0
+   Is_Private Boolean FALSE
+   Features List_Id 0
+   Subcomponents List_Id 0
+   Modes List_Id 0
+   Mode_transitions List_Id 0
+   Connections List_Id 0
+   Calls List_Id 0
+   Flows List_Id 0
+   Annexes List_Id 23
+   Parent_Subcomponent Node_Id 17
+   Namespace Node_Id 3
+  Destinations List_Id 19
+  In_Modes Node_Id 24
+  24 in modes test_modes.aadl:14:18
+   Modes List_Id 25
+   26 node container test_modes.aadl:8:05
+    Item Node_Id 11
+    Extra_Item Node_Id 0
+ Modes List_Id 9
+ 11 mode instance test_modes.aadl:8:05
+  Identifier Node_Id 12
+  12 identifier test_modes.aadl:8:05
+   Display_Name Name_Id "m1"
+   Corresponding_Entity Node_Id 1500
+   Scope_Entity Node_Id 0
+   Backend_Node Node_Id 0
+  Corresponding_Declaration Node_Id 1500
+  Properties List_Id 0
+  Parent_Component Node_Id 6
+  Is_Initial Boolean FALSE
+ 13 mode instance test_modes.aadl:9:05
+  Identifier Node_Id 14
+  14 identifier test_modes.aadl:9:05
+   Display_Name Name_Id "m2"
+   Corresponding_Entity Node_Id 1504
+   Scope_Entity Node_Id 0
+   Backend_Node Node_Id 0
+  Corresponding_Declaration Node_Id 1504
+  Properties List_Id 0
+  Parent_Component Node_Id 6
+  Is_Initial Boolean FALSE
+ Mode_transitions List_Id 10
+ Connections List_Id 0
+ Calls List_Id 0
+ Flows List_Id 0
+ Annexes List_Id 27
+ Parent_Subcomponent Node_Id 0
+ Namespace Node_Id 3
+Namespaces List_Id 2
+3 namespace instance 
+ Identifier Node_Id 5
+ 5 identifier test_modes.aadl:1:09
+  Display_Name Name_Id "foo"
+  Corresponding_Entity Node_Id 1485
+  Scope_Entity Node_Id 0
+  Backend_Node Node_Id 0
+ Corresponding_Declaration Node_Id 1485
+ Declarations List_Id 4
+Unnamed_Namespace Node_Id 0

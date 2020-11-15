@@ -474,9 +474,9 @@ package body Ocarina.Instances.Components is
 
             while Present (List_Node) loop
                if No
-                   (Get_First_Homonym_Instance
-                      (AIN.Connections (New_Instance),
-                       List_Node))
+                 (Get_First_Homonym_Instance
+                    (AIN.Connections (New_Instance),
+                     List_Node))
                then
                   Instance_Node :=
                     Instantiate_Connection
@@ -498,81 +498,84 @@ package body Ocarina.Instances.Components is
             end loop;
          end if;
 
-         --  Modes
+      end if;
 
-         if not ATNU.Is_Empty (ATN.Modes (Component)) then
-            if AIN.Modes (New_Instance) = No_List then
-               AIN.Set_Modes (New_Instance, New_List (K_List_Id, No_Location));
-            end if;
+      --  Modes
 
-            if AIN.Mode_transitions (New_Instance) = No_List then
-               Set_Mode_transitions
-                 (New_Instance,
-                  New_List (K_List_Id, No_Location));
-            end if;
-
-            --  We must instantiate all modes before any mode
-            --  transition since the mode transition instantiation
-            --  uses the instantiated modes.
-
-            List_Node := ATN.First_Node (ATN.Modes (Component));
-
-            while Present (List_Node) loop
-               if ATN.Kind (List_Node) = K_Mode then
-                  Instance_Node :=
-                    Instantiate_Mode (Instance_Root, New_Instance, List_Node);
-
-                  --  Apply the properties to the instantiated mode
-
-                  if Present (Instance_Node) then
-                     Success :=
-                       Apply_Properties
-                         (Instance_Root,
-                          Instance_Node,
-                          ATN.Properties (List_Node),
-                          Override_Mode => True)
-                       and then Success;
-                  end if;
-
-                  if Present (Instance_Node) then
-                     Append_Node_To_List
-                       (Instance_Node,
-                        AIN.Modes (New_Instance));
-                  else
-                     Display_Instantiation_Error (List_Node);
-                     Success := False;
-                  end if;
-               end if;
-
-               List_Node := ATN.Next_Node (List_Node);
-            end loop;
-
-            --  Mode transitions
-
-            List_Node := ATN.First_Node (ATN.Modes (Component));
-
-            while Present (List_Node) loop
-               if Kind (List_Node) = K_Mode_Transition then
-                  Instance_Node :=
-                    Instantiate_Mode_Transition
-                      (Instance_Root,
-                       New_Instance,
-                       List_Node);
-
-                  if Present (Instance_Node) then
-                     Append_Node_To_List
-                       (Instance_Node,
-                        AIN.Mode_transitions (New_Instance));
-                  else
-                     Display_Instantiation_Error (Component);
-                     Success := False;
-                  end if;
-               end if;
-
-               List_Node := ATN.Next_Node (List_Node);
-            end loop;
+      if not ATNU.Is_Empty (ATN.Modes (Component)) then
+         if AIN.Modes (New_Instance) = No_List then
+            AIN.Set_Modes (New_Instance, New_List (K_List_Id, No_Location));
          end if;
 
+         if AIN.Mode_transitions (New_Instance) = No_List then
+            Set_Mode_transitions
+              (New_Instance,
+               New_List (K_List_Id, No_Location));
+         end if;
+
+         --  We must instantiate all modes before any mode
+         --  transition since the mode transition instantiation
+         --  uses the instantiated modes.
+
+         List_Node := ATN.First_Node (ATN.Modes (Component));
+
+         while Present (List_Node) loop
+            if ATN.Kind (List_Node) = K_Mode then
+               Instance_Node :=
+                 Instantiate_Mode (Instance_Root, New_Instance, List_Node);
+
+               --  Apply the properties to the instantiated mode
+
+               if Present (Instance_Node) then
+                  Success :=
+                    Apply_Properties
+                      (Instance_Root,
+                       Instance_Node,
+                       ATN.Properties (List_Node),
+                       Override_Mode => True)
+                      and then Success;
+               end if;
+
+               if Present (Instance_Node) then
+                  Append_Node_To_List
+                    (Instance_Node,
+                     AIN.Modes (New_Instance));
+               else
+                  Display_Instantiation_Error (List_Node);
+                  Success := False;
+               end if;
+            end if;
+
+            List_Node := ATN.Next_Node (List_Node);
+         end loop;
+
+         --  Mode transitions
+
+         List_Node := ATN.First_Node (ATN.Modes (Component));
+
+         while Present (List_Node) loop
+            if Kind (List_Node) = K_Mode_Transition then
+               Instance_Node :=
+                 Instantiate_Mode_Transition
+                   (Instance_Root,
+                    New_Instance,
+                    List_Node);
+
+               if Present (Instance_Node) then
+                  Append_Node_To_List
+                    (Instance_Node,
+                     AIN.Mode_transitions (New_Instance));
+               else
+                  Display_Instantiation_Error (Component);
+                  Success := False;
+               end if;
+            end if;
+
+            List_Node := ATN.Next_Node (List_Node);
+         end loop;
+      end if;
+
+      if Kind (Component) = K_Component_Implementation then
          --  At this point, we have all necessary elements to solve
          --  the "in_modes" clauses of subcomponents, call sequences,
          --  connections. "in modes" of property association is done
