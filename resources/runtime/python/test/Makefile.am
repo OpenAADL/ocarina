@@ -1,6 +1,7 @@
 ifeq ($(PYTHON_TEST), yes)
 TESTS = metrics test_api
-endif
+fi
+
 
 check-local: $(TEST)
 
