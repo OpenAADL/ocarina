@@ -180,9 +180,9 @@ $(top_builddir)/%.ads $(top_builddir)/%.adb: $(top_srcdir)/%.idl $(top_builddir)
 python_tree:
 	echo "*****"
 	$(MKNODES_BUILD_DIR)/mknodes -t python $(top_srcdir)/src/core/tree/ocarina-me_aadl-aadl_tree-nodes.idl	\
-	 -D $(top_builddir)/src/python
+	 -D $(top_builddir)/resources/runtime/python/ocarina
 	$(MKNODES_BUILD_DIR)/mknodes -t python $(top_srcdir)/src/core/tree/ocarina-me_aadl-aadl_instances-nodes.idl	\
-	 -D $(top_builddir)/src/python
+	 -D $(top_builddir)/resources/runtime/python/ocarina
 	echo "*****"
 
 dist-hook: build-mknodes $(TREE_ADA_SPECS) $(TREE_ADA_BODIES)
