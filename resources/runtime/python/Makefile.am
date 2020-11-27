@@ -19,4 +19,6 @@ ocarina_python = ${shell $(CYGPATH_U) '$(includedir)/ocarina/runtime/python'}
 
 install-data-local:
 	$(INSTALL) -d $(DESTDIR)$(ocarina_python)
-	pip3 install . -t $(DESTDIR)$(ocarina_python) --upgrade
+	if [ x"$$PYTHON°TEST" = x"yes" ]; then \
+		pip3 install . -t $(DESTDIR)$(ocarina_python) --upgrade ; \
+	fi
