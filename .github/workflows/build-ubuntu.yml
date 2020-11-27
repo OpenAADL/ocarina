@@ -1,4 +1,4 @@
-name: Ocarina / Ubuntu (default GNAT)
+name: Ocarina + Python / Ubuntu (default GNAT)
 
 on:
   push:
@@ -14,10 +14,13 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
+    - name: Set up Python
+      uses: actions/setup-python@v2
+
     - name: Set up GNAT toolchain (Ubuntu default distribution)
       run: >
         sudo apt-get update &&
-        sudo apt-get install gnat gprbuild
+        sudo apt-get install gnat gprbuild libgnatcoll-python18-dev
 
     - name: Set up ocarina-builder
       run: >
