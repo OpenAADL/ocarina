@@ -47,7 +47,6 @@ with Ocarina.Analyzer;
 with Ocarina.Options;  use Ocarina.Options;
 with Ocarina.Parser;   use Ocarina.Parser;
 
-with GNAT.Compiler_Version;
 with GNAT.OS_Lib;      use GNAT.OS_Lib;
 with GNAT.Source_Info;
 with Ada.Command_Line; use Ada.Command_Line;
@@ -287,8 +286,6 @@ package body Ocarina.Configuration is
    -------------
 
    procedure Version is
-      package Compiler_Version is new GNAT.Compiler_Version;
-
    begin
       Write_Line
         ("Ocarina " & Ocarina_Version & " (" & Ocarina_Revision & ")");
@@ -297,7 +294,6 @@ package body Ocarina.Configuration is
          Ocarina_Last_Configure_Year &
          " ESA & ISAE");
       Write_Line ("Build date: " & Ocarina_Last_Configure_Date);
-      Write_Line ("Compiled with: " & Compiler_Version.Version);
    end Version;
 
 end Ocarina.Configuration;
