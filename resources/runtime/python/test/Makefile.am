@@ -1,12 +1,11 @@
-ifeq ($(PYTHON_TEST), yes)
-TESTS = metrics test_api
-fi
-
-
-check-local: $(TEST)
+check-local: metrics test_api
 
 metrics:
-	 ./metrics.py -a rma.aadl -r rma.impl
+	if [ x"$$PYTHON°TEST" = x"yes" ]; then \
+		./metrics.py -a rma.aadl -r rma.impl ; \
+	fi
 
 test_api:
-	./test.py
+	if [ x"$$PYTHON°TEST" = x"yes" ]; then \
+			./test.py ; \
+	fi
