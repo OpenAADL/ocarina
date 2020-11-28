@@ -380,13 +380,13 @@ if test ${dotests} = "true" ; then
                     ${dos2unix} ${actual_output} >/dev/null 2>&1
                     ${scriptdir}/tools/compare.py \
                         ${expected_output} \
-                        ${actual_output} >/dev/null 2>&1
+                        ${actual_output} 2>&1
                     result=$?
 
                 else
                     ${scriptdir}/tools/compare.py \
                         ${file} \
-                        ${output_file} >> /dev/null 2>&1
+                        ${output_file} 2>&1
                     result=$?
                 fi
 
