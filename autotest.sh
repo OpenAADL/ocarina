@@ -68,6 +68,8 @@ failed () {
         echo_log "----------------------- actual output ---------------------------"
         cat_log $4
         echo_log "-----------------------------------------------------------------"
+        diff $3 $4
+        echo_log "-----------------------------------------------------------------"
     elif [ -f "$4" ]; then
         echo_log "--------------------------- output ------------------------------"
         cat_log $4
@@ -378,13 +380,13 @@ if test ${dotests} = "true" ; then
                     ${dos2unix} ${actual_output} >/dev/null 2>&1
                     ${scriptdir}/tools/compare.py \
                         ${expected_output} \
-                        ${actual_output} >/dev/null 2>&1
+                        ${actual_output} 2>&1
                     result=$?
 
                 else
                     ${scriptdir}/tools/compare.py \
                         ${file} \
-                        ${output_file} >> /dev/null 2>&1
+                        ${output_file} 2>&1
                     result=$?
                 fi
 
