@@ -693,6 +693,7 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
                Aggregates  : List_Id;
                Ref_Message : Boolean := False;
                F           : Node_Id;
+               Cases       : Integer := 0;
             begin
                --  If the thread has not IN port, there is nothing to
                --  unmarshall
@@ -781,6 +782,7 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
                                 Extract_Enumerator (F, False)),
                              Statements);
                         Append_Node_To_List (N, Alternatives);
+                        Cases := Cases + 1;
                      end if;
 
                      F := Next_Node (F);
@@ -798,8 +800,6 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
                   end if;
 
                   declare
-                     --  Declarations : constant List_Id
-                     --    := New_List (ADN.K_Declaration_List);
                      Elsif_Statements : constant List_Id :=
                        New_List (ADN.K_List_Id);
                   begin
@@ -812,20 +812,40 @@ package body Ocarina.Backends.PO_HI_Ada.Marshallers is
                        (Elsif_Statements,
                         ADN.Next_Node (ADN.First_Node (Alternatives)));
 
-                     N :=
-                       Make_If_Statement
-                         (Condition =>
-                            ADN.Condition (ADN.First_Node (Alternatives)),
-                          Then_Statements =>
-                            ADN.Then_Statements
-                              (ADN.First_Node (Alternatives)),
-                          Elsif_Statements => Elsif_Statements);
+                     if Cases > 1 then
+                        --  We have more than one port to consider,
+                        --  generate a if/elsif
+                        N :=
+                        Make_If_Statement
+                           (Condition =>
+                              ADN.Condition (ADN.First_Node (Alternatives)),
+                           Then_Statements =>
+                              ADN.Then_Statements
+                                 (ADN.First_Node (Alternatives)),
+                           Elsif_Statements => Elsif_Statements);
 
-                     N :=
-                       Make_Subprogram_Implementation
-                         (Spec,
-                          Declarations,
-                          Make_List_Id (N));
+                        N :=
+                        Make_Subprogram_Implementation
+                           (Spec,
+                           Declarations,
+                           Make_List_Id (N));
+                     else
+                        --  Only one port to unmarshall, we generate
+                        --  minimal code
+                        N :=
+                        Make_Pragma_Statement
+                           (Pragma_Unreferenced,
+                           Make_List_Id
+                             (Make_Defining_Identifier (PN (P_Port))));
+                        Append_Node_To_List (N, Declarations);
+
+                        N :=
+                        Make_Subprogram_Implementation
+                           (Spec,
+                           Declarations,
+                           ADN.Then_Statements
+                              (ADN.First_Node (Alternatives)));
+                     end if;
                   end;
 
                else
