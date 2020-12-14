@@ -1528,11 +1528,6 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
 
          declare
             F                       : Node_Id;
-            N_Destination_Aggregate : constant List_Id :=
-              New_List (ADN.K_Element_List);
-            Destination_Aggregate : constant List_Id :=
-              New_List (ADN.K_Element_List);
-
             Statements : List_Id :=
               New_List (ADN.K_Statement_List);
             Alternatives : constant List_Id := New_List (ADN.K_List_Id);
@@ -1600,25 +1595,6 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                              (N,
                               ADN.Statements (Current_Package));
 
-                           N :=
-                             Make_Element_Association
-                               (Map_Ada_Defining_Identifier (F),
-                                Make_Literal
-                                  (New_Integer_Value
-                                     (Unsigned_Long_Long
-                                        (AINU.Length (Destinations)),
-                                      1,
-                                      10)));
-                           Append_Node_To_List (N, N_Destination_Aggregate);
-
-                           N :=
-                             Make_Element_Association
-                               (Map_Ada_Defining_Identifier (F),
-                                Make_Attribute_Designator
-                                  (Make_Designator (Map_Destination_Name (F)),
-                                   A_Address));
-                           Append_Node_To_List (N, Destination_Aggregate);
-
                            Statements := Make_List_Id
                              (Make_Pragma_Statement
                                 (Pragma_Unreferenced,
@@ -1646,18 +1622,6 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                                 (Map_Ada_Defining_Identifier (F)),
                               Statements);
                            Append_Node_To_List (N, Alternatives);
-
-                           N :=
-                             Make_Element_Association
-                               (Map_Ada_Defining_Identifier (F),
-                                Make_Literal (New_Integer_Value (0, 1, 10)));
-                           Append_Node_To_List (N, N_Destination_Aggregate);
-
-                           N :=
-                             Make_Element_Association
-                               (Map_Ada_Defining_Identifier (F),
-                                RE (RE_Null_Address));
-                           Append_Node_To_List (N, Destination_Aggregate);
                         end if;
 
                      end;
@@ -1678,20 +1642,7 @@ package body Ocarina.Backends.PO_HI_Ada.Activity is
                           (Map_Ada_Defining_Identifier (F)),
                         Statements);
                      Append_Node_To_List (N, Alternatives);
-
-                     N :=
-                       Make_Element_Association
-                         (Map_Ada_Defining_Identifier (F),
-                          Make_Literal (New_Integer_Value (0, 1, 10)));
-                     Append_Node_To_List (N, N_Destination_Aggregate);
-
-                     N :=
-                       Make_Element_Association
-                         (Map_Ada_Defining_Identifier (F),
-                          RE (RE_Null_Address));
-                     Append_Node_To_List (N, Destination_Aggregate);
                   end if;
-
                end if;
 
                F := Next_Node (F);
