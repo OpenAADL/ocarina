@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---         Copyright (C) 2011-2019 ESA & ISAE, 2019-2020 OpenAADL           --
+--         Copyright (C) 2011-2019 ESA & ISAE, 2019-2021 OpenAADL           --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -153,6 +153,8 @@ package body Ocarina.Backends.AADL_XML.Main is
    -- Visit_Component --
    ---------------------
 
+   Root_System_Processed : boolean := False;
+
    procedure Visit_Component (E : Node_Id) is
       Category : constant Component_Category := Get_Category_Of_Component (E);
       N        : Node_Id;
@@ -171,7 +173,10 @@ package body Ocarina.Backends.AADL_XML.Main is
       AADL_Property_Value : Node_Id;
 
    begin
-      if Category = CC_System then
+      if Category = CC_System and then
+        not Root_System_Processed
+      then
+         Root_system_Processed := True;
          P := Map_HI_Node (E);
          Push_Entity (P);
 
