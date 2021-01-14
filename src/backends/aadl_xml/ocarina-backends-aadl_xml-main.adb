@@ -153,8 +153,6 @@ package body Ocarina.Backends.AADL_XML.Main is
    -- Visit_Component --
    ---------------------
 
-   Root_System_Processed : boolean := False;
-
    procedure Visit_Component (E : Node_Id) is
       Category : constant Component_Category := Get_Category_Of_Component (E);
       N        : Node_Id;
@@ -174,9 +172,8 @@ package body Ocarina.Backends.AADL_XML.Main is
 
    begin
       if Category = CC_System and then
-        not Root_System_Processed
+        E = Root_System_Node
       then
-         Root_system_Processed := True;
          P := Map_HI_Node (E);
          Push_Entity (P);
 
@@ -553,7 +550,9 @@ package body Ocarina.Backends.AADL_XML.Main is
          end loop;
       end if;
 
-      if Category = CC_System then
+      if Category = CC_System and then
+        E = Root_System_Node
+      then
          Pop_Entity;
          Pop_Entity; --  A
       end if;
