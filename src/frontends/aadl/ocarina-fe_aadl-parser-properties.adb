@@ -725,23 +725,27 @@ package body Ocarina.FE_AADL.Parser.Properties is
       Scan_Token;
 
       if Token = T_List then
-         Is_A_List    := True;
-         Multiplicity := 1;
+         Is_A_List := True;
 
-         Save_Lexer (Loc);
-         Scan_Token;
+         loop
+            -- Parse nested "list of"
+            Multiplicity := Multiplicity + 1;
 
-         if Token = T_Of then
+            Save_Lexer (Loc);
             Scan_Token;
-            if Token /= T_List then
-               Restore_Lexer (Loc);
+            if Token = T_Of then
+               Scan_Token;
+               if Token /= T_List then
+                  Restore_Lexer (Loc);
+                  exit;
+               end if;
             else
-               Multiplicity := 2; -- XXX shall we iterate? BNF says yes
+               Restore_Lexer (Loc);
+               exit;
             end if;
-         else
-            Restore_Lexer (Loc);
-         end if;
+         end loop;
 
+         -- Current token has be to "list" for P_Multi_Valued_Property
          Property_Definition_Value := P_Multi_Valued_Property;
          Single_Default_Value      := No_Node;
 
