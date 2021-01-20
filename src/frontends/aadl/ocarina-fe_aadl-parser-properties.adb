@@ -7,7 +7,7 @@
 --                                 B o d y                                  --
 --                                                                          --
 --               Copyright (C) 2008-2009 Telecom ParisTech,                 --
---                 2010-2019 ESA & ISAE, 2019-2020 OpenAADL                 --
+--                 2010-2019 ESA & ISAE, 2019-2021 OpenAADL                 --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -728,7 +728,7 @@ package body Ocarina.FE_AADL.Parser.Properties is
          Is_A_List := True;
 
          loop
-            -- Parse nested "list of"
+            --  Parse nested "list of"
             Multiplicity := Multiplicity + 1;
 
             Save_Lexer (Loc);
@@ -745,7 +745,7 @@ package body Ocarina.FE_AADL.Parser.Properties is
             end if;
          end loop;
 
-         -- Current token has be to "list" for P_Multi_Valued_Property
+         --  Current token has be to "list" for P_Multi_Valued_Property
          Property_Definition_Value := P_Multi_Valued_Property;
          Single_Default_Value      := No_Node;
 
