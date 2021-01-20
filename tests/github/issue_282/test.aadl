@@ -1,0 +1,5 @@
+property set Test_List_of_List_Properties is
+  a_list_of_list_property: list of list of aadlinteger applies to (system);
+  a_list_of_list_of_list_property: list of list of list of aadlinteger applies to (system);
+  a_list_of_list_of_list_of_list_property: list of list of list of list of aadlinteger applies to (system);
+end Test_List_of_List_Properties;

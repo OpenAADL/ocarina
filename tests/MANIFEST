@@ -329,6 +329,7 @@ tests/github/issue_174/test.aadl
 tests/github/issue_177/test.aadl
 tests/github/issue_179/t.aadl
 tests/github/issue_270/test_modes.aadl
+tests/github/issue_282/test.aadl
 
 tests/root_system/test.aadl
 
