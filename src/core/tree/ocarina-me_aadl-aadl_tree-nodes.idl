@@ -4,7 +4,8 @@
 **                                                                          **
 **                        O C A R I N A . N O D E S                         **
 **                                                                          **
-**    Copyright (C) 2004-2009, GET-Telecom Paris, 2010-2016 ESA & ISAE.     **
+**                Copyright (C) 2004-2009, GET-Telecom Paris,               **
+**                   2010-2016 ESA & ISAE, 2021 OpenAADL                    **
 **                                                                          **
 ** Ocarina  is free software;  you  can  redistribute  it and/or  modify    **
 ** it under terms of the GNU General Public License as published by the     **
@@ -1253,10 +1254,10 @@ module Ocarina::ME_AADL::AADL_Tree::Nodes {
   //                                   | memory_classifier_reference
   //                                   | bus_classsifer_reference
 
-  interface Property_List_Value : List_Id { };
-  //  interface Property_List_Value : Node_Id {
-  //  List_Id Property_Values;
-  //};
+  //interface Property_List_Value : List_Id { };
+  interface Property_List_Value : Node_Id {
+    List_Id Property_Values;
+  };
 
   //  XXX Change to inherit from Node_Id, list being an internal field
   /*

@@ -7,7 +7,7 @@
 --                                 B o d y                                  --
 --                                                                          --
 --                  Copyright (C) 2009 Telecom ParisTech,                   --
---                 2010-2019 ESA & ISAE, 2019-2020 OpenAADL                 --
+--                 2010-2019 ESA & ISAE, 2019-2021 OpenAADL                 --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -418,7 +418,7 @@ package body Ocarina.Builder.AADL.Properties is
                Set_Single_Value (Value_Of_Association, No_Node);
                Set_Multi_Value
                  (Value_Of_Association,
-                  List_Id (Property_Value));
+                  Property_Values (Property_Value));
             else
                Set_Single_Value (Value_Of_Association, Property_Value);
                Set_Multi_Value (Value_Of_Association, No_List);

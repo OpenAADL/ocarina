@@ -93,31 +93,29 @@ package body Ocarina.FE_AADL.Parser.Properties is
 
          if Token = T_Right_Parenthesis then
             --  Property_List_Value is empty
-            Prop_Value := Node_Id (New_List (K_List_Id, Loc));
-            Set_Kind (Prop_Value, K_Property_List_Value);
-            Set_First_Node (List_Id (Prop_Value), No_Node);
-            Set_Last_Node (List_Id (Prop_Value), No_Node);
+            Prop_Value := New_Node (K_Property_List_Value, Loc);
+            Set_Property_Values (Prop_Value, New_List (K_List_Id, Loc));
+            Set_First_Node (Property_Values (Prop_Value), No_Node);
+            Set_Last_Node (Property_Values (Prop_Value), No_Node);
          else
             Restore_Lexer (Loc);
 
-            --  Prop_Value :=
-            --  Node_Id (P_Items_List (P_Property_Value'Access,
+            Prop_Value := New_Node (K_Property_List_Value, Loc);
+            Set_Property_Values
+              (Prop_Value,
+               P_Items_List
+                 (P_Property_Expression'Access,
+                  No_Node,
+                  T_Comma,
+                  T_Right_Parenthesis,
+                  PC_Property_List_Value));
 
-            Prop_Value :=
-              Node_Id
-                (P_Items_List
-                   (P_Property_Expression'Access,
-                    No_Node,
-                    T_Comma,
-                    T_Right_Parenthesis,
-                    PC_Property_List_Value));
             if No (Prop_Value) then
                --  error when parsing Property_Expression list, quit
                Skip_Tokens (T_Semicolon);
                return No_Node;
             end if;
 
-            Set_Kind (Prop_Value, K_Property_List_Value);
          end if;
 
       else
