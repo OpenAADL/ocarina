@@ -7,7 +7,7 @@
 --                                 B o d y                                  --
 --                                                                          --
 --                  Copyright (C) 2009 Telecom ParisTech,                   --
---                 2010-2019 ESA & ISAE, 2019-2020 OpenAADL                 --
+--                 2010-2019 ESA & ISAE, 2019-2021 OpenAADL                 --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -179,6 +179,17 @@ package body Ocarina.Analyzer.AADL.Semantics is
    function Test_Property_Value_Validity
      (Property_Type  : Node_Id;
       Property_Value : Node_Id) return Boolean;
+
+   function Check_Values_Of_Property_List_Value
+     (Property_Association       : Node_Id;
+      Property_Value             : Node_Id;
+      Property_Name              : Node_Id;
+      Property_Type_Multiplicity : Int;
+      Property_Value_Layer       : Int) return Boolean;
+   --  Check whether the values in the property value that is a
+   --  K_Property_List_Value node and the depth of the nested lists are
+   --  conformant with the type associated with the corresponding
+   --  property name.
 
    ------------------------------------
    -- Check_Classifier_Matching_Rule --
@@ -2048,30 +2059,21 @@ package body Ocarina.Analyzer.AADL.Semantics is
            No_List
          then
             if Type_Of_Property_Is_A_List (Property_Name) then
-               List_Node :=
-                 First_Node
-                   (Expanded_Multi_Value
-                      (Property_Association_Value (Property_Association)));
+               --  Wrap the list in a K_Property_List_Value node for checks
 
-               while Present (List_Node) loop
-                  Types_Are_Compatible :=
-                    Test_Property_Type_Equivalence
-                      (Type_Of_Property_Name,
-                       Get_Type_Of_Property_Value (List_Node))
-                    and then Test_Property_Value_Validity
-                      (Property_Name_Type (Property_Name),
-                       List_Node);
+               List_Node := New_Node
+                 (K_Property_List_Value,
+                  Loc (Property_Association_Value (Property_Association)));
+               Set_Property_Values (List_Node, Expanded_Multi_Value
+                    (Property_Association_Value (Property_Association)));
 
-                  if not Types_Are_Compatible then
-                     Display_Incompatible_Property_Types
-                       (Property_Association => Property_Association,
-                        Property_Value       => List_Node,
-                        Property_Name        => Property_Name);
-                     Success := False;
-                  end if;
-
-                  List_Node := Next_Node (List_Node);
-               end loop;
+               Success :=
+                  Check_Values_Of_Property_List_Value
+                    (Property_Association,
+                     List_Node,
+                     Property_Name,
+                     Multiplicity (Property_Name_Type (Property_Name)),
+                     1);
 
             else
                --  Single value properties cannot have a list as
@@ -2664,5 +2666,64 @@ package body Ocarina.Analyzer.AADL.Semantics is
       return Check_Property_Type (Type_Designator)
         and then Check_Property_Value (Type_Designator, Property_Value);
    end Test_Property_Value_Validity;
+
+   -----------------------------------------
+   -- Check_Values_Of_Property_List_Value --
+   -----------------------------------------
+
+   function Check_Values_Of_Property_List_Value
+     (Property_Association       : Node_Id;
+      Property_Value             : Node_Id;
+      Property_Name              : Node_Id;
+      Property_Type_Multiplicity : Int;
+      Property_Value_Layer       : Int) return Boolean
+   is
+      pragma Assert (Kind (Property_Value) = K_Property_List_Value);
+
+      List_Node            : Node_Id;
+      Types_Are_Compatible : Boolean;
+      Success              : Boolean;
+   begin
+
+      List_Node :=
+         First_Node
+            (Property_Values
+               (Property_Value));
+      while Present (List_Node) loop
+         if Kind (List_Node) = K_Property_List_Value then
+            Types_Are_Compatible :=
+               Check_Values_Of_Property_List_Value
+                  (Property_Association,
+                   List_Node,
+                   Property_Name,
+                   Property_Type_Multiplicity,
+                   Property_Value_Layer + 1);
+            if not Types_Are_Compatible then
+               Success := False;
+            end if;
+         else
+            Types_Are_Compatible :=
+               Test_Property_Type_Equivalence
+                 (Get_Type_Of_Property (Property_Name),
+                  Get_Type_Of_Property_Value (List_Node))
+               and then Test_Property_Value_Validity
+                 (Property_Name_Type (Property_Name),
+                  List_Node);
+
+            if not Types_Are_Compatible then
+               Display_Incompatible_Property_Types
+                  (Property_Association => Property_Association,
+                   Property_Value       => List_Node,
+                   Property_Name        => Property_Name);
+               Success := False;
+            end if;
+
+         end if;
+
+         List_Node := Next_Node (List_Node);
+      end loop;
+
+      return Success;
+   end Check_Values_Of_Property_List_Value;
 
 end Ocarina.Analyzer.AADL.Semantics;

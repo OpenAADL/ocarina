@@ -7,7 +7,7 @@
 --                                 B o d y                                  --
 --                                                                          --
 --               Copyright (C) 2005-2009 Telecom ParisTech,                 --
---                 2010-2019 ESA & ISAE, 2019-2020 OpenAADL                 --
+--                 2010-2019 ESA & ISAE, 2019-2021 OpenAADL                 --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -649,6 +649,7 @@ package body Ocarina.Instances.Properties is
         (No (Property_Value)
            or else Kind (Property_Value) = K_Literal
            or else Kind (Property_Value) = K_Property_Term
+           or else Kind (Property_Value) = K_Property_List_Value
            or else Kind (Property_Value) = K_Enumeration_Term
            or else Kind (Property_Value) = K_Number_Range_Term
            or else Kind (Property_Value) = K_Reference_Term
@@ -664,6 +665,7 @@ package body Ocarina.Instances.Properties is
 
       Instantiated_Value : Node_Id := No_Node;
       List_Node          : Node_Id := No_Node;
+      Items              : List_Id;
       Node               : Node_Id;
 
    begin
@@ -810,6 +812,25 @@ package body Ocarina.Instances.Properties is
             Set_List_Items
               (Instantiated_Value,
                ATN.List_Items (Property_Value));
+
+         when K_Property_List_Value =>
+            -- nested lists
+            Items := New_List (K_List_Id, ATN.Loc (Property_Value));
+            List_Node :=
+              ATN.First_Node (Property_Values (Property_Value));
+
+            while Present (List_Node) loop
+               Append_Node_To_List
+                 (Instantiate_Property_Value
+                   (Instance_Root, List_Node, Instance),
+                    Items);
+               List_Node := ATN.Next_Node (List_Node);
+            end loop;
+            Instantiated_Value :=
+              New_Node
+                (K_Property_List_Value,
+                 ATN.Loc (Property_Value));
+            Set_Property_Values (Instantiated_Value, Items);
 
          when others =>
             raise Program_Error;
