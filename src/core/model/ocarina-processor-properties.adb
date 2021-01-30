@@ -7,7 +7,7 @@
 --                                 B o d y                                  --
 --                                                                          --
 --               Copyright (C) 2005-2009 Telecom ParisTech,                 --
---                 2010-2019 ESA & ISAE, 2019-2020 OpenAADL                 --
+--                 2010-2019 ESA & ISAE, 2019-2021 OpenAADL                 --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -513,6 +513,11 @@ package body Ocarina.Processor.Properties is
                   Append_List_To_List
                     (List_Id (Computed_Value),
                      Expanded_List);
+               elsif Kind (Computed_Value) = K_Property_List_Value then
+                  --  nested lists
+                  Append_Node_To_List
+                    (Computed_Value,
+                     Expanded_List);
                else
                   Expanded_List_Node := Computed_Value;
 
@@ -564,6 +569,7 @@ package body Ocarina.Processor.Properties is
          or else Kind (Property_Value) = K_Component_Classifier_Term
          or else Kind (Property_Value) = K_Unique_Property_Const_Identifier
          or else Kind (Property_Value) = K_Record_Term
+         or else Kind (Property_Value) = K_Property_List_Value
          or else Ocarina.ME_AADL.AADL_Tree.Entities.DNKE (Property_Value));
 
       pragma Assert (Reference_Property /= No_Node);
@@ -575,6 +581,26 @@ package body Ocarina.Processor.Properties is
          Evaluated_Value := No_Node;
       else
          case Kind (Property_Value) is
+            when K_Property_List_Value =>
+               declare
+                  Items              : List_Id;
+                  Item               : Node_Id;
+                  New_Evaluated_Node : Node_Id;
+               begin
+                  Items := New_List (K_List_Id, Loc (Property_Value));
+                  Item := First_Node (Property_Values (Property_Value));
+                  while Item /= No_Node loop
+                     New_Evaluated_Node :=
+                       Evaluate_Property_Value (Item, Reference_Property);
+                     Append_Node_To_List (New_Evaluated_Node, Items);
+                     Item := Next_Node (Item);
+                  end loop;
+
+                  Evaluated_Value :=
+                    New_Node (K_Property_List_Value, Loc (Property_Value));
+                  Set_Property_Values (Evaluated_Value, Items);
+               end;
+
             when K_Enumeration_Term =>
                Evaluated_Value :=
                  New_Node (Kind (Property_Value), Loc (Property_Value));

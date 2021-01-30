@@ -63,6 +63,8 @@ package body Ocarina.FE_AADL.Parser.Properties is
 
    function P_Property_Value (Container : Node_Id) return Node_Id;
 
+   function Is_Boolean_Or_Record_Term return Boolean;
+
    ----------------------
    -- P_Property_Value --
    ----------------------
@@ -97,6 +99,32 @@ package body Ocarina.FE_AADL.Parser.Properties is
             Set_Property_Values (Prop_Value, New_List (K_List_Id, Loc));
             Set_First_Node (Property_Values (Prop_Value), No_Node);
             Set_Last_Node (Property_Values (Prop_Value), No_Node);
+
+         elsif Token = T_Left_Parenthesis and not Is_Boolean_Or_Record_Term then
+            --  Parse nested lists
+            Restore_Lexer (Loc);
+
+            declare
+               Item  : Node_Id; --  a nested list
+               Items : List_Id; --  nested lists
+            begin
+               Items := New_List (K_List_Id, Loc);
+               loop
+                  Item := P_Property_Value(Container);
+                  if Present (Item) then
+                     Append_Node_To_List (Item, Items);
+                  end if;
+
+                  Scan_Token;
+                  if Token = T_Right_Parenthesis then
+                     exit;
+                  end if;
+               end loop;
+
+               Prop_Value := New_Node (K_Property_List_Value, Loc);
+               Set_Property_Values (Prop_Value, Items);
+            end;
+
          else
             Restore_Lexer (Loc);
 
@@ -1286,5 +1314,26 @@ package body Ocarina.FE_AADL.Parser.Properties is
 
       return Property_Set;
    end P_Property_Set;
+
+   -------------------------------
+   -- Is_Boolean_Or_Record_Term --
+   -------------------------------
+
+   function Is_Boolean_Or_Record_Term return Boolean is
+      use Lexer;
+      use Ocarina.ME_AADL.Tokens;
+   begin
+      Scan_Token;
+      case Token is
+         when T_Left_Parenthesis =>
+            return Is_Boolean_Or_Record_Term;
+         when T_True | T_False | T_Not
+           | T_Identifier | T_Left_Square_Bracket =>
+            return True;
+         when others =>
+            return False;
+      end case;
+      return False;
+   end Is_Boolean_Or_Record_Term;
 
 end Ocarina.FE_AADL.Parser.Properties;

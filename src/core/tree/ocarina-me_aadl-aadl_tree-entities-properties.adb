@@ -7,7 +7,7 @@
 --                                 B o d y                                  --
 --                                                                          --
 --               Copyright (C) 2008-2009 Telecom ParisTech,                 --
---                 2010-2019 ESA & ISAE, 2019-2020 OpenAADL                 --
+--                 2010-2019 ESA & ISAE, 2019-2021 OpenAADL                 --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -262,6 +262,7 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities.Properties is
       pragma Assert
         (No (Property_Value)
          or else Kind (Property_Value) = K_Property_Value
+         or else Kind (Property_Value) = K_Property_List_Value
          or else Kind (Property_Value) = K_Literal
          or else Kind (Property_Value) = K_Minus_Numeric_Term
          or else Kind (Property_Value) = K_Signed_AADLNumber
@@ -320,6 +321,12 @@ package body Ocarina.ME_AADL.AADL_Tree.Entities.Properties is
                Value_Node := No_Node;
             end if;
          end if;
+
+      elsif Kind (Property_Value) = K_Property_List_Value then
+         Value_Node := First_Node (Property_Values (Property_Value));
+         while Kind (Value_Node) = K_Property_List_Value loop
+            Value_Node := First_Node (Property_Values (Value_Node));
+         end loop;
 
       else
          Value_Node := Property_Value;
