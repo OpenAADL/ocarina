@@ -7,7 +7,7 @@
 --                                 B o d y                                  --
 --                                                                          --
 --               Copyright (C) 2008-2009 Telecom ParisTech,                 --
---                 2010-2019 ESA & ISAE, 2019-2020 OpenAADL                 --
+--                 2010-2019 ESA & ISAE, 2019-2021 OpenAADL                 --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -291,6 +291,36 @@ package body Ocarina.BE_AADL.Properties is
       Write_Eol;
    end Print_Property_Type_Declaration;
 
+   -------------------------------
+   -- Print_Property_List_Value --
+   -------------------------------
+
+   procedure Print_Property_List_Value (Node : Node_Id) is
+      pragma Assert (Kind (Node) = K_Property_List_Value);
+
+      List_Node : Node_Id;
+   begin
+      Print_Token (T_Left_Parenthesis);
+      List_Node := First_Node (Property_Values (Node));
+
+      while Present (List_Node) loop
+         if List_Node /= First_Node (Property_Values (Node)) then
+            Print_Token (T_Comma);
+            Write_Space;
+         end if;
+
+         if Kind (List_Node) = K_Property_List_Value then
+            Print_Property_List_Value (List_Node);
+         else
+            Print_Property_Value (List_Node);
+         end if;
+
+         List_Node := Next_Node (List_Node);
+      end loop;
+
+      Print_Token (T_Right_Parenthesis);
+   end Print_Property_List_Value;
+
    ---------------------------
    -- Print_Property_Values --
    ---------------------------
@@ -300,25 +330,15 @@ package body Ocarina.BE_AADL.Properties is
         (Present (Node)
          and then (Kind (Node) = K_Property_Value or else DNKE (Node)));
 
-      List_Node : Node_Id;
+      Prop_List_Value_Node : Node_Id;
    begin
       if Single_Value (Node) = No_Node then
-         --  Print Property_List_Value with new line and indents
+         --  Print Property_List_Value
 
-         Print_Token (T_Left_Parenthesis);
-         List_Node := First_Node (Multi_Value (Node));
-
-         while Present (List_Node) loop
-            if List_Node /= First_Node (Multi_Value (Node)) then
-               Print_Token (T_Comma);
-               Write_Space;
-            end if;
-
-            Print_Property_Value (List_Node);
-            List_Node := Next_Node (List_Node);
-         end loop;
-
-         Print_Token (T_Right_Parenthesis);
+         Prop_List_Value_Node :=
+           New_Node (K_Property_List_Value, Loc (Node));
+         Set_Property_Values (Prop_List_Value_Node, Multi_Value (Node));
+         Print_Property_List_Value (Prop_List_Value_Node);
       else
          --  Print Property_Expression without new line
 
