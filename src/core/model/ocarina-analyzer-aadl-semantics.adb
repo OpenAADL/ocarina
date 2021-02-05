@@ -2003,7 +2003,7 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
       List_Node            : Node_Id;
       Success              : Boolean := True;
-      Types_Are_Compatible : Boolean := True;
+
    begin
       if Value_Of_Property_Association_Is_Undefined (Property_Association) then
          Success := True;

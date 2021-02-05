@@ -72,7 +72,6 @@ package body Ocarina.FE_AADL.Parser.Properties is
    --  property_value ::= single_property_value | property_list_value
 
    function P_Property_Value (Container : Node_Id) return Node_Id is
-      pragma Unreferenced (Container);
       use Lexer;
       use Ocarina.ME_AADL.Tokens;
       use Ocarina.ME_AADL.AADL_Tree.Nodes;
@@ -100,7 +99,9 @@ package body Ocarina.FE_AADL.Parser.Properties is
             Set_First_Node (Property_Values (Prop_Value), No_Node);
             Set_Last_Node (Property_Values (Prop_Value), No_Node);
 
-         elsif Token = T_Left_Parenthesis and not Is_Boolean_Or_Record_Term then
+         elsif Token = T_Left_Parenthesis and then
+            not Is_Boolean_Or_Record_Term
+         then
             --  Parse nested lists
             Restore_Lexer (Loc);
 
@@ -110,7 +111,7 @@ package body Ocarina.FE_AADL.Parser.Properties is
             begin
                Items := New_List (K_List_Id, Loc);
                loop
-                  Item := P_Property_Value(Container);
+                  Item := P_Property_Value (Container);
                   if Present (Item) then
                      Append_Node_To_List (Item, Items);
                   end if;
@@ -1333,7 +1334,6 @@ package body Ocarina.FE_AADL.Parser.Properties is
          when others =>
             return False;
       end case;
-      return False;
    end Is_Boolean_Or_Record_Term;
 
 end Ocarina.FE_AADL.Parser.Properties;

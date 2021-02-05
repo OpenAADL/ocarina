@@ -814,7 +814,7 @@ package body Ocarina.Instances.Properties is
                ATN.List_Items (Property_Value));
 
          when K_Property_List_Value =>
-            -- nested lists
+            --  nested lists
             Items := New_List (K_List_Id, ATN.Loc (Property_Value));
             List_Node :=
               ATN.First_Node (Property_Values (Property_Value));
