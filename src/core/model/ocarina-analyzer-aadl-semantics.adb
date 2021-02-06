@@ -2682,7 +2682,7 @@ package body Ocarina.Analyzer.AADL.Semantics is
 
       List_Node            : Node_Id;
       Types_Are_Compatible : Boolean;
-      Success              : Boolean;
+      Success              : Boolean := True;
    begin
 
       List_Node :=
