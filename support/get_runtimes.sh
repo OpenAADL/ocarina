@@ -56,7 +56,7 @@ while test $# -ne 0; do
 
         *po*hi*ada* )
             cd ${scriptdir}/../resources/runtime || exit 2
-            if git-remote-url-reachable "${repository}/polyorb-hi-ada.git"; then
+            if git_remote_url_reachable "${repository}/polyorb-hi-ada.git"; then
                 rm -rf polyorb-hi-ada 2>/dev/null
                 git clone ${repository}/polyorb-hi-ada.git \
                     || exit 2
@@ -70,7 +70,7 @@ while test $# -ne 0; do
 
         *po*hi*c* )
             cd ${scriptdir}/../resources/runtime || exit 2
-            if git-remote-url-reachable "${repository}/polyorb-hi-c.git"; then
+            if git_remote_url_reachable "${repository}/polyorb-hi-c.git"; then
                 rm -rf polyorb-hi-c 2>/dev/null
                 git clone ${repository}/polyorb-hi-c.git \
                     || exit 2
