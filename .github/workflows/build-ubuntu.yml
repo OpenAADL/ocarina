@@ -27,4 +27,4 @@ jobs:
        git clone https://github.com/OpenAADL/ocarina-build.git
 
     - name: Build
-      run: ( cd ocarina-build ; ./build_ocarina.sh --scenario=github --remote=$GITHUB_SERVER_URL/$GITHUB_WORKSPACE )
+      run: ( cd ocarina-build ; ./build_ocarina.sh --scenario=github --remote=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY )
