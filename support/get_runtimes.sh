@@ -1,5 +1,9 @@
 #! /bin/sh
-# $Id: get_runtimes.sh 7229 2010-03-01 11:17:32Z zalila $
+
+## Returns errlvl 0 if $1 is a reachable git remote url
+git_remote_url_reachable () {
+      git ls-remote "$1" CHECK_GIT_REMOTE_URL_REACHABILITY >/dev/null 2>&1
+}
 
 usage () {
     cat <<EOF
@@ -37,46 +41,58 @@ while test $# -ne 0; do
         --tag=*) tag=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'` ;;
 
         *aadlib* )
-	    cd ${scriptdir}/../resources/runtime || exit 2
-	    rm -rf AADLib 2>/dev/null
-	    git clone ${repository}/AADLib.git aadlib \
-		|| exit 2
-            if test ! -z "${tag}"; then
-                git checkout ${tag} -b ${tag}
+            cd ${scriptdir}/../resources/runtime || exit 2
+            rm -rf AADLib 2>/dev/null
+            if git_remote_url_reachable "${repository}/AADLib.git"; then
+                git clone ${repository}/AADLib.git aadlib \
+                    || exit 2
+                if test ! -z "${tag}"; then
+                    git checkout ${tag} -b ${tag}
+                fi;
+            else
+                echo Cannot check out "${repository}/AADLib.git", ignoring it
             fi;
-	    ;;
+            ;;
 
-	*po*hi*ada* )
-	    cd ${scriptdir}/../resources/runtime || exit 2
-	    rm -rf polyorb-hi-ada 2>/dev/null
-	    git clone ${repository}/polyorb-hi-ada.git \
-		|| exit 2
-            if test ! -z "${tag}"; then
-                git checkout ${tag} -b ${tag}
+        *po*hi*ada* )
+            cd ${scriptdir}/../resources/runtime || exit 2
+            rm -rf polyorb-hi-ada 2>/dev/nul
+            if git-remote-url-reachable "${repository}/polyorb-hi-ada.git"; then
+                git clone ${repository}/polyorb-hi-ada.git \
+                    || exit 2
+                if test ! -z "${tag}"; then
+                    git checkout ${tag} -b ${tag}
+                fi;
+            else
+                echo Cannot check out "${repository}/polyorb-hi-ada.git", ignoring it
             fi;
-	    ;;
+            ;;
 
-	*po*hi*c* )
-	    cd ${scriptdir}/../resources/runtime || exit 2
-	    rm -rf polyorb-hi-c 2>/dev/null
-	    git clone ${repository}/polyorb-hi-c.git \
-		|| exit 2
-            if test ! -z "${tag}"; then
-                git checkout ${tag} -b ${tag}
+        *po*hi*c* )
+            cd ${scriptdir}/../resources/runtime || exit 2
+            rm -rf polyorb-hi-c 2>/dev/null
+            if git-remote-url-reachable "${repository}/polyorb-hi-c.git"; then
+                git clone ${repository}/polyorb-hi-c.git \
+                    || exit 2
+                if test ! -z "${tag}"; then
+                    git checkout ${tag} -b ${tag}
+                fi;
+            else
+                echo Cannot check out "${repository}/polyorb-hi-c.git", ignoring it
             fi;
-	    ;;
+            ;;
 
-	*pok* )
-	    cd ${scriptdir}/../resources/runtime || exit 2
-	    rm -rf pok 2>/dev/null
+        *pok* )
+            cd ${scriptdir}/../resources/runtime || exit 2
+            rm -rf pok 2>/dev/null
             git clone https://github.com/pok-kernel/pok.git \
-		|| exit 2
-	    ;;
+                || exit 2
+            ;;
 
-	* )
-	    echo "Unknown runtime: '${1}'"
-	    exit 2
-	    ;;
+        * )
+            echo "Unknown runtime: '${1}'"
+            exit 2
+            ;;
     esac
     shift
 done
