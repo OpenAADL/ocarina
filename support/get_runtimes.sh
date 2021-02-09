@@ -42,8 +42,8 @@ while test $# -ne 0; do
 
         *aadlib* )
             cd ${scriptdir}/../resources/runtime || exit 2
-            rm -rf AADLib 2>/dev/null
             if git_remote_url_reachable "${repository}/AADLib.git"; then
+                rm -rf AADLib 2>/dev/null
                 git clone ${repository}/AADLib.git aadlib \
                     || exit 2
                 if test ! -z "${tag}"; then
@@ -56,8 +56,8 @@ while test $# -ne 0; do
 
         *po*hi*ada* )
             cd ${scriptdir}/../resources/runtime || exit 2
-            rm -rf polyorb-hi-ada 2>/dev/nul
             if git-remote-url-reachable "${repository}/polyorb-hi-ada.git"; then
+                rm -rf polyorb-hi-ada 2>/dev/null
                 git clone ${repository}/polyorb-hi-ada.git \
                     || exit 2
                 if test ! -z "${tag}"; then
@@ -70,8 +70,8 @@ while test $# -ne 0; do
 
         *po*hi*c* )
             cd ${scriptdir}/../resources/runtime || exit 2
-            rm -rf polyorb-hi-c 2>/dev/null
             if git-remote-url-reachable "${repository}/polyorb-hi-c.git"; then
+                rm -rf polyorb-hi-c 2>/dev/null
                 git clone ${repository}/polyorb-hi-c.git \
                     || exit 2
                 if test ! -z "${tag}"; then
