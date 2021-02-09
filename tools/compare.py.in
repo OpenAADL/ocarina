@@ -116,11 +116,4 @@ if com2 < len(statements2):
         differences += 1
         com2 += 1
 
-
-print(sys.argv[1], "and", sys.argv[2], "have been compared",)
-if differences == 0:
-    print("and are identical")
-else:
-    print("and have", differences, "differences")
-
 sys.exit(differences)
