@@ -1,0 +1,86 @@
+<aadl_xml root_system="main.impl">
+ <components>
+   <component category="system" identifier="main.impl">
+     <classifier>
+       main.impl     </classifier>
+     <features/>
+     <subcomponents/>
+     <properties>
+       <property name="Test_List_of_List_Properties::a_list_of_list_of_list_of_list_property">
+         <property_value>
+           <list>
+             <list>
+               <list>
+                 <list>
+                   <value value="1"/>
+                   <value value="2"/>
+                 </list>
+               </list>
+               <list>
+                 <list>
+                   <value value="3"/>
+                   <value value="4"/>
+                 </list>
+               </list>
+             </list>
+             <list>
+               <list>
+                 <list>
+                   <value value="5"/>
+                   <value value="6"/>
+                 </list>
+               </list>
+               <list>
+                 <list>
+                   <value value="7"/>
+                   <value value="8"/>
+                 </list>
+               </list>
+             </list>
+           </list>
+         </property_value>
+       </property>
+       <property name="Test_List_of_List_Properties::a_list_of_list_of_list_property">
+         <property_value>
+           <list>
+             <list>
+               <list>
+                 <value value="1"/>
+                 <value value="2"/>
+               </list>
+               <list>
+                 <value value="3"/>
+                 <value value="4"/>
+               </list>
+             </list>
+             <list>
+               <list>
+                 <value value="5"/>
+                 <value value="6"/>
+               </list>
+               <list>
+                 <value value="7"/>
+                 <value value="8"/>
+               </list>
+             </list>
+           </list>
+         </property_value>
+       </property>
+       <property name="Test_List_of_List_Properties::a_list_of_list_property">
+         <property_value>
+           <list>
+             <list>
+               <value value="1"/>
+               <value value="2"/>
+             </list>
+             <list>
+               <value value="3"/>
+               <value value="4"/>
+             </list>
+           </list>
+         </property_value>
+       </property>
+     </properties>
+   </component>
+ </components>
+</aadl_xml>

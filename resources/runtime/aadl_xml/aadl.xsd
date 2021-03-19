@@ -184,21 +184,33 @@
   
   <xs:element name='property'>
     <xs:complexType>
-      <xs:sequence minOccurs='1' maxOccurs='unbounded'>
-	<xs:element ref='property_value'/>
+      <xs:sequence>
+        <xs:element name='property_value' type="property_expression"/>
       </xs:sequence>
       <xs:attribute name='name' type="xs:string" use='required'/>
     </xs:complexType>
   </xs:element>
 
-  <xs:element name="property_value">
+  <xs:complexType name='property_expression'>
+    <xs:choice minOccurs="1" maxOccurs="1">
+      <xs:element name="classifier" type="classifier_prop"/>
+      <xs:element name="reference" type="reference_prop"/>
+      <xs:element name="unit" type="unit_prop"/>
+      <xs:element name="value" type="value_prop"/>
+      <xs:element name="range" type="range_prop"/>
+      <xs:element ref="list"/>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:element name='list'>
     <xs:complexType>
-      <xs:choice>
-	<xs:element name="classifier" type="classifier_prop"/>
-	<xs:element name="reference" type="reference_prop"/>
-	<xs:element name="unit" type="unit_prop"/>
-	<xs:element name="value" type="value_prop"/>
-	<xs:element name="range" type="range_prop"/>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="classifier" type="classifier_prop"/>
+        <xs:element name="reference" type="reference_prop"/>
+        <xs:element name="unit" type="unit_prop"/>
+        <xs:element name="value" type="value_prop"/>
+        <xs:element name="range" type="range_prop"/>
+        <xs:element ref="list"/>
       </xs:choice>
     </xs:complexType>
   </xs:element>

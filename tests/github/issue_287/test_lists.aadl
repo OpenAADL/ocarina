@@ -1,0 +1,21 @@
+property set Test_List_of_List_Properties is
+  a_list_of_list_property: list of list of aadlinteger applies to (system);
+  a_list_of_list_of_list_property: list of list of list of aadlinteger applies to (system);
+  a_list_of_list_of_list_of_list_property: list of list of list of list of aadlinteger applies to (system);
+end Test_List_of_List_Properties;
+
+package Test_List_of_List
+public
+    with Test_List_of_List_Properties;
+
+    system main
+    end main;
+
+    system implementation main.impl
+        properties
+            Test_List_of_List_Properties::a_list_of_list_property => ((1,2), (3,4));
+            Test_List_of_List_Properties::a_list_of_list_of_list_property => (((1,2),(3,4)),((5,6),(7,8)));
+            Test_List_of_List_Properties::a_list_of_list_of_list_of_list_property => ((((1,2)),((3,4))),(((5,6)),((7,8))));
+    end main.impl;
+
+end Test_List_of_List;
