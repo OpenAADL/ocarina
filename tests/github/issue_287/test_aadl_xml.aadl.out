@@ -1,0 +1,11 @@
+<aadl_xml root_system="main.impl">
+ <components>
+   <component category="system" identifier="main.impl">
+     <classifier>
+       main.impl     </classifier>
+     <features/>
+     <subcomponents/>
+     <properties/>
+   </component>
+ </components>
+</aadl_xml>

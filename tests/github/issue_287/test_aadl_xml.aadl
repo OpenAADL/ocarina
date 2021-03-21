@@ -1,0 +1,10 @@
+package Test_Aadl_Xml_Output
+public
+
+    system main
+    end main;
+
+    system implementation main.impl
+    end main.impl;
+
+end Test_Aadl_Xml_Output;
