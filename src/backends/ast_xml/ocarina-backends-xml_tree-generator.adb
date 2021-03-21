@@ -7,7 +7,7 @@
 --                                 B o d y                                  --
 --                                                                          --
 --               Copyright (C) 2008-2009 Telecom ParisTech,                 --
---                 2010-2019 ESA & ISAE, 2019-2020 OpenAADL                 --
+--         2010-2019 ESA & ISAE, 2019-2021 OpenAADL, 2021 NVIDIA            --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -34,7 +34,7 @@ with Ocarina.Namet;  use Ocarina.Namet;
 with Ocarina.Output; use Ocarina.Output;
 with Utils;          use Utils;
 
-with Ada.Directories;
+with Ada.Text_IO;
 with GNAT.OS_Lib; use GNAT.OS_Lib;
 
 with Ocarina.Backends.Utils;
@@ -102,39 +102,36 @@ package body Ocarina.Backends.XML_Tree.Generator is
    ----------------
 
    function Set_Output (N : Node_Id) return File_Descriptor is
+      Fd : File_Descriptor := Current_Output;
    begin
       if not Print_On_Stdout then
-         declare
-            File_Name        : constant Name_Id := Get_File_Name (N);
-            File_Name_String : constant String  := Get_Name_String (File_Name);
-            Fd               : File_Descriptor;
 
-         begin
-            if Present (XML_DTD (N)) then
-               --  If a DTD has been specified, copy it as target
-               --  file, then move at the end of the file to add
-               --  output.
+         if Fd = Standout or else Fd = Standerr
+         then
+            --  Create an output file if not yet specified
 
-               Ada.Directories.Copy_File
-                 (Source_Name => Get_Name_String (Name (XML_DTD (N))),
-                  Target_Name => File_Name_String);
-               Fd := Open_Read_Write (File_Name_String, Text);
-               Lseek (Fd, 0, Seek_End);
-            else
-               --  Else, create a new file, overwrite existing file
-
-               Fd := Create_File (File_Name_String, Text);
-            end if;
-
-            if Fd = Invalid_FD then
-               raise Program_Error;
-            end if;
-
-            --  Setting the output
-
+            Fd := Create_File (Get_Name_String (Get_File_Name (N)), Text);
             Set_Output (Fd);
-            return Fd;
-         end;
+         end if;
+
+         if Present (XML_DTD (N)) then
+            --  If a DTD has been specified, add the content to the output.
+
+            declare
+               Fd_Dtd : Ada.Text_IO.File_Type;
+            begin
+               Ada.Text_IO.Open
+                  (Fd_Dtd,
+                   Ada.Text_IO.In_File,
+                   Get_Name_String (Name (XML_DTD (N))));
+               while not Ada.Text_IO.End_Of_File (Fd_Dtd) loop
+                  Write_Line (Ada.Text_IO.Get_Line (Fd_Dtd));
+               end loop;
+               Ada.Text_IO.Close (Fd_Dtd);
+            end;
+         end if;
+
+         return Fd;
       end if;
 
       return Invalid_FD;
