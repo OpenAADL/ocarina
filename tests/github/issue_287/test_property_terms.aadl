@@ -1,0 +1,77 @@
+property set Test_Properties is
+  an_integer_property: aadlinteger applies to (all);
+  a_negative_integer_property: aadlinteger applies to (all);
+  an_integer_unit_property: aadlinteger units (ms) applies to (all);
+  an_integer_range_property: range of aadlinteger applies to (all);
+
+  a_real_property: aadlreal applies to (all);
+  a_negative_real_property: aadlreal applies to (all);
+  a_real_unit_property: aadlreal units (ns) applies to (all);
+  a_real_range_property: range of aadlreal applies to (all);
+
+  a_string_property: aadlstring applies to (all);
+
+  a_boolean_property: aadlboolean applies to (all);
+
+  a_list_of_list_property: list of list of aadlinteger applies to (all);
+
+  a_reference_property: reference (system, device) applies to (all);
+
+  a_classifier_property: classifier (system, device) applies to (all);
+
+  an_enumeration_type: type enumeration (enum1, enum2, enum3);
+  an_enumeration_property: Test_Properties::an_enumeration_type applies to (all);
+
+  a_record_property: record (
+    an_integer_field: aadlinteger;
+    a_string_field: aadlstring;
+    a_real_range_field: range of aadlreal;
+  ) applies to (all);
+
+end Test_Properties;
+
+package Test
+public
+  with Test_Properties;
+
+  system main
+  end main;
+
+  system implementation main.impl
+    subcomponents
+      subcomp_subdevice: device subdevice.impl;
+    properties
+
+      Test_Properties::an_integer_property => 10;
+      Test_Properties::a_negative_integer_property => -10;
+      Test_Properties::an_integer_unit_property => 10 ms;
+      Test_Properties::an_integer_range_property => 5 .. 10;
+
+      Test_Properties::a_real_property => 10.0;
+      Test_Properties::a_negative_real_property => -10.0;
+      Test_Properties::a_real_unit_property => 10 ns;
+      Test_Properties::a_real_range_property => 5.0 .. 10.0;
+
+      Test_Properties::a_string_property => "test string";
+
+      Test_Properties::a_boolean_property => true;
+
+      Test_Properties::a_list_of_list_property => ((1,2), (3,4));
+
+      Test_Properties::a_reference_property => reference (subcomp_subdevice);
+
+      Test_Properties::a_classifier_property => classifier (subdevice);
+
+      Test_Properties::an_enumeration_property => enum2;
+
+      Test_Properties::a_record_property => [an_integer_field => 10; a_string_field => "test string"; a_real_range_field => 5.0 .. 10.0];
+
+  end main.impl;
+
+  device subdevice
+  end subdevice;
+
+  device implementation subdevice.impl
+  end subdevice.impl;
+
+end Test;
