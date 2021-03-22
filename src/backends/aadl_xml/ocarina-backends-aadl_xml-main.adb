@@ -38,6 +38,7 @@ with Ocarina.ME_AADL;
 with Ocarina.ME_AADL.AADL_Instances.Nodes;
 with Ocarina.ME_AADL.AADL_Tree.Nodes;
 with Ocarina.ME_AADL.AADL_Tree.Nutils;
+with Ocarina.ME_AADL.AADL_Tree.Entities;
 with Ocarina.ME_AADL.AADL_Instances.Entities;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
@@ -53,6 +54,8 @@ package body Ocarina.Backends.AADL_XML.Main is
    use Ocarina.Backends.AADL_XML.Mapping;
    use Ocarina.Backends.Utils;
 
+   package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
+   package ATE renames Ocarina.ME_AADL.AADL_Tree.Entities;
    package ATN renames Ocarina.ME_AADL.AADL_Tree.Nodes;
    package XTN renames Ocarina.Backends.XML_Tree.Nodes;
    use type ATN.Node_Kind;
@@ -405,38 +408,11 @@ package body Ocarina.Backends.AADL_XML.Main is
    begin
       if Present (AADL_Property_Value)
         and then ATN.Kind (AADL_Property_Value) = ATN.K_Signed_AADLNumber
-        and then Present (ATN.Unit_Identifier (AADL_Property_Value))
       then
-         --  This property value denotes a property with a unit
-         --  identifier.
+         --  This property value denotes a number property which can
+         --  be aadlinteger or aadlreal with or without an unit
 
-         Value_Node := Make_XML_Node ("unit");
-
-         Append_Node_To_List
-           (Make_Assignement
-              (Make_Defining_Identifier (Get_String_Name ("value")),
-               Make_Defining_Identifier
-                 (Get_String_Name
-                    (Ocarina.AADL_Values.Image
-                       (ATN.Value
-                         (ATN.Number_Value
-                            (AADL_Property_Value)))))),
-            XTN.Items (Value_Node));
-
-         Append_Node_To_List
-           (Make_Assignement
-              (Make_Defining_Identifier (Get_String_Name ("unit")),
-               Make_Defining_Identifier
-                 (ATN.Display_Name
-                    (ATN.Unit_Identifier (AADL_Property_Value)))),
-            XTN.Items (Value_Node));
-
-      elsif Present (AADL_Property_Value)
-        and then ATN.Kind (AADL_Property_Value) = ATN.K_Signed_AADLNumber
-      then
-         --  This property value denotes a aadlinteger property
-
-         Value_Node := Make_XML_Node ("value");
+         Value_Node := Make_XML_Node ("number");
 
          Append_Node_To_List
            (Make_Assignement
@@ -449,12 +425,22 @@ package body Ocarina.Backends.AADL_XML.Main is
                              (AADL_Property_Value)))))),
             XTN.Items (Value_Node));
 
+         if Present (ATN.Unit_Identifier (AADL_Property_Value)) then
+            Append_Node_To_List
+              (Make_Assignement
+                 (Make_Defining_Identifier (Get_String_Name ("unit")),
+                  Make_Defining_Identifier
+                    (ATN.Display_Name
+                       (ATN.Unit_Identifier (AADL_Property_Value)))),
+            XTN.Items (Value_Node));
+         end if;
+
       elsif Present (AADL_Property_Value)
         and then ATN.Kind (AADL_Property_Value) = ATN.K_Literal
       then
-         --  This property value denotes a literal
+         --  This property value denotes a literal term
 
-         Value_Node := Make_XML_Node ("value");
+         Value_Node := Make_XML_Node ("string");
 
          Append_Node_To_List
            (Make_Assignement
@@ -485,11 +471,28 @@ package body Ocarina.Backends.AADL_XML.Main is
             XTN.Items (Value_Node));
 
       elsif Present (AADL_Property_Value)
+        and then ATN.Kind (AADL_Property_Value) =
+          ATN.K_Component_Classifier_Term
+      then
+         --  This property value denotes a classifier term
+
+         Value_Node := Make_XML_Node ("classifier");
+
+         Append_Node_To_List
+           (Make_Assignement
+              (Make_Defining_Identifier (Get_String_Name ("value")),
+                 Make_Defining_Identifier
+                   (AIN.Display_Name
+                      (AIN.Identifier
+                         (ATE.Get_Referenced_Entity (AADL_Property_Value))))),
+               XTN.Items (Value_Node));
+
+      elsif Present (AADL_Property_Value)
         and then ATN.Kind (AADL_Property_Value) = ATN.K_Enumeration_Term
       then
          --  This property value denotes an enumeration term
 
-         Value_Node := Make_XML_Node ("value");
+         Value_Node := Make_XML_Node ("enumeration");
 
          Append_Node_To_List
            (Make_Assignement
@@ -545,6 +548,47 @@ package body Ocarina.Backends.AADL_XML.Main is
                           (ATN.Lower_Bound (AADL_Property_Value))))),
                XTN.Items (Value_Node));
          end if;
+
+      elsif Present (AADL_Property_Value)
+        and then ATN.Kind (AADL_Property_Value) = ATN.K_Record_Term
+      then
+         --  This property value denotes a record term
+
+         Value_Node := Make_XML_Node ("record");
+         List_Node :=
+           ATN.First_Node (ATN.List_Items (AADL_Property_Value));
+
+         declare
+            Record_Field_Node       : Node_Id;
+         begin
+            while Present (List_Node) loop
+
+               if ATN.Kind (List_Node) = ATN.K_Record_Term_Element then
+
+                  Record_Field_Node := Make_XML_Node ("record_field");
+
+                  Append_Node_To_List
+                    (Record_Field_Node,
+                     XTN.Subitems (Value_Node));
+
+                  Append_Node_To_List
+                    (Make_Assignement
+                       (Make_Defining_Identifier (Get_String_Name ("name")),
+                        Make_Defining_Identifier
+                          (ATN.Display_Name (ATN.Identifier (List_Node)))),
+                     XTN.Items (Record_Field_Node));
+
+                  --  Visit record field's value
+
+                  Append_Node_To_List
+                    (Visit_Property_Value
+                       (ATN.Property_Expression (List_Node)),
+                     XTN.Subitems (Record_Field_Node));
+               end if;
+
+               List_Node := ATN.Next_Node (List_Node);
+            end loop;
+         end;
 
       elsif Present (AADL_Property_Value)
         and then ATN.Kind (AADL_Property_Value) = ATN.K_Property_List_Value
