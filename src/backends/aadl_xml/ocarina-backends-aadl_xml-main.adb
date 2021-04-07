@@ -64,6 +64,9 @@ package body Ocarina.Backends.AADL_XML.Main is
    procedure Visit_Subcomponents_Of is new Visit_Subcomponents_Of_G (Visit);
 
    function Map_Component (E : Node_Id) return Node_Id;
+   procedure Visit_Connection_Entity
+     (Entity_XML_Node : Node_Id;
+      Entity_Node     : Node_Id);
    function Visit_Property_Value
      (AADL_Property_Value : Node_Id) return Node_Id;
 
@@ -176,6 +179,8 @@ package body Ocarina.Backends.AADL_XML.Main is
       Components_Node     : Node_Id;
       Property_Value_Node : Node_Id;
       AADL_Property_Value : Node_Id;
+      Connections_Node    : Node_Id;
+      Connection_Node     : Node_Id;
 
    begin
       if Category = CC_System and then
@@ -387,6 +392,50 @@ package body Ocarina.Backends.AADL_XML.Main is
          end loop;
       end if;
 
+      --  Connections
+
+      if Present (Connections (E)) then
+
+         Connections_Node := Make_XML_Node ("connections");
+         Append_Node_To_List (Connections_Node, XTN.Subitems (N));
+
+         F := First_Node (Connections (E));
+         while Present (F) loop
+            Connection_Node := Make_XML_Node ("connection");
+
+            --  Identifier
+
+            Append_Node_To_List
+              (Make_Assignement
+                 (Make_Defining_Identifier (Get_String_Name ("name")),
+                  Make_Defining_Identifier (Display_Name (Identifier (F)))),
+               XTN.Items (Connection_Node));
+
+            --  Source and Destination
+
+            declare
+               Src_Node       : Node_Id;
+               Dst_Node       : Node_Id;
+            begin
+               --  Source
+
+               Src_Node := Make_XML_Node ("src");
+               Visit_Connection_Entity (Src_Node, Source (F));
+               Append_Node_To_List (Src_Node, XTN.Subitems (Connection_Node));
+
+               --  Destination
+
+               Dst_Node := Make_XML_Node ("dst");
+               Visit_Connection_Entity (Dst_Node, Destination (F));
+               Append_Node_To_List (Dst_Node, XTN.Subitems (Connection_Node));
+            end;
+
+            Append_Node_To_List
+              (Connection_Node, XTN.Subitems (Connections_Node));
+            F := Next_Node (F);
+         end loop;
+      end if;
+
       if Category = CC_System and then
         E = Root_System_Node
       then
@@ -394,6 +443,52 @@ package body Ocarina.Backends.AADL_XML.Main is
          Pop_Entity; --  A
       end if;
    end Visit_Component;
+
+   -----------------------------
+   -- Visit_Connection_Entity --
+   -----------------------------
+
+   procedure Visit_Connection_Entity
+     (Entity_XML_Node : Node_Id;
+      Entity_Node     : Node_Id)
+   is
+      pragma Assert
+        (Kind (Entity_Node) = K_Entity_Reference_Instance);
+   begin
+      if Present (Next_Node (First_Node (Path (Entity_Node))))
+      then
+         --  The connection port is in a subcomponent
+
+         Append_Node_To_List
+           (Make_Assignement
+              (Make_Defining_Identifier (Get_String_Name ("component")),
+               Make_Defining_Identifier
+                 (Display_Name
+                    (Identifier
+                       (Item (First_Node (Path (Entity_Node))))))),
+            XTN.Items (Entity_XML_Node));
+
+         Append_Node_To_List
+           (Make_Assignement
+              (Make_Defining_Identifier (Get_String_Name ("feature")),
+               Make_Defining_Identifier
+                 (Name
+                    (Identifier
+                       (Item (Next_Node (First_Node (Path (Entity_Node)))))))),
+            XTN.Items (Entity_XML_Node));
+      else
+         --  The connection port is in the current component
+
+         Append_Node_To_List
+           (Make_Assignement
+              (Make_Defining_Identifier (Get_String_Name ("feature")),
+               Make_Defining_Identifier
+                 (Display_Name
+                    (Identifier
+                       (Item (First_Node (Path (Entity_Node))))))),
+            XTN.Items (Entity_XML_Node));
+      end if;
+   end Visit_Connection_Entity;
 
    --------------------------
    -- Visit_Property_Value --

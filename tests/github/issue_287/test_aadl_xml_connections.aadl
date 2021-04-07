@@ -1,0 +1,44 @@
+package Test_Aadl_Xml_Connections
+public
+
+    data dummy_data end dummy_data;
+
+    system main
+    end main;
+
+    system implementation main.impl
+        subcomponents
+            p1: process dummy_process.impl;
+            p2: process dummy_process.impl;
+
+        connections
+            conn1: port p1.out_port -> p2.in_port;
+    end main.impl;
+
+    process dummy_process
+        features
+            in_port: in data port dummy_data;
+            out_port: out data port dummy_data;
+    end dummy_process;
+
+    process implementation dummy_process.impl
+        subcomponents
+            t1: thread dummy_thread.impl;
+            t2: thread dummy_thread.impl;
+
+        connections
+            conn1: port in_port -> t1.in_port;
+            conn2: port t1.out_port -> t2.in_port;
+            conn3: port t2.out_port -> out_port;
+    end dummy_process.impl;
+
+    thread dummy_thread
+        features
+            in_port: in data port dummy_data;
+            out_port: out data port dummy_data;
+    end dummy_thread;
+
+    thread implementation dummy_thread.impl
+    end dummy_thread.impl;
+
+end Test_Aadl_Xml_Connections;
