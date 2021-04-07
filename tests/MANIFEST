@@ -333,6 +333,7 @@ tests/github/issue_282/test.aadl
 tests/github/issue_287/test_aadl_xml.aadl
 tests/github/issue_287/test_lists.aadl
 tests/github/issue_287/test_property_terms.aadl
+tests/github/issue_287/test_aadl_xml_connections.aadl
 
 tests/root_system/test.aadl
 

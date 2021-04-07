@@ -161,14 +161,14 @@
   
   <xs:element name='src'>
     <xs:complexType>
-      <xs:attribute name='component' type="xs:string" use='required'/>
+      <xs:attribute name='component' type="xs:string" use='optional'/>
       <xs:attribute name='feature' type="xs:string" use='required'/>
     </xs:complexType>
   </xs:element>
   
   <xs:element name='dst'>
     <xs:complexType>
-      <xs:attribute name='component' type="xs:string" use='required'/>
+      <xs:attribute name='component' type="xs:string" use='optional'/>
       <xs:attribute name='feature' type="xs:string" use='required'/>
     </xs:complexType>
   </xs:element>
