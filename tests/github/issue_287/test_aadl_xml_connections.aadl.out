@@ -69,14 +69,23 @@
            <connection name="conn1">
              <src feature="in_port"/>
              <dst component="t1" feature="in_port"/>
+             <properties/>
            </connection>
            <connection name="conn2">
              <src component="t1" feature="out_port"/>
              <dst component="t2" feature="in_port"/>
+             <properties>
+               <property name="Timing">
+                 <property_value>
+                   <enumeration value="Delayed"/>
+                 </property_value>
+               </property>
+             </properties>
            </connection>
            <connection name="conn3">
              <src component="t2" feature="out_port"/>
              <dst feature="out_port"/>
+             <properties/>
            </connection>
          </connections>
        </component>
@@ -144,14 +153,23 @@
            <connection name="conn1">
              <src feature="in_port"/>
              <dst component="t1" feature="in_port"/>
+             <properties/>
            </connection>
            <connection name="conn2">
              <src component="t1" feature="out_port"/>
              <dst component="t2" feature="in_port"/>
+             <properties>
+               <property name="Timing">
+                 <property_value>
+                   <enumeration value="Delayed"/>
+                 </property_value>
+               </property>
+             </properties>
            </connection>
            <connection name="conn3">
              <src component="t2" feature="out_port"/>
              <dst feature="out_port"/>
+             <properties/>
            </connection>
          </connections>
        </component>
@@ -161,6 +179,18 @@
        <connection name="conn1">
          <src component="p1" feature="out_port"/>
          <dst component="p2" feature="in_port"/>
+         <properties>
+           <property name="Latency">
+             <property_value>
+               <range value_low="1" value_high="10" unit="ms"/>
+             </property_value>
+           </property>
+           <property name="Timing">
+             <property_value>
+               <enumeration value="Immediate"/>
+             </property_value>
+           </property>
+         </properties>
        </connection>
      </connections>
    </component>
