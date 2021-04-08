@@ -67,6 +67,7 @@ package body Ocarina.Backends.AADL_XML.Main is
    procedure Visit_Connection_Entity
      (Entity_XML_Node : Node_Id;
       Entity_Node     : Node_Id);
+   function Visit_Properties (E : Node_Id) return Node_Id;
    function Visit_Property_Value
      (AADL_Property_Value : Node_Id) return Node_Id;
 
@@ -170,15 +171,11 @@ package body Ocarina.Backends.AADL_XML.Main is
       Old_XML_Node        : Node_Id;
       Subcomponents_Node  : Node_Id;
       Features_Node       : Node_Id;
-      Properties_Node     : Node_Id;
       Feature_Node        : Node_Id;
       F                   : Node_Id;
       P                   : Node_Id;
       U                   : Node_Id;
-      Property_Node       : Node_Id;
       Components_Node     : Node_Id;
-      Property_Value_Node : Node_Id;
-      AADL_Property_Value : Node_Id;
       Connections_Node    : Node_Id;
       Connection_Node     : Node_Id;
 
@@ -328,69 +325,7 @@ package body Ocarina.Backends.AADL_XML.Main is
 
       --  Properties
 
-      Properties_Node := Make_XML_Node ("properties");
-      Append_Node_To_List (Properties_Node, XTN.Subitems (N));
-
-      if Present (Properties (E)) then
-         F := First_Node (Properties (E));
-         while Present (F) loop
-            --  XXX Warning, if there are multiple values for a
-            --  property (e.g. because of inheritance), then all
-            --  values are dumped.
-
-            Property_Node := Make_XML_Node ("property");
-
-            Append_Node_To_List
-              (Make_Assignement
-                 (Make_Defining_Identifier (Get_String_Name ("name")),
-                  Make_Defining_Identifier (Display_Name (Identifier (F)))),
-               XTN.Items (Property_Node));
-
-            Property_Value_Node := Make_XML_Node ("property_value");
-            Append_Node_To_List
-              (Property_Value_Node,
-               XTN.Subitems (Property_Node));
-
-            declare
-               use Ocarina.ME_AADL.AADL_Tree.Nutils; -- for New_Node
-               Property_Association_Value_Node : Node_Id;
-            begin
-               Property_Association_Value_Node :=
-                 Property_Association_Value
-                   (Get_Property_Association
-                     (E,
-                      Name (Identifier (F))));
-
-               if ATN.Single_Value (Property_Association_Value_Node) = No_Node
-               then
-                  --  Wrap Multi_Value, a List_Id, in a K_Property_List_Value
-                  --  node for further processing
-
-                  AADL_Property_Value :=
-                    New_Node
-                      (ATN.K_Property_List_Value,
-                       ATN.Loc (Property_Association_Value_Node));
-
-                  ATN.Set_Property_Values
-                    (AADL_Property_Value,
-                     ATN.Multi_Value (Property_Association_Value_Node));
-
-               else
-                  AADL_Property_Value :=
-                    Compute_Property_Value (Property_Association_Value_Node);
-               end if;
-            end;
-
-            Append_Node_To_List
-              (Visit_Property_Value (AADL_Property_Value),
-               XTN.Subitems (Property_Value_Node));
-
-            Append_Node_To_List
-              (Property_Node,
-               XTN.Subitems (Properties_Node));
-            F := Next_Node (F);
-         end loop;
-      end if;
+      Append_Node_To_List (Visit_Properties (E), XTN.Subitems (N));
 
       --  Connections
 
@@ -429,6 +364,11 @@ package body Ocarina.Backends.AADL_XML.Main is
                Visit_Connection_Entity (Dst_Node, Destination (F));
                Append_Node_To_List (Dst_Node, XTN.Subitems (Connection_Node));
             end;
+
+            --  Properties of the connection
+
+            Append_Node_To_List
+              (Visit_Properties (F), XTN.Subitems (Connection_Node));
 
             Append_Node_To_List
               (Connection_Node, XTN.Subitems (Connections_Node));
@@ -489,6 +429,81 @@ package body Ocarina.Backends.AADL_XML.Main is
             XTN.Items (Entity_XML_Node));
       end if;
    end Visit_Connection_Entity;
+
+   ----------------------
+   -- Visit_Properties --
+   ----------------------
+
+   function Visit_Properties
+     (E : Node_Id) return Node_Id
+   is
+      Properties_Node                 : Node_Id;
+      F                               : Node_Id;
+      Property_Node                   : Node_Id;
+      Property_Value_Node             : Node_Id;
+      AADL_Property_Value             : Node_Id;
+      Property_Association_Value_Node : Node_Id;
+   begin
+      Properties_Node := Make_XML_Node ("properties");
+
+      if Present (Properties (E)) then
+         F := First_Node (Properties (E));
+         while Present (F) loop
+            --  XXX Warning, if there are multiple values for a
+            --  property (e.g. because of inheritance), then all
+            --  values are dumped.
+
+            Property_Node := Make_XML_Node ("property");
+
+            Append_Node_To_List
+              (Make_Assignement
+                 (Make_Defining_Identifier (Get_String_Name ("name")),
+                  Make_Defining_Identifier (Display_Name (Identifier (F)))),
+               XTN.Items (Property_Node));
+
+            Property_Value_Node := Make_XML_Node ("property_value");
+            Append_Node_To_List
+              (Property_Value_Node,
+               XTN.Subitems (Property_Node));
+
+            Property_Association_Value_Node :=
+              Property_Association_Value
+                (Get_Property_Association
+                   (E,
+                    Name (Identifier (F))));
+
+            if ATN.Single_Value (Property_Association_Value_Node) = No_Node
+            then
+               --  Wrap Multi_Value, a List_Id, in a K_Property_List_Value
+               --  node for further processing
+
+               AADL_Property_Value :=
+                 Ocarina.ME_AADL.AADL_Tree.Nutils.New_Node
+                   (ATN.K_Property_List_Value,
+                    ATN.Loc (Property_Association_Value_Node));
+
+               ATN.Set_Property_Values
+                 (AADL_Property_Value,
+                  ATN.Multi_Value (Property_Association_Value_Node));
+
+            else
+               AADL_Property_Value :=
+                 Compute_Property_Value (Property_Association_Value_Node);
+            end if;
+
+            Append_Node_To_List
+              (Visit_Property_Value (AADL_Property_Value),
+               XTN.Subitems (Property_Value_Node));
+
+            Append_Node_To_List
+              (Property_Node,
+               XTN.Subitems (Properties_Node));
+            F := Next_Node (F);
+         end loop;
+      end if;
+
+      return Properties_Node;
+   end Visit_Properties;
 
    --------------------------
    -- Visit_Property_Value --

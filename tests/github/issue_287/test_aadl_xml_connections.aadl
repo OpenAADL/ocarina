@@ -12,7 +12,7 @@ public
             p2: process dummy_process.impl;
 
         connections
-            conn1: port p1.out_port -> p2.in_port;
+            conn1: port p1.out_port -> p2.in_port {Timing => Immediate; Latency => 1ms .. 10ms;};
     end main.impl;
 
     process dummy_process
@@ -28,7 +28,7 @@ public
 
         connections
             conn1: port in_port -> t1.in_port;
-            conn2: port t1.out_port -> t2.in_port;
+            conn2: port t1.out_port -> t2.in_port {Timing => Delayed;};
             conn3: port t2.out_port -> out_port;
     end dummy_process.impl;
 
