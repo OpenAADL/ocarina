@@ -5,6 +5,13 @@
        main.impl     </classifier>
      <features/>
      <subcomponents>
+       <component category="bus" identifier="b1">
+         <classifier>
+           dummy_bus.impl         </classifier>
+         <features/>
+         <subcomponents/>
+         <properties/>
+       </component>
        <component category="process" identifier="p1">
          <classifier>
            dummy_process.impl         </classifier>
@@ -66,12 +73,12 @@
          </subcomponents>
          <properties/>
          <connections>
-           <connection name="conn1">
+           <connection name="conn1" type="port_connection">
              <src feature="in_port"/>
              <dst component="t1" feature="in_port"/>
              <properties/>
            </connection>
-           <connection name="conn2">
+           <connection name="conn2" type="port_connection">
              <src component="t1" feature="out_port"/>
              <dst component="t2" feature="in_port"/>
              <properties>
@@ -82,7 +89,7 @@
                </property>
              </properties>
            </connection>
-           <connection name="conn3">
+           <connection name="conn3" type="port_connection">
              <src component="t2" feature="out_port"/>
              <dst feature="out_port"/>
              <properties/>
@@ -150,12 +157,12 @@
          </subcomponents>
          <properties/>
          <connections>
-           <connection name="conn1">
+           <connection name="conn1" type="port_connection">
              <src feature="in_port"/>
              <dst component="t1" feature="in_port"/>
              <properties/>
            </connection>
-           <connection name="conn2">
+           <connection name="conn2" type="port_connection">
              <src component="t1" feature="out_port"/>
              <dst component="t2" feature="in_port"/>
              <properties>
@@ -166,17 +173,31 @@
                </property>
              </properties>
            </connection>
-           <connection name="conn3">
+           <connection name="conn3" type="port_connection">
              <src component="t2" feature="out_port"/>
              <dst feature="out_port"/>
              <properties/>
            </connection>
          </connections>
        </component>
+       <component category="device" identifier="d1">
+         <classifier>
+           dummy_device.impl         </classifier>
+         <features>
+           <feature identifier="b1">
+             <direction kind="none"/>
+             <type kind="access"/>
+             <classifier>
+               dummy_bus             </classifier>
+           </feature>
+         </features>
+         <subcomponents/>
+         <properties/>
+       </component>
      </subcomponents>
      <properties/>
      <connections>
-       <connection name="conn1">
+       <connection name="conn1" type="port_connection">
          <src component="p1" feature="out_port"/>
          <dst component="p2" feature="in_port"/>
          <properties>
@@ -191,6 +212,11 @@
              </property_value>
            </property>
          </properties>
+       </connection>
+       <connection name="conn2" type="access_bus">
+         <src feature="b1"/>
+         <dst component="d1" feature="b1"/>
+         <properties/>
        </connection>
      </connections>
    </component>
