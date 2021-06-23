@@ -8,11 +8,14 @@ public
 
     system implementation main.impl
         subcomponents
+            b1: bus dummy_bus.impl;
             p1: process dummy_process.impl;
             p2: process dummy_process.impl;
+            d1: device dummy_device.impl;
 
         connections
             conn1: port p1.out_port -> p2.in_port {Timing => Immediate; Latency => 1ms .. 10ms;};
+            conn2: bus access b1 <-> d1.b1;
     end main.impl;
 
     process dummy_process
@@ -40,5 +43,19 @@ public
 
     thread implementation dummy_thread.impl
     end dummy_thread.impl;
+
+    device dummy_device
+        features
+            b1: requires bus access dummy_bus;
+    end dummy_device;
+
+    device implementation dummy_device.impl
+    end dummy_device.impl;
+
+    bus dummy_bus
+    end dummy_bus;
+
+    bus implementation dummy_bus.impl
+    end dummy_bus.impl;
 
 end Test_Aadl_Xml_Connections;

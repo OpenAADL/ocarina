@@ -156,6 +156,26 @@
 	<xs:element ref='properties' minOccurs='0' maxOccurs='1'/>
       </xs:sequence>
       <xs:attribute name='name' type="xs:string" use='optional'/>
+      <xs:attribute name='type' use='optional'>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value='event_data'/>
+            <xs:enumeration value='data_delayed'/>
+            <xs:enumeration value='data'/>
+            <xs:enumeration value='event'/>
+            <xs:enumeration value='feature_group'/>
+            <xs:enumeration value='parameter'/>
+            <xs:enumeration value='access_bus'/>
+            <xs:enumeration value='access_data'/>
+            <xs:enumeration value='access_subprogram'/>
+            <xs:enumeration value='access_virtual_bus'/>
+            <xs:enumeration value='feature'/>
+            <xs:enumeration value='port_connection'/>
+            <xs:enumeration value='access_subprogram_group'/>
+            <xs:enumeration value='access'/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
     </xs:complexType>
   </xs:element>
   
