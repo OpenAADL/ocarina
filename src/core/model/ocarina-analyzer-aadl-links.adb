@@ -7,7 +7,7 @@
 --                                 B o d y                                  --
 --                                                                          --
 --                  Copyright (C) 2009 Telecom ParisTech,                   --
---                 2010-2019 ESA & ISAE, 2019-2020 OpenAADL                 --
+--          2010-2019 ESA & ISAE, 2019-2021 OpenAADL, 2021 NVIDIA           --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -3389,8 +3389,11 @@ package body Ocarina.Analyzer.AADL.Links is
       Push_Scope (Entity_Scope (Root));
 
       if not Is_Empty (Declarations (Root)) then
-         List_Node := First_Node (Declarations (Root));
 
+         --  Process type declarations first so the specs (e.g., flow spec)
+         --  can be referenced correctly by type implementations
+
+         List_Node := First_Node (Declarations (Root));
          while Present (List_Node) loop
             case Kind (List_Node) is
                when K_Component_Type =>
@@ -3398,6 +3401,38 @@ package body Ocarina.Analyzer.AADL.Links is
                     Link_Component_Type_Subclauses (Root, List_Node)
                     and then Success;
 
+               when K_Package_Specification =>
+                  Push_Scope (Entity_Scope (List_Node));
+
+                  if not Is_Empty (Declarations (List_Node)) then
+                     Package_List_Node :=
+                       First_Node (Declarations (List_Node));
+                     while Present (Package_List_Node) loop
+                        if Kind (Package_List_Node) = K_Component_Type then
+                           Success :=
+                             Link_Component_Type_Subclauses
+                               (Root,
+                                Package_List_Node)
+                             and then Success;
+                        end if;
+                        Package_List_Node := Next_Node (Package_List_Node);
+                     end loop;
+                  end if;
+
+                  Pop_Scope;
+
+               when others =>
+                  null;
+            end case;
+
+            List_Node := Next_Node (List_Node);
+         end loop;
+
+         --  Process everything else other than the type declarations
+
+         List_Node := First_Node (Declarations (Root));
+         while Present (List_Node) loop
+            case Kind (List_Node) is
                when K_Component_Implementation =>
                   Success :=
                     Link_Component_Implementation_Subclauses (Root, List_Node)
@@ -3417,13 +3452,6 @@ package body Ocarina.Analyzer.AADL.Links is
 
                      while Present (Package_List_Node) loop
                         case Kind (Package_List_Node) is
-                           when K_Component_Type =>
-                              Success :=
-                                Link_Component_Type_Subclauses
-                                  (Root,
-                                   Package_List_Node)
-                                and then Success;
-
                            when K_Component_Implementation =>
                               Success :=
                                 Link_Component_Implementation_Subclauses

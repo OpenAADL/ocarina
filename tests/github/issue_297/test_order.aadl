@@ -1,0 +1,56 @@
+package test_order
+public
+
+    data d1 end d1;
+
+
+    system deployment
+    end deployment;
+
+    system implementation deployment.impl
+        subcomponents
+            p1: process p1.impl;
+    end deployment.impl;
+
+
+    -- The extended component
+    -- An flow source inconsistency error was thrown wrongly
+    -- if p2 implementation is declared before p1 type is declared.
+    process p2
+    extends p1
+    end p2;
+
+    process implementation p2.impl
+    extends p1.impl
+    end p2.impl;
+    -- End of extend component
+
+
+    process p1
+        features
+            out_port: out data port d1;
+        flows
+            flow_out: flow source out_port;
+    end p1;
+
+    process implementation p1.impl
+        subcomponents
+            t1: thread t1.impl;
+        connections
+            conn_out: port t1.out_port -> out_port;
+        flows
+            flow_out: flow source t1.flow_out -> conn_out -> out_port;   -- where Ocarina throws an error against
+    end p1.impl;
+
+
+    thread t1
+        features
+            out_port: out data port d1;
+        flows
+            flow_out: flow source out_port;
+    end t1;
+
+    thread implementation t1.impl
+    end t1.impl;
+
+end test_order;
