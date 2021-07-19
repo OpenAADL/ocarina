@@ -351,58 +351,36 @@ package body Ocarina.Backends.AADL_XML.Main is
             if Present (Associated_Type (F)) then
 
                declare
-                  Connection_Type : Ocarina.ME_AADL.Connection_Type;
                   Type_String     : Name_Id;
+
+                  Map_Connection_Type : constant array
+                    (Ocarina.ME_AADL.Connection_Type'Range) of Name_Id :=
+                     --  AADL_V1
+                     (CT_Event_Data => Get_String_Name ("event_data"),
+                      CT_Data_Delayed => Get_String_Name ("data_delayed"),
+                      --  AADL_V1 and AADL_V2
+                      CT_Data => Get_String_Name ("data"),
+                      CT_Event => Get_String_Name ("event"),
+                      CT_Feature_Group => Get_String_Name ("feature_group"),
+                      CT_Parameter => Get_String_Name ("parameter"),
+                      CT_Access_Bus => Get_String_Name ("access_bus"),
+                      CT_Access_Data => Get_String_Name ("access_data"),
+                      CT_Access_Subprogram
+                        => Get_String_Name ("access_subprogram"),
+                      --  AADL_V2
+                      CT_Access_Virtual_Bus
+                        => Get_String_Name ("access_virtual_bus"),
+                      CT_Feature => Get_String_Name ("feature"),
+                      CT_Port_Connection =>
+                        Get_String_Name ("port_connection"),
+                      CT_Access_Subprogram_Group =>
+                        Get_String_Name ("access_subprogram_group"),
+                      CT_Access => Get_String_Name ("access"),
+                      CT_Error => Get_String_Name ("error"));
+
                begin
-                  Connection_Type := Get_Category_Of_Connection (F);
-
-                  --  AADL_V1
-                  if Connection_Type = CT_Event_Data then
-                     Type_String := Get_String_Name ("event_data");
-
-                  elsif Connection_Type = CT_Data_Delayed then
-                     Type_String := Get_String_Name ("data_delayed");
-
-                  --  AADL_V1 and AADL_V2
-                  elsif Connection_Type = CT_Data then
-                     Type_String := Get_String_Name ("data");
-
-                  elsif Connection_Type = CT_Event then
-                     Type_String := Get_String_Name ("event");
-
-                  elsif Connection_Type = CT_Feature_Group then
-                     Type_String := Get_String_Name ("feature_group");
-
-                  elsif Connection_Type = CT_Parameter then
-                     Type_String := Get_String_Name ("parameter");
-
-                  elsif Connection_Type = CT_Access_Bus then
-                     Type_String := Get_String_Name ("access_bus");
-
-                  elsif Connection_Type = CT_Access_Data then
-                     Type_String := Get_String_Name ("access_data");
-
-                  elsif Connection_Type = CT_Access_Subprogram then
-                     Type_String := Get_String_Name ("access_subprogram");
-
-                  --  AADL_V2
-                  elsif Connection_Type = CT_Access_Virtual_Bus then
-                     Type_String := Get_String_Name ("access_virtual_bus");
-
-                  elsif Connection_Type = CT_Feature then
-                     Type_String := Get_String_Name ("feature");
-
-                  elsif Connection_Type = CT_Port_Connection then
-                     Type_String := Get_String_Name ("port_connection");
-
-                  elsif Connection_Type = CT_Access_Subprogram_Group then
-                     Type_String :=
-                        Get_String_Name ("access_subprogram_group");
-
-                  else
-                     --  CT_Access
-                     Type_String := Get_String_Name ("access");
-                  end if;
+                  Type_String := Map_Connection_Type
+                      (Get_Category_Of_Connection (F));
 
                   Append_Node_To_List
                     (Make_Assignement
