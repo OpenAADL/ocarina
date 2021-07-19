@@ -7,7 +7,7 @@
 --                                 B o d y                                  --
 --                                                                          --
 --               Copyright (C) 2008-2009 Telecom ParisTech,                 --
---                 2010-2019 ESA & ISAE, 2019-2020 OpenAADL                 --
+--                 2010-2019 ESA & ISAE, 2019-2021 OpenAADL                 --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -378,7 +378,7 @@ package body Ocarina.Backends.C_Tree.Generator is
             Used_Columns := Used_Columns + Next_Word_Length;
             Write_Str (Get_Next_Word);
          end loop;
-         Write_Str ("*/");
+         Write_Str (" */");
 
          if Are_There_More_Words then
             Write_Eol;
@@ -796,6 +796,8 @@ package body Ocarina.Backends.C_Tree.Generator is
       --  Enter If_Statement
 
       Write_Str ("/* :: Yes if commentary :: */");
+      Write_Eol;
+      Write_Indentation;
       Write (Tok_If);
       Write_Space;
       Write (Tok_Left_Paren);
