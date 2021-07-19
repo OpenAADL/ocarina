@@ -1,0 +1,62 @@
+package Test_Cheddar
+public
+
+    with Cheddar_Properties;
+
+    -- Top level component of the whole system
+    system deployment
+    end deployment;
+
+    system implementation deployment.impl
+        subcomponents
+            cpu: processor main_processor.impl;
+            p1: process dummy_process.impl;
+
+        properties
+            Actual_Processor_Binding => (reference (cpu)) applies to p1;
+    end deployment.impl;
+
+    processor main_processor
+    end main_processor;
+
+    processor implementation main_processor.impl
+        properties
+            Scheduling_Protocol => (RMS);
+            Preemptive_Scheduler => true;
+            Priority_Range => 0 .. 255;
+    end main_processor.impl;
+
+    process dummy_process
+    end dummy_process;
+
+    process implementation dummy_process.impl
+        subcomponents
+            t1: thread task1.impl;
+            t2: thread task2.impl;
+    end dummy_process.impl;
+
+    thread task1
+    end task1;
+
+    thread implementation task1.impl
+        properties
+            Compute_Execution_time => 2ms .. 10ms;
+            Period => 20ms;
+            Deadline => 20ms;
+            Dispatch_Protocol => Periodic;
+            Cheddar_Properties::Fixed_Priority => 1;
+    end task1.impl;
+
+    thread task2
+    end task2;
+
+    thread implementation task2.impl
+        properties
+            Compute_Execution_time => 5ms .. 15ms;
+            Period => 50ms;
+            Deadline => 50ms;
+            Dispatch_Protocol => Periodic;
+            Cheddar_Properties::Fixed_Priority => 2;
+    end task2.impl;
+
+end Test_Cheddar;

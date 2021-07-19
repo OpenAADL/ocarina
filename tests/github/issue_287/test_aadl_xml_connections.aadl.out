@@ -1,0 +1,224 @@
+<aadl_xml root_system="main.impl">
+ <components>
+   <component category="system" identifier="main.impl">
+     <classifier>
+       main.impl     </classifier>
+     <features/>
+     <subcomponents>
+       <component category="bus" identifier="b1">
+         <classifier>
+           dummy_bus.impl         </classifier>
+         <features/>
+         <subcomponents/>
+         <properties/>
+       </component>
+       <component category="process" identifier="p1">
+         <classifier>
+           dummy_process.impl         </classifier>
+         <features>
+           <feature identifier="in_port">
+             <direction kind="in"/>
+             <type kind="data"/>
+             <classifier>
+               dummy_data             </classifier>
+           </feature>
+           <feature identifier="out_port">
+             <direction kind="out"/>
+             <type kind="data"/>
+             <classifier>
+               dummy_data             </classifier>
+           </feature>
+         </features>
+         <subcomponents>
+           <component category="thread" identifier="t1">
+             <classifier>
+               dummy_thread.impl             </classifier>
+             <features>
+               <feature identifier="in_port">
+                 <direction kind="in"/>
+                 <type kind="data"/>
+                 <classifier>
+                   dummy_data                 </classifier>
+               </feature>
+               <feature identifier="out_port">
+                 <direction kind="out"/>
+                 <type kind="data"/>
+                 <classifier>
+                   dummy_data                 </classifier>
+               </feature>
+             </features>
+             <subcomponents/>
+             <properties/>
+           </component>
+           <component category="thread" identifier="t2">
+             <classifier>
+               dummy_thread.impl             </classifier>
+             <features>
+               <feature identifier="in_port">
+                 <direction kind="in"/>
+                 <type kind="data"/>
+                 <classifier>
+                   dummy_data                 </classifier>
+               </feature>
+               <feature identifier="out_port">
+                 <direction kind="out"/>
+                 <type kind="data"/>
+                 <classifier>
+                   dummy_data                 </classifier>
+               </feature>
+             </features>
+             <subcomponents/>
+             <properties/>
+           </component>
+         </subcomponents>
+         <properties/>
+         <connections>
+           <connection name="conn1" type="port_connection">
+             <src feature="in_port"/>
+             <dst component="t1" feature="in_port"/>
+             <properties/>
+           </connection>
+           <connection name="conn2" type="port_connection">
+             <src component="t1" feature="out_port"/>
+             <dst component="t2" feature="in_port"/>
+             <properties>
+               <property name="Timing">
+                 <property_value>
+                   <enumeration value="Delayed"/>
+                 </property_value>
+               </property>
+             </properties>
+           </connection>
+           <connection name="conn3" type="port_connection">
+             <src component="t2" feature="out_port"/>
+             <dst feature="out_port"/>
+             <properties/>
+           </connection>
+         </connections>
+       </component>
+       <component category="process" identifier="p2">
+         <classifier>
+           dummy_process.impl         </classifier>
+         <features>
+           <feature identifier="in_port">
+             <direction kind="in"/>
+             <type kind="data"/>
+             <classifier>
+               dummy_data             </classifier>
+           </feature>
+           <feature identifier="out_port">
+             <direction kind="out"/>
+             <type kind="data"/>
+             <classifier>
+               dummy_data             </classifier>
+           </feature>
+         </features>
+         <subcomponents>
+           <component category="thread" identifier="t1">
+             <classifier>
+               dummy_thread.impl             </classifier>
+             <features>
+               <feature identifier="in_port">
+                 <direction kind="in"/>
+                 <type kind="data"/>
+                 <classifier>
+                   dummy_data                 </classifier>
+               </feature>
+               <feature identifier="out_port">
+                 <direction kind="out"/>
+                 <type kind="data"/>
+                 <classifier>
+                   dummy_data                 </classifier>
+               </feature>
+             </features>
+             <subcomponents/>
+             <properties/>
+           </component>
+           <component category="thread" identifier="t2">
+             <classifier>
+               dummy_thread.impl             </classifier>
+             <features>
+               <feature identifier="in_port">
+                 <direction kind="in"/>
+                 <type kind="data"/>
+                 <classifier>
+                   dummy_data                 </classifier>
+               </feature>
+               <feature identifier="out_port">
+                 <direction kind="out"/>
+                 <type kind="data"/>
+                 <classifier>
+                   dummy_data                 </classifier>
+               </feature>
+             </features>
+             <subcomponents/>
+             <properties/>
+           </component>
+         </subcomponents>
+         <properties/>
+         <connections>
+           <connection name="conn1" type="port_connection">
+             <src feature="in_port"/>
+             <dst component="t1" feature="in_port"/>
+             <properties/>
+           </connection>
+           <connection name="conn2" type="port_connection">
+             <src component="t1" feature="out_port"/>
+             <dst component="t2" feature="in_port"/>
+             <properties>
+               <property name="Timing">
+                 <property_value>
+                   <enumeration value="Delayed"/>
+                 </property_value>
+               </property>
+             </properties>
+           </connection>
+           <connection name="conn3" type="port_connection">
+             <src component="t2" feature="out_port"/>
+             <dst feature="out_port"/>
+             <properties/>
+           </connection>
+         </connections>
+       </component>
+       <component category="device" identifier="d1">
+         <classifier>
+           dummy_device.impl         </classifier>
+         <features>
+           <feature identifier="b1">
+             <direction kind="none"/>
+             <type kind="access"/>
+             <classifier>
+               dummy_bus             </classifier>
+           </feature>
+         </features>
+         <subcomponents/>
+         <properties/>
+       </component>
+     </subcomponents>
+     <properties/>
+     <connections>
+       <connection name="conn1" type="port_connection">
+         <src component="p1" feature="out_port"/>
+         <dst component="p2" feature="in_port"/>
+         <properties>
+           <property name="Latency">
+             <property_value>
+               <range value_low="1" value_high="10" unit="ms"/>
+             </property_value>
+           </property>
+           <property name="Timing">
+             <property_value>
+               <enumeration value="Immediate"/>
+             </property_value>
+           </property>
+         </properties>
+       </connection>
+       <connection name="conn2" type="access_bus">
+         <src feature="b1"/>
+         <dst component="d1" feature="b1"/>
+         <properties/>
+       </connection>
+     </connections>
+   </component>
+ </components>
+</aadl_xml>

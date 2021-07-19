@@ -7,7 +7,7 @@
 --                                 B o d y                                  --
 --                                                                          --
 --               Copyright (C) 2005-2009 Telecom ParisTech,                 --
---                 2010-2019 ESA & ISAE, 2019-2020 OpenAADL                 --
+--         2010-2019 ESA & ISAE, 2019-2021 OpenAADL, 2021 NVIDIA            --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -248,7 +248,7 @@ package body Ocarina.Instances.Components.Connections is
 
       --  Set the connection type
 
-      Set_Associated_Type (New_Instance, No_Node);
+      Set_Associated_Type (New_Instance, Node_Id (ATN.Category (Connection)));
 
       --  Apply the properties of the connection to the connection
       --  instance.

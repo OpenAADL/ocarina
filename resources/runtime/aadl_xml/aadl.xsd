@@ -156,19 +156,39 @@
 	<xs:element ref='properties' minOccurs='0' maxOccurs='1'/>
       </xs:sequence>
       <xs:attribute name='name' type="xs:string" use='optional'/>
+      <xs:attribute name='type' use='optional'>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value='event_data'/>
+            <xs:enumeration value='data_delayed'/>
+            <xs:enumeration value='data'/>
+            <xs:enumeration value='event'/>
+            <xs:enumeration value='feature_group'/>
+            <xs:enumeration value='parameter'/>
+            <xs:enumeration value='access_bus'/>
+            <xs:enumeration value='access_data'/>
+            <xs:enumeration value='access_subprogram'/>
+            <xs:enumeration value='access_virtual_bus'/>
+            <xs:enumeration value='feature'/>
+            <xs:enumeration value='port_connection'/>
+            <xs:enumeration value='access_subprogram_group'/>
+            <xs:enumeration value='access'/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
     </xs:complexType>
   </xs:element>
   
   <xs:element name='src'>
     <xs:complexType>
-      <xs:attribute name='component' type="xs:string" use='required'/>
+      <xs:attribute name='component' type="xs:string" use='optional'/>
       <xs:attribute name='feature' type="xs:string" use='required'/>
     </xs:complexType>
   </xs:element>
   
   <xs:element name='dst'>
     <xs:complexType>
-      <xs:attribute name='component' type="xs:string" use='required'/>
+      <xs:attribute name='component' type="xs:string" use='optional'/>
       <xs:attribute name='feature' type="xs:string" use='required'/>
     </xs:complexType>
   </xs:element>
@@ -184,45 +204,81 @@
   
   <xs:element name='property'>
     <xs:complexType>
-      <xs:sequence minOccurs='1' maxOccurs='unbounded'>
-	<xs:element ref='property_value'/>
+      <xs:sequence>
+        <xs:element name='property_value' type="property_expression"/>
       </xs:sequence>
       <xs:attribute name='name' type="xs:string" use='required'/>
     </xs:complexType>
   </xs:element>
 
-  <xs:element name="property_value">
+  <xs:complexType name='property_expression'>
+    <xs:choice minOccurs="1" maxOccurs="1">
+      <xs:element name="classifier" type="classifier_prop"/>
+      <xs:element name="reference" type="reference_prop"/>
+      <xs:element name="enumeration" type="enumeration_prop"/>
+      <xs:element name="number" type="unit_prop"/>
+      <xs:element name="range" type="range_prop"/>
+      <xs:element name="string" type="string_prop"/>
+      <xs:element ref="record"/>
+      <xs:element ref="list"/>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:element name='list'>
     <xs:complexType>
-      <xs:choice>
-	<xs:element name="classifier" type="classifier_prop"/>
-	<xs:element name="reference" type="reference_prop"/>
-	<xs:element name="unit" type="unit_prop"/>
-	<xs:element name="value" type="value_prop"/>
-	<xs:element name="range" type="range_prop"/>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="classifier" type="classifier_prop"/>
+        <xs:element name="reference" type="reference_prop"/>
+        <xs:element name="enumeration" type="enumeration_prop"/>
+        <xs:element name="number" type="unit_prop"/>
+        <xs:element name="range" type="range_prop"/>
+        <xs:element name="string" type="string_prop"/>
+        <xs:element ref="record"/>
+        <xs:element ref="list"/>
       </xs:choice>
     </xs:complexType>
   </xs:element>
 
+  <xs:element name='record'>
+    <xs:complexType>
+      <xs:sequence minOccurs='1' maxOccurs='unbounded'>
+        <xs:element name='record_field'>
+          <xs:complexType>
+            <xs:complexContent>
+              <xs:extension base="property_expression">
+                <xs:attribute name='name' type="xs:string" use='required'/>
+              </xs:extension>
+            </xs:complexContent>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
   <xs:complexType name='classifier_prop'>
-    <xs:attribute name='name' type="xs:string" use='required'/>
+    <xs:attribute name='value' type="xs:string" use='required'/>
   </xs:complexType>
 
   <xs:complexType name='unit_prop'>
-    <xs:attribute name='value' type="xs:string" use='required'/>
-    <xs:attribute name='unit' type="xs:string" use='required'/>
-  </xs:complexType>
-
-  <xs:complexType name='range_prop'>
-    <xs:attribute name='value_low' type="xs:string" use='required'/>
-    <xs:attribute name='value_high' type="xs:string" use='required'/>
+    <xs:attribute name='value' type="xs:decimal" use='required'/>
     <xs:attribute name='unit' type="xs:string" use='optional'/>
   </xs:complexType>
 
-  <xs:complexType name='value_prop'>
+  <xs:complexType name='range_prop'>
+    <xs:attribute name='value_low' type="xs:decimal" use='required'/>
+    <xs:attribute name='value_high' type="xs:decimal" use='required'/>
+    <xs:attribute name='unit' type="xs:string" use='optional'/>
+  </xs:complexType>
+
+  <xs:complexType name='string_prop'>
     <xs:attribute name='value' type="xs:string" use='required'/>
   </xs:complexType>
 
   <xs:complexType name='reference_prop'>
+    <xs:attribute name='value' type="xs:string" use='required'/>
+  </xs:complexType>
+
+  <xs:complexType name='enumeration_prop'>
     <xs:attribute name='value' type="xs:string" use='required'/>
   </xs:complexType>
 

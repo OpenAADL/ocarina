@@ -1,0 +1,114 @@
+<aadl_xml root_system="main.impl">
+ <components>
+   <component category="system" identifier="main.impl">
+     <classifier>
+       main.impl     </classifier>
+     <features/>
+     <subcomponents>
+       <component category="device" identifier="subcomp_subdevice">
+         <classifier>
+           subdevice.impl         </classifier>
+         <features/>
+         <subcomponents/>
+         <properties/>
+       </component>
+     </subcomponents>
+     <properties>
+       <property name="Test_Properties::a_record_property">
+         <property_value>
+           <record>
+             <record_field name="an_integer_field">
+               <number value="10"/>
+             </record_field>
+             <record_field name="a_string_field">
+               <string value="test string"/>
+             </record_field>
+             <record_field name="a_real_range_field">
+               <range value_low="5.0" value_high="10.0"/>
+             </record_field>
+           </record>
+         </property_value>
+       </property>
+       <property name="Test_Properties::an_enumeration_property">
+         <property_value>
+           <enumeration value="enum2"/>
+         </property_value>
+       </property>
+       <property name="Test_Properties::a_classifier_property">
+         <property_value>
+           <classifier value="subdevice"/>
+         </property_value>
+       </property>
+       <property name="Test_Properties::a_reference_property">
+         <property_value>
+           <reference value="subcomp_subdevice"/>
+         </property_value>
+       </property>
+       <property name="Test_Properties::a_list_of_list_property">
+         <property_value>
+           <list>
+             <list>
+               <number value="1"/>
+               <number value="2"/>
+             </list>
+             <list>
+               <number value="3"/>
+               <number value="4"/>
+             </list>
+           </list>
+         </property_value>
+       </property>
+       <property name="Test_Properties::a_boolean_property">
+         <property_value>
+           <string value="true"/>
+         </property_value>
+       </property>
+       <property name="Test_Properties::a_string_property">
+         <property_value>
+           <string value="test string"/>
+         </property_value>
+       </property>
+       <property name="Test_Properties::a_real_range_property">
+         <property_value>
+           <range value_low="5.0" value_high="10.0"/>
+         </property_value>
+       </property>
+       <property name="Test_Properties::a_real_unit_property">
+         <property_value>
+           <number value="10" unit="ns"/>
+         </property_value>
+       </property>
+       <property name="Test_Properties::a_negative_real_property">
+         <property_value>
+           <number value="-10.0"/>
+         </property_value>
+       </property>
+       <property name="Test_Properties::a_real_property">
+         <property_value>
+           <number value="10.0"/>
+         </property_value>
+       </property>
+       <property name="Test_Properties::an_integer_range_property">
+         <property_value>
+           <range value_low="5" value_high="10"/>
+         </property_value>
+       </property>
+       <property name="Test_Properties::an_integer_unit_property">
+         <property_value>
+           <number value="10" unit="ms"/>
+         </property_value>
+       </property>
+       <property name="Test_Properties::a_negative_integer_property">
+         <property_value>
+           <number value="-10"/>
+         </property_value>
+       </property>
+       <property name="Test_Properties::an_integer_property">
+         <property_value>
+           <number value="10"/>
+         </property_value>
+       </property>
+     </properties>
+   </component>
+ </components>
+</aadl_xml>

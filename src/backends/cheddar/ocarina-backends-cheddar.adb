@@ -6,7 +6,8 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---         Copyright (C) 2010-2019 ESA & ISAE, 2019-2020 OpenAADL           --
+--                   Copyright (C) 2010-2019 ESA & ISAE,                    --
+--                     2019-2021 OpenAADL, 2021 NVIDIA                      --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -29,6 +30,8 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
+with GNAT.OS_Lib;
+
 with Ocarina.Instances;
 with Ocarina.Backends.Expander;
 with Ocarina.Backends.Messages;
@@ -37,6 +40,9 @@ with Ocarina.Backends.Utils;
 with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
 with Ocarina.Backends.XML_Tree.Generator;
+with Ocarina.Namet;
+with Ocarina.Output;
+with Ocarina.Options;
 
 package body Ocarina.Backends.Cheddar is
 
@@ -58,8 +64,12 @@ package body Ocarina.Backends.Cheddar is
    --------------
 
    procedure Generate (AADL_Root : Node_Id) is
-      Instance_Root : Node_Id;
+      use GNAT.OS_Lib;
+      use Ocarina.Namet;
+      use Ocarina.Output;
+      use Ocarina.Options;
 
+      Instance_Root : Node_Id;
    begin
       Instance_Root := Instantiate_Model (AADL_Root);
 
@@ -79,15 +89,26 @@ package body Ocarina.Backends.Cheddar is
          Display_Error ("XML generation failed", Fatal => True);
       end if;
 
-      Create_Directory (Generated_Sources_Directory);
+      if Output_Filename /= No_Name and then
+         not Is_Directory (Get_Name_String (Output_Filename))
+      then
+         --  Create the output file based on the given file name
 
-      Enter_Directory (Generated_Sources_Directory);
+         Set_Output
+            (Create_File
+               (Get_Name_String (Output_Filename),
+               Binary));
+         XML_Tree.Generator.Generate (XML_Root);
+      else
+         --  Enter to the given directory and let the XML generator
+         --  determine the output file name
 
-      --  Create the XML file
+         Enter_Directory (Generated_Sources_Directory);
 
-      XML_Tree.Generator.Generate (XML_Root);
+         XML_Tree.Generator.Generate (XML_Root);
 
-      Leave_Directory;
+         Leave_Directory;
+      end if;
    end Generate;
 
    ----------
