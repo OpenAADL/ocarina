@@ -7,7 +7,7 @@
 --                                 B o d y                                  --
 --                                                                          --
 --               Copyright (C) 2008-2009 Telecom ParisTech,                 --
---                 2010-2019 ESA & ISAE, 2019-2020 OpenAADL                 --
+--                 2010-2019 ESA & ISAE, 2019-2021 OpenAADL                 --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -1871,7 +1871,8 @@ package body Ocarina.Backends.C_Tree.Nutils is
                                Make_Defining_Identifier
                                  (Map_C_Variable_Name
                                     (Source_F,
-                                     Port_Request => True)));
+                                     Port_Request => True)),
+                           Is_Pointer => True);
                      else
                         M :=
                           Map_C_Data_Type_Designator
