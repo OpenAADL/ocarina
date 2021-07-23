@@ -19,14 +19,28 @@
            <feature identifier="in_port">
              <direction kind="in"/>
              <type kind="data"/>
-             <classifier>
-               dummy_data             </classifier>
+             <corresponding_instance>
+               <component category="data" identifier="dummy_data">
+                 <classifier>
+                   dummy_data                 </classifier>
+                 <features/>
+                 <subcomponents/>
+                 <properties/>
+               </component>
+             </corresponding_instance>
            </feature>
            <feature identifier="out_port">
              <direction kind="out"/>
              <type kind="data"/>
-             <classifier>
-               dummy_data             </classifier>
+             <corresponding_instance>
+               <component category="data" identifier="dummy_data">
+                 <classifier>
+                   dummy_data                 </classifier>
+                 <features/>
+                 <subcomponents/>
+                 <properties/>
+               </component>
+             </corresponding_instance>
            </feature>
          </features>
          <subcomponents>
@@ -37,14 +51,28 @@
                <feature identifier="in_port">
                  <direction kind="in"/>
                  <type kind="data"/>
-                 <classifier>
-                   dummy_data                 </classifier>
+                 <corresponding_instance>
+                   <component category="data" identifier="dummy_data">
+                     <classifier>
+                       dummy_data                     </classifier>
+                     <features/>
+                     <subcomponents/>
+                     <properties/>
+                   </component>
+                 </corresponding_instance>
                </feature>
                <feature identifier="out_port">
                  <direction kind="out"/>
                  <type kind="data"/>
-                 <classifier>
-                   dummy_data                 </classifier>
+                 <corresponding_instance>
+                   <component category="data" identifier="dummy_data">
+                     <classifier>
+                       dummy_data                     </classifier>
+                     <features/>
+                     <subcomponents/>
+                     <properties/>
+                   </component>
+                 </corresponding_instance>
                </feature>
              </features>
              <subcomponents/>
@@ -57,14 +85,28 @@
                <feature identifier="in_port">
                  <direction kind="in"/>
                  <type kind="data"/>
-                 <classifier>
-                   dummy_data                 </classifier>
+                 <corresponding_instance>
+                   <component category="data" identifier="dummy_data">
+                     <classifier>
+                       dummy_data                     </classifier>
+                     <features/>
+                     <subcomponents/>
+                     <properties/>
+                   </component>
+                 </corresponding_instance>
                </feature>
                <feature identifier="out_port">
                  <direction kind="out"/>
                  <type kind="data"/>
-                 <classifier>
-                   dummy_data                 </classifier>
+                 <corresponding_instance>
+                   <component category="data" identifier="dummy_data">
+                     <classifier>
+                       dummy_data                     </classifier>
+                     <features/>
+                     <subcomponents/>
+                     <properties/>
+                   </component>
+                 </corresponding_instance>
                </feature>
              </features>
              <subcomponents/>
@@ -103,14 +145,28 @@
            <feature identifier="in_port">
              <direction kind="in"/>
              <type kind="data"/>
-             <classifier>
-               dummy_data             </classifier>
+             <corresponding_instance>
+               <component category="data" identifier="dummy_data">
+                 <classifier>
+                   dummy_data                 </classifier>
+                 <features/>
+                 <subcomponents/>
+                 <properties/>
+               </component>
+             </corresponding_instance>
            </feature>
            <feature identifier="out_port">
              <direction kind="out"/>
              <type kind="data"/>
-             <classifier>
-               dummy_data             </classifier>
+             <corresponding_instance>
+               <component category="data" identifier="dummy_data">
+                 <classifier>
+                   dummy_data                 </classifier>
+                 <features/>
+                 <subcomponents/>
+                 <properties/>
+               </component>
+             </corresponding_instance>
            </feature>
          </features>
          <subcomponents>
@@ -121,14 +177,28 @@
                <feature identifier="in_port">
                  <direction kind="in"/>
                  <type kind="data"/>
-                 <classifier>
-                   dummy_data                 </classifier>
+                 <corresponding_instance>
+                   <component category="data" identifier="dummy_data">
+                     <classifier>
+                       dummy_data                     </classifier>
+                     <features/>
+                     <subcomponents/>
+                     <properties/>
+                   </component>
+                 </corresponding_instance>
                </feature>
                <feature identifier="out_port">
                  <direction kind="out"/>
                  <type kind="data"/>
-                 <classifier>
-                   dummy_data                 </classifier>
+                 <corresponding_instance>
+                   <component category="data" identifier="dummy_data">
+                     <classifier>
+                       dummy_data                     </classifier>
+                     <features/>
+                     <subcomponents/>
+                     <properties/>
+                   </component>
+                 </corresponding_instance>
                </feature>
              </features>
              <subcomponents/>
@@ -141,14 +211,28 @@
                <feature identifier="in_port">
                  <direction kind="in"/>
                  <type kind="data"/>
-                 <classifier>
-                   dummy_data                 </classifier>
+                 <corresponding_instance>
+                   <component category="data" identifier="dummy_data">
+                     <classifier>
+                       dummy_data                     </classifier>
+                     <features/>
+                     <subcomponents/>
+                     <properties/>
+                   </component>
+                 </corresponding_instance>
                </feature>
                <feature identifier="out_port">
                  <direction kind="out"/>
                  <type kind="data"/>
-                 <classifier>
-                   dummy_data                 </classifier>
+                 <corresponding_instance>
+                   <component category="data" identifier="dummy_data">
+                     <classifier>
+                       dummy_data                     </classifier>
+                     <features/>
+                     <subcomponents/>
+                     <properties/>
+                   </component>
+                 </corresponding_instance>
                </feature>
              </features>
              <subcomponents/>
@@ -187,8 +271,15 @@
            <feature identifier="b1">
              <direction kind="none"/>
              <type kind="access"/>
-             <classifier>
-               dummy_bus             </classifier>
+             <corresponding_instance>
+               <component category="bus" identifier="dummy_bus">
+                 <classifier>
+                   dummy_bus                 </classifier>
+                 <features/>
+                 <subcomponents/>
+                 <properties/>
+               </component>
+             </corresponding_instance>
            </feature>
          </features>
          <subcomponents/>
