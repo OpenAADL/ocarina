@@ -220,6 +220,7 @@
       <xs:element name="number" type="unit_prop"/>
       <xs:element name="range" type="range_prop"/>
       <xs:element name="string" type="string_prop"/>
+      <xs:element name="boolean" type="boolean_prop"/>
       <xs:element ref="record"/>
       <xs:element ref="list"/>
     </xs:choice>
@@ -234,6 +235,7 @@
         <xs:element name="number" type="unit_prop"/>
         <xs:element name="range" type="range_prop"/>
         <xs:element name="string" type="string_prop"/>
+        <xs:element name="boolean" type="boolean_prop"/>
         <xs:element ref="record"/>
         <xs:element ref="list"/>
       </xs:choice>
@@ -273,6 +275,10 @@
 
   <xs:complexType name='string_prop'>
     <xs:attribute name='value' type="xs:string" use='required'/>
+  </xs:complexType>
+
+  <xs:complexType name='boolean_prop'>
+    <xs:attribute name='value' type="xs:boolean" use='required'/>
   </xs:complexType>
 
   <xs:complexType name='reference_prop'>
