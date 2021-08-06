@@ -623,18 +623,43 @@ package body Ocarina.Backends.AADL_XML.Main is
       then
          --  This property value denotes a reference term
 
-         Value_Node := Make_XML_Node ("reference");
+         declare
+            Full_Reference_Name : Name_Id;
+            Is_First_Node       : Boolean := TRUE;
+         begin
+            Value_Node := Make_XML_Node ("reference");
 
-         Append_Node_To_List
-           (Make_Assignement
-              (Make_Defining_Identifier (Get_String_Name ("value")),
-               Make_Defining_Identifier
-               (ATN.Display_Name
-                  (ATN.First_Node --  XXX must iterate
-                     (ATN.List_Items
-                        (ATN.Reference_Term
-                           (AADL_Property_Value)))))),
-            XTN.Items (Value_Node));
+            List_Node :=
+              ATN.First_Node
+                (ATN.List_Items
+                  (ATN.Reference_Term
+                     (AADL_Property_Value)));
+
+            while Present (List_Node) loop
+               if Is_First_Node then
+                  Full_Reference_Name := ATN.Display_Name (List_Node);
+                  Is_First_Node := FALSE;
+
+               else
+                  Full_Reference_Name :=
+                    Add_Suffix_To_Name
+                      (".", Full_Reference_Name);
+
+                  Full_Reference_Name :=
+                    Add_Suffix_To_Name
+                      (Get_Name_String (ATN.Display_Name (List_Node)),
+                       Full_Reference_Name);
+               end if;
+
+               List_Node := ATN.Next_Node (List_Node);
+            end loop;
+
+            Append_Node_To_List
+              (Make_Assignement
+                 (Make_Defining_Identifier (Get_String_Name ("value")),
+                  Make_Defining_Identifier (Full_Reference_Name)),
+               XTN.Items (Value_Node));
+         end;
 
       elsif Present (AADL_Property_Value)
         and then ATN.Kind (AADL_Property_Value) =
