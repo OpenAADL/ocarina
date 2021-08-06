@@ -134,6 +134,15 @@ package body Ocarina.Backends.AADL_XML.Main is
       Append_Node_To_List
         (Make_Defining_Identifier (Display_Name (Identifier (E))),
          XTN.Subitems (Classifier_Node));
+
+      --  Add namespace attribute to the classifier node
+      Append_Node_To_List
+        (Make_Assignement
+           (Make_Defining_Identifier (Get_String_Name ("namespace")),
+            Make_Defining_Identifier
+              (Display_Name (Identifier (Namespace (E))))),
+         XTN.Items (Classifier_Node));
+
       Append_Node_To_List (Classifier_Node, XTN.Subitems (N));
 
       return N;

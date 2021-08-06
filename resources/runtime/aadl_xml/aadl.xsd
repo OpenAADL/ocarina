@@ -77,6 +77,7 @@
   
   <xs:element name='classifier'>
     <xs:complexType mixed='true'>
+      <xs:attribute name='namespace' type="xs:string" use='required'/>
     </xs:complexType>
   </xs:element>
   

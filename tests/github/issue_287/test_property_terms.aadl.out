@@ -1,17 +1,17 @@
 <aadl_xml root_system="main.impl">
  <components>
    <component category="system" identifier="main.impl">
-     <classifier>
+     <classifier namespace="Test">
        main.impl     </classifier>
      <features/>
      <subcomponents>
        <component category="process" identifier="subcomp_process">
-         <classifier>
+         <classifier namespace="Test">
            dummy_process.impl         </classifier>
          <features/>
          <subcomponents>
            <component category="thread" identifier="subcomp_thread">
-             <classifier>
+             <classifier namespace="Test">
                dummy_thread.impl             </classifier>
              <features/>
              <subcomponents/>
