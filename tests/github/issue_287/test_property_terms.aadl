@@ -39,7 +39,7 @@ public
 
   system implementation main.impl
     subcomponents
-      subcomp_subdevice: device subdevice.impl;
+      subcomp_process: process dummy_process.impl;
     properties
 
       Test_Properties::an_integer_property => 10;
@@ -58,9 +58,9 @@ public
 
       Test_Properties::a_list_of_list_property => ((1,2), (3,4));
 
-      Test_Properties::a_reference_property => reference (subcomp_subdevice);
+      Test_Properties::a_reference_property => reference (subcomp_process.subcomp_thread);
 
-      Test_Properties::a_classifier_property => classifier (subdevice);
+      Test_Properties::a_classifier_property => classifier (dummy_process.impl);
 
       Test_Properties::an_enumeration_property => enum2;
 
@@ -68,10 +68,18 @@ public
 
   end main.impl;
 
-  device subdevice
-  end subdevice;
+  process dummy_process
+  end dummy_process;
 
-  device implementation subdevice.impl
-  end subdevice.impl;
+  process implementation dummy_process.impl
+    subcomponents
+      subcomp_thread: thread dummy_thread.impl;
+  end dummy_process.impl;
+
+  thread dummy_thread
+  end dummy_thread;
+
+  thread implementation dummy_thread.impl
+  end dummy_thread.impl;
 
 end Test;

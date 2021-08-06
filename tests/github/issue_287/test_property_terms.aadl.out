@@ -5,11 +5,19 @@
        main.impl     </classifier>
      <features/>
      <subcomponents>
-       <component category="device" identifier="subcomp_subdevice">
+       <component category="process" identifier="subcomp_process">
          <classifier>
-           subdevice.impl         </classifier>
+           dummy_process.impl         </classifier>
          <features/>
-         <subcomponents/>
+         <subcomponents>
+           <component category="thread" identifier="subcomp_thread">
+             <classifier>
+               dummy_thread.impl             </classifier>
+             <features/>
+             <subcomponents/>
+             <properties/>
+           </component>
+         </subcomponents>
          <properties/>
        </component>
      </subcomponents>
@@ -36,12 +44,12 @@
        </property>
        <property name="Test_Properties::a_classifier_property">
          <property_value>
-           <classifier value="subdevice"/>
+           <classifier value="dummy_process.impl"/>
          </property_value>
        </property>
        <property name="Test_Properties::a_reference_property">
          <property_value>
-           <reference value="subcomp_subdevice"/>
+           <reference value="subcomp_process.subcomp_thread"/>
          </property_value>
        </property>
        <property name="Test_Properties::a_list_of_list_property">
