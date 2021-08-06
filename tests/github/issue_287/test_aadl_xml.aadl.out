@@ -1,7 +1,7 @@
 <aadl_xml root_system="main.impl">
  <components>
    <component category="system" identifier="main.impl">
-     <classifier>
+     <classifier namespace="Test_Aadl_Xml_Output">
        main.impl     </classifier>
      <features/>
      <subcomponents/>
