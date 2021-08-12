@@ -293,19 +293,21 @@ package body Ocarina.Backends.AADL_XML.Main is
                Append_Node_To_List (Type_Node, XTN.Subitems (Feature_Node));
             end;
 
-            --  Classifier
+            --  Corresponding instance
 
             declare
-               Classifier_Node : Node_Id;
+               Corresponding_Instance_Node : Node_Id;
             begin
-               Classifier_Node := Make_XML_Node ("classifier");
+               Corresponding_Instance_Node :=
+                  Make_XML_Node ("corresponding_instance");
                Append_Node_To_List
-                 (Make_Defining_Identifier
-                    (Display_Name (Identifier (Corresponding_Instance (F)))),
-                  XTN.Subitems (Classifier_Node));
-               Append_Node_To_List
-                 (Classifier_Node,
+                 (Corresponding_Instance_Node,
                   XTN.Subitems (Feature_Node));
+
+               Old_XML_Node     := Current_XML_Node;
+               Current_XML_Node := Corresponding_Instance_Node;
+               Visit (Corresponding_Instance (F));
+               Current_XML_Node := Old_XML_Node;
             end;
 
             Append_Node_To_List (Feature_Node, XTN.Subitems (Features_Node));
