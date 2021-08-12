@@ -1174,30 +1174,8 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                   --  Declare local data variable if the port is a
                   --  data port.
 
-                  if AAN.Is_Data (F) then
-                     N := Make_Get_Valid_Value (F);
-                     Append_Node_To_List (N, Switch_Statements);
-                  end if;
-
-                  if Is_Event (F) and then not AAN.Is_Data (F) then
-                     Call_Parameters := New_List (CTN.K_Parameter_List);
-
-                     Append_Node_To_List
-                       (Make_Defining_Identifier (Map_C_Enumerator_Name (S)),
-                        Call_Parameters);
-
-                     Append_Node_To_List
-                       (Make_Defining_Identifier
-                          (Map_C_Enumerator_Name (F, Local_Port => True)),
-                        Call_Parameters);
-
-                     N :=
-                       Make_Call_Profile
-                         (RE (RE_Gqueue_Next_Value),
-                          Call_Parameters);
-
-                     Append_Node_To_List (N, Switch_Statements);
-                  end if;
+                  N := Make_Get_Valid_Value (F);
+                  Append_Node_To_List (N, Switch_Statements);
 
                   Call_Parameters := New_List (CTN.K_Parameter_List);
                   N := Make_Defining_Identifier (Map_C_Enumerator_Name (S));
