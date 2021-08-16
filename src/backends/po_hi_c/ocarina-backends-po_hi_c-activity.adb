@@ -1184,6 +1184,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                   declare
                      Parameter_List : constant List_Id :=
                        New_List (CTN.K_List_Id);
+                     D : constant Node_Id := Corresponding_Instance (F);
                   begin
                      N :=
                        Make_Parameter_Specification
@@ -1213,15 +1214,30 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                                      Port_Request => True)),
                                      Is_Pointer => True);
 
-                        Append_Node_To_List (N, Call_Parameters);
+                        if Get_Data_Representation (D) /= Data_Array and then
+                           Get_Data_Representation (D) /= Data_Struct
+                        then
+                           Append_Node_To_List (N, Call_Parameters);
+                        else
+                           Append_Node_To_List (Make_Variable_Address (N),
+                                                Call_Parameters);
+                        end if;
 
-                        N :=
-                          Map_C_Data_Type_Designator
-                            (Corresponding_Instance (F));
-                        N :=
-                          Make_Parameter_Specification
-                            (Map_C_Defining_Identifier (F),
-                             N);
+                        N := Map_C_Data_Type_Designator (D);
+
+                        if Get_Data_Representation (D) /= Data_Array and then
+                           Get_Data_Representation (D) /= Data_Struct
+                        then
+                           N :=
+                              Make_Parameter_Specification
+                                 (Map_C_Defining_Identifier (F), N);
+
+                        else
+                           N :=
+                              Make_Parameter_Specification
+                                 (Map_C_Defining_Identifier (F),
+                                  CTU.Make_Pointer_Type (N));
+                        end if;
                         Append_Node_To_List (N, Parameter_List);
                      end if;
 
