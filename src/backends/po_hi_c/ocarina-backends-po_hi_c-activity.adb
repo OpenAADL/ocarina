@@ -1101,7 +1101,6 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                if Kind (F) = K_Port_Spec_Instance
                  and then Is_In (F)
                  and then AAN.Is_Event (F)
-                 and then AAN.Is_Data (F)
                then
 
                   Call_Parameters := New_List (CTN.K_Parameter_List);
