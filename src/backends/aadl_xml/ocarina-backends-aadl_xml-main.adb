@@ -44,6 +44,7 @@ with Ocarina.Backends.XML_Tree.Nodes;
 with Ocarina.Backends.XML_Tree.Nutils;
 with Ocarina.Backends.AADL_XML.Mapping;
 with Ocarina.Backends.Utils;
+with Ocarina.ME_AADL.AADL_Tree.Entities.Properties;
 
 package body Ocarina.Backends.AADL_XML.Main is
 
@@ -53,6 +54,7 @@ package body Ocarina.Backends.AADL_XML.Main is
    use Ocarina.Backends.XML_Tree.Nutils;
    use Ocarina.Backends.AADL_XML.Mapping;
    use Ocarina.Backends.Utils;
+   use Ocarina.ME_AADL.AADL_Tree.Entities.Properties;
 
    package AIN renames Ocarina.ME_AADL.AADL_Instances.Nodes;
    package ATE renames Ocarina.ME_AADL.AADL_Tree.Entities;
@@ -595,8 +597,16 @@ package body Ocarina.Backends.AADL_XML.Main is
         and then ATN.Kind (AADL_Property_Value) = ATN.K_Literal
       then
          --  This property value denotes a literal term
-
-         Value_Node := Make_XML_Node ("string");
+         declare
+            PV_Type : constant Property_Type :=
+               Get_Type_Of_Property_Value (AADL_Property_Value, True);
+         begin
+            if PV_Type = PT_Boolean then
+               Value_Node := Make_XML_Node ("boolean");
+            elsif PV_Type = PT_String then
+               Value_Node := Make_XML_Node ("string");
+            end if;
+         end;
 
          Append_Node_To_List
            (Make_Assignement

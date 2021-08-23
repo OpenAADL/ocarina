@@ -60,7 +60,7 @@
        </property>
        <property name="Test_Properties::a_boolean_property">
          <property_value>
-           <string value="true"/>
+           <boolean value="true"/>
          </property_value>
        </property>
        <property name="Test_Properties::a_string_property">
