@@ -12,28 +12,28 @@
              <list>
                <list>
                  <list>
-                   <number value="1"/>
-                   <number value="2"/>
+                   <integer value="1"/>
+                   <integer value="2"/>
                  </list>
                </list>
                <list>
                  <list>
-                   <number value="3"/>
-                   <number value="4"/>
+                   <integer value="3"/>
+                   <integer value="4"/>
                  </list>
                </list>
              </list>
              <list>
                <list>
                  <list>
-                   <number value="5"/>
-                   <number value="6"/>
+                   <integer value="5"/>
+                   <integer value="6"/>
                  </list>
                </list>
                <list>
                  <list>
-                   <number value="7"/>
-                   <number value="8"/>
+                   <integer value="7"/>
+                   <integer value="8"/>
                  </list>
                </list>
              </list>
@@ -45,22 +45,22 @@
            <list>
              <list>
                <list>
-                 <number value="1"/>
-                 <number value="2"/>
+                 <integer value="1"/>
+                 <integer value="2"/>
                </list>
                <list>
-                 <number value="3"/>
-                 <number value="4"/>
+                 <integer value="3"/>
+                 <integer value="4"/>
                </list>
              </list>
              <list>
                <list>
-                 <number value="5"/>
-                 <number value="6"/>
+                 <integer value="5"/>
+                 <integer value="6"/>
                </list>
                <list>
-                 <number value="7"/>
-                 <number value="8"/>
+                 <integer value="7"/>
+                 <integer value="8"/>
                </list>
              </list>
            </list>
@@ -70,12 +70,12 @@
          <property_value>
            <list>
              <list>
-               <number value="1"/>
-               <number value="2"/>
+               <integer value="1"/>
+               <integer value="2"/>
              </list>
              <list>
-               <number value="3"/>
-               <number value="4"/>
+               <integer value="3"/>
+               <integer value="4"/>
              </list>
            </list>
          </property_value>

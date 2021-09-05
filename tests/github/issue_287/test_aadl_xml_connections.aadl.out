@@ -294,7 +294,7 @@
          <properties>
            <property name="Latency">
              <property_value>
-               <range value_low="1" value_high="10" unit="ms"/>
+               <integer_range_unit value_low="1" value_high="10" unit_low="ms" unit_high="ms"/>
              </property_value>
            </property>
            <property name="Timing">

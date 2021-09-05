@@ -18,13 +18,13 @@
          <property_value>
            <record>
              <record_field name="an_integer_field">
-               <number value="10"/>
+               <integer value="10"/>
              </record_field>
              <record_field name="a_string_field">
                <string value="test string"/>
              </record_field>
              <record_field name="a_real_range_field">
-               <range value_low="5.0" value_high="10.0"/>
+               <real_range value_low="5.0" value_high="10.0"/>
              </record_field>
            </record>
          </property_value>
@@ -48,12 +48,12 @@
          <property_value>
            <list>
              <list>
-               <number value="1"/>
-               <number value="2"/>
+               <integer value="1"/>
+               <integer value="2"/>
              </list>
              <list>
-               <number value="3"/>
-               <number value="4"/>
+               <integer value="3"/>
+               <integer value="4"/>
              </list>
            </list>
          </property_value>
@@ -70,42 +70,42 @@
        </property>
        <property name="Test_Properties::a_real_range_property">
          <property_value>
-           <range value_low="5.0" value_high="10.0"/>
+           <real_range value_low="5.0" value_high="10.0"/>
          </property_value>
        </property>
        <property name="Test_Properties::a_real_unit_property">
          <property_value>
-           <number value="10" unit="ns"/>
+           <integer_unit value="10" unit="ns"/>
          </property_value>
        </property>
        <property name="Test_Properties::a_negative_real_property">
          <property_value>
-           <number value="-10.0"/>
+           <real value="-10.0"/>
          </property_value>
        </property>
        <property name="Test_Properties::a_real_property">
          <property_value>
-           <number value="10.0"/>
+           <real value="10.0"/>
          </property_value>
        </property>
        <property name="Test_Properties::an_integer_range_property">
          <property_value>
-           <range value_low="5" value_high="10"/>
+           <integer_range value_low="5" value_high="10"/>
          </property_value>
        </property>
        <property name="Test_Properties::an_integer_unit_property">
          <property_value>
-           <number value="10" unit="ms"/>
+           <integer_unit value="10" unit="ms"/>
          </property_value>
        </property>
        <property name="Test_Properties::a_negative_integer_property">
          <property_value>
-           <number value="-10"/>
+           <integer value="-10"/>
          </property_value>
        </property>
        <property name="Test_Properties::an_integer_property">
          <property_value>
-           <number value="10"/>
+           <integer value="10"/>
          </property_value>
        </property>
      </properties>
