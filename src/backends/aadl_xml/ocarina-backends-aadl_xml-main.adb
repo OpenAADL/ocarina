@@ -570,7 +570,29 @@ package body Ocarina.Backends.AADL_XML.Main is
          --  This property value denotes a number property which can
          --  be aadlinteger or aadlreal with or without an unit
 
-         Value_Node := Make_XML_Node ("number");
+         declare
+            PV_Type : constant Property_Type :=
+               Get_Type_Of_Property_Value (AADL_Property_Value, True);
+         begin
+            if PV_Type = PT_Integer and then
+               No (ATN.Unit_Identifier (AADL_Property_Value))
+            then
+               Value_Node := Make_XML_Node ("integer");
+            elsif
+               PV_Type = PT_Integer and then
+               Present (ATN.Unit_Identifier (AADL_Property_Value))
+            then
+               Value_Node := Make_XML_Node ("integer_unit");
+            elsif PV_Type = PT_Float and then
+               No (ATN.Unit_Identifier (AADL_Property_Value))
+            then
+               Value_Node := Make_XML_Node ("real");
+            elsif PV_Type = PT_Float and then
+               Present (ATN.Unit_Identifier (AADL_Property_Value))
+            then
+               Value_Node := Make_XML_Node ("real_unit");
+            end if;
+         end;
 
          Append_Node_To_List
            (Make_Assignement
@@ -673,7 +695,32 @@ package body Ocarina.Backends.AADL_XML.Main is
       then
          --  This property value denotes a number range term
 
-         Value_Node := Make_XML_Node ("range");
+         declare
+            use Ocarina.AADL_Values;
+            V : constant Value_Type := Get_Value_Type (ATN.Value
+               (ATN.Number_Value (ATN.Lower_Bound (AADL_Property_Value))));
+         begin
+            if V.T = LT_Real then
+               if Present
+                   (ATN.Unit_Identifier
+                      (ATN.Lower_Bound (AADL_Property_Value)))
+               then
+                  Value_Node := Make_XML_Node ("real_range_unit");
+               else
+                  Value_Node := Make_XML_Node ("real_range");
+               end if;
+
+            elsif V.T = LT_Integer then
+               if Present
+                   (ATN.Unit_Identifier
+                      (ATN.Lower_Bound (AADL_Property_Value)))
+               then
+                  Value_Node := Make_XML_Node ("integer_range_unit");
+               else
+                  Value_Node := Make_XML_Node ("integer_range");
+               end if;
+            end if;
+         end;
 
          Append_Node_To_List
            (Make_Assignement
@@ -707,12 +754,22 @@ package body Ocarina.Backends.AADL_XML.Main is
          then
             Append_Node_To_List
               (Make_Assignement
-                 (Make_Defining_Identifier (Get_String_Name ("unit")),
+                 (Make_Defining_Identifier (Get_String_Name ("unit_low")),
                   Make_Defining_Identifier
                     (ATN.Display_Name
                        (ATN.Unit_Identifier
                           (ATN.Lower_Bound (AADL_Property_Value))))),
                XTN.Items (Value_Node));
+
+            Append_Node_To_List
+              (Make_Assignement
+                 (Make_Defining_Identifier (Get_String_Name ("unit_high")),
+                  Make_Defining_Identifier
+                    (ATN.Display_Name
+                       (ATN.Unit_Identifier
+                          (ATN.Upper_Bound (AADL_Property_Value))))),
+               XTN.Items (Value_Node));
+
          end if;
 
       elsif Present (AADL_Property_Value)
