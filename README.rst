@@ -7,15 +7,8 @@ Citable Reference: |zenodo|
 
 ::
 
-  @software{jerome_hugues_2021_5459517,
-   author       = {Jerome Hugues and
-                   bouazizrahma and
-                   Julien and
-                   CY Chen and
-                   Jerome Hugues and
-                   HannaMk and
-                   Ethan McGee and
-                   Maxime Perrotin},
+  @software{ocarina_v2021_1,
+   author       = {OpenAADL},
    title        = {OpenAADL/ocarina: 2021.1},
    month        = sep,
    year         = 2021,
