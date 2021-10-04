@@ -1,6 +1,6 @@
-<aadl_xml root_system="main.impl">
+<aadl_xml root_system="main_impl">
  <components>
-   <component category="system" identifier="main.impl">
+   <component category="system" identifier="main_impl">
      <classifier namespace="Test_List_of_List">
        main.impl     </classifier>
      <features/>

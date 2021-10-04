@@ -124,7 +124,8 @@ package body Ocarina.Backends.AADL_XML.Main is
          Append_Node_To_List
            (Make_Assignement
               (Make_Defining_Identifier (Get_String_Name ("identifier")),
-               Make_Defining_Identifier (Display_Name (Identifier (E)))),
+               Make_Defining_Identifier
+                  (Normalize_Name (Name (Identifier (E))))),
             XTN.Items (N));
       end if;
 
@@ -207,7 +208,8 @@ package body Ocarina.Backends.AADL_XML.Main is
               (Make_Assignement
                  (Make_Defining_Identifier (Get_String_Name ("root_system")),
                   Make_Defining_Identifier
-                    (Display_Name (Identifier (Root_System_Node)))),
+                    (Normalize_Name
+                       (Display_Name (Identifier (Root_System_Node))))),
                XTN.Items (AADL_XML_Node));
 
             Append_Node_To_List
