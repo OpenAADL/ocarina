@@ -7,7 +7,7 @@
 --                                 B o d y                                  --
 --                                                                          --
 --               Copyright (C) 2008-2009 Telecom ParisTech,                 --
---                 2010-2019 ESA & ISAE, 2019-2020 OpenAADL                 --
+--                 2010-2019 ESA & ISAE, 2019-2021 OpenAADL                 --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -1353,7 +1353,8 @@ package body Ocarina.Backends.Build_Utils is
          Language : constant Supported_Source_Language := Resolve_Language (E);
          Compute_Entrypoint : constant Name_Id                   :=
            Get_Port_Compute_Entrypoint (E);
-         Source_Files : constant Name_Array := Get_Source_Text (E);
+         Source_Files : constant Name_Array :=
+           Get_Source_Text (Get_Port_Compute_Entrypoint (E));
          Data         : Node_Id;
       begin
          --  If the port implementation is in C, we need to update
