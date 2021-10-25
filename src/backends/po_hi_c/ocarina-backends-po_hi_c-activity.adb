@@ -1117,6 +1117,20 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                       (RE (RE_Free_Request),
                        Call_Parameters);
                   Append_Node_To_List (N, WStatements);
+
+                  N :=
+                    Make_Defining_Identifier
+                      (CONST (C_Null),
+                       C_Conversion => False);
+
+                  N :=
+                     Make_Assignment_Statement
+                        (Variable_Identifier =>
+                         Make_Defining_Identifier
+                         (Map_C_Variable_Name
+                         (F, Port_Request => True)),
+                         Expression => N);
+                  Append_Node_To_List (N, WStatements);
                end if;
 
                F := Next_Node (F);
