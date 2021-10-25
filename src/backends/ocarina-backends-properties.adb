@@ -1542,6 +1542,14 @@ package body Ocarina.Backends.Properties is
 
    function Get_Source_Text (E : Node_Id) return Name_Array is
    begin
+      --  Ensure E has the proper kind; it is safe to ignore this case, e.g.
+      --  when E is computed from Get_Compute_Entrypoint and the model has a
+      --  Compute_Entrypoint_Source_Text set
+
+      if Present (E) and then Kind (E) = K_Property_Association_Instance then
+         return Empty_Name_Array;
+      end if;
+
       return Check_And_Get_Property (E, Source_Text);
    end Get_Source_Text;
 
