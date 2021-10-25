@@ -6,7 +6,7 @@
 --                                                                          --
 --                                 B o d y                                  --
 --                                                                          --
---         Copyright (C) 2014-2019 ESA & ISAE, 2019-2020 OpenAADL           --
+--         Copyright (C) 2014-2019 ESA & ISAE, 2019-2021 OpenAADL           --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -368,7 +368,9 @@ package body Ocarina.Backends.Properties.Utils is
    is
       N_List : List_Id;
    begin
-      if Is_Defined_List_Property (E, Property_Name) then
+      if Present (E) and then
+         Is_Defined_List_Property (E, Property_Name)
+      then
          N_List := Get_List_Property (E, Property_Name);
 
          declare
