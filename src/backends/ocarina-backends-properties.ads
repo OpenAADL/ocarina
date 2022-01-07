@@ -7,7 +7,7 @@
 --                                 S p e c                                  --
 --                                                                          --
 --               Copyright (C) 2008-2009 Telecom ParisTech,                 --
---                 2010-2019 ESA & ISAE, 2019-2020 OpenAADL                 --
+--                 2010-2019 ESA & ISAE, 2019-2022 OpenAADL                 --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -300,6 +300,12 @@ package Ocarina.Backends.Properties is
    --  Return the representation kind of a data component. If no
    --  representation kind has been specified by the user, returns
    --  Data_None.
+
+   function By_Reference_Type (D : Node_Id) return Boolean is
+     (Get_Data_Representation (D) = Data_Array or else
+      Get_Data_Representation (D) = Data_Bounded_Array or else
+      Get_Data_Representation (D) = Data_Struct);
+   --  Return true if the data component should be passed by reference
 
    function Get_Data_Digits (D : Node_Id) return Unsigned_Long_Long;
    --  Return the value of the "data_digits" aadl property of a data

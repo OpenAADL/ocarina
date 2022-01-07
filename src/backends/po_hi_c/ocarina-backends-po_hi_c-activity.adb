@@ -7,7 +7,7 @@
 --                                 B o d y                                  --
 --                                                                          --
 --               Copyright (C) 2008-2009 Telecom ParisTech,                 --
---                 2010-2019 ESA & ISAE, 2019-2021 OpenAADL                 --
+--                 2010-2019 ESA & ISAE, 2019-2022 OpenAADL                 --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -1227,9 +1227,7 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                                      Port_Request => True)),
                                      Is_Pointer => True);
 
-                        if Get_Data_Representation (D) /= Data_Array and then
-                           Get_Data_Representation (D) /= Data_Struct
-                        then
+                        if By_Reference_Type (D) then
                            Append_Node_To_List (N, Call_Parameters);
                         else
                            Append_Node_To_List (Make_Variable_Address (N),
@@ -1238,13 +1236,10 @@ package body Ocarina.Backends.PO_HI_C.Activity is
 
                         N := Map_C_Data_Type_Designator (D);
 
-                        if Get_Data_Representation (D) /= Data_Array and then
-                           Get_Data_Representation (D) /= Data_Struct
-                        then
+                        if By_Reference_Type (D) then
                            N :=
                               Make_Parameter_Specification
                                  (Map_C_Defining_Identifier (F), N);
-
                         else
                            N :=
                               Make_Parameter_Specification

@@ -7,7 +7,7 @@
 --                                 B o d y                                  --
 --                                                                          --
 --               Copyright (C) 2008-2009 Telecom ParisTech,                 --
---                 2010-2019 ESA & ISAE, 2019-2020 OpenAADL                 --
+--                 2010-2019 ESA & ISAE, 2019-2022 OpenAADL                 --
 --                                                                          --
 -- Ocarina  is free software; you can redistribute it and/or modify under   --
 -- terms of the  GNU General Public License as published  by the Free Soft- --
@@ -171,13 +171,22 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
       function Marshall_Type_Spec (E : Node_Id) return Node_Id is
          N          : Node_Id;
          Parameters : constant List_Id := New_List (CTN.K_Parameter_List);
-      begin
 
-         Append_Node_To_List
-           (Make_Parameter_Specification
-              (Defining_Identifier => Make_Defining_Identifier (PN (P_Value)),
-               Parameter_Type      => Map_C_Defining_Identifier (E)),
-            Parameters);
+      begin
+         if By_Reference_Type (E) then
+            Append_Node_To_List
+            (Make_Parameter_Specification
+               (Defining_Identifier => Make_Defining_Identifier (PN (P_Value)),
+                Parameter_Type      =>
+                  Make_Pointer_Type (Map_C_Defining_Identifier (E))),
+               Parameters);
+         else
+            Append_Node_To_List
+            (Make_Parameter_Specification
+               (Defining_Identifier => Make_Defining_Identifier (PN (P_Value)),
+                Parameter_Type      => Map_C_Defining_Identifier (E)),
+               Parameters);
+         end if;
 
          Append_Node_To_List
            (Make_Parameter_Specification
@@ -675,7 +684,7 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
                              Make_Defining_Identifier (PN (P_Value)),
                            Defining_Identifier =>
                              Map_C_Defining_Identifier (C),
-                           Is_Pointer => False),
+                           Is_Pointer => By_Reference_Type (E)),
                         Parameters);
                      Append_Node_To_List
                        (Make_Defining_Identifier (PN (P_Message)),
@@ -720,7 +729,8 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
                     (Defining_Identifier =>
                        Make_Defining_Identifier (MN (M_Length)),
                      Aggregate_Name =>
-                       Make_Defining_Identifier (PN (P_Value))),
+                       Make_Defining_Identifier (PN (P_Value)),
+                     Is_Pointer => True), --  XXX
                   Parameters);
                Append_Node_To_List
                  (Make_Defining_Identifier (PN (P_Message)),
@@ -739,13 +749,14 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
                     (Defining_Identifier =>
                        Make_Defining_Identifier (MN (M_Data)),
                      Aggregate_Name =>
-                       Make_Defining_Identifier (PN (P_Value))),
+                       Make_Defining_Identifier (PN (P_Value)),
+                     Is_Pointer => True),
                   Parameters);
                Append_Node_To_List
                  (Make_Defining_Identifier (PN (P_Message)),
                   Parameters);
                Append_Node_To_List
-                 (CTU.Get_Data_Size (E, Is_Pointer => False), Parameters);
+                 (CTU.Get_Data_Size (E, Is_Pointer => True), Parameters);
                Append_Node_To_List
                  (Make_Defining_Identifier (PN (P_Offset)),
                   Parameters);
@@ -1636,24 +1647,46 @@ package body Ocarina.Backends.PO_HI_C.Marshallers is
 
                   Parameters := New_List (CTN.K_Parameter_List);
 
-                  Append_Node_To_List
-                    (Make_Member_Designator
-                       (Defining_Identifier =>
-                          Make_Member_Designator
-                            (Defining_Identifier =>
-                               Make_Defining_Identifier
-                                 (Map_C_Enumerator_Name (F)),
-                             Aggregate_Name =>
-                               Make_Member_Designator
-                                 (Defining_Identifier =>
-                                    Make_Defining_Identifier
+                  if By_Reference_Type (D) then
+                     Append_Node_To_List
+                       (Make_Variable_Address
+                          (Make_Member_Designator
+                             (Defining_Identifier =>
+                                Make_Member_Designator
+                                (Defining_Identifier =>
+                                   Make_Defining_Identifier
+                                   (Map_C_Enumerator_Name (F)),
+                                 Aggregate_Name =>
+                                   Make_Member_Designator
+                                   (Defining_Identifier =>
+                                      Make_Defining_Identifier
                                       (Map_C_Enumerator_Name (F)),
-                                  Aggregate_Name =>
-                                    Make_Defining_Identifier (MN (M_Vars)))),
-                        Aggregate_Name =>
-                          Make_Defining_Identifier (PN (P_Request)),
-                        Is_Pointer => True),
-                     Parameters);
+                                    Aggregate_Name =>
+                                      Make_Defining_Identifier (MN (M_Vars)))),
+                              Aggregate_Name =>
+                                Make_Defining_Identifier (PN (P_Request)),
+                              Is_Pointer => True)),
+                        Parameters);
+                  else
+                     Append_Node_To_List
+                       (Make_Member_Designator
+                          (Defining_Identifier =>
+                             Make_Member_Designator
+                             (Defining_Identifier =>
+                                Make_Defining_Identifier
+                                (Map_C_Enumerator_Name (F)),
+                              Aggregate_Name =>
+                                Make_Member_Designator
+                                (Defining_Identifier =>
+                                   Make_Defining_Identifier
+                                   (Map_C_Enumerator_Name (F)),
+                                 Aggregate_Name =>
+                                   Make_Defining_Identifier (MN (M_Vars)))),
+                           Aggregate_Name =>
+                             Make_Defining_Identifier (PN (P_Request)),
+                           Is_Pointer => True),
+                        Parameters);
+                  end if;
 
                   Append_Node_To_List
                     (Make_Defining_Identifier (PN (P_Message)),
