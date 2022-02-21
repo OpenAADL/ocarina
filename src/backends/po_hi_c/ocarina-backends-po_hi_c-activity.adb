@@ -751,7 +751,10 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                         Append_Node_To_List (N, Declarations);
 
                         N := CTU.Make_Call_Profile
-                              (RE (RE_Get_Request), No_List);
+                              (RE (RE_Get_Request),
+                              Make_List_Id
+                                 (Make_Defining_Identifier
+                                    (Map_C_Enumerator_Name (F))));
                         N :=
                            Make_Assignment_Statement
                               (Variable_Identifier =>
