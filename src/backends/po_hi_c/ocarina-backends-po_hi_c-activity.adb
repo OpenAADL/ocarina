@@ -1231,10 +1231,10 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                                      Is_Pointer => True);
 
                         if By_Reference_Type (D) then
-                           Append_Node_To_List (N, Call_Parameters);
-                        else
                            Append_Node_To_List (Make_Variable_Address (N),
                                                 Call_Parameters);
+                        else
+                           Append_Node_To_List (N, Call_Parameters);
                         end if;
 
                         N := Map_C_Data_Type_Designator (D);
@@ -1242,12 +1242,12 @@ package body Ocarina.Backends.PO_HI_C.Activity is
                         if By_Reference_Type (D) then
                            N :=
                               Make_Parameter_Specification
-                                 (Map_C_Defining_Identifier (F), N);
+                                 (Map_C_Defining_Identifier (F),
+                                  CTU.Make_Pointer_Type (N));
                         else
                            N :=
                               Make_Parameter_Specification
-                                 (Map_C_Defining_Identifier (F),
-                                  CTU.Make_Pointer_Type (N));
+                                 (Map_C_Defining_Identifier (F), N);
                         end if;
                         Append_Node_To_List (N, Parameter_List);
                      end if;
