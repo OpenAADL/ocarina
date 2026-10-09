@@ -1,0 +1,79 @@
+-- Standalone model for inspecting generated integer-mod C code.
+-- Expected values below are review references, not automatic assertions.
+package Mod_Regression
+public
+  with Base_Types;
+  with Deployment;
+
+  thread Ba_Worker
+  end Ba_Worker;
+  thread implementation Ba_Worker.impl
+    properties
+      Dispatch_Protocol => Periodic;
+      Period => 1 ms;
+    annex behavior_specification {**
+      variables
+        dividend, divisor : Base_Types::Integer_32;
+        unsigned_dividend, unsigned_divisor : Base_Types::Unsigned_32;
+        result_positive_positive : Base_Types::Integer_32;
+        result_negative_positive : Base_Types::Integer_32;
+        result_positive_negative : Base_Types::Integer_32;
+        result_negative_negative : Base_Types::Integer_32;
+        result_zero, result_exact, result_minus_one : Base_Types::Integer_32;
+        result_literals, result_compound : Base_Types::Integer_32;
+        result_outer_product : Base_Types::Integer_32;
+        result_unsigned : Base_Types::Unsigned_32;
+      states
+        ba_ready : initial complete final state;
+      transitions
+        ba_ready -[on dispatch]-> ba_ready {
+          -- A nonzero mod result has the divisor's sign.
+          dividend := 7; divisor := 3;
+          result_positive_positive := dividend mod divisor; -- Expect 1.
+          dividend := 0 - 7;
+          result_negative_positive := dividend mod divisor; -- Expect 2.
+          dividend := 7; divisor := 0 - 3;
+          result_positive_negative := dividend mod divisor; -- Expect -2.
+          dividend := 0 - 7;
+          result_negative_negative := dividend mod divisor; -- Expect -1.
+
+          -- Zero and exact division must remain zero.
+          dividend := 0; divisor := 3;
+          result_zero := dividend mod divisor; -- Expect 0.
+          dividend := 0 - 6;
+          result_exact := dividend mod divisor; -- Expect 0.
+          divisor := 0 - 1;
+          result_minus_one := dividend mod divisor; -- Expect 0.
+
+          -- Literals and simple arithmetic use the existing expression path.
+          result_literals := 7 mod 3; -- Expect 1.
+          dividend := 0 - 7; divisor := 3;
+          result_compound := (dividend + 2) mod divisor; -- Expect 1.
+          result_outer_product := (dividend mod divisor) * 4; -- Expect 8.
+
+          -- Unsigned mod keeps the ordinary C remainder.
+          unsigned_dividend := 7; unsigned_divisor := 3;
+          result_unsigned := unsigned_dividend mod unsigned_divisor -- Expect 1.
+        };
+    **};
+  end Ba_Worker.impl;
+  process Ba_Process
+  end Ba_Process;
+  process implementation Ba_Process.impl
+    subcomponents ba_worker : thread Ba_Worker.impl;
+  end Ba_Process.impl;
+  processor Ba_CPU
+    properties Deployment::Execution_Platform => native;
+  end Ba_CPU;
+  processor implementation Ba_CPU.impl
+  end Ba_CPU.impl;
+  system Ba_System
+  end Ba_System;
+  system implementation Ba_System.impl
+    subcomponents
+      ba_application : process Ba_Process.impl;
+      ba_cpu : processor Ba_CPU.impl;
+    properties
+      Actual_Processor_Binding => (reference(ba_cpu)) applies to ba_application;
+  end Ba_System.impl;
+end Mod_Regression;

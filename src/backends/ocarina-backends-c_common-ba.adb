@@ -5188,6 +5188,63 @@ package body Ocarina.Backends.C_Common.BA is
 
    end Evaluate_BA_Simple_Expression;
 
+   -------------------------
+   -- Ensure_Modulo_Macro --
+   -------------------------
+
+   function Ensure_Modulo_Macro return Name_Id is
+      Macro_Name : constant Name_Id := Get_String_Name ("ocarina_ba_mod");
+      Definition_Name : constant Name_Id :=
+        Get_String_Name ("ocarina_ba_mod(ba_left, ba_right)");
+      Existing_Node : Node_Id := CTN.First_Node
+        (CTN.Declarations (Current_File));
+      New_Line : constant String :=
+        " " & Character'Val (92) & ASCII.LF & "  ";
+      --  These unevaluated operands give zero the same promoted common type
+      --  as left % right, without inspecting AADL classifiers or C widths.
+      Common_Zero : constant String :=
+        "(0 ? (ba_left) : (0 ? (ba_right) : 0))";
+      Divisor : constant String := "(" & Common_Zero & " + (ba_right))";
+      Remainder : constant String := "((ba_left) % (ba_right))";
+      Definition : constant String :=
+        "((" & Divisor & " < 1 && "
+        & Divisor & " == (" & Common_Zero & " - 1))" & New_Line
+        & " ? 0 : (" & Remainder & New_Line
+        & " + ((" & Remainder & " != 0 && " & New_Line
+        & "     ((" & Remainder & " < 1) != (" & Divisor & " < 1)))"
+        & New_Line & "    ? " & Divisor & " : 0)))";
+   begin
+      while Present (Existing_Node) loop
+         if CTN.Kind (Existing_Node) = CTN.K_Define_Statement
+           and then CTN.Name (CTN.Defining_Identifier (Existing_Node)) =
+             Definition_Name
+         then
+            return Macro_Name;
+         end if;
+         Existing_Node := CTN.Next_Node (Existing_Node);
+      end loop;
+
+      Append_Node_To_List
+        (Message_Comment
+           ("BA mod expands as a C99 expression and may evaluate operands "
+            & "more than once. Unevaluated conditional operands preserve "
+            & "the common C integer type for the divisor and minus one."),
+         CTN.Declarations (Current_File));
+      Append_Node_To_List
+        (Message_Comment
+           ("Handle a signed divisor of -1 before remainder to avoid "
+            & "MIN % -1 overflow. Add the divisor only to a nonzero "
+            & "remainder of the opposite sign; this addition cannot "
+            & "overflow. Comparisons with one also work for unsigned types."),
+         CTN.Declarations (Current_File));
+      Append_Node_To_List
+        (Make_Define_Statement
+           (Make_Defining_Identifier (Definition_Name, False),
+            Make_Defining_Identifier (Get_String_Name (Definition), False)),
+         CTN.Declarations (Current_File));
+      return Macro_Name;
+   end Ensure_Modulo_Macro;
+
    ----------------------
    -- Evaluate_BA_Term --
    ----------------------
@@ -5211,7 +5268,6 @@ package body Ocarina.Backends.C_Common.BA is
    begin
 
       N := BATN.First_Node (Factors (Node));
-
       Left_Expr := Evaluate_BA_Factor (N, Is_Out_Parameter,
                                        Subprogram_Root,
                                        Declarations, Statements,
@@ -5241,7 +5297,14 @@ package body Ocarina.Backends.C_Common.BA is
             if Right_Expr /= No_Node and then
               Op /= Op_None
             then
-               Expr := Make_Expression (Left_Expr, Op, Right_Expr);
+               if Op = Op_Modulo then
+                  Expr := Make_Call_Profile
+                    (Make_Defining_Identifier
+                       (Ensure_Modulo_Macro, False),
+                     Make_List_Id (Left_Expr, Right_Expr));
+               else
+                  Expr := Make_Expression (Left_Expr, Op, Right_Expr);
+               end if;
                Left_Expr := Expr;
                Op := Op_None;
                Right_Expr := No_Node;
