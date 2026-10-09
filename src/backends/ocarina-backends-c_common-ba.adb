@@ -241,6 +241,12 @@ package body Ocarina.Backends.C_Common.BA is
       Declarations : List_Id;
       Statements   : List_Id);
 
+   procedure Map_C_DoUntil_Cond_Struct
+     (Node         : Node_Id;
+      S            : Node_Id;
+      Declarations : List_Id;
+      Statements   : List_Id);
+
    procedure Map_C_Communication_Action
      (Node         : Node_Id;
       S            : Node_Id;
@@ -3694,6 +3700,7 @@ package body Ocarina.Backends.C_Common.BA is
       pragma Assert (BATN.Kind (Node) = BATN.K_Behavior_Action_Block
                      or else BATN.Kind (Node) = K_Conditional_Statement
                      or else BATN.Kind (Node) = K_While_Cond_Structure
+                     or else BATN.Kind (Node) = K_DoUntil_Cond_Structure
                      or else BATN.Kind (Node) = K_For_Cond_Structure
                      or else BATN.Kind (Node) = K_ForAll_Cond_Structure);
 
@@ -3796,8 +3803,9 @@ package body Ocarina.Backends.C_Common.BA is
             Map_C_For_or_ForAll_Cond_Struct
               (Action_Node, S, Declarations, Statements);
 
-            --  when K_DoUntil_Cond_Structure =>
-            --    Map_C_DoUntil_Cond_Struct (Action_Node);
+         when K_DoUntil_Cond_Structure =>
+            Map_C_DoUntil_Cond_Struct
+              (Action_Node, S, Declarations, Statements);
 
          when BATN.K_Assignment_Action      =>
             Map_C_Assignment_Action (Action_Node, S, Declarations, Statements);
@@ -4079,6 +4087,65 @@ package body Ocarina.Backends.C_Common.BA is
          Statements);
 
    end Map_C_While_Cond_Struct;
+
+   -------------------------------
+   -- Map_C_DoUntil_Cond_Struct --
+   -------------------------------
+
+   procedure Map_C_DoUntil_Cond_Struct
+     (Node         : Node_Id;
+      S            : Node_Id;
+      Declarations : List_Id;
+      Statements   : List_Id)
+   is
+      pragma Assert (BATN.Kind (Node) = K_DoUntil_Cond_Structure);
+      pragma Assert (Present (Logical_Expr (Node)));
+      pragma Assert (Present (Behav_Acts (Node)));
+
+      Condition       : Node_Id;
+      Loop_Statements : constant List_Id := New_List (CTN.K_Statement_List);
+      Done_Name       : constant Name_Id :=
+        Get_String_Name ("_ba_do_until_done");
+   begin
+      Map_C_Behav_Acts
+        (Node         => Node,
+         S            => S,
+         Declarations => Declarations,
+         WStatements  => Loop_Statements);
+
+      --  Condition evaluation may emit statements, such as port reads.
+      --  Keep them after the body and inside the loop on every iteration.
+      Condition := Evaluate_BA_Value_Expression
+        (Node            => Logical_Expr (Node),
+         Subprogram_Root => S,
+         Declarations    => Declarations,
+         Statements      => Loop_Statements);
+
+      --  A C99 for initializer gives each loop its own flag and resets it
+      --  whenever execution enters this construct, including nested loops.
+      Append_Node_To_List
+        (Message_Comment
+           ("Execute the do-until body at least once; "
+            & "test the exit condition after each iteration."),
+         Statements);
+      Append_Node_To_List
+        (Make_For_Statement
+           (Pre_Cond => Make_Variable_Declaration
+              (Defining_Identifier => Make_Defining_Identifier (Done_Name),
+               Used_Type           => Make_Defining_Identifier
+                 (Get_String_Name ("int")),
+               Value               =>
+                 Make_Literal (CV.New_Int_Value (0, 1, 10))),
+            Condition => Make_Expression
+              (Left_Expr  => Make_Defining_Identifier (Done_Name),
+               Operator   => CTU.Op_Equal_Equal,
+               Right_Expr => Make_Literal (CV.New_Int_Value (0, 1, 10))),
+            Post_Cond => Make_Assignment_Statement
+              (Variable_Identifier => Make_Defining_Identifier (Done_Name),
+               Expression          => Condition),
+            Statements => Loop_Statements),
+         Statements);
+   end Map_C_DoUntil_Cond_Struct;
 
    --------------------------------
    -- Map_C_Communication_Action --

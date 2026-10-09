@@ -133,18 +133,12 @@ package body Ocarina.Analyzer.AADL_BA is
       Scope_BA_Entities : List_Id)
       return Boolean;
 
-   function Analyze_While_Cond_Struct
+   function Analyze_While_Or_DoUntil_Cond_Struct
      (Node              : Node_Id;
       Root              : Node_Id;
       BA_Root           : Node_Id;
       Parent_Component  : Node_Id;
       Scope_BA_Entities : List_Id)
-      return Boolean;
-
-   function Analyze_DoUntil_Cond_Struct
-     (Node              : Node_Id;
-      BA_Root           : Node_Id;
-      Parent_Component  : Node_Id)
       return Boolean;
 
    function Analyze_Assignment_Action
@@ -1055,6 +1049,7 @@ package body Ocarina.Analyzer.AADL_BA is
       pragma Assert (BATN.Kind (Node) = BATN.K_Behavior_Action_Block
                      or else BATN.Kind (Node) = K_Conditional_Statement
                      or else BATN.Kind (Node) = K_While_Cond_Structure
+                     or else BATN.Kind (Node) = K_DoUntil_Cond_Structure
                      or else BATN.Kind (Node) = K_For_Cond_Structure
                      or else BATN.Kind (Node) = K_ForAll_Cond_Structure);
       pragma Assert (BATN.Kind (BA_Root) = BATN.K_Behavior_Annex);
@@ -1170,18 +1165,14 @@ package body Ocarina.Analyzer.AADL_BA is
            (Action_Node, Root, BA_Root, Parent_Component,
             Scope_BA_Entities);
 
-      when K_While_Cond_Structure   =>
-         Success := Analyze_While_Cond_Struct
+      when K_While_Cond_Structure | K_DoUntil_Cond_Structure =>
+         Success := Analyze_While_Or_DoUntil_Cond_Struct
            (Action_Node, Root, BA_Root, Parent_Component, Scope_BA_Entities);
 
       when K_ForAll_Cond_Structure  =>
          Success := Analyze_For_or_ForAll_Cond_Struct
            (Action_Node, Root, BA_Root, Parent_Component,
             Scope_BA_Entities);
-
-      when K_DoUntil_Cond_Structure =>
-         Success := Analyze_DoUntil_Cond_Struct
-           (Action_Node, BA_Root, Parent_Component); --  , Scope_BA_Entities);
 
       when BATN.K_Assignment_Action =>
          Success := Analyze_Assignment_Action
@@ -1360,11 +1351,14 @@ package body Ocarina.Analyzer.AADL_BA is
       return Success;
    end Analyze_For_or_ForAll_Cond_Struct;
 
-   -------------------------------
-   -- Analyze_While_Cond_Struct --
-   -------------------------------
+   ------------------------------------------
+   -- Analyze_While_Or_DoUntil_Cond_Struct --
+   ------------------------------------------
 
-   function Analyze_While_Cond_Struct
+   --  Both loops resolve the same condition and body references. Their
+   --  different execution order is handled by the code generator.
+
+   function Analyze_While_Or_DoUntil_Cond_Struct
      (Node              : Node_Id;
       Root              : Node_Id;
       BA_Root           : Node_Id;
@@ -1377,7 +1371,8 @@ package body Ocarina.Analyzer.AADL_BA is
       pragma Assert (ATN.Kind (Parent_Component) = ATN.K_Component_Type
                      or else Kind (Parent_Component) =
                        ATN.K_Component_Implementation);
-      pragma Assert (BATN.Kind (Node) = BATN.K_While_Cond_Structure);
+      pragma Assert (BATN.Kind (Node) = BATN.K_While_Cond_Structure
+                     or else BATN.Kind (Node) = BATN.K_DoUntil_Cond_Structure);
       Success : Boolean;
    begin
       Success := Analyze_BA_Value_Expression
@@ -1397,28 +1392,7 @@ package body Ocarina.Analyzer.AADL_BA is
          BA_Root          => BA_Root,
          Parent_Component => Parent_Component);
       return Success;
-   end Analyze_While_Cond_Struct;
-
-   ---------------------------------
-   -- Analyze_DoUntil_Cond_Struct --
-   ---------------------------------
-
-   function Analyze_DoUntil_Cond_Struct
-     (Node              : Node_Id;
-      BA_Root           : Node_Id;
-      Parent_Component  : Node_Id)
-      return Boolean
-   is
-      use ATN;
-      pragma Assert (BATN.Kind (BA_Root) = BATN.K_Behavior_Annex);
-      pragma Assert (ATN.Kind (Parent_Component) = ATN.K_Component_Type
-                     or else Kind (Parent_Component) =
-                       ATN.K_Component_Implementation);
-      pragma Assert (BATN.Kind (Node) = BATN.K_DoUntil_Cond_Structure);
-
-   begin
-      return True;
-   end Analyze_DoUntil_Cond_Struct;
+   end Analyze_While_Or_DoUntil_Cond_Struct;
 
    -------------------------------
    -- Analyze_Assignment_Action --

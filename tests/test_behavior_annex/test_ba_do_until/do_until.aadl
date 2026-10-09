@@ -1,0 +1,151 @@
+-- Standalone model for inspecting do-until actions in generated C.
+-- Expected values below are review references, not automatic assertions.
+-- Each transition assigns its own inputs; no local persistence is required.
+package Do_Until_Regression
+public
+  with Base_Types;
+  with Deployment;
+
+  thread Ba_Worker
+  end Ba_Worker;
+  thread implementation Ba_Worker.impl
+    properties
+      Dispatch_Protocol => Periodic;
+      Period => 10 ms;
+    annex behavior_specification {**
+      variables
+        result_initial, result_basic : Base_Types::Integer_32;
+        result_once, result_initially_true : Base_Types::Integer_32;
+        result_changed_condition : Base_Types::Integer_32;
+        result_first, result_second : Base_Types::Integer_32;
+        result_outer, result_nested : Base_Types::Integer_32;
+        result_for_reentry, result_while_reentry : Base_Types::Integer_32;
+        result_inner_for, result_iterator_mod : Base_Types::Integer_64;
+        result_counter, result_boolean, result_branch : Base_Types::Integer_32;
+        inner_count, repeat_count, loop_count : Base_Types::Integer_32;
+        iterator_value : Base_Types::Integer_64;
+        stop_value : Base_Types::Boolean;
+      states
+        ba_start : initial state;
+        ba_ready : complete final state;
+      transitions
+        ba_start -[]-> ba_ready {
+          result_initial := 0;
+          do
+            result_initial := result_initial + 1
+          until (result_initial = 2) -- Expect 2 before the first dispatch.
+        };
+        ba_ready -[on dispatch]-> ba_ready {
+          result_basic := 0;
+          do
+            result_basic := result_basic + 1
+          until (result_basic = 3); -- Expect 3; the old generator leaves 0.
+
+          result_once := 0;
+          do
+            result_once := result_once + 1
+          until (true); -- Expect 1 even for a constant true condition.
+
+          result_initially_true := 0;
+          do
+            result_initially_true := result_initially_true + 1
+          until (result_initially_true >= 0); -- Expect 1, not 0.
+
+          -- The condition is true on entry but false after the first body.
+          result_changed_condition := 0;
+          do
+            result_changed_condition := result_changed_condition + 1
+          until (result_changed_condition mod 3 = 0); -- Expect 3.
+
+          result_first := 0; result_second := 0;
+          do
+            result_first := result_first + 1
+          until (result_first = 2);
+          do
+            result_second := result_second + 1
+          until (result_second = 4); -- Expect independent results 2 and 4.
+
+          result_outer := 0; result_nested := 0;
+          do
+            result_outer := result_outer + 1;
+            inner_count := 0;
+            do
+              inner_count := inner_count + 1;
+              result_nested := result_nested + 1
+            until (inner_count = 2)
+          until (result_outer = 3); -- Expect outer 3, nested total 6.
+
+          result_for_reentry := 0;
+          for (repeat_step : Base_Types::Integer_32 in 1 .. 3) {
+            do
+              result_for_reentry := result_for_reentry + 1
+            until (true)
+          }; -- Expect 3; reset the do-until flag on each entry.
+
+          repeat_count := 0; result_while_reentry := 0;
+          while (repeat_count < 3) {
+            repeat_count := repeat_count + 1;
+            do
+              result_while_reentry := result_while_reentry + 1
+            until (true)
+          }; -- Expect 3 when re-entered through a while loop as well.
+
+          loop_count := 0; result_inner_for := 0;
+          do
+            loop_count := loop_count + 1;
+            for (inner_step : Base_Types::Integer_64 in 1 .. 2) {
+              result_inner_for := result_inner_for + inner_step
+            }
+          until (loop_count = 2); -- Expect sum 6.
+
+          result_iterator_mod := 0;
+          for (loop_step : Base_Types::Integer_64 in 1 .. 3) {
+            iterator_value := 0;
+            do
+              iterator_value := iterator_value + 1
+            until (iterator_value mod loop_step = 0);
+            result_iterator_mod := result_iterator_mod + iterator_value
+          }; -- Expect 6; retain the enclosing iterator type in the condition.
+
+          result_counter := 0;
+          do
+            result_counter := result_counter + 1
+          until (result_counter >= 3); -- Expect 3.
+
+          result_boolean := 0; stop_value := true;
+          do
+            stop_value := not stop_value;
+            result_boolean := result_boolean + 1
+          until (stop_value); -- Expect 2, using the updated Boolean value.
+
+          result_branch := 0;
+          if (false)
+            do result_branch := 99 until (true)
+          else
+            do
+              result_branch := result_branch + 2
+            until (result_branch >= 4)
+          end if -- Expect 4, only executing the selected branch.
+        };
+    **};
+  end Ba_Worker.impl;
+  process Ba_Process
+  end Ba_Process;
+  process implementation Ba_Process.impl
+    subcomponents ba_worker : thread Ba_Worker.impl;
+  end Ba_Process.impl;
+  processor Ba_CPU
+    properties Deployment::Execution_Platform => native;
+  end Ba_CPU;
+  processor implementation Ba_CPU.impl
+  end Ba_CPU.impl;
+  system Ba_System
+  end Ba_System;
+  system implementation Ba_System.impl
+    subcomponents
+      ba_application : process Ba_Process.impl;
+      ba_cpu : processor Ba_CPU.impl;
+    properties
+      Actual_Processor_Binding => (reference(ba_cpu)) applies to ba_application;
+  end Ba_System.impl;
+end Do_Until_Regression;
