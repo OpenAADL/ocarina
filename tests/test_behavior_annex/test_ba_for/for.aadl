@@ -1,0 +1,159 @@
+-- Standalone model for inspecting inclusive integer-range loops in generated C.
+-- Expected values below are review references, not automatic assertions.
+package For_Regression
+public
+  with Base_Types;
+  with Deployment;
+
+  thread Ba_Worker
+  end Ba_Worker;
+  thread implementation Ba_Worker.impl
+    properties
+      Dispatch_Protocol => Periodic;
+      Period => 10 ms;
+    annex behavior_specification {**
+      variables
+        result_normal_count, result_normal_sum : Base_Types::Integer_32;
+        result_single_count, result_single_last : Base_Types::Integer_32;
+        result_empty_count : Base_Types::Integer_32;
+        result_visited_once, result_visited_twice : Base_Types::Boolean;
+        result_maximum_done : Base_Types::Boolean;
+        result_maximum_last : Base_Types::Unsigned_8;
+        result_pair_count, result_full_count : Base_Types::Integer_32;
+        result_nested_count, result_nested_sum : Base_Types::Integer_32;
+        result_forall_count : Base_Types::Integer_32;
+        result_signed_count, result_unsigned_count : Base_Types::Integer_32;
+        result_signed_last : Base_Types::Integer_64;
+        result_unsigned_last : Base_Types::Unsigned_64;
+        result_reduced_count, upper_value : Base_Types::Integer_32;
+        mixed_lower_value : Base_Types::Unsigned_32;
+        result_mixed_empty_count : Base_Types::Integer_32;
+        result_outer_sum, result_inner_sum : Base_Types::Integer_64;
+      states
+        ba_ready : initial complete final state;
+      transitions
+        ba_ready -[on dispatch]-> ba_ready {
+          result_normal_count := 0; result_normal_sum := 0;
+          for (loop_step : Base_Types::Unsigned_8 in 1 .. 3) {
+            result_normal_count := result_normal_count + 1;
+            result_normal_sum := result_normal_sum + loop_step
+          }; -- Expect count 3, sum 6.
+
+          result_single_count := 0; result_single_last := 0;
+          for (loop_step : Base_Types::Unsigned_8 in 7 .. 7) {
+            result_single_count := result_single_count + 1;
+            result_single_last := loop_step
+          }; -- Expect count 1, last 7.
+
+          result_empty_count := 0;
+          for (loop_step : Base_Types::Unsigned_8 in 3 .. 2) {
+            result_empty_count := result_empty_count + 1
+          }; -- Expect count 0.
+
+          -- Compare the initialized iterator type, not the lower bound's type.
+          mixed_lower_value := 0; upper_value := 0 - 1;
+          result_mixed_empty_count := 0;
+          for (loop_step : Base_Types::Integer_64 in
+               mixed_lower_value .. upper_value) {
+            result_mixed_empty_count := result_mixed_empty_count + 1
+          }; -- Expect count 0: signed 64-bit 0 .. -1 is an empty range.
+
+          -- The old generator wraps from 255 to 0 and never leaves this loop.
+          -- Boolean observations do not overflow while reproducing that bug.
+          result_visited_once := false; result_visited_twice := false;
+          result_maximum_done := false; result_maximum_last := 0;
+          for (loop_step : Base_Types::Unsigned_8 in 255 .. 255) {
+            result_visited_twice := result_visited_once;
+            result_visited_once := true;
+            result_maximum_last := loop_step
+          };
+          result_maximum_done := true;
+          -- Expect once true, twice false, done true, last 255.
+
+          result_pair_count := 0;
+          for (loop_step : Base_Types::Unsigned_8 in 254 .. 255) {
+            if (result_pair_count < 3)
+              result_pair_count := result_pair_count + 1
+            end if
+          }; -- Expect count 2; saturate to avoid a secondary counter overflow.
+
+          result_full_count := 0;
+          for (loop_step : Base_Types::Unsigned_8 in 0 .. 255) {
+            if (result_full_count < 257)
+              result_full_count := result_full_count + 1
+            end if
+          }; -- Expect count 256, including both endpoints.
+
+          result_nested_count := 0; result_nested_sum := 0;
+          for (outer_step : Base_Types::Unsigned_8 in 254 .. 255) {
+            for (inner_step : Base_Types::Unsigned_8 in 254 .. 255) {
+              if (result_nested_count < 5)
+                result_nested_count := result_nested_count + 1;
+                result_nested_sum := result_nested_sum + outer_step + inner_step
+              end if
+            }
+          }; -- Expect count 4, sum 2036; inner and outer flags are independent.
+
+          result_forall_count := 0;
+          forall (loop_step : Base_Types::Unsigned_8 in 255 .. 255) {
+            if (result_forall_count < 2)
+              result_forall_count := result_forall_count + 1
+            end if
+          }; -- Expect count 1 through the shared integer-range generator.
+
+          result_signed_count := 0; result_signed_last := 0;
+          for (loop_step : Base_Types::Integer_64 in
+               9223372036854775806 .. 9223372036854775807) {
+            if (result_signed_count < 3)
+              result_signed_count := result_signed_count + 1
+            end if;
+            result_signed_last := loop_step
+          }; -- Expect count 2, last 9223372036854775807, without signed overflow.
+
+          result_unsigned_count := 0; result_unsigned_last := 0;
+          for (loop_step : Base_Types::Unsigned_64 in
+               16#FFFFFFFFFFFFFFFE# .. 16#FFFFFFFFFFFFFFFF#) {
+            if (result_unsigned_count < 3)
+              result_unsigned_count := result_unsigned_count + 1
+            end if;
+            result_unsigned_last := loop_step
+          }; -- Expect count 2, last 18446744073709551615, without wraparound.
+
+          -- Retain the existing behavior when the body lowers a variable bound.
+          upper_value := 3; result_reduced_count := 0;
+          for (loop_step : Base_Types::Integer_32 in 1 .. upper_value) {
+            upper_value := 0;
+            result_reduced_count := result_reduced_count + 1
+          }; -- Expect count 1.
+
+          -- Nested loops may shadow names without changing the outer iterator.
+          result_outer_sum := 0; result_inner_sum := 0;
+          for (loop_step : Base_Types::Integer_64 in 1 .. 2) {
+            for (loop_step : Base_Types::Unsigned_8 in 254 .. 255) {
+              result_inner_sum := result_inner_sum + loop_step
+            };
+            result_outer_sum := result_outer_sum + loop_step
+          } -- Expect outer 3, inner 1018; preserve the outer iterator after nesting.
+        };
+    **};
+  end Ba_Worker.impl;
+  process Ba_Process
+  end Ba_Process;
+  process implementation Ba_Process.impl
+    subcomponents ba_worker : thread Ba_Worker.impl;
+  end Ba_Process.impl;
+  processor Ba_CPU
+    properties Deployment::Execution_Platform => native;
+  end Ba_CPU;
+  processor implementation Ba_CPU.impl
+  end Ba_CPU.impl;
+  system Ba_System
+  end Ba_System;
+  system implementation Ba_System.impl
+    subcomponents
+      ba_application : process Ba_Process.impl;
+      ba_cpu : processor Ba_CPU.impl;
+    properties
+      Actual_Processor_Binding => (reference(ba_cpu)) applies to ba_application;
+  end Ba_System.impl;
+end For_Regression;

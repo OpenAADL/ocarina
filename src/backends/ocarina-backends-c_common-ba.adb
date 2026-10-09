@@ -3977,12 +3977,16 @@ package body Ocarina.Backends.C_Common.BA is
       pragma Assert (BATN.Kind (Node) = K_For_Cond_Structure
                      or else BATN.Kind (Node) = K_ForAll_Cond_Structure);
 
-      Pre_Cond       : Node_Id;
-      Post_Cond      : Node_Id;
-      Used_Type      : Node_Id;
-      init_value     : Node_Id;
-      Condition      : Node_Id;
-      For_Statements : constant List_Id := New_List (CTN.K_Statement_List);
+      Used_Type       : Node_Id;
+      Init_Value      : Node_Id;
+      Upper_Value     : Node_Id;
+      Element_Name    : Name_Id;
+      Loop_Statements : constant List_Id := New_List (CTN.K_Statement_List);
+      If_Statements   : constant List_Id := New_List (CTN.K_Statement_List);
+      Stop_Statements : constant List_Id := New_List (CTN.K_Statement_List);
+      Next_Statements : constant List_Id := New_List (CTN.K_Statement_List);
+      Continue_Name   : constant Name_Id :=
+        Get_String_Name ("_ba_for_continue");
    begin
 
       if BATN.Kind (In_Element_Values (Node)) = BATN.K_Integer_Range then
@@ -3990,46 +3994,85 @@ package body Ocarina.Backends.C_Common.BA is
          Used_Type := Map_Used_Type (BATN.Corresponding_Declaration
                                      (BATN.Classifier_Ref (Node)));
 
-         init_value := Evaluate_BA_Integer_Value
+         Init_Value := Evaluate_BA_Integer_Value
            (BATN.Lower_Int_Val (In_Element_Values (Node)),
             S,
             Declarations,
             Statements);
-
-         Pre_Cond := Make_Variable_Declaration
-           (Defining_Identifier => Make_Defining_Identifier
-              (BATN.Display_Name (Element_Idt (Node))),
-            Used_Type           => Used_Type,
-            Value               => init_value);
-
-         Condition := CTU.Make_Expression
-           (Left_Expr  => Make_Defining_Identifier
-              (BATN.Display_Name (Element_Idt (Node))),
-            Operator   => CTU.Op_Less_Equal,
-            Right_Expr => Evaluate_BA_Integer_Value
-              (BATN.Upper_Int_Val (In_Element_Values (Node)),
-               S,
-               Declarations,
-               Statements));
-
-         Post_Cond := CTU.Make_Expression
-              (Left_Expr  => Make_Defining_Identifier
-                   (BATN.Display_Name (Element_Idt (Node))),
-               Operator   => CTU.Op_Plus_Plus,
-               Right_Expr => No_Node);
+         Upper_Value := Evaluate_BA_Integer_Value
+           (BATN.Upper_Int_Val (In_Element_Values (Node)),
+            S,
+            Declarations,
+            Statements);
+         Element_Name := BATN.Display_Name (Element_Idt (Node));
 
          Map_C_Behav_Acts
            (Node         => Node,
             S            => S,
             Declarations => Declarations,
-            WStatements  => For_Statements);
+            WStatements  => Loop_Statements);
 
-         CTU.Append_Node_To_List
-           (CTU.Make_For_Statement
-              (Pre_Cond   => Pre_Cond,
-               Condition  => Condition,
-               Post_Cond  => Post_Cond,
-               Statements => For_Statements),
+         --  Test after the body, before incrementing the iterator. In
+         --  particular, never increment a maximum-valued upper bound.
+         --  Using >= also stops if the body reduces a variable upper bound.
+         Append_Node_To_List
+           (Message_Comment
+              ("Stop at the inclusive upper bound before incrementing "
+               & "to avoid integer overflow."),
+            Loop_Statements);
+         Append_Node_To_List
+           (Make_Assignment_Statement
+              (Variable_Identifier => Make_Defining_Identifier (Continue_Name),
+               Expression          =>
+                 Make_Literal (CV.New_Int_Value (0, 1, 10))),
+            Stop_Statements);
+         Append_Node_To_List
+           (Make_Expression
+              (Left_Expr => Make_Defining_Identifier (Element_Name),
+               Operator  => CTU.Op_Plus_Plus),
+            Next_Statements);
+         Append_Node_To_List
+           (Make_If_Statement
+              (Condition => Make_Expression
+                 (Left_Expr  => Make_Defining_Identifier (Element_Name),
+                  Operator   => CTU.Op_Greater_Equal,
+                  Right_Expr => Upper_Value),
+               Statements      => Stop_Statements,
+               Else_Statements => Next_Statements),
+            Loop_Statements);
+
+         --  The guard skips empty ranges and gives each nested loop its own
+         --  scope for the iterator and continuation flag.
+         Append_Node_To_List
+           (Make_Variable_Declaration
+              (Defining_Identifier => Make_Defining_Identifier (Element_Name),
+               Used_Type           => Used_Type,
+               Value               => Init_Value),
+            If_Statements);
+         Append_Node_To_List
+           (Make_Variable_Declaration
+              (Defining_Identifier => Make_Defining_Identifier (Continue_Name),
+               Used_Type           => Make_Defining_Identifier
+                 (Get_String_Name ("int")),
+               Value               =>
+                 Make_Literal (CV.New_Int_Value (1, 1, 10))),
+            If_Statements);
+         Append_Node_To_List
+           (Make_While_Statement
+              (Condition  => Make_Defining_Identifier (Continue_Name),
+               Statements => Loop_Statements),
+            If_Statements);
+         --  Match the conversion performed by the iterator initialization,
+         --  including mixed signed and unsigned types in an empty range.
+         Append_Node_To_List
+           (Make_If_Statement
+              (Condition => Make_Expression
+                 (Left_Expr  => Make_Type_Conversion
+                    (Subtype_Mark => Used_Type,
+                     Expression   => Init_Value),
+                  Operator   => CTU.Op_Less_Equal,
+                  Right_Expr => Upper_Value),
+               Statements => If_Statements),
             Statements);
 
       else
