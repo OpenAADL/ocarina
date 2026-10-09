@@ -1,0 +1,50 @@
+-- Standalone model for inspecting periodic dispatch selection in generated C.
+-- Expected values are review references, not automatic assertions.
+-- After state initialization, successive dispatches assign 1, 2, 1, 2.
+-- This case checks control-state persistence; each action assigns before use.
+package Dispatch_State_Regression
+public
+  with Base_Types;
+  with Deployment;
+
+  thread Ba_Worker
+  end Ba_Worker;
+  thread implementation Ba_Worker.impl
+    properties
+      Dispatch_Protocol => Periodic;
+      Period => 10 ms;
+    annex behavior_specification {**
+      variables
+        ba_value : Base_Types::Integer_32;
+      states
+        ba_left : initial complete final state;
+        ba_right : complete state;
+      transitions
+        ba_left -[on dispatch]-> ba_right {
+          ba_value := 1
+        };
+        ba_right -[on dispatch]-> ba_left {
+          ba_value := 2
+        };
+    **};
+  end Ba_Worker.impl;
+  process Ba_Process
+  end Ba_Process;
+  process implementation Ba_Process.impl
+    subcomponents ba_worker : thread Ba_Worker.impl;
+  end Ba_Process.impl;
+  processor Ba_CPU
+    properties Deployment::Execution_Platform => native;
+  end Ba_CPU;
+  processor implementation Ba_CPU.impl
+  end Ba_CPU.impl;
+  system Ba_System
+  end Ba_System;
+  system implementation Ba_System.impl
+    subcomponents
+      ba_application : process Ba_Process.impl;
+      ba_cpu : processor Ba_CPU.impl;
+    properties
+      Actual_Processor_Binding => (reference(ba_cpu)) applies to ba_application;
+  end Ba_System.impl;
+end Dispatch_State_Regression;

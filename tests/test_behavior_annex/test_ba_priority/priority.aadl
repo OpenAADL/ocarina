@@ -1,0 +1,74 @@
+-- Standalone model for inspecting transition priority in generated C.
+-- Expected values are review references, not automatic assertions.
+-- Initialization selects 5. Each dispatch assigns 0, then selects 5 again.
+-- Priority 9 is disabled; otherwise is only eligible when all guards are false.
+package Priority_Regression
+public
+  with Base_Types;
+  with Deployment;
+
+  thread Ba_Worker
+  end Ba_Worker;
+  thread implementation Ba_Worker.impl
+    properties
+      Dispatch_Protocol => Periodic;
+      Period => 10 ms;
+    annex behavior_specification {**
+      variables
+        ba_selected : Base_Types::Integer_32;
+      states
+        ba_start : initial state;
+        ba_ready : complete final state;
+        ba_choose : state;
+      transitions
+        -- Check priority on transitions leaving the initial state.
+        initial_low[1] : ba_start -[true]-> ba_ready {
+          ba_selected := 1
+        };
+        initial_high[5] : ba_start -[true]-> ba_ready {
+          ba_selected := 5
+        };
+        initial_disabled[9] : ba_start -[false]-> ba_ready {
+          ba_selected := 9
+        };
+        initial_fallback[100] : ba_start -[otherwise]-> ba_ready {
+          ba_selected := 100
+        };
+
+        ba_ready -[on dispatch]-> ba_choose { ba_selected := 0 };
+
+        -- Check the same ordering after dispatch, in an execution state.
+        choose_low[1] : ba_choose -[true]-> ba_ready {
+          ba_selected := 1
+        };
+        choose_high[5] : ba_choose -[true]-> ba_ready {
+          ba_selected := 5
+        };
+        choose_disabled[9] : ba_choose -[false]-> ba_ready {
+          ba_selected := 9
+        };
+        choose_fallback[100] : ba_choose -[otherwise]-> ba_ready {
+          ba_selected := 100
+        };
+    **};
+  end Ba_Worker.impl;
+  process Ba_Process
+  end Ba_Process;
+  process implementation Ba_Process.impl
+    subcomponents ba_worker : thread Ba_Worker.impl;
+  end Ba_Process.impl;
+  processor Ba_CPU
+    properties Deployment::Execution_Platform => native;
+  end Ba_CPU;
+  processor implementation Ba_CPU.impl
+  end Ba_CPU.impl;
+  system Ba_System
+  end Ba_System;
+  system implementation Ba_System.impl
+    subcomponents
+      ba_application : process Ba_Process.impl;
+      ba_cpu : processor Ba_CPU.impl;
+    properties
+      Actual_Processor_Binding => (reference(ba_cpu)) applies to ba_application;
+  end Ba_System.impl;
+end Priority_Regression;
