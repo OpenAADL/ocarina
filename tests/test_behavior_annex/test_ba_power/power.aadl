@@ -1,0 +1,128 @@
+-- Standalone model for inspecting generated integer-power C code.
+-- Expected values below are review references, not automatic assertions.
+package Power_Regression
+public
+  with Base_Types;
+  with Deployment;
+
+  -- Local classifiers also exercise inherited fixed-width integer types.
+  data Power_Integer extends Base_Types::Integer_64
+  end Power_Integer;
+  data Power_Unsigned extends Base_Types::Unsigned_64
+  end Power_Unsigned;
+
+  thread Ba_Worker
+  end Ba_Worker;
+  thread implementation Ba_Worker.impl
+    properties
+      Dispatch_Protocol => Periodic;
+      Period => 1 ms;
+    annex behavior_specification {**
+      variables
+        signed_value : Power_Integer;
+        minimum_value : Power_Integer;
+        runtime_exponent : Power_Integer;
+        unsigned_value : Power_Unsigned;
+        high_value : Power_Unsigned;
+        huge_exponent : Power_Unsigned;
+      states
+        ba_ready : initial complete final state;
+      transitions
+        ba_ready -[on dispatch]-> ba_ready {
+          -- Initialize wide values through exponent one to exercise integer
+          -- literal formatting in the power generator, without external C.
+          minimum_value := (-9223372036854775808) ** 1;
+          high_value := 9223372036854775808 ** 1;
+          huge_exponent := 18446744073709551615 ** 1;
+          runtime_exponent := 3;
+
+          -- Variable and parenthesized exponents: expect 8, 8, then 1.
+          signed_value := 2 ** runtime_exponent;
+          signed_value := 2;
+          signed_value := (signed_value) ** (runtime_exponent);
+          signed_value := (signed_value) ** (0);
+
+          -- Constant exponents: expect 1, 5, then 8.
+          signed_value := 5 ** 0;
+          signed_value := 5 ** 1;
+          signed_value := 2 ** 3;
+
+          -- This result is exact in int64 but cannot be represented by double.
+          -- Expect 16677181699666569.
+          signed_value := 3;
+          signed_value := signed_value ** 34;
+
+          -- Negative bases: expect -8, 16, then -8.
+          signed_value := 0 - 2;
+          signed_value := signed_value ** 3;
+          signed_value := 0 - 2;
+          signed_value := signed_value ** 4;
+          signed_value := (-2) ** 3;
+
+          -- Preserve the signed minimum literal: expect -9223372036854775808.
+          signed_value := (-9223372036854775808) ** 1;
+
+          -- Exponent one must not perform an unnecessary overflowing square.
+          -- Expect minimum_value and high_value to be preserved in each pair.
+          signed_value := minimum_value ** 1;
+          unsigned_value := high_value ** 1;
+          runtime_exponent := 1;
+          signed_value := minimum_value ** runtime_exponent;
+          unsigned_value := high_value ** runtime_exponent;
+
+          -- Wide integer literals must retain their value and signedness.
+          signed_value := 9223372036854775807 ** 1;
+          unsigned_value := 9223372036854775808 ** 1;
+          unsigned_value := 18446744073709551615 ** 1;
+
+          -- A full-width unsigned exponent is nonnegative and must terminate
+          -- quickly. Expect 1 for both unsigned and signed bases.
+          unsigned_value := 1;
+          unsigned_value := unsigned_value ** huge_exponent;
+          signed_value := 1;
+          signed_value := signed_value ** huge_exponent;
+
+          -- Preserve surrounding operations: expect 3, 17, then 42.
+          signed_value := 2;
+          signed_value := signed_value ** 3 mod 5;
+          signed_value := 2;
+          signed_value := signed_value ** 3 * 2 + 1;
+          if (2 ** 3 = 8)
+            signed_value := 42
+          else
+            signed_value := 43
+          end if;
+
+          -- Reevaluate the base on each check; expect signed_value = 4.
+          signed_value := 1;
+          while (signed_value ** 2 < 16) {
+            signed_value := signed_value + 1
+          };
+
+          -- Reevaluate the exponent on each check; expect runtime_exponent = 4.
+          signed_value := 2;
+          runtime_exponent := 0;
+          while (signed_value ** runtime_exponent < 16) {
+            runtime_exponent := runtime_exponent + 1
+          }
+        };
+    **};
+  end Ba_Worker.impl;
+  process Ba_Process
+  end Ba_Process;
+  process implementation Ba_Process.impl
+    subcomponents ba_worker : thread Ba_Worker.impl;
+  end Ba_Process.impl;
+  processor Ba_CPU
+    properties Deployment::Execution_Platform => native;
+  end Ba_CPU;
+  system Ba_System
+  end Ba_System;
+  system implementation Ba_System.impl
+    subcomponents
+      ba_application : process Ba_Process.impl;
+      ba_cpu : processor Ba_CPU;
+    properties
+      Actual_Processor_Binding => (reference(ba_cpu)) applies to ba_application;
+  end Ba_System.impl;
+end Power_Regression;

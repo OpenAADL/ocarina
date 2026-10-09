@@ -29,6 +29,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
+with Ocarina.AADL_Values;
 with Ocarina.Namet;
 with Locations;
 with Utils;
@@ -5268,33 +5269,327 @@ package body Ocarina.Backends.C_Common.BA is
       Is_Put_Value_On_Port : Boolean := False) return Node_Id
    is
       pragma Assert (BATN.Kind (Node) = BATN.K_Factor);
-   begin
-      --  if BATN.Is_Abs (Node) then
-      --     --  We must add the library #include <stdlib.h>
-      --     --  in order to be able to use their functions
-      --     --  abs (x), pow (x,y)
-      --     --
-      --     Display_Error ("Abs not treated yet", Fatal => True);
-      --  elsif BATN.Is_Not (Node) then
-      --     Op := CTU.Op_Not;
-      --  end if;
+      use type Ocarina.AADL_Values.Literal_Type;
 
+      type Power_Operand is record
+         Type_Name    : Name_Id := No_Name;
+         Is_Signed    : Boolean := True;
+         Literal_Node : Node_Id := No_Node;
+         Is_Negative  : Boolean := False;
+      end record;
+      Signed_Max : constant Unsigned_Long_Long := 2 ** 63 - 1;
+      Base_Info, Exponent_Info : Power_Operand;
+      Base_Expr, Exponent_Expr : Node_Id;
+
+      function Identifier (Spelling : String) return Node_Id is
+      begin
+         return Make_Defining_Identifier (Get_String_Name (Spelling), False);
+      end Identifier;
+
+      function Integer_Literal (Magnitude : Unsigned_Long_Long) return Node_Id
+      is
+      begin
+         return Make_Literal (CV.New_Int_Value (Magnitude, 1, 10));
+      end Integer_Literal;
+
+      --  Resolve only declared scalar integers and literal operands.
+      --  Parentheses are transparent; compound expressions need a separate
+      --  type analysis and must not silently inherit their first variable.
+      function Operand_Type
+        (Operand_Node : Node_Id;
+         Negate       : Boolean := False;
+         Unary_Sign   : Boolean := False) return Power_Operand
+      is
+         Items : List_Id := No_List;
+         First_Item, Variable_Node, Data_Instance : Node_Id;
+         Result_Info : Power_Operand;
+      begin
+         case BATN.Kind (Operand_Node) is
+            when BATN.K_Literal =>
+               declare
+                  Literal_Value : constant Ocarina.AADL_Values.Value_Type :=
+                    Ocarina.AADL_Values.Value (BATN.Value (Operand_Node));
+               begin
+                  if Literal_Value.T = Ocarina.AADL_Values.LT_Integer then
+                     Result_Info.Literal_Node := Operand_Node;
+                     Result_Info.Is_Negative := Literal_Value.ISign /= Negate;
+                     if Result_Info.Is_Negative
+                       and then Literal_Value.IVal > Signed_Max + 1
+                     then
+                        Display_Located_Error
+                          (BATN.Loc (Operand_Node),
+                           "Integer power literal exceeds signed 64-bit range",
+                           Fatal => True);
+                     end if;
+                     Result_Info.Is_Signed := Result_Info.Is_Negative
+                       or else Literal_Value.IVal <= Signed_Max;
+                     --  Literals have no classifier.  Give them an explicit
+                     --  64-bit integer type, independent of native int size.
+                     Result_Info.Type_Name := Get_String_Name
+                       (if Result_Info.Is_Signed then "int64_t"
+                        else "uint64_t");
+                     return Result_Info;
+                  end if;
+               end;
+            when BATN.K_Identifier =>
+               if not Unary_Sign and then Present (Subprogram_Root) then
+                  Variable_Node := Find_BA_Variable
+                    (Operand_Node, Get_Behavior_Specification
+                       (Subprogram_Root));
+                  if Present (Variable_Node) then
+                     Data_Instance := AAN.Default_Instance
+                       (BATN.Corresponding_Declaration
+                          (BATN.Classifier_Ref (Variable_Node)));
+                     if Present (Data_Instance) and then
+                       Get_Data_Representation (Data_Instance) = Data_Integer
+                     then
+                        Result_Info.Type_Name := CTN.Name
+                          (Map_C_Data_Type_Designator (Data_Instance));
+                        --  The existing C mapping uses signed int when no
+                        --  size is specified, irrespective of Number_Rep.
+                        Result_Info.Is_Signed :=
+                          Get_Data_Size (Data_Instance).S = 0 or else
+                          Get_Number_Representation (Data_Instance) = Signed;
+                        return Result_Info;
+                     end if;
+                  end if;
+               end if;
+            when BATN.K_Property_Constant =>
+               return Operand_Type
+                 (BATN.Identifier (Operand_Node), Negate, Unary_Sign);
+            when BATN.K_Value_Variable =>
+               if not BATN.Is_Count (Operand_Node)
+                 and then not BATN.Is_Fresh (Operand_Node)
+                 and then not BATN.Is_Updated (Operand_Node)
+               then
+                  return Operand_Type
+                    (BATN.Identifier (Operand_Node), Negate, Unary_Sign);
+               end if;
+            when BATN.K_Name =>
+               if BANu.Is_Empty (BATN.Array_Index (Operand_Node)) then
+                  Items := BATN.Idt (Operand_Node);
+               end if;
+            when BATN.K_Data_Component_Reference =>
+               Items := BATN.Identifiers (Operand_Node);
+            when BATN.K_Value_Expression =>
+               Items := BATN.Relations (Operand_Node);
+            when BATN.K_Relation =>
+               Items := BATN.Simple_Exprs (Operand_Node);
+            when BATN.K_Simple_Expression =>
+               Items := BATN.Term_And_Operator (Operand_Node);
+               if BANu.Length (Items) = 2 then
+                  First_Item := BATN.First_Node (Items);
+                  if BATN.Kind (First_Item) = BATN.K_Operator then
+                     if Evaluate_BA_Operator (First_Item) = Op_Minus then
+                        return Operand_Type
+                          (BATN.Next_Node (First_Item), not Negate, True);
+                     elsif Evaluate_BA_Operator (First_Item) = Op_Plus then
+                        return Operand_Type
+                          (BATN.Next_Node (First_Item), Negate, True);
+                     end if;
+                  end if;
+               end if;
+            when BATN.K_Term =>
+               Items := BATN.Factors (Operand_Node);
+            when BATN.K_Factor =>
+               if No (BATN.Upper_Value (Operand_Node))
+                 and then not BATN.Is_Not (Operand_Node)
+                 and then not BATN.Is_Abs (Operand_Node)
+               then
+                  return Operand_Type
+                    (BATN.Lower_Value (Operand_Node), Negate, Unary_Sign);
+               end if;
+            when others =>
+               null;
+         end case;
+         if not BANu.Is_Empty (Items) and then BANu.Length (Items) = 1 then
+            return Operand_Type
+              (BATN.First_Node (Items), Negate, Unary_Sign);
+         end if;
+         Display_Located_Error
+           (BATN.Loc (Operand_Node),
+            "Cannot infer integer power operand type: use a declared "
+            & "BA integer variable or an integer literal; compound "
+            & "operands are not supported", Fatal => True);
+         return Result_Info;
+      end Operand_Type;
+
+      function Literal_Expression (Info : Power_Operand) return Node_Id is
+         Magnitude : constant Unsigned_Long_Long := Ocarina.AADL_Values.Value
+           (BATN.Value (Info.Literal_Node)).IVal;
+         Literal_Expr : Node_Id;
+      begin
+         Add_Include
+           (Make_Include_Clause (Identifier ("stdint"), Local => False));
+         if Info.Is_Negative then
+            --  Spell the signed minimum without an out-of-range positive
+            --  signed token or a negation of the signed minimum itself.
+            Literal_Expr := Make_Expression
+              (Integer_Literal (0), Op_Minus, Make_Call_Profile
+                 (Identifier ("INT64_C"), Make_List_Id
+                    (Integer_Literal
+                       (Unsigned_Long_Long'Min (Magnitude, Signed_Max)))));
+            if Magnitude > Signed_Max then
+               Literal_Expr := Make_Expression
+                 (Literal_Expr, Op_Minus, Integer_Literal (1));
+            end if;
+            return Literal_Expr;
+         end if;
+         return Make_Call_Profile
+           (Identifier (if Info.Is_Signed then "INT64_C" else "UINT64_C"),
+            Make_List_Id (Integer_Literal (Magnitude)));
+      end Literal_Expression;
+
+      function Ensure_Power_Helper return Name_Id is
+         Helper_Name : constant Name_Id := Get_String_Name
+           ("ocarina_ba_power_" & Get_Name_String (Base_Info.Type_Name)
+            & "_by_" & Get_Name_String (Exponent_Info.Type_Name));
+         Existing_Node : Node_Id := CTN.First_Node
+           (CTN.Declarations (Current_File));
+         Params : constant List_Id := New_List (CTN.K_Parameter_List);
+         Locals : constant List_Id := New_List (CTN.K_Declaration_List);
+         Body_Stmts : constant List_Id := New_List (CTN.K_Statement_List);
+         Loop_Stmts : constant List_Id := New_List (CTN.K_Statement_List);
+         Multiply_Stmts : constant List_Id := New_List (CTN.K_Statement_List);
+         Square_Stmts : constant List_Id := New_List (CTN.K_Statement_List);
+         Failure_Stmts : constant List_Id := New_List (CTN.K_Statement_List);
+
+         function Product (Left_Name : String) return Node_Id is
+            Left_Value : Node_Id := Identifier (Left_Name);
+         begin
+            if not Base_Info.Is_Signed then
+               --  Prevent narrow unsigned operands from promoting to signed
+               --  int for multiplication.  Assignment restores their width.
+               Add_Include
+                 (Make_Include_Clause (Identifier ("stdint"), Local => False));
+               Left_Value := Make_Type_Conversion
+                 (Identifier ("uintmax_t"), Left_Value);
+            end if;
+            return Make_Expression
+              (Left_Value, Op_Asterisk, Identifier ("ba_power_base"));
+         end Product;
+      begin
+         --  Keep one helper per pair of declared C types in this source.
+         while Present (Existing_Node) loop
+            if CTN.Kind (Existing_Node) = CTN.K_Function_Implementation
+              and then CTN.Name
+                (CTN.Defining_Identifier (CTN.Specification (Existing_Node))) =
+                  Helper_Name
+            then
+               return Helper_Name;
+            end if;
+            Existing_Node := CTN.Next_Node (Existing_Node);
+         end loop;
+         Append_Node_To_List
+           (Make_Parameter_Specification
+              (Identifier ("ba_power_base"),
+               Make_Defining_Identifier (Base_Info.Type_Name, False)), Params);
+         Append_Node_To_List
+           (Make_Parameter_Specification
+              (Identifier ("ba_power_exponent"), Make_Defining_Identifier
+                 (Exponent_Info.Type_Name, False)), Params);
+         Append_Node_To_List
+           (Make_Variable_Declaration
+              (Identifier ("ba_power_result"), Make_Defining_Identifier
+                 (Base_Info.Type_Name, False),
+               Value => Integer_Literal (1)), Locals);
+         Append_Node_To_List
+           (Message_Comment
+              ("Integer power evaluates each operand once at the call site "
+               & "and preserves the declared base and exponent types."),
+            Body_Stmts);
+         if Exponent_Info.Is_Signed then
+            Add_Include
+              (Make_Include_Clause (Identifier ("stdlib"), Local => False));
+            Append_Node_To_List
+              (Message_Comment
+                 ("Negative exponents are outside this integer helper's "
+                  & "supported domain; reject before any conversion."),
+               Body_Stmts);
+            Append_Node_To_List
+              (Make_Call_Profile (Identifier ("abort")), Failure_Stmts);
+            Append_Node_To_List
+              (Make_If_Statement
+                 (Make_Expression
+                    (Identifier ("ba_power_exponent"),
+                     Op_Less, Integer_Literal (0)),
+                  Failure_Stmts), Body_Stmts);
+         end if;
+         Append_Node_To_List
+           (Make_Assignment_Statement
+              (Identifier ("ba_power_result"), Product ("ba_power_result")),
+            Multiply_Stmts);
+         Append_Node_To_List
+           (Make_If_Statement
+              (Make_Expression
+                 (Identifier ("ba_power_exponent"),
+                  Op_Modulo, Integer_Literal (2)),
+               Multiply_Stmts), Loop_Stmts);
+         Append_Node_To_List
+           (Make_Assignment_Statement
+              (Identifier ("ba_power_exponent"), Make_Expression
+                 (Identifier ("ba_power_exponent"),
+                  Op_Slash, Integer_Literal (2))),
+            Loop_Stmts);
+         Append_Node_To_List
+           (Make_Assignment_Statement
+              (Identifier ("ba_power_base"), Product ("ba_power_base")),
+            Square_Stmts);
+         Append_Node_To_List
+           (Message_Comment
+              ("Skip the last unused square: it could overflow even when "
+               & "the final power is representable."), Loop_Stmts);
+         Append_Node_To_List
+           (Make_If_Statement
+              (Identifier ("ba_power_exponent"), Square_Stmts), Loop_Stmts);
+         Append_Node_To_List
+           (Make_While_Statement
+              (Identifier ("ba_power_exponent"), Loop_Stmts), Body_Stmts);
+         Append_Node_To_List
+           (Make_Return_Statement (Identifier ("ba_power_result")),
+            Body_Stmts);
+         Append_Node_To_List
+           (Make_Function_Implementation
+              (Make_Function_Specification
+                 (Make_Defining_Identifier (Helper_Name, False), Params,
+                  Make_Defining_Identifier (Base_Info.Type_Name, False)),
+               Locals, Body_Stmts), CTN.Declarations (Current_File));
+         return Helper_Name;
+      end Ensure_Power_Helper;
+   begin
       if BATN.Is_Not (Node) then
          return Make_Expression
-           (Left_Expr  => Evaluate_BA_Value
+           (Left_Expr => Evaluate_BA_Value
               (BATN.Lower_Value (Node), Is_Out_Parameter,
                Subprogram_Root, Declarations, Statements),
-            Operator   => CTU.Op_Not);
-      else
+            Operator => CTU.Op_Not);
+      elsif No (BATN.Upper_Value (Node)) then
          return Evaluate_BA_Value
            (BATN.Lower_Value (Node), Is_Out_Parameter,
             Subprogram_Root, Declarations, Statements, Is_Put_Value_On_Port);
       end if;
 
-      --  if Present (BATN.Upper_Value (Node)) then
-      --     Display_Error ("Exponent not treated yet", Fatal => True);
-      --  end if;
-
+      Base_Info := Operand_Type (BATN.Lower_Value (Node));
+      Exponent_Info := Operand_Type (BATN.Upper_Value (Node));
+      if Present (Base_Info.Literal_Node) then
+         Base_Expr := Literal_Expression (Base_Info);
+      else
+         Base_Expr := Evaluate_BA_Value
+           (BATN.Lower_Value (Node), Is_Out_Parameter, Subprogram_Root,
+            Declarations, Statements, Is_Put_Value_On_Port);
+      end if;
+      if Present (Exponent_Info.Literal_Node) then
+         Exponent_Expr := Literal_Expression (Exponent_Info);
+      else
+         Exponent_Expr := Evaluate_BA_Value
+           (BATN.Upper_Value (Node), False, Subprogram_Root,
+            Declarations, Statements);
+      end if;
+      --  Return a call expression, not a precomputed statement, so while
+      --  conditions reevaluate the current operands on every iteration.
+      return Make_Call_Profile
+        (Make_Defining_Identifier (Ensure_Power_Helper, False),
+         Make_List_Id (Base_Expr, Exponent_Expr));
    end Evaluate_BA_Factor;
 
    -----------------------
