@@ -1,0 +1,55 @@
+-- Independent single-thread, single-BA reproduction of a missing C header.
+-- Two states require a generated state structure; no ports, variables or actions.
+-- Expected: deployment.h includes po_hi_types.h before the state structure,
+-- whose kind member uses __po_hi_state_kind_t.
+-- The initial transition reaches ba_ready, which dispatches back to itself.
+package Header_Example
+public
+  with Deployment;
+
+  thread Header_Worker
+  end Header_Worker;
+
+  thread implementation Header_Worker.impl
+  properties
+    Dispatch_Protocol => Periodic;
+    Period => 10 ms;
+    Compute_Execution_Time => 0 ms .. 1 ms;
+  annex behavior_specification {**
+    states
+      ba_start : initial state;
+      ba_ready : complete final state;
+    transitions
+      ba_start -[]-> ba_ready;
+      ba_ready -[on dispatch]-> ba_ready;
+  **};
+  end Header_Worker.impl;
+
+  process Header_Process
+  end Header_Process;
+
+  process implementation Header_Process.impl
+  subcomponents
+    header_worker : thread Header_Worker.impl;
+  end Header_Process.impl;
+
+  processor Header_CPU
+  properties
+    Deployment::Execution_Platform => native;
+  end Header_CPU;
+
+  processor implementation Header_CPU.impl
+  end Header_CPU.impl;
+
+  system Header_System
+  end Header_System;
+
+  system implementation Header_System.impl
+  subcomponents
+    header_application : process Header_Process.impl;
+    header_cpu : processor Header_CPU.impl;
+  properties
+    Actual_Processor_Binding => (reference(header_cpu))
+      applies to header_application;
+  end Header_System.impl;
+end Header_Example;

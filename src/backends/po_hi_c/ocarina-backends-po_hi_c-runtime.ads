@@ -519,7 +519,7 @@ package Ocarina.Backends.PO_HI_C.Runtime is
       RE_Complete_Final               => RH_Null,
       RE_Final                        => RH_Null,
       RE_Execution                    => RH_Null,
-      RE_State_Kind_T                 => RH_Null,
+      RE_State_Kind_T                 => RH_PO_HI_Types,
       RE_Ba_Automata_State_T          => RH_Null
       );
    procedure Initialize;
