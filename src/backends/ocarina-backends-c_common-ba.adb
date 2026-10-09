@@ -29,6 +29,9 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
+with Ada.Strings.Fixed;
+
+with Ocarina.Instances.Queries;
 with Ocarina.Namet;
 with Locations;
 with Utils;
@@ -517,7 +520,98 @@ package body Ocarina.Backends.C_Common.BA is
    procedure Map_C_Behavior_Variables (S            : Node_Id;
                                        Declarations : List_Id)
    is
-      BA, P, T      : Node_Id;
+      BA, P, T        : Node_Id;
+      Classifier_Decl : Node_Id;
+      Initializer     : Node_Id;
+
+      function Map_Initial_Value (Data_Instance : Node_Id) return Node_Id is
+         Data_Rep : constant Supported_Data_Representation :=
+           Get_Data_Representation (Data_Instance);
+         Value_Name : Name_Id;
+      begin
+         if Data_Rep not in Data_Integer | Data_Boolean then
+            return No_Node;
+         end if;
+
+         --  The instance carries inherited and overridden classifier values.
+         --  Get_String_Property resolves the first element of this list
+         --  property without assuming that its AST node is a literal.
+         Value_Name := Ocarina.Instances.Queries.Get_String_Property
+           (Data_Instance, "data_model::initial_value");
+         if Value_Name = No_Name then
+            return No_Node;
+         end if;
+
+         declare
+            Text : constant String := Ada.Strings.Fixed.Trim
+              (Get_Name_String (Value_Name), Ada.Strings.Both);
+            Raw_Value : constant Node_Id :=
+              Make_Defining_Identifier (Get_String_Name (Text), False);
+            First : Integer := Text'First;
+            Negative : Boolean;
+            Magnitude : Unsigned_Long_Long;
+            Signed_Max : constant Unsigned_Long_Long := 2 ** 63 - 1;
+         begin
+            if Data_Rep = Data_Boolean then
+               return Make_Literal
+                 (CV.New_Int_Value
+                    (Unsigned_Long_Long (Boolean'Pos (Boolean'Value (Text))),
+                     1, 10));
+            end if;
+
+            --  Normalize plain decimal integers, including both 64-bit
+            --  boundaries. Other C initializers are interpreted by the C
+            --  compiler, as specified by Data_Model::Initial_Value.
+            if Text'Length = 0 then
+               return Raw_Value;
+            end if;
+            Negative := Text (First) = '-';
+            if Text (First) in '+' | '-' then
+               First := First + 1;
+            end if;
+            if First > Text'Last then
+               return Raw_Value;
+            end if;
+            if Text (First) = '0' and then First < Text'Last then
+               --  Preserve C octal and hexadecimal syntax, e.g. 077 and 0xFF.
+               return Raw_Value;
+            end if;
+            for J in First .. Text'Last loop
+               if Text (J) not in '0' .. '9' then
+                  return Raw_Value;
+               end if;
+            end loop;
+            Magnitude := Unsigned_Long_Long'Value (Text (First .. Text'Last));
+
+            if Negative and then Magnitude = Signed_Max + 1 then
+               --  The positive magnitude of INT64_MIN is not a signed C99
+               --  decimal literal. Subtract one from -INT64_MAX instead.
+               return Make_Expression
+                 (Make_Literal (CV.New_Int_Value (Signed_Max, -1, 10)),
+                  Op_Minus, Make_Literal (CV.New_Int_Value (1, 1, 10)));
+            elsif Negative and then Magnitude > Signed_Max then
+               return Raw_Value;
+            elsif not Negative and then Magnitude > Signed_Max then
+               Add_Include
+                 (Make_Include_Clause
+                    (Make_Defining_Identifier
+                       (Get_String_Name ("stdint"), False), Local => False));
+               return Make_Call_Profile
+                 (Make_Defining_Identifier
+                    (Get_String_Name ("UINT64_C"), False),
+                  Make_List_Id
+                    (Make_Literal (CV.New_Int_Value (Magnitude, 1, 10))));
+            end if;
+            return Make_Literal
+              (CV.New_Int_Value (Magnitude, (if Negative then -1 else 1), 10));
+         exception
+            when Constraint_Error =>
+               --  A source-language expression need not be an Ada scalar
+               --  literal; keep it as an initializer rather than dropping it.
+               return Raw_Value;
+         end;
+      end Map_Initial_Value;
+
    begin
 
       BA := Get_Behavior_Specification (S);
@@ -533,13 +627,23 @@ package body Ocarina.Backends.C_Common.BA is
                                       (BATN.Classifier_Ref (P))))
                then
 
+                  Classifier_Decl := BATN.Corresponding_Declaration
+                    (BATN.Classifier_Ref (P));
+                  Initializer := Map_Initial_Value
+                    (AAN.Default_Instance (Classifier_Decl));
+                  if Present (Initializer) then
+                     Append_Node_To_List
+                       (Message_Comment
+                          ("Initialize the BA variable from "
+                           & "Data_Model::Initial_Value before its actions."),
+                        Declarations);
+                  end if;
                   CTU.Append_Node_To_List
                     (CTU.Make_Variable_Declaration
                        (Defining_Identifier => CTU.Make_Defining_Identifier
                             (BATN.Display_Name (T)),
-                        Used_Type =>  Map_Used_Type
-                          (BATN.Corresponding_Declaration
-                               (BATN.Classifier_Ref (P)))),
+                        Used_Type => Map_Used_Type (Classifier_Decl),
+                        Value     => Initializer),
                      Declarations);
 
                else

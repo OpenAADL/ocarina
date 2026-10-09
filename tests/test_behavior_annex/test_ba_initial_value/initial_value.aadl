@@ -1,0 +1,120 @@
+-- Standalone model for classifier-provided integer and Boolean initial values.
+-- Observe the results in the initial transition, before any dispatch transition.
+-- Expected values below are review references, not automatic assertions.
+package Initial_Value_Regression
+public
+  with Base_Types;
+  with Data_Model;
+  with Deployment;
+
+  data Seed_Integer
+    properties
+      Data_Model::Data_Representation => Integer;
+      Data_Model::Initial_Value => ("7");
+  end Seed_Integer;
+  data Inherited_Integer extends Seed_Integer
+  end Inherited_Integer;
+  data Overridden_Integer extends Inherited_Integer
+    properties Data_Model::Initial_Value => ("11");
+  end Overridden_Integer;
+
+  data Negative_Integer extends Base_Types::Integer_32
+    properties Data_Model::Initial_Value => ("-7");
+  end Negative_Integer;
+  data Zero_Integer extends Base_Types::Integer_32
+    properties Data_Model::Initial_Value => ("0");
+  end Zero_Integer;
+  data Positive_Integer extends Base_Types::Integer_32
+    properties Data_Model::Initial_Value => (" +17 ");
+  end Positive_Integer;
+  data True_Boolean extends Base_Types::Boolean
+    properties Data_Model::Initial_Value => ("true");
+  end True_Boolean;
+  data False_Boolean extends Base_Types::Boolean
+    properties Data_Model::Initial_Value => ("false");
+  end False_Boolean;
+
+  data Minimum_Integer extends Base_Types::Integer_64
+    properties Data_Model::Initial_Value => ("-9223372036854775808");
+  end Minimum_Integer;
+  data Maximum_Unsigned extends Base_Types::Unsigned_64
+    properties Data_Model::Initial_Value => ("18446744073709551615");
+  end Maximum_Unsigned;
+  data Hexadecimal_Integer extends Base_Types::Unsigned_32
+    properties Data_Model::Initial_Value => ("0x2AU");
+  end Hexadecimal_Integer;
+  data Octal_Integer extends Base_Types::Integer_32
+    properties Data_Model::Initial_Value => ("077");
+  end Octal_Integer;
+
+  thread Ba_Worker
+  end Ba_Worker;
+  thread implementation Ba_Worker.impl
+    properties
+      Dispatch_Protocol => Periodic;
+      Period => 10 ms;
+    annex behavior_specification {**
+      variables
+        ba_seed, sibling_seed : Seed_Integer;
+        inherited_seed : Inherited_Integer;
+        overridden_seed : Overridden_Integer;
+        negative_seed : Negative_Integer;
+        zero_seed : Zero_Integer;
+        positive_seed : Positive_Integer;
+        true_seed : True_Boolean;
+        false_seed : False_Boolean;
+        minimum_seed : Minimum_Integer;
+        maximum_seed : Maximum_Unsigned;
+        hexadecimal_seed : Hexadecimal_Integer;
+        octal_seed : Octal_Integer;
+        -- These classifiers have no Initial_Value; BA actions assign them.
+        result_direct, result_sibling : Base_Types::Integer_32;
+        result_inherited, result_overridden : Base_Types::Integer_32;
+        result_negative, result_zero, result_positive : Base_Types::Integer_32;
+        result_boolean : Base_Types::Boolean;
+        result_minimum : Base_Types::Integer_64;
+        result_maximum : Base_Types::Unsigned_64;
+        result_hexadecimal : Base_Types::Unsigned_32;
+        result_octal : Base_Types::Integer_32;
+      states
+        ba_start : initial state;
+        ba_ready : complete final state;
+      transitions
+        ba_start -[]-> ba_ready {
+          result_direct := ba_seed + 2; -- Expect 9, from classifier value 7.
+          result_sibling := sibling_seed; -- Expect 7 for the second identifier.
+          result_inherited := inherited_seed; -- Expect inherited value 7.
+          result_overridden := overridden_seed; -- Expect overriding value 11.
+          result_negative := negative_seed; -- Expect -7.
+          result_zero := zero_seed; -- Expect 0, not an absent initializer.
+          result_positive := positive_seed; -- Expect 17.
+          result_boolean := true_seed and not false_seed; -- Expect true.
+          result_minimum := minimum_seed; -- Expect -9223372036854775808.
+          result_maximum := maximum_seed; -- Expect 18446744073709551615.
+          result_hexadecimal := hexadecimal_seed; -- Expect 42 (C syntax).
+          result_octal := octal_seed -- Expect 63, preserving C octal syntax.
+        };
+        -- This case does not rely on locals persisting between BA invocations.
+        ba_ready -[on dispatch]-> ba_ready;
+    **};
+  end Ba_Worker.impl;
+  process Ba_Process
+  end Ba_Process;
+  process implementation Ba_Process.impl
+    subcomponents ba_worker : thread Ba_Worker.impl;
+  end Ba_Process.impl;
+  processor Ba_CPU
+    properties Deployment::Execution_Platform => native;
+  end Ba_CPU;
+  processor implementation Ba_CPU.impl
+  end Ba_CPU.impl;
+  system Ba_System
+  end Ba_System;
+  system implementation Ba_System.impl
+    subcomponents
+      ba_application : process Ba_Process.impl;
+      ba_cpu : processor Ba_CPU.impl;
+    properties
+      Actual_Processor_Binding => (reference(ba_cpu)) applies to ba_application;
+  end Ba_System.impl;
+end Initial_Value_Regression;
